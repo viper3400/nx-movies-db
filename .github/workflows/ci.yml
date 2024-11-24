@@ -35,4 +35,8 @@ jobs:
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: npx nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      - run: npx nx run-many -t lint prisma-generate build --skip-nx-cache
+      # Run prisma generate first
+      - run: npx nx run prisma-generate
+
+      # Now run lint and build in parallel
+      - run: npx nx run-many -t lint build --skip-nx-cache --parallel

@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "prisma-generate": "prisma generate --schema prisma/prisma.schema"
+  }
+}

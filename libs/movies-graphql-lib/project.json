@@ -1,0 +1,9 @@
+{
+  "name": "movies-graphql-lib",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/movies-graphql-lib/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project movies-graphql-lib --web",
+  "targets": {}
+}

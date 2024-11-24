@@ -1,0 +1,13 @@
+{
+  "name": "movies-prisma-lib",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/movies-prisma-lib/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project movies-prisma-lib --web",
+  "targets": {
+    "test": {
+      "dependsOn": ["prisma-generate"]
+    }
+  }
+}

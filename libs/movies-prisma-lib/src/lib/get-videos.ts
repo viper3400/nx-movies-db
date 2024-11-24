@@ -1,0 +1,70 @@
+// videoQueries.ts
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export type VideoQueryArgs = {
+  title?: string;        // Optional string for filtering by title
+  diskid?: string;      // Optional string for filtering by disk ID
+  genreName?: string;   // Optional string for filtering by genre name
+  mediaType?: string[]; // Optional array of strings for filtering by media type
+  ownerid?: string;     // Optional string for filtering by owner ID
+};
+
+
+export const getVideos = async (args: VideoQueryArgs, query: any) => {
+  const { title, diskid, genreName, mediaType, ownerid } = args;
+
+  return await prisma.videodb_videodata.findMany({
+    where: {
+      AND: [
+        {
+          OR: [
+            { title: title ? { contains: title } : undefined },
+            { subtitle: title ? { contains: title } : undefined },
+          ],
+        },
+        {
+          owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,
+        },
+        { diskid: diskid ? { startsWith: diskid } : undefined },
+        genreName ? {
+          videodb_videogenre: {
+            some: {
+              genre: {
+                name: genreName ? { contains: genreName } : undefined,
+              },
+            },
+          },
+        } : {},
+        {
+          videodb_mediatypes: {
+            name: mediaType ? { in: mediaType } : undefined,
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      subtitle: true,
+      title: true,
+      diskid: true,
+      owner_id: true,
+      videodb_videogenre: {
+        select: {
+          genre: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      videodb_mediatypes: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    ...query,
+  });
+};

@@ -1,4 +1,4 @@
-import { moviesPrismaLib } from "@nx-movies-db/movies-prisma-lib";
+import { MovieComponent } from "../components/movies";
 
 export default function Index() {
   /*
@@ -8,7 +8,8 @@ export default function Index() {
    */
   return (
     <div>
-     <div className="text-2xl underline">{moviesPrismaLib()}</div>
+     <div className="text-2xl underline">Filmdatenbank</div>
+     <MovieComponent/>
     </div>
   );
 }

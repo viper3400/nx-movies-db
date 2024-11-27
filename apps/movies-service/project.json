@@ -25,6 +25,7 @@
           }
         }
       },
+      "dependsOn": ["movies-prisma-lib:prisma-generate"],
       "configurations": {
         "development": {},
         "production": {
@@ -56,8 +57,7 @@
       }
     },
     "docker-build": {
-      "dependsOn": ["build"],
-      "command": "docker build -f apps/movies-service/Dockerfile . -t movies-service"
+      "command": "docker build --no-cache -f apps/movies-service/Dockerfile . -t movies-service"
     }
   }
 }

@@ -1,0 +1,10 @@
+services:
+  movies-service:
+    build:
+      context: "../"
+      dockerfile: "apps/movies-service/Dockerfile"
+    ports:
+      - "7100:7100"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}

@@ -8,6 +8,7 @@ COPY . .
 RUN rm -rf node_modules
 RUN rm -rf dist
 RUN rm -rf .nx
+RUN rm -rf ./apps/movies-service/.env.local
 
 # Install dependencies
 RUN npm install
@@ -23,8 +24,8 @@ RUN npx nx build movies-service
 # Run the container with `docker run -p 3000:3000 -t movies-service`.
 FROM docker.io/node:lts-alpine
 
-ENV HOST=0.0.0.0
-ENV PORT=7100
+#ENV HOST=0.0.0.0
+#ENV PORT=7100
 
 WORKDIR /app
 
@@ -39,5 +40,7 @@ RUN chown -R movies-service:movies-service .
 # You can remove this install step if you build with `--bundle` option.
 # The bundled output will include external dependencies.
 # RUN npm --prefix movies-service --omit=dev -f install
+
+EXPOSE 7100
 
 CMD [ "node", "movies-service" ]

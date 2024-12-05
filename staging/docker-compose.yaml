@@ -32,7 +32,7 @@ services:
       - "7200:3306"
     volumes:
      - ./db:/var/lib/mysql
-     - ./seed:/docker-entrypoint-initdb.d/  # Mount backup SQL file
+     - ./../seed:/docker-entrypoint-initdb.d/  # Mount backup SQL file
     user: mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]

@@ -1,0 +1,29 @@
+services:
+  movies-service-db:
+    platform: linux/x86_64
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    image: mysql:latest
+    ports:
+      - "7200:3306"
+    volumes:
+     - ./db:/var/lib/mysql
+     - ./../seed:/docker-entrypoint-initdb.d/  # Mount backup SQL file
+    user: mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 10s   # Check every 10 seconds
+      timeout: 5s
+      retries: 5      # Retry up to 5 times before considering the service unhealthy
+      start_period: 30s  # Allow up to 30s for MySQL to initialize
+
+  phpmyadmin:
+    depends_on:
+      movies-service-db:
+        condition: service_healthy
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "7300:80"
+    volumes:
+      - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php

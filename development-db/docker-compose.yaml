@@ -1,27 +1,4 @@
 services:
-  movies-service:
-    build:
-      context: "../"
-      dockerfile: "apps/movies-service/Dockerfile"
-    ports:
-      - "7100:7100"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
-    depends_on:
-      movies-service-db:
-        condition: service_healthy
-  movies-ui:
-    build:
-      context: "../"
-      dockerfile: "apps/movies-ui/Dockerfile"
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_GRAPHQL_URL=${NEXT_PUBLIC_GRAPHQL_URL}
-    depends_on:
-      - movies-service
-
   movies-service-db:
     platform: linux/x86_64
     environment:

@@ -7,7 +7,7 @@ import { getClient } from "../../../lib/apollocient";
 // GraphQL query
 const getMovieByTitle = gql`
   query GetMovies($title: String!, $diskid: String!) {
-    videos(title: $title, diskid: $diskid) {
+    videos(title: $title, diskid: $diskid, queryPlot: true) {
       title
       diskid
       genres
@@ -15,6 +15,7 @@ const getMovieByTitle = gql`
       mediaType
       ownerid
       id
+      plot
     }
   }
 `;

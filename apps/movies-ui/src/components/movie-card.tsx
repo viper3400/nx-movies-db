@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody } from "@nextui-org/card";
+import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
 import { Divider } from "@nextui-org/divider";
 // Define the interface for a single movie
@@ -9,6 +9,8 @@ export interface Movie {
   mediaType: string;
   genres: string[];
   ownerid: string;
+
+  plot: string;
 }
 
 // Define the props for the MovieCard component
@@ -25,7 +27,7 @@ export const MovieCard = ({ movies }: MovieCardProps) => {
 
   return (
     <>
-      {movies.map(({ id, title, diskid, mediaType, genres, ownerid }: any) => (
+      {movies.map(({ id, title, diskid, mediaType, genres, ownerid, plot }: any) => (
         <div key={id}>
           <Card>
             <CardHeader className="flex items-center justify-between px-4 py-2">
@@ -38,7 +40,15 @@ export const MovieCard = ({ movies }: MovieCardProps) => {
               </div>
             </CardHeader>
             <Divider />
-            <CardBody className="flex flex-row gap-2">
+            { plot && (
+            <div>
+              <CardBody>
+                <div>{plot}</div>
+              </CardBody>
+              <Divider />
+            </div>
+            )}
+            <CardFooter className="flex flex-row gap-2">
               {ownerid === "999" && (
                 <Chip color="danger">Gelöschter Eintrag</Chip>
               )}
@@ -48,7 +58,7 @@ export const MovieCard = ({ movies }: MovieCardProps) => {
                     {genreName}
                   </Chip>
                 ))}
-            </CardBody>
+            </CardFooter>
           </Card>
         </div>
       ))}

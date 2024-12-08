@@ -8,7 +8,7 @@
     "@apollo/client": "^3.11.8",
     "@apollo/experimental-nextjs-app-support": "^0.11.6",
     "@graphql-yoga/plugin-jwt": "^3.4.3",
-    "@nextui-org/react": "^2.4.8",
+    "@nextui-org/react": "^2.6.4",
     "@prisma/client": "^6.0.0",
     "@pothos/core": "^4.3.0",
     "@pothos/plugin-prisma": "^4.3.1",

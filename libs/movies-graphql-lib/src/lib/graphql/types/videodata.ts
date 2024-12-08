@@ -43,6 +43,7 @@ builder.prismaObject("videodb_videodata", {
     subtitle: t.exposeString("subtitle"),
     diskid: t.exposeString("diskid"),
     ownerid: t.exposeID("owner_id"),
+    plot: t.exposeString("plot"),
     // Map genre names to a string array
     genres: t.field({
       type: ["String"], // Define the type as an array of strings
@@ -69,6 +70,7 @@ builder.queryField("videos", (t) =>
       genreName: t.arg.string(),
       mediaType: t.arg.stringList(),
       ownerid: t.arg.string(),
+      queryPlot: t.arg.boolean()
     },
     resolve: async (query, _parent, args, _ctx: any, _info) => {
       //const { title, diskid, genreName, mediaType, ownerid } = args; // Extract the title and diskid from the args

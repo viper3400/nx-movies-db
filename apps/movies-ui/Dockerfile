@@ -1,5 +1,5 @@
 # 1. Stage: Clone und Build
-FROM node:22 as builder
+FROM node:22
 
 # Setze das Arbeitsverzeichnis
 WORKDIR /staging
@@ -13,9 +13,9 @@ RUN rm -rf ./apps/movies-ui/.env.local
 RUN rm -rf .nx
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
-RUN npx nx run movies-ui:build
+RUN npx nx build movies-ui --verbose
 
 WORKDIR /staging/apps/movies-ui
 

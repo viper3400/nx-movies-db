@@ -6,6 +6,7 @@ import { Input } from "@nextui-org/input";
 import { Movie, MovieCard } from "./movie-card";
 
 import { getMovies } from "../app/services/actions/getMovies";
+import { useSession } from "next-auth/react";
 
 // Main component that handles user input and renders Data component
 export const MovieComponent: React.FC = () => {

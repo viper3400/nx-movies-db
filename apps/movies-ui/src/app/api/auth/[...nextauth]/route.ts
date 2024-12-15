@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 
 const githubId = process.env.GITHUB_ID;
@@ -8,7 +8,7 @@ if (!githubId || !githubSecret) {
   throw new Error("GITHUB_ID and GITHUB_SECRET must be set in the environment variables.");
 }
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
     GithubProvider({
       clientId: githubId,
@@ -18,8 +18,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     error: '/auth/error', // Error code passed in query string as ?error=
   },
-};
+});
 
-const handler = NextAuth(authOptions);
-
+// Export the handler for both GET and POST requests
 export { handler as GET, handler as POST };

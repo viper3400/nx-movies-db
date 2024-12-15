@@ -7,13 +7,17 @@ import {
   ThemeProvider as NextThemesProvider,
   ThemeProviderProps,
 } from "next-themes";
+import { SessionProvider } from "next-auth/react"
+import { Session } from "next-auth";
 
 export interface ProvidersProps {
   children: React.ReactNode;
   themeProps?: ThemeProviderProps;
+
+  session: Session
 }
 
-export function Providers({ children, themeProps }: ProvidersProps) {
+export function Providers({ children, themeProps, session }: ProvidersProps) {
   const router = useRouter();
   const [isMounted, setIsMounted] = React.useState(false);
 
@@ -22,6 +26,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   }, []);
 
   return (
+    <SessionProvider session = { session }>
     <NextUIProvider navigate={router.push}>
       {isMounted ? (
         <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
@@ -29,5 +34,6 @@ export function Providers({ children, themeProps }: ProvidersProps) {
        <div className="h-screen w-screen bg-black"></div>
       )}
     </NextUIProvider>
+    </SessionProvider>
   );
 }

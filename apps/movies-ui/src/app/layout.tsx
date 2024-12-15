@@ -1,3 +1,4 @@
+import { Session } from 'next-auth';
 import './global.css';
 import { Providers } from './provider';
 
@@ -8,13 +9,15 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  session
 }: {
   children: React.ReactNode;
+  session: Session
 }) {
   return (
     <html lang="en">
       <body>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} session = {session}>
           {children}
         </Providers>
       </body>

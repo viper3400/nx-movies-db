@@ -1,5 +1,5 @@
 import { MovieComponent } from "../components/movies";
-
+import Github from "../components/github";
 export default function Index() {
   /*
    * Replace the elements below with your own.
@@ -8,8 +8,11 @@ export default function Index() {
    */
   return (
     <div>
-     <div className="text-2xl underline">Filmdatenbank</div>
-     <MovieComponent/>
+        <div className="flex justify-between items-center">
+          <div className="text-2xl underline">Filmdatenbank</div>
+          <Github />
+      </div>
+      <MovieComponent/>
     </div>
   );
 }

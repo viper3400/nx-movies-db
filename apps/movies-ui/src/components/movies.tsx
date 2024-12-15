@@ -23,12 +23,15 @@ export const MovieComponent: React.FC = () => {
     console.log(result);
     setSearchResult(result);
   };
+
+  const validateSearch = (text: string) => {
+    setInvalidSearch(text.length < 3);
+  };
+
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (searchText.length < 3) {
-      setInvalidSearch(true);
-    } else {
-      setInvalidSearch(false);
+    validateSearch(searchText);
+    if (!invalidSearch) {
       setSearchTitle(searchText);
       setSearchResult(undefined);
       search();
@@ -47,7 +50,11 @@ export const MovieComponent: React.FC = () => {
             placeholder="Enter search text"
             type="text"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchText(value);
+              validateSearch(value);
+            }}
             onClear={() => setSearchText("")}
           />
         </div>

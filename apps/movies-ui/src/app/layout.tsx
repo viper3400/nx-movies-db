@@ -8,16 +8,14 @@ export const metadata = {
 };
 
 export default function RootLayout({
-  children,
-  session
+  children
 }: {
   children: React.ReactNode;
-  session: Session
 }) {
   return (
     <html lang="en">
       <body>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} session = {session}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           {children}
         </Providers>
       </body>

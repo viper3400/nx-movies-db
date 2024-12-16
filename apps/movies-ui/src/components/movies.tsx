@@ -6,10 +6,14 @@ import { Input } from "@nextui-org/input";
 import { Movie, MovieCard } from "./movie-card";
 
 import { getMovies } from "../app/services/actions/getMovies";
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+
+interface MovieComponentProperties {
+  session: Session
+}
 
 // Main component that handles user input and renders Data component
-export const MovieComponent: React.FC = () => {
+export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("imposs");
   const [searchTitle, setSearchTitle] = useState<string>(searchText);
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
@@ -41,6 +45,7 @@ export const MovieComponent: React.FC = () => {
 
   return (
     <div>
+      <div>{session.user?.email}</div>
       <form onSubmit={handleSearchSubmit}>
         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
           <Input

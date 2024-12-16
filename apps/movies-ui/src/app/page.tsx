@@ -1,18 +1,31 @@
-import { MovieComponent } from "../components/movies";
-import Github from "../components/github";
-export default function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.tailwind file.
-   */
-  return (
-    <div>
-        <div className="flex justify-between items-center">
-          <div className="text-2xl underline">Filmdatenbank</div>
-          <Github />
+import Github from "../components/github"
+import { MovieComponent } from "../components/movies"
+import { isUserAllowed } from "../lib/allowed-user-parser"
+import { auth } from "../lib/auth"
+
+const getContentBasedOnSession = async () => {
+  const session = await auth()
+  if (session?.user?.email && isUserAllowed(session.user?.email)) {
+    console.log(session)
+    return (
+      <div>
+        <MovieComponent session={ session }/>
       </div>
-      <MovieComponent/>
-    </div>
-  );
+    )
+  } else {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-between p-24">
+        <Github />
+      </div>
+    )
+  }
+}
+
+export default async function Home() {
+  const content = await getContentBasedOnSession()
+  return (
+    <main>
+      { content }
+    </main>
+  )
 }

@@ -45,7 +45,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   return (
     <div>
-      <div>{session.user?.email}</div>
       <form onSubmit={handleSearchSubmit}>
         <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
           <Input

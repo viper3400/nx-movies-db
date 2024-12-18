@@ -23,7 +23,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   }, []);
 
   return (
-    <SessionProvider>
+    <SessionProvider basePath={process.env.NEXT_PUBLIC_NEXTAUTH_URL}>
       <NextUIProvider navigate={router.push}>
         {isMounted ? (
           <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>

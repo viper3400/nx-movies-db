@@ -12,6 +12,7 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  basePath: process.env.APP_BASE_PATH
 };
 
 const plugins = [

@@ -8,9 +8,9 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
-    depends_on:
-      movies-service-db:
-        condition: service_healthy
+    # depends_on:
+    #   movies-service-db:
+    #     condition: service_healthy
   movies-ui:
     build:
       context: "../"

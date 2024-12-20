@@ -29,13 +29,13 @@ FROM node:22
 
 WORKDIR /app
 
-RUN addgroup --system movies-service && \
-          adduser --system -G movies-service movies-service
+# RUN addgroup --system movies-service && \
+#           adduser --system -G movies-service movies-service
 
 COPY --from=builder /staging/dist/apps/movies-service movies-service/
 COPY --from=builder /staging/node_modules node_modules
 
-RUN chown -R movies-service:movies-service .
+# RUN chown -R movies-service:movies-service .
 
 # You can remove this install step if you build with `--bundle` option.
 # The bundled output will include external dependencies.

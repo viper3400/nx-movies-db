@@ -14,11 +14,13 @@ interface MovieComponentProperties {
 
 // Main component that handles user input and renders Data component
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
-  const [searchText, setSearchText] = useState<string>("imposs");
+  const [searchText, setSearchText] = useState<string>("");
   const [searchTitle, setSearchTitle] = useState<string>(searchText);
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const invalidTextLength = (text: string) => text.length < 3
 
   const search = async () => {
     setLoading(true);
@@ -30,13 +32,13 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   };
 
   const validateSearch = (text: string) => {
-    setInvalidSearch(text.length < 3);
+    setInvalidSearch(invalidTextLength(text));
   };
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
     validateSearch(searchText);
-    if (!invalidSearch) {
+    if (!invalidTextLength(searchText)) {
       setSearchTitle(searchText);
       setSearchResult(undefined);
       search();
@@ -58,7 +60,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             onChange={(e) => {
               const value = e.target.value;
               setSearchText(value);
-              validateSearch(value);
+              if(invalidSearch) validateSearch(value);
             }}
             onClear={() => setSearchText("")}
           />

@@ -1,37 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { builder } from "../builder";
-import { PrismaClient } from "@prisma/client";
+//import { PrismaClient } from "@prisma/client";
 
 import {getVideos } from '@nx-movies-db/movies-prisma-lib';
 import type { VideoQueryArgs } from '@nx-movies-db/movies-prisma-lib';
 
-const prisma = new PrismaClient({
-  log: [
-    {
-      emit: 'event',
-      level: 'query',
-    },
-    {
-      emit: 'stdout',
-      level: 'info',
-    },
-    {
-      emit: 'stdout',
-      level: 'warn',
-    },
-    {
-      emit: 'stdout',
-      level: 'error',
-    },
-  ],
-});
+// const prisma = new PrismaClient({
+//   log: [
+//     {
+//       emit: 'event',
+//       level: 'query',
+//     },
+//     {
+//       emit: 'stdout',
+//       level: 'info',
+//     },
+//     {
+//       emit: 'stdout',
+//       level: 'warn',
+//     },
+//     {
+//       emit: 'stdout',
+//       level: 'error',
+//     },
+//   ],
+// });
 
-// Optionally, listen for query events
-prisma.$on('query', (e) => {
-  console.log('Query: ' + e.query);
-  console.log('Params: ' + e.params);
-  console.log('Duration: ' + e.duration + 'ms');
-});
+// // Optionally, listen for query events
+// prisma.$on('query', (e) => {
+//   console.log('Query: ' + e.query);
+//   console.log('Params: ' + e.params);
+//   console.log('Duration: ' + e.duration + 'ms');
+// });
 
 //https://www.prisma.io/blog/fullstack-nextjs-graphql-prisma-2-fwpc6ds155
 

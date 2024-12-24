@@ -8,6 +8,12 @@
   "targets": {
     "test": {
       "dependsOn": ["prisma-generate"]
+    },
+    "generate": {
+      "dependsOn": ["prisma-generate"]
+    },
+    "format": {
+      "dependsOn": ["prisma-format"]
     }
   }
 }

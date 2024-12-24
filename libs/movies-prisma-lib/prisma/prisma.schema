@@ -1,6 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  binaryTargets   = ["native", "linux-arm64-openssl-3.0.x", "darwin-arm64", "linux-musl-arm64-openssl-3.0.x","linux-musl"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x", "darwin-arm64", "linux-musl-arm64-openssl-3.0.x", "linux-musl"]
 }
 
 generator pothos {
@@ -42,6 +42,9 @@ model homewebbridge_userseen {
   viewdate      DateTime @db.DateTime(0)
   asp_viewgroup String   @db.VarChar(45)
   asp_username  String   @db.VarChar(45)
+
+  // Foreign key relation to videodb_videodata
+  video videodb_videodata @relation(fields: [vdb_videoid], references: [id])
 }
 
 model videodb_actors {
@@ -111,6 +114,9 @@ model videodb_videodata {
   owner_id           Int                  @default(1)
   videodb_videogenre videodb_videogenre[]
   videodb_mediatypes videodb_mediatypes   @relation(fields: [mediatype], references: [id])
+
+  // Relation to homewebbridge_userseen
+  userSeen homewebbridge_userseen[]
 
   @@index([comment], map: "comment")
   @@index([diskid], map: "diskid_idx")

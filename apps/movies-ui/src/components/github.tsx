@@ -1,8 +1,7 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { Button, Spacer } from '@nextui-org/react';
-import { auth } from '../lib/auth';
+import { Button } from '@nextui-org/react';
 
 
 export default function Github() {

@@ -28,5 +28,5 @@ export function parseUserString(input: string): AllowedUser[] {
 export function isUserAllowed(email: string): boolean {
   const allowedUsersEnv = process.env.ALLOWED_USERS ? process.env.ALLOWED_USERS : "";
   const allowedUsers = parseUserString(allowedUsersEnv);
-  return allowedUsers.some(u => u.email === email)
+  return allowedUsers.some(u => u.email === email);
 }

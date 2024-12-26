@@ -1,35 +1,55 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import { Input } from "@nextui-org/input";
 
-import { Movie, MovieCard } from "./movie-card";
+import { Movie, MovieCardDeck } from "./movie-card-deck";
 
-import { getMovies } from "../app/services/actions/getMovies";
+import { getMovies, getSeenDates } from "../app/services/actions";
 import { Session } from "next-auth";
 
 interface MovieComponentProperties {
   session: Session
 }
 
-// Main component that handles user input and renders Data component
+export interface SeenDateDTO {
+  movieId: string;
+  dates: string[];
+}
+// Main component that handles user input and renders Data componen
+
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
   const [searchTitle, setSearchTitle] = useState<string>(searchText);
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
+  const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const invalidTextLength = (text: string) => text.length < 3
+  const invalidTextLength = (text: string) => text.length < 3;
 
   const search = async () => {
     setLoading(true);
     const result = await getMovies(searchText);
 
     setLoading(false);
-    console.log(result);
-    setSearchResult(result);
+    setSearchResult(result); // Triggers `useEffect`
   };
+
+  useEffect(() => {
+    if (searchResult) {
+      const fetchSeenDates = async () => {
+        const seenDateCollection: SeenDateDTO[] = [];
+        for (const movie of searchResult) {
+          const dates = await getSeenDates(movie.id, "VG_Default");
+          seenDateCollection.push({ movieId: movie.id, dates });
+        }
+        setSeenDates(seenDateCollection);
+      };
+
+      fetchSeenDates();
+    }
+  }, [searchResult]); // Run when `searchResult` changes
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -41,6 +61,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     if (!invalidTextLength(searchText)) {
       setSearchTitle(searchText);
       setSearchResult(undefined);
+      setSeenDates([]);
       search();
     }
   };
@@ -60,7 +81,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             onChange={(e) => {
               const value = e.target.value;
               setSearchText(value);
-              if(invalidSearch) validateSearch(value);
+              if (invalidSearch) validateSearch(value);
             }}
             onClear={() => setSearchText("")}
           />
@@ -68,7 +89,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       </form>
       <div className="space-y-4">
         {loading && <div>Loading ...</div>}
-        {searchResult && <MovieCard movies={searchResult} />}
+        {searchResult && (
+          <MovieCardDeck
+            movies={searchResult}
+            seenDates={seenDates ? seenDates : []}
+          />
+        )}
       </div>
     </div>
   );

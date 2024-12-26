@@ -4,7 +4,12 @@ import {getSeenDates, VideoSeenDateArgs } from '@nx-movies-db/movies-prisma-lib'
 builder.prismaObject("homewebbridge_userseen", {
   fields: (t: any) => ({
     username: t.exposeString("asp_username"),
-    viewdate: t.exposeString("viewdate"),
+    viewdate: t.string({
+      resolve: (parent: any) => {
+        // Assuming viewdate is a timestamp (number)
+        return new Date(parent.viewdate).toISOString();
+      },
+    }),
   }),
 });
 

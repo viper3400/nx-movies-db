@@ -1,4 +1,3 @@
-import Github from "../components/github";
 import { MovieComponent } from "../components/movies";
 import NavbarComponent from "../components/navbar";
 import { isUserAllowed } from "../lib/allowed-user-parser";

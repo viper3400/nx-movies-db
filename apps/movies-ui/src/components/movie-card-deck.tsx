@@ -1,6 +1,3 @@
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
-import { Chip } from "@nextui-org/chip";
-import { Divider } from "@nextui-org/divider";
 import { SeenDateDTO } from "./movies";
 import { MovieCard } from "./movie-card";
 // Define the interface for a single movie

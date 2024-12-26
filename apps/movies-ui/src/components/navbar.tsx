@@ -1,5 +1,5 @@
-import {  Navbar,   NavbarBrand,   NavbarContent,   NavbarItem,   NavbarMenuToggle,  NavbarMenu,  NavbarMenuItem} from "@nextui-org/navbar";
-import { Button, Link, Spacer } from "@nextui-org/react";
+import {  Navbar,   NavbarBrand,   NavbarContent,   NavbarItem} from "@nextui-org/navbar";
+import { Link, Spacer } from "@nextui-org/react";
 import Github from "./github";
 
 export const MovieLogo = () => {

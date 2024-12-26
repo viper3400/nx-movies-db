@@ -59,8 +59,8 @@ export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
           </Card>
         </div>
     </>
-  )
-}
+  );
+};
 
 
 const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
@@ -75,7 +75,7 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
         const year = date.getFullYear();
 
         return `${day}.${month}.${year}`;
-  }
+  };
 
   return (
     <>
@@ -91,5 +91,5 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
       ))
     }
     </>
-  )
-}
+  );
+};

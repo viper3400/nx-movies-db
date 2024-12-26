@@ -49,12 +49,12 @@ builder.prismaObject("videodb_videodata", {
       type: ["String"], // Define the type as an array of strings
       resolve: (video: any) => {
         // Map the included genre names to a string array
-        return video.videodb_videogenre.map((vg: any) => vg.genre.name)
+        return video.videodb_videogenre.map((vg: any) => vg.genre.name);
     }}),
     mediaType: t.field({
       type: "String",
       resolve: (video: any) => {
-        return video.videodb_mediatypes.name
+        return video.videodb_mediatypes.name;
       }
     })
   }),
@@ -74,7 +74,7 @@ builder.queryField("videos", (t) =>
     },
     resolve: async (query, _parent, args, _ctx: any, _info) => {
       //const { title, diskid, genreName, mediaType, ownerid } = args; // Extract the title and diskid from the args
-      console.log(_ctx.jwt)
+      console.log(_ctx.jwt);
       return await getVideos( args as VideoQueryArgs, query);
     },
   }),

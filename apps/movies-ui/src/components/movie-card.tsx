@@ -1,59 +1,42 @@
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
-import { Chip } from "@nextui-org/chip";
-import { Divider } from "@nextui-org/divider";
-// Define the interface for a single movie
-export interface Movie {
-  id: string;
-  title: string;
-  diskid?: string; // Optional
-  mediaType: string;
-  genres: string[];
-  ownerid: string;
+import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
+import { Movie } from "./movie-card-deck"
 
-  plot: string;
-}
-
-// Define the props for the MovieCard component
 export interface MovieCardProps {
-  movies: Movie[];
+  movie: Movie;
+  seenDates: string[]
 }
-
-export const MovieCard = ({ movies }: MovieCardProps) => {
-  //console.log(movieCardProps);
-
-  if (movies.length === 0) {
-    return <p>No movies found.</p>;
-  }
-
+export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
   return (
     <>
-      {movies.map(({ id, title, diskid, mediaType, genres, ownerid, plot }: any) => (
-        <div key={id}>
+     <div key={movie.id}>
           <Card>
             <CardHeader className="flex items-center justify-between px-4 py-2">
               <div className="text-left font-semibold text-lg pr-2">
-                {title}
+                {movie.title}
               </div>
               <div className="flex gap-2">
-                <Chip color="secondary">{mediaType}</Chip>
-                {diskid && <Chip color="primary">{diskid}</Chip>}
+                <Chip color="secondary">{movie.mediaType}</Chip>
+                {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
               </div>
             </CardHeader>
             <Divider />
-            { plot && (
+            { movie.plot && (
             <div>
               <CardBody>
-                <div>{plot}</div>
+                <div>
+                  <SeenChips seenDates={seenDates ? seenDates : []} />
+                </div>
+                <div>{movie.plot}</div>
               </CardBody>
               <Divider />
             </div>
             )}
             <CardFooter className="flex flex-row gap-2">
-              {ownerid === "999" && (
+              {movie.ownerid === "999" && (
                 <Chip color="danger">Gelöschter Eintrag</Chip>
               )}
-              {genres &&
-                genres.map((genreName: any) => (
+              {movie.genres &&
+                movie.genres.map((genreName: any) => (
                   <Chip key={genreName} color="primary" variant="flat">
                     {genreName}
                   </Chip>
@@ -61,7 +44,38 @@ export const MovieCard = ({ movies }: MovieCardProps) => {
             </CardFooter>
           </Card>
         </div>
-      ))}
     </>
-  );
-};
+  )
+}
+
+
+const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+        // Format as DD.MM.YYYY
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+
+        return `${day}.${month}.${year}`;
+  }
+
+  return (
+    <>
+    { seenDates && seenDates.length > 0  &&
+      seenDates.map((date, index) => (
+      <Chip
+        key={index}
+        className="mr-4 mb-4"
+        color="secondary"
+        variant="flat">
+          {formatDate(date)}
+        </Chip>
+      ))
+    }
+    </>
+  )
+}

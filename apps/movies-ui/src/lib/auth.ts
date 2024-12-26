@@ -1,9 +1,9 @@
-import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next'
-import type { NextAuthOptions } from 'next-auth'
-import { getServerSession } from 'next-auth'
-import GithubProvider from 'next-auth/providers/github'
-import GoogleProvider from "next-auth/providers/google"
-import CredentialsProvider from 'next-auth/providers/credentials'
+import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next';
+import type { NextAuthOptions } from 'next-auth';
+import { getServerSession } from 'next-auth';
+import GithubProvider from 'next-auth/providers/github';
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from 'next-auth/providers/credentials';
 
 
 const githubId = process.env.GITHUB_ID;
@@ -37,9 +37,9 @@ export const config = {
     }),
   ],
   // rest of your config
-} satisfies NextAuthOptions
+} satisfies NextAuthOptions;
 
 // Use it in server contexts
 export function auth(...args: [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']] | [NextApiRequest, NextApiResponse] | []) {
-  return getServerSession(...args, config)
+  return getServerSession(...args, config);
 }

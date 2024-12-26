@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react'
-import { Button, Spacer } from '@nextui-org/react'
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { Button, Spacer } from '@nextui-org/react';
 import { auth } from '../lib/auth';
 
 
 export default function Github() {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   console.log(session);
 
   return (
@@ -20,5 +20,5 @@ export default function Github() {
         <Button color="primary" onPress={() => signIn()} disabled={false}>Sign In</Button>
       )}
     </main>
-  )
+  );
 }

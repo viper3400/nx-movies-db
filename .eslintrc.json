@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx"],
+  "plugins": ["@nx", "unused-imports"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -19,21 +19,24 @@
             ]
           }
         ],
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "unused-imports/no-unused-imports": "error"
       }
     },
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript"],
       "rules": {
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "unused-imports/no-unused-imports": "error"
       }
     },
     {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "unused-imports/no-unused-imports": "error"
       }
     },
     {
@@ -42,7 +45,8 @@
         "jest": true
       },
       "rules": {
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "unused-imports/no-unused-imports": "error"
       }
     }
   ]

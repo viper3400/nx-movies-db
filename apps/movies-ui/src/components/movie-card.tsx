@@ -1,5 +1,6 @@
 import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
-import { Movie } from "./movie-card-deck"
+import { Movie } from "./movie-card-deck";
+import Image from 'next/image';
 
 export interface MovieCardProps {
   movie: Movie;
@@ -20,17 +21,30 @@ export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
               </div>
             </CardHeader>
             <Divider />
-            { movie.plot && (
+
             <div>
               <CardBody>
                 <div>
                   <SeenChips seenDates={seenDates ? seenDates : []} />
                 </div>
-                <div>{movie.plot}</div>
+                <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <Image
+                    alt="Movie Cover"
+                    height={180}
+                    src=" /movies/bray-cover-not-found.png"
+                    width={120}
+                    className="rounded"
+                  />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-justify">{movie.plot}</p>
+                </div>
+              </div>
               </CardBody>
               <Divider />
             </div>
-            )}
+
             <CardFooter className="flex flex-row gap-2">
               {movie.ownerid === "999" && (
                 <Chip color="danger">Gelöschter Eintrag</Chip>

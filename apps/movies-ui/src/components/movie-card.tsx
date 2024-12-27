@@ -4,9 +4,10 @@ import Image from 'next/image';
 
 export interface MovieCardProps {
   movie: Movie;
-  seenDates: string[]
+  seenDates: string[];
+  imageUrl: string;
 }
-export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
+export const MovieCard = ({movie, seenDates, imageUrl} : MovieCardProps) => {
   return (
     <>
      <div key={movie.id}>
@@ -32,7 +33,7 @@ export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
                   <Image
                     alt="Movie Cover"
                     height={180}
-                    src=" /movies/bray-cover-not-found.png"
+                    src={imageUrl}
                     width={120}
                     className="rounded"
                   />

@@ -1,6 +1,5 @@
 import {  Navbar,   NavbarBrand,   NavbarContent,   NavbarItem, NavbarMenuToggle} from "@nextui-org/navbar";
 import { Link, Spacer } from "@nextui-org/react";
-import Github from "./github";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "./icons";
 export default function NavbarComponent() {

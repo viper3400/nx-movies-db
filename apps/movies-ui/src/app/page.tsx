@@ -25,8 +25,10 @@ export default async function Home() {
   const content = await getContentBasedOnSession();
   return (
     <main>
+      <div className="container mx-auto">
       <NavbarComponent></NavbarComponent>
       { content }
+      </div>
     </main>
   );
 }

@@ -24,12 +24,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   } catch (error) {
 
-    console.error("image not found fallback")
+    console.error("image not found fallback");
     //https://www.dummyimage.com/
     imagePath = path.join(coverImagePath, `not_found.jpg`);
   }
 
-  console.log("image path: "+ imagePath)
+  console.log("image path: "+ imagePath);
     // Create a manual Web Stream from the file
     const stream = fs.createReadStream(imagePath);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FormEvent, useMemo } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import { Input } from "@nextui-org/input";
 
 import { Movie, MovieCardDeck } from "./movie-card-deck";
@@ -44,9 +44,9 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     const fetchAppBasePath = async () => {
     const appBasePath = await getAppBasePath();
     setImageBaseUrl(appBasePath + "/api/cover-image");
-    }
+    };
     fetchAppBasePath();
-  })
+  });
 
 
 

@@ -1,6 +1,6 @@
 # NX-MOVIES-DB
 
-[Original NX Readme](NX_README)
+[Original NX Readme](NX_README.md)
 
 ## App Settings
 

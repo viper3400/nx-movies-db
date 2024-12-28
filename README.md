@@ -22,8 +22,6 @@ JWT_SECRET=984038080dw0
 
 ### movies-ui
 
-Got it, here's the Markdown table with just the descriptions:
-
 | Setting | Description |
 | --- | --- |
 | `GRAPHQL_URL` | The URL for the GraphQL API |

@@ -1,6 +1,3 @@
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
-import { Chip } from "@nextui-org/chip";
-import { Divider } from "@nextui-org/divider";
 import { SeenDateDTO } from "./movies";
 import { MovieCard } from "./movie-card";
 // Define the interface for a single movie
@@ -18,15 +15,15 @@ export interface Movie {
 export interface MovieCardDeckProps {
   movies: Movie[];
   seenDates?: SeenDateDTO[];
+  imageBaseUrl: string;
 }
 
-export const MovieCardDeck = ({ movies, seenDates }: MovieCardDeckProps) => {
+export const MovieCardDeck = ({ movies, seenDates, imageBaseUrl }: MovieCardDeckProps) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {
     return <p>No movies found.</p>;
   }
-
   return (
     <>
       {
@@ -35,9 +32,12 @@ export const MovieCardDeck = ({ movies, seenDates }: MovieCardDeckProps) => {
         <MovieCard
           key={movie.id}
           movie={movie}
-          seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []} />
+          seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []}
+          imageUrl={imageBaseUrl + "/" + movie.id}
+          />
       )
     )}
     </>
   );
 };
+

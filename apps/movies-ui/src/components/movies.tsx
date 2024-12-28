@@ -7,6 +7,7 @@ import { Movie, MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { Session } from "next-auth";
+import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 
 interface MovieComponentProperties {
   session: Session
@@ -16,6 +17,7 @@ export interface SeenDateDTO {
   movieId: string;
   dates: string[];
 }
+
 // Main component that handles user input and renders Data componen
 
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
@@ -25,6 +27,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [imageBaseUrl, setImageBaseUrl] = useState<string>();
 
   const invalidTextLength = (text: string) => text.length < 3;
 
@@ -35,6 +38,17 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     setLoading(false);
     setSearchResult(result); // Triggers `useEffect`
   };
+
+
+  useEffect(() => {
+    const fetchAppBasePath = async () => {
+    const appBasePath = await getAppBasePath();
+    setImageBaseUrl(appBasePath + "/api/cover-image");
+    };
+    fetchAppBasePath();
+  });
+
+
 
   useEffect(() => {
     if (searchResult) {
@@ -69,7 +83,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   return (
     <div>
       <form onSubmit={handleSearchSubmit}>
-        <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+        <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
           <Input
             isClearable
             errorMessage="Search must have at least 3 characters"
@@ -89,10 +103,11 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       </form>
       <div className="space-y-4">
         {loading && <div>Loading ...</div>}
-        {searchResult && (
+        {searchResult && imageBaseUrl && (
           <MovieCardDeck
             movies={searchResult}
             seenDates={seenDates ? seenDates : []}
+            imageBaseUrl={imageBaseUrl}
           />
         )}
       </div>

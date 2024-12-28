@@ -1,4 +1,3 @@
-import { Session } from 'next-auth';
 import './global.css';
 import { Providers } from './provider';
 

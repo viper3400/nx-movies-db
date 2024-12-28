@@ -1,11 +1,13 @@
 import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
-import { Movie } from "./movie-card-deck"
+import { Movie } from "./movie-card-deck";
+import Image from 'next/image';
 
 export interface MovieCardProps {
   movie: Movie;
-  seenDates: string[]
+  seenDates: string[];
+  imageUrl: string;
 }
-export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
+export const MovieCard = ({movie, seenDates, imageUrl} : MovieCardProps) => {
   return (
     <>
      <div key={movie.id}>
@@ -20,17 +22,30 @@ export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
               </div>
             </CardHeader>
             <Divider />
-            { movie.plot && (
+
             <div>
               <CardBody>
                 <div>
                   <SeenChips seenDates={seenDates ? seenDates : []} />
                 </div>
-                <div>{movie.plot}</div>
+                <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <Image
+                    alt="Movie Cover"
+                    height={180}
+                    src={imageUrl}
+                    width={120}
+                    className="rounded"
+                  />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-justify">{movie.plot}</p>
+                </div>
+              </div>
               </CardBody>
               <Divider />
             </div>
-            )}
+
             <CardFooter className="flex flex-row gap-2">
               {movie.ownerid === "999" && (
                 <Chip color="danger">Gelöschter Eintrag</Chip>
@@ -45,8 +60,8 @@ export const MovieCard = ({movie, seenDates} : MovieCardProps) => {
           </Card>
         </div>
     </>
-  )
-}
+  );
+};
 
 
 const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
@@ -61,7 +76,7 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
         const year = date.getFullYear();
 
         return `${day}.${month}.${year}`;
-  }
+  };
 
   return (
     <>
@@ -77,5 +92,5 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
       ))
     }
     </>
-  )
-}
+  );
+};

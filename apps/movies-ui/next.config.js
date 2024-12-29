@@ -12,7 +12,8 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
-  basePath: process.env.APP_BASE_PATH
+  basePath: process.env.APP_BASE_PATH,
+  output: "standalone"
 };
 
 const plugins = [

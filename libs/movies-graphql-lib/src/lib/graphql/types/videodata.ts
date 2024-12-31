@@ -50,7 +50,7 @@ builder.prismaObject("videodb_videodata", {
       resolve: (video: any) => {
         // Map the included genre names to a string array
         return video.videodb_videogenre.map((vg: any) => vg.genre.name);
-    }}),
+      }}),
     mediaType: t.field({
       type: "String",
       resolve: (video: any) => {

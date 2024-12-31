@@ -19,22 +19,22 @@ export default function NavbarComponent() {
       </NavbarBrand>
 
       <NavbarContent justify="end">
-          <ThemeSwitch />
-          <NavbarMenuToggle />
+        <ThemeSwitch />
+        <NavbarMenuToggle />
       </NavbarContent>
 
       <NavbarMenu className="place-items-center space-y-4">
         <NavbarMenuItem>
-        {
-        session?.user?.image && session.user.name  &&
+          {
+            session?.user?.image && session.user.name  &&
           <User
-          avatarProps={{src: session?.user?.image   }}
-          name={session?.user?.name}
-          description={session.user.email} />
-      }
+            avatarProps={{src: session?.user?.image   }}
+            name={session?.user?.name}
+            description={session.user.email} />
+          }
         </NavbarMenuItem>
         {
-        session  &&
+          session  &&
         <NavbarMenuItem>
           <Button  onPress={() => signOut()}>Abmelden</Button>
         </NavbarMenuItem>

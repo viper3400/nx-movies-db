@@ -10,16 +10,16 @@ export function parseUserString(input: string): AllowedUser[] {
 
   // Map each entry to a User object
   const users: AllowedUser[] = userEntries.map(entry => {
-      const [email, name, idStr] = entry.split(",");
+    const [email, name, idStr] = entry.split(",");
 
-      // Convert idStr to a number
-      const id = parseInt(idStr, 10);
+    // Convert idStr to a number
+    const id = parseInt(idStr, 10);
 
-      return {
-          email: email.trim(),
-          name: name.trim(),
-          id: isNaN(id) ? 0 : id // Default to 0 if id is not a valid number
-      };
+    return {
+      email: email.trim(),
+      name: name.trim(),
+      id: isNaN(id) ? 0 : id // Default to 0 if id is not a valid number
+    };
   });
 
   return users;

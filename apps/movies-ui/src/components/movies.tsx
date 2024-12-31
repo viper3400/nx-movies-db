@@ -44,8 +44,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   useEffect(() => {
     const fetchAppBasePath = async () => {
-    const appBasePath = await getAppBasePath();
-    setImageBaseUrl(appBasePath + "/api/cover-image");
+      const appBasePath = await getAppBasePath();
+      setImageBaseUrl(appBasePath + "/api/cover-image");
     };
     fetchAppBasePath();
   });
@@ -113,11 +113,11 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           />
         </div>
         <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
-        <RadioGroup label="Gelöschte Filme" value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
-          <Radio value="EXCLUDE_DELETED">Exklusive Gelöschte</Radio>
-          <Radio value="INCLUDE_DELETED">Inklusive Gelöschte</Radio>
-          <Radio value="ONLY_DELETED">Nur Gelöschte</Radio>
-        </RadioGroup>
+          <RadioGroup label="Gelöschte Filme" value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
+            <Radio value="EXCLUDE_DELETED">Exklusive Gelöschte</Radio>
+            <Radio value="INCLUDE_DELETED">Inklusive Gelöschte</Radio>
+            <Radio value="ONLY_DELETED">Nur Gelöschte</Radio>
+          </RadioGroup>
         </div>
       </form>
       <div className="space-y-4">

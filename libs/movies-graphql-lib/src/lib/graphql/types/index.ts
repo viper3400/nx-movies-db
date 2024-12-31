@@ -1,2 +1,2 @@
-export * from './seen-dates';
-export * from './videodata';
+export * from "./seen-dates";
+export * from "./videodata";

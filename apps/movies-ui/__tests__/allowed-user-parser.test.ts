@@ -1,4 +1,4 @@
-import { parseUserString } from '../src/lib/allowed-user-parser';
+import { parseUserString } from "../src/lib/allowed-user-parser";
 describe("Allowed user parser", () => {
   it("should parse a single user string", () => {
     const testString = "my@example.com,Michael,3";

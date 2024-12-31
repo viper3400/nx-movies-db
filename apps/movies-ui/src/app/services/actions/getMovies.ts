@@ -6,8 +6,8 @@ import { getClient } from "../../../lib/apollocient";
 
 // GraphQL query
 const getMovieByTitle = gql`
-  query GetMovies($title: String!, $diskid: String!) {
-    videos(title: $title, diskid: $diskid, queryPlot: true) {
+  query GetMovies($title: String!, $diskid: String!, $deleteMode: DeleteMode) {
+    videos(title: $title, diskid: $diskid, deleteMode: $deleteMode, queryPlot: true) {
       title
       diskid
       genres
@@ -20,7 +20,7 @@ const getMovieByTitle = gql`
   }
 `;
 
-export async function getMovies(searchString: string) {
+export async function getMovies(searchString: string, deleteMode: string) {
   let searchTitle = "";
   let searchDiskId = "";
   const diskidRegex = /^R\d{2}F\d/;
@@ -32,7 +32,7 @@ export async function getMovies(searchString: string) {
 
   const { data } = await getClient().query({
     query: getMovieByTitle,
-    variables: { title: searchTitle, diskid: searchDiskId },
+    variables: { title: searchTitle, diskid: searchDiskId, deleteMode: deleteMode },
   });
 
   const result = await data;

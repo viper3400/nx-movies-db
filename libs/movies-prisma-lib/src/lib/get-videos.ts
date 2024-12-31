@@ -1,5 +1,6 @@
 // videoQueries.ts
 import { PrismaClient } from "@prisma/client";
+import { DeleteMode } from "libs/movies-graphql-lib/src/lib/graphql/types";
 
 const prisma = new PrismaClient();
 
@@ -9,12 +10,14 @@ export type VideoQueryArgs = {
   genreName?: string;   // Optional string for filtering by genre name
   mediaType?: string[]; // Optional array of strings for filtering by media type
   ownerid?: string;     // Optional string for filtering by owner ID
-  queryPlot?: boolean
+  queryPlot?: boolean;
+  deleteMode?: string;
+  //deleteMode?: 'ONLY_DELETED' | 'INCLUDE_DELETED' | 'EXCLUDE_DELETED'; // New deleteMode parameter
 };
 
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { title, diskid, genreName, mediaType, ownerid, queryPlot } = args;
+  const { title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode} = args;
 
   return await prisma.videodb_videodata.findMany({
     where: {
@@ -43,6 +46,12 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
             name: mediaType ? { in: mediaType } : undefined,
           },
         },
+        // Handle deleteMode logic
+        deleteMode === 'ONLY_DELETED' ? {
+          owner_id: { equals: 999 },
+        } : deleteMode === 'EXCLUDE_DELETED' ? {
+          owner_id: { not: 999 },
+        } : {}, // INCLUDE_DELETED will not add any additional filters
       ],
     },
     select: {

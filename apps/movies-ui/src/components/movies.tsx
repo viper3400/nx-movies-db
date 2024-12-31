@@ -8,6 +8,7 @@ import { Movie, MovieCardDeck } from "./movie-card-deck";
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { Session } from "next-auth";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
+import { RadioGroup, Radio } from "@nextui-org/react";
 
 interface MovieComponentProperties {
   session: Session
@@ -28,12 +29,13 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
+  const [deleteMode, setDeleteMode] = useState<string>("EXCLUDE_DELETED");
 
   const invalidTextLength = (text: string) => text.length < 3;
 
   const search = async () => {
     setLoading(true);
-    const result = await getMovies(searchText);
+    const result = await getMovies(searchText, deleteMode);
 
     setLoading(false);
     setSearchResult(result); // Triggers `useEffect`
@@ -47,8 +49,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     };
     fetchAppBasePath();
   });
-
-
 
   useEffect(() => {
     if (searchResult) {
@@ -64,6 +64,18 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       fetchSeenDates();
     }
   }, [searchResult]); // Run when `searchResult` changes
+
+  useEffect(() => {
+    invalidSearch ? setSearchResult(undefined) : {}
+  }, [invalidSearch])
+
+
+  // New useEffect to retrigger search when deleteMode changes
+  useEffect(() => {
+    if (searchResult) {
+      invalidTextLength(searchText) ? validateSearch(searchText) : search();
+    }
+  }, [deleteMode]); // Run when `deleteMode` changes
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -99,6 +111,13 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             }}
             onClear={() => setSearchText("")}
           />
+        </div>
+        <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
+        <RadioGroup label="Gelöschte Filme" value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
+          <Radio value="EXCLUDE_DELETED">Exklusive Gelöschte</Radio>
+          <Radio value="INCLUDE_DELETED">Inklusive Gelöschte</Radio>
+          <Radio value="ONLY_DELETED">Nur Gelöschte</Radio>
+        </RadioGroup>
         </div>
       </form>
       <div className="space-y-4">

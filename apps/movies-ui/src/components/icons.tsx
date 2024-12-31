@@ -13,11 +13,11 @@ export const SceneLogo: React.FC<IconSvgProps> = ({
 }) => {
   return (
     <svg
-    fill="none"
-    height={size || height}
-    viewBox="0 0 32 32"
-    width={size || width}
-    {...props}
+      fill="none"
+      height={size || height}
+      viewBox="0 0 32 32"
+      width={size || width}
+      {...props}
     >
       <path
         clipRule="evenodd"
@@ -27,7 +27,7 @@ export const SceneLogo: React.FC<IconSvgProps> = ({
 
       </path>
     </svg>
-      );
+  );
 };
 export const Logo: React.FC<IconSvgProps> = ({
   size = 36,

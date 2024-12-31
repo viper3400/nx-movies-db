@@ -30,12 +30,12 @@ export default async function Home() {
   return (
     <main>
       <div className="mx-auto container sm:hidden">
-      <NavbarComponent></NavbarComponent>
-      { content }
+        <NavbarComponent></NavbarComponent>
+        { content }
       </div>
       <div className="mx-auto sm:block hidden">
-      <NavbarComponent></NavbarComponent>
-      { content }
+        <NavbarComponent></NavbarComponent>
+        { content }
       </div>
     </main>
   );

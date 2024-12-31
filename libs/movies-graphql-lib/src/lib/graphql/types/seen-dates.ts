@@ -1,5 +1,5 @@
 import { builder } from "../builder";
-import {getSeenDates, VideoSeenDateArgs } from '@nx-movies-db/movies-prisma-lib';
+import {getSeenDates, VideoSeenDateArgs } from "@nx-movies-db/movies-prisma-lib";
 
 builder.prismaObject("homewebbridge_userseen", {
   fields: (t: any) => ({

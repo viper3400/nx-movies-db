@@ -2,8 +2,8 @@
 import { builder } from "../builder";
 //import { PrismaClient } from "@prisma/client";
 
-import {getVideos } from '@nx-movies-db/movies-prisma-lib';
-import type { VideoQueryArgs } from '@nx-movies-db/movies-prisma-lib';
+import {getVideos } from "@nx-movies-db/movies-prisma-lib";
+import type { VideoQueryArgs } from "@nx-movies-db/movies-prisma-lib";
 
 // const prisma = new PrismaClient({
 //   log: [
@@ -50,7 +50,7 @@ builder.prismaObject("videodb_videodata", {
       resolve: (video: any) => {
         // Map the included genre names to a string array
         return video.videodb_videogenre.map((vg: any) => vg.genre.name);
-    }}),
+      }}),
     mediaType: t.field({
       type: "String",
       resolve: (video: any) => {
@@ -60,8 +60,8 @@ builder.prismaObject("videodb_videodata", {
   }),
 });
 
-export const DeleteMode = builder.enumType('DeleteMode', {
-  values: ['ONLY_DELETED', 'INCLUDE_DELETED', 'EXCLUDE_DELETED'] as const,
+export const DeleteMode = builder.enumType("DeleteMode", {
+  values: ["ONLY_DELETED", "INCLUDE_DELETED", "EXCLUDE_DELETED"] as const,
 });
 
 // Define the queryField and add an argument for filtering by 'title' and 'diskid'

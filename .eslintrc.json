@@ -20,6 +20,8 @@
           }
         ],
         "semi": ["error", "always"],
+        "quotes": ["error", "double"],
+        "indent": ["error", 2],
         "unused-imports/no-unused-imports": "error"
       }
     },
@@ -28,6 +30,8 @@
       "extends": ["plugin:@nx/typescript"],
       "rules": {
         "semi": ["error", "always"],
+        "quotes": ["error", "double"],
+        "indent": ["error", 2],
         "unused-imports/no-unused-imports": "error"
       }
     },
@@ -36,6 +40,8 @@
       "extends": ["plugin:@nx/javascript"],
       "rules": {
         "semi": ["error", "always"],
+        "quotes": ["error", "double"],
+        "indent": ["error", 2],
         "unused-imports/no-unused-imports": "error"
       }
     },
@@ -46,6 +52,8 @@
       },
       "rules": {
         "semi": ["error", "always"],
+        "quotes": ["error", "double"],
+        "indent": ["error", 2],
         "unused-imports/no-unused-imports": "error"
       }
     }

@@ -29,14 +29,14 @@ export const MovieCardDeck = ({ movies, seenDates, imageBaseUrl }: MovieCardDeck
       {
         movies.map(
           ( movie : Movie) => (
-        <MovieCard
-          key={movie.id}
-          movie={movie}
-          seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []}
-          imageUrl={imageBaseUrl + "/" + movie.id}
-          />
-      )
-    )}
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []}
+              imageUrl={imageBaseUrl + "/" + movie.id}
+            />
+          )
+        )}
     </>
   );
 };

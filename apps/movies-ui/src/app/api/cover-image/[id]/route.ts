@@ -30,19 +30,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   console.log("image path: "+ imagePath);
-    // Create a manual Web Stream from the file
-    const stream = fs.createReadStream(imagePath);
+  // Create a manual Web Stream from the file
+  const stream = fs.createReadStream(imagePath);
 
-    const readableStream = new ReadableStream({
-      start(controller) {
-        stream.on("data", (chunk) => controller.enqueue(chunk));
-        stream.on("end", () => controller.close());
-        stream.on("error", (err) => controller.error(err));
-      },
-    });
+  const readableStream = new ReadableStream({
+    start(controller) {
+      stream.on("data", (chunk) => controller.enqueue(chunk));
+      stream.on("end", () => controller.close());
+      stream.on("error", (err) => controller.error(err));
+    },
+  });
 
-    return new Response(readableStream, {
-      status: 200,
-      headers: { "Content-Type": "image/jpeg" },
-    });
+  return new Response(readableStream, {
+    status: 200,
+    headers: { "Content-Type": "image/jpeg" },
+  });
 }

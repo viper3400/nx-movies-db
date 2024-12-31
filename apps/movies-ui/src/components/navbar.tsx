@@ -1,51 +1,46 @@
-import {  Navbar,   NavbarBrand,   NavbarContent,   NavbarItem, NavbarMenuToggle} from "@nextui-org/navbar";
-import { Link, Spacer } from "@nextui-org/react";
+"use client";
+
+import {  Navbar,   NavbarBrand,   NavbarContent,   NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle} from "@nextui-org/navbar";
+import { Button, Link, Spacer, User } from "@nextui-org/react";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "./icons";
 import Github from "./github";
+import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 export default function NavbarComponent() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  console.log(session);
   return (
-    <div>
-    <Navbar maxWidth="full">
+    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isBordered position="sticky">
       <NavbarBrand>
         <SceneLogo />
         <Spacer x={4}/>
         <p className="font-bold text-inherit">Filmdatenbank</p>
       </NavbarBrand>
 
-      <NavbarContent className="hidden sm:flex" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Neuer Film
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" href="#">
-            Suche
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Inventur
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent className="hidden sm:flex" justify="end">
-        <NavbarItem>
-          <Github />
-        </NavbarItem>
-        <NavbarItem>
+      <NavbarContent justify="end">
           <ThemeSwitch />
-        </NavbarItem>
+          <NavbarMenuToggle />
       </NavbarContent>
 
-
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Github />
-        <ThemeSwitch />
-        <NavbarMenuToggle />
-      </NavbarContent>
+      <NavbarMenu className="place-items-center space-y-4">
+        <NavbarMenuItem>
+        {
+        session?.user?.image && session.user.name  &&
+          <User
+          avatarProps={{src: session?.user?.image   }}
+          name={session?.user?.name}
+          description={session.user.email} />
+      }
+        </NavbarMenuItem>
+        {
+        session  &&
+        <NavbarMenuItem>
+          <Button  onPress={() => signOut()}>Abmelden</Button>
+        </NavbarMenuItem>
+        }
+      </NavbarMenu>
     </Navbar>
-    </div>
   );
 }

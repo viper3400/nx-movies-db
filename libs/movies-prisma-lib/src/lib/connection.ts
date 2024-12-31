@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
   // ... you will write your Prisma Client queries here
   const genreCount = await prisma.videodb_genres.count();
-  console.log('genre count test: ' + genreCount);
+  console.log("genre count test: " + genreCount);
   const result = await test();
   console.log(JSON.stringify(result));
 }
@@ -21,8 +21,8 @@ export const initConnection = () =>
 
 async function test() {
   const diskid = undefined;
-  const title = 'Gras';
-  const genreName = 'Drama';
+  const title = "Gras";
+  const genreName = "Drama";
 
   return await prisma.videodb_videodata.findMany({
     where: {

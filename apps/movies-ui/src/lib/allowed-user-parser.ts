@@ -6,11 +6,11 @@ export interface AllowedUser {
 
 export function parseUserString(input: string): AllowedUser[] {
   // Split the input string by semicolon to get individual user entries
-  const userEntries = input.split(';');
+  const userEntries = input.split(";");
 
   // Map each entry to a User object
   const users: AllowedUser[] = userEntries.map(entry => {
-      const [email, name, idStr] = entry.split(',');
+      const [email, name, idStr] = entry.split(",");
 
       // Convert idStr to a number
       const id = parseInt(idStr, 10);

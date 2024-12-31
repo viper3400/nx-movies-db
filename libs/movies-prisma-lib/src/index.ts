@@ -1,2 +1,2 @@
-export * from './lib/movies-prisma-lib';
-export * from './lib';
+export * from "./lib/movies-prisma-lib";
+export * from "./lib";

@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
-import accessEnv from './helpers/access-env';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import { yoga } from '@nx-movies-db/movies-graphql-lib';
+import express, { Request, Response, NextFunction } from "express";
+import accessEnv from "./helpers/access-env";
+import cors from "cors";
+import bodyParser from "body-parser";
+import { yoga } from "@nx-movies-db/movies-graphql-lib";
 
 
-const host = process.env.HOST ?? 'localhost';
+const host = process.env.HOST ?? "localhost";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 const app = express();

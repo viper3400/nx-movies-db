@@ -46,9 +46,9 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
           },
         },
         // Handle deleteMode logic
-        deleteMode === 'ONLY_DELETED' ? {
+        deleteMode === "ONLY_DELETED" ? {
           owner_id: { equals: 999 },
-        } : deleteMode === 'EXCLUDE_DELETED' ? {
+        } : deleteMode === "EXCLUDE_DELETED" ? {
           owner_id: { not: 999 },
         } : {}, // INCLUDE_DELETED will not add any additional filters
       ],

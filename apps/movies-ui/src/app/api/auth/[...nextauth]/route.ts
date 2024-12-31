@@ -28,7 +28,7 @@ const handler = NextAuth({
     })
   ],
   pages: {
-    error: '/auth/error', // Error code passed in query string as ?error=
+    error: "/auth/error", // Error code passed in query string as ?error=
   },
 });
 

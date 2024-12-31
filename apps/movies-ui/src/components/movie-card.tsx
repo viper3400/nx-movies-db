@@ -1,6 +1,6 @@
 import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
 import { Movie } from "./movie-card-deck";
-import Image from 'next/image';
+import Image from "next/image";
 
 export interface MovieCardProps {
   movie: Movie;
@@ -68,11 +68,11 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return 'Invalid Date';
+      return "Invalid Date";
     }
         // Format as DD.MM.YYYY
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
         const year = date.getFullYear();
 
         return `${day}.${month}.${year}`;

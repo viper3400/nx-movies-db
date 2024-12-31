@@ -1,3 +1,3 @@
 export function prismaLib(): string {
-  return 'prisma-lib';
+  return "prisma-lib";
 }

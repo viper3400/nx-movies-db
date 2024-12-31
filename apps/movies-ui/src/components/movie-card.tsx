@@ -80,6 +80,13 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
 
   return (
     <>
+    {seenDates && seenDates.length > 0 &&
+    <Chip
+      className="mr-4 mb-4"
+      color="secondary">
+        {seenDates.length} x gesehen
+    </Chip>
+    }
     { seenDates && seenDates.length > 0  &&
       seenDates.map((date, index) => (
       <Chip

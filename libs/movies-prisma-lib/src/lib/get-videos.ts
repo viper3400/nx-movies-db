@@ -1,6 +1,5 @@
 // videoQueries.ts
 import { PrismaClient } from "@prisma/client";
-import { DeleteMode } from "libs/movies-graphql-lib/src/lib/graphql/types";
 
 const prisma = new PrismaClient();
 

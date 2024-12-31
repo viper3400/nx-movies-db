@@ -1,10 +1,9 @@
 "use client";
 
-import {  Navbar,   NavbarBrand,   NavbarContent,   NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle} from "@nextui-org/navbar";
-import { Button, Link, Spacer, User } from "@nextui-org/react";
+import {  Navbar,   NavbarBrand,   NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle} from "@nextui-org/navbar";
+import { Button, Spacer, User } from "@nextui-org/react";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "./icons";
-import Github from "./github";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 export default function NavbarComponent() {

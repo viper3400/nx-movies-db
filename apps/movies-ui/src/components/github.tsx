@@ -6,7 +6,6 @@ import { Button } from '@nextui-org/react';
 
 export default function Github() {
   const { data: session } = useSession();
-  console.log(session);
 
   return (
     <main className="p-2">

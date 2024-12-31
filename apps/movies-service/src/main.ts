@@ -24,8 +24,8 @@ app.use(
 
 app.use(yoga.graphqlEndpoint, yoga);
 
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  return res.status(500).json({ message: err.message });
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+  res.status(500).json({ message: err.message });
 });
 
 app.listen(PORT, "0.0.0.0", () => {

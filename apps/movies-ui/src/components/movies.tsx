@@ -19,7 +19,7 @@ export interface SeenDateDTO {
   dates: string[];
 }
 
-// Main component that handles user input and renders Data componen
+// Main component that handles user input and renders Data component
 
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
@@ -66,8 +66,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   }, [searchResult]); // Run when `searchResult` changes
 
   useEffect(() => {
-    invalidSearch ? setSearchResult(undefined) : {}
-  }, [invalidSearch])
+    invalidSearch ?? setSearchResult(undefined);
+  }, [invalidSearch]);
 
 
   // New useEffect to retrigger search when deleteMode changes

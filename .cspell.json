@@ -1,0 +1,28 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Abmelden",
+    "Exklusive",
+    "Filmdatenbank",
+    "Filme",
+    "Gelöschte",
+    "homewebbridge",
+    "Inklusive",
+    "mediatypes",
+    "nextui",
+    "ownerid",
+    "pothos",
+    "Testtokens",
+    "userseen",
+    "videodata",
+    "videodb",
+    "videogenre",
+    "viewdate"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "**/.nx/**",
+    "dist"
+  ]
+}

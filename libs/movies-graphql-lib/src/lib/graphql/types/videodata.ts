@@ -62,22 +62,37 @@ builder.prismaObject("videodb_videodata", {
 
 export const DeleteMode = builder.enumType("DeleteMode", {
   values: ["ONLY_DELETED", "INCLUDE_DELETED", "EXCLUDE_DELETED"] as const,
+  description: "Modes for filtering deleted videos",
 });
 
 // Define the queryField and add an argument for filtering by 'title' and 'diskid'
 builder.queryField("videos", (t) =>
   t.prismaField({
     type: ["videodb_videodata"],
+    description: "Query to fetch videos based on various filters",
     args: {
-      title: t.arg.string(),
-      diskid: t.arg.string(),
-      genreName: t.arg.string(),
-      mediaType: t.arg.stringList(),
-      ownerid: t.arg.string(),
-      queryPlot: t.arg.boolean(),
+      title: t.arg.string({
+        description: "Filter videos by title",
+      }),
+      diskid: t.arg.string({
+        description: "Filter videos by disk ID",
+      }),
+      genreName: t.arg.string({
+        description: "Filter videos by genre name",
+      }),
+      mediaType: t.arg.stringList({
+        description: "Filter videos by media type",
+      }),
+      ownerid: t.arg.string({
+        description: "Filter videos by owner ID",
+      }),
+      queryPlot: t.arg.boolean({
+        description: "Include plot in the result",
+      }),
       deleteMode: t.arg({
         type: DeleteMode,
-      })
+        description: "Filter videos based on delete mode",
+      }),
     },
     resolve: async (query, _parent, args, _ctx: any, _info) => {
       //const { title, diskid, genreName, mediaType, ownerid } = args; // Extract the title and diskid from the args

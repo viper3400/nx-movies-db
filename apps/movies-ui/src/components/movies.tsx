@@ -66,7 +66,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   }, [searchResult]); // Run when `searchResult` changes
 
   useEffect(() => {
-    invalidSearch ?? setSearchResult(undefined);
+    invalidSearch ?? clearSearchResult();
   }, [invalidSearch]);
 
 
@@ -86,10 +86,14 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     validateSearch(searchText);
     if (!invalidTextLength(searchText)) {
       setSearchTitle(searchText);
-      setSearchResult(undefined);
-      setSeenDates([]);
+      clearSearchResult();
       search();
     }
+  };
+
+  const clearSearchResult = () => {
+    setSearchResult(undefined);
+    setSeenDates([]);
   };
 
   return (
@@ -109,7 +113,11 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
               setSearchText(value);
               if (invalidSearch) validateSearch(value);
             }}
-            onClear={() => setSearchText("")}
+            onClear={() => {
+              clearSearchResult();
+              setSearchText("");
+            }
+            }
           />
         </div>
         <div className="flex w-full flex-wrap md:flex-nowrap pb-4">

@@ -4,6 +4,7 @@ import { MovieCard } from "./movie-card";
 export interface Movie {
   id: string;
   title: string;
+  subtitle: string;
   diskid?: string; // Optional
   mediaType: string;
   genres: string[];

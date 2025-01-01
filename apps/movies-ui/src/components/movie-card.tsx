@@ -12,17 +12,21 @@ export const MovieCard = ({movie, seenDates, imageUrl} : MovieCardProps) => {
     <>
       <div key={movie.id}>
         <Card>
-          <CardHeader className="flex items-center justify-between px-4 py-2">
-            <div className="text-left font-semibold text-lg pr-2">
-              {movie.title}
+          <CardHeader className="flex flex-col px-4 py-2">
+            <div className="flex items-center justify-between w-full">
+              <div className="text-left font-semibold text-lg pr-2">
+                {movie.title}
+              </div>
+              <div className="flex gap-2">
+                <Chip color="secondary">{movie.mediaType}</Chip>
+                {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Chip color="secondary">{movie.mediaType}</Chip>
-              {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
-            </div>
+            {movie.subtitle && (
+              <div className="text-left text-sm w-full">{movie.subtitle}</div>
+            )}
           </CardHeader>
           <Divider />
-
           <div>
             <CardBody>
               <div>

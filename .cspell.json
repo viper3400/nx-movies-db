@@ -10,15 +10,18 @@
     "homewebbridge",
     "Inklusive",
     "mediatypes",
+    "movieid",
     "nextui",
     "ownerid",
     "pothos",
     "Testtokens",
+    "usermoviesettings",
     "userseen",
     "videodata",
     "videodb",
     "videogenre",
-    "viewdate"
+    "viewdate",
+    "watchagain"
   ],
   "ignorePaths": [
     "node_modules/**",

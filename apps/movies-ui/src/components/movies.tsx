@@ -6,9 +6,10 @@ import { Input } from "@nextui-org/input";
 import { Movie, MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
-import { Session } from "next-auth";
+import { Session, User } from "next-auth";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { RadioGroup, Radio } from "@nextui-org/react";
+import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 
 interface MovieComponentProperties {
   session: Session
@@ -19,6 +20,12 @@ export interface SeenDateDTO {
   dates: string[];
 }
 
+export interface UserFlagsDTO {
+  movieId: string;
+  isWatchAgain: boolean;
+  isFavorite: boolean;
+}
+
 // Main component that handles user input and renders Data component
 
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
@@ -27,6 +34,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
+  const [userFlags, setUserFlags] = useState<UserFlagsDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [deleteMode, setDeleteMode] = useState<string>("EXCLUDE_DELETED");
@@ -61,7 +69,17 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setSeenDates(seenDateCollection);
       };
 
+      const fetchUserFlags = async () => {
+        const userFlagCollection: UserFlagsDTO[] = [];
+        for (const movie of searchResult) {
+          const flags = await getUserFlagsForMovie(movie.id, "jan.graefe");
+          if(flags.length > 0) userFlagCollection.push({ movieId: movie.id, isFavorite: flags[0].isFavorite, isWatchAgain: flags[0].isWatchAgain  });
+        }
+        setUserFlags(userFlagCollection);
+      };
+
       fetchSeenDates();
+      fetchUserFlags();
     }
   }, [searchResult]); // Run when `searchResult` changes
 
@@ -134,6 +152,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           <MovieCardDeck
             movies={searchResult}
             seenDates={seenDates ? seenDates : []}
+            userFlags={userFlags ? userFlags : []}
             imageBaseUrl={imageBaseUrl}
           />
         )}

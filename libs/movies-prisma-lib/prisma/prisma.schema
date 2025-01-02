@@ -32,8 +32,8 @@ model homewebbridge_usermoviesettings {
   id           Int    @id @default(autoincrement())
   vdb_movieid  Int
   asp_username String @db.VarChar(45)
-  is_favorite  Int?
-  watchagain   Int?
+  is_favorite  Boolean?
+  watchagain   Boolean?
 }
 
 model homewebbridge_userseen {

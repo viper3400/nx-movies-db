@@ -1,9 +1,10 @@
-import { SeenDateDTO } from "./movies";
+import { SeenDateDTO, UserFlagsDTO } from "./movies";
 import { MovieCard } from "./movie-card";
 // Define the interface for a single movie
 export interface Movie {
   id: string;
   title: string;
+  subtitle: string;
   diskid?: string; // Optional
   mediaType: string;
   genres: string[];
@@ -15,15 +16,17 @@ export interface Movie {
 export interface MovieCardDeckProps {
   movies: Movie[];
   seenDates?: SeenDateDTO[];
+  userFlags?: UserFlagsDTO[];
   imageBaseUrl: string;
 }
 
-export const MovieCardDeck = ({ movies, seenDates, imageBaseUrl }: MovieCardDeckProps) => {
+export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl }: MovieCardDeckProps) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {
     return <p>No movies found.</p>;
   }
+  console.log(userFlags);
   return (
     <>
       {
@@ -33,6 +36,7 @@ export const MovieCardDeck = ({ movies, seenDates, imageBaseUrl }: MovieCardDeck
               key={movie.id}
               movie={movie}
               seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []}
+              userFlags={userFlags?.find((m) => m.movieId === movie.id) ?? undefined}
               imageUrl={imageBaseUrl + "/" + movie.id}
             />
           )

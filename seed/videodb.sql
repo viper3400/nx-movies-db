@@ -2,9 +2,9 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: videodb-service-db
--- Erstellungszeit: 15. Sep 2024 um 08:24
--- Server-Version: 9.0.1
+-- Host: movies-service-db
+-- Erstellungszeit: 01. Jan 2025 um 15:17
+-- Server-Version: 9.1.0
 -- PHP-Version: 8.2.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -2492,6 +2492,20 @@ CREATE TABLE `homewebbridge_usermoviesettings` (
   `watchagain` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+--
+-- Daten für Tabelle `homewebbridge_usermoviesettings`
+--
+
+INSERT INTO `homewebbridge_usermoviesettings` (`id`, `vdb_movieid`, `asp_username`, `is_favorite`, `watchagain`) VALUES
+(1, 4, 'User 1', 1, 1),
+(2, 4, 'User 2', 0, 1),
+(3, 5, 'User 1', 1, 1),
+(4, 5, 'User 2', 1, 0),
+(5, 6, 'User 1', 0, 1),
+(6, 6, 'User 2', 1, 1),
+(7, 7, 'User 1', 1, 0),
+(8, 7, 'User 2', 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -2505,6 +2519,14 @@ CREATE TABLE `homewebbridge_userseen` (
   `asp_viewgroup` varchar(45) NOT NULL,
   `asp_username` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Daten für Tabelle `homewebbridge_userseen`
+--
+
+INSERT INTO `homewebbridge_userseen` (`id`, `vdb_videoid`, `viewdate`, `asp_viewgroup`, `asp_username`) VALUES
+(287, 1874, '2014-07-26 21:06:43', 'VG_Default', 'Xoom'),
+(371, 1874, '2014-11-19 22:04:23', 'VG_Default', 'Xoom');
 
 -- --------------------------------------------------------
 
@@ -33563,13 +33585,13 @@ ALTER TABLE `homewebbridge_inventorydata`
 -- AUTO_INCREMENT für Tabelle `homewebbridge_usermoviesettings`
 --
 ALTER TABLE `homewebbridge_usermoviesettings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT für Tabelle `homewebbridge_userseen`
 --
 ALTER TABLE `homewebbridge_userseen`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=372;
 
 --
 -- AUTO_INCREMENT für Tabelle `videodb_genres`

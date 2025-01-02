@@ -53,3 +53,23 @@ ALLOWED_USERS=jane@doe.com,Jane,3;John@example.org,3
 APP_BASE_PATH=/movies
 COVER_IMAGE_PATH=/media/coverimages
 ```
+# Setting Up the Development Database
+
+This project includes a development database located in the `./seed` folder, which can be deployed to a MySQL database using the `docker-compose` file found in the `./development-db` folder.
+
+Please make sure, ports 7200 and 7300 are available on your system or modify the `docker-compose.yaml`.
+
+To run the example database, you need to provide at least the following environment variables:
+
+```
+MYSQL_DATABASE="db-name"
+MYSQL_ROOT_PASSWORD="secret"
+```
+
+It is recommended to create an `.env` file in the `./development-db` folder to store these variables. Then, from the `./development-db` directory, run the following command:
+
+```
+docker-compose --env-file .env up
+```
+
+In addition to the MySQL container, a phpMyAdmin container is also included. To access it, open a web browser and navigate to `http://localhost:7300`. Use the username `root` and the password specified in your environment variable to log in to your database.

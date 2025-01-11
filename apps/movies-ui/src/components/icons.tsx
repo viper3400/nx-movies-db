@@ -282,7 +282,7 @@ export const HeartFilled: React.FC<IconSvgProps> = ({
     {...props}
   >
     <path
-      fill="currentColor"
+      fill="white"
       fillRule="evenodd"
       d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
     />
@@ -327,7 +327,7 @@ export const FlagFilled: React.FC<IconSvgProps> = ({
     {...props}
   >
     <path
-      fill="currentColor" // Set to red color
+      fill="white" // Set to red color
       d="M191.87-111.87v-696.26H566.7l16.09 80h225.34v416.26H513.3l-16-80H282.87v280h-91Z"
     />
   </svg>

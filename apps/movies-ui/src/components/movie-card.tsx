@@ -2,7 +2,7 @@ import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-o
 import { Movie } from "./movie-card-deck";
 import Image from "next/image";
 import { UserFlagsDTO } from "./movies";
-import { FlagFilled, FlagOutlined, HeartFilled, HeartOutlined } from "./icons";
+import { FlagFilled, HeartFilled } from "./icons";
 
 export interface MovieCardProps {
   movie: Movie;
@@ -21,9 +21,9 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl} : MovieCardPro
                 {movie.title}
               </div>
               <div className="flex gap-2">
-              { userFlags?.isFavorite ??
+                { userFlags?.isFavorite ??
                 <Chip className="text-left w-full" color="warning">
-                   <HeartFilled />
+                  <HeartFilled />
                 </Chip>
                 }
                 { userFlags?.isWatchAgain ??

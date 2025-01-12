@@ -4,7 +4,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export type VideoQueryArgs = {
-  title?: string;        // Optional string for filtering by title
+  id?: string;          // Optional string for filtering by id
+  title?: string;       // Optional string for filtering by title
   diskid?: string;      // Optional string for filtering by disk ID
   genreName?: string;   // Optional string for filtering by genre name
   mediaType?: string[]; // Optional array of strings for filtering by media type
@@ -16,7 +17,7 @@ export type VideoQueryArgs = {
 
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode} = args;
+  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode} = args;
 
   return await prisma.videodb_videodata.findMany({
     where: {
@@ -26,6 +27,9 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
             { title: title ? { contains: title } : undefined },
             { subtitle: title ? { contains: title } : undefined },
           ],
+        },
+        {
+          id: id ? { equals: parseInt(id, 10) } : undefined,
         },
         {
           owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,

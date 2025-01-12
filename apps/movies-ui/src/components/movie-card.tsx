@@ -21,15 +21,15 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl} : MovieCardPro
                 {movie.title}
               </div>
               <div className="flex gap-2">
-                { userFlags?.isFavorite ??
+                { userFlags?.isFavorite ?
                 <Chip className="text-left w-full" color="warning">
                   <HeartFilled />
-                </Chip>
+                </Chip> : ''
                 }
-                { userFlags?.isWatchAgain ??
+                { userFlags?.isWatchAgain ?
                 <Chip className="text-left w-full" color="warning">
                   <FlagFilled/>
-                </Chip>
+                </Chip> : ''
                 }
                 <Chip color="secondary">{movie.mediaType}</Chip>
                 {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}

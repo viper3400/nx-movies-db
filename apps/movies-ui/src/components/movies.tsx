@@ -3,13 +3,14 @@
 import { useEffect, useState, FormEvent } from "react";
 import { Input } from "@nextui-org/input";
 
-import { Movie, MovieCardDeck } from "./movie-card-deck";
+import { MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { Session } from "next-auth";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
+import { Movie } from "../interfaces";
 
 interface MovieComponentProperties {
   session: Session

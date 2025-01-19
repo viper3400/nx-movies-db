@@ -5,7 +5,7 @@ import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "./movie-card";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Movie, UserFlagsDTO } from "../interfaces";
-import { Input, Spacer, Switch } from "@nextui-org/react";
+import { Input, Spacer, Switch } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { getSeenDates } from "../app/services/actions";
 

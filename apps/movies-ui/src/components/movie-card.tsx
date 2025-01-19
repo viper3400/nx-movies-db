@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@heroui/react";
 import Image from "next/image";
 import { FlagFilled, HeartFilled } from "./icons";
 import { Movie, UserFlagsDTO } from "../interfaces";

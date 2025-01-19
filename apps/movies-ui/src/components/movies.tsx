@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState, FormEvent } from "react";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { RadioGroup, Radio } from "@nextui-org/react";
+import { RadioGroup, Radio } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
 

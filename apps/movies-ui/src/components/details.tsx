@@ -4,18 +4,23 @@ import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "./movie-card";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { Movie } from "../interfaces";
+import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer, Switch } from "@nextui-org/react";
+import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
+import { getSeenDates } from "../app/services/actions";
 
 interface DetailsComponentProperties {
-  id: string
+  id: string;
+  userName: string;
 }
-export const DetailsComponent = ({ id }: DetailsComponentProperties) => {
+export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) => {
   const [movie, setMovie] = useState<Movie>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
+  const [seenDates, setSeenDates] = useState<string[]>([]);
+  const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
 
   const inputVariant = "underlined";
 
@@ -39,7 +44,19 @@ export const DetailsComponent = ({ id }: DetailsComponentProperties) => {
       }
     };
 
+    const fetchUserFlags = async () => {
+      const flags = await getUserFlagsForMovie(id, userName);
+      if(flags.length > 0) setUserFlags({movieId: id, isFavorite: flags[0].isFavorite, isWatchAgain: flags[0].isWatchAgain});
+    };
+
+    const fetchSeenDates = async () => {
+      const dates = await getSeenDates(id, "VG_Default");
+      if(dates.length >0) setSeenDates(dates);
+    };
+
     fetchMovie();
+    fetchUserFlags();
+    fetchSeenDates();
   }, [id]);
 
   if (loading) {
@@ -55,17 +72,18 @@ export const DetailsComponent = ({ id }: DetailsComponentProperties) => {
       <div>
         <div className="flex flex-row">
           <Switch
-            defaultSelected={!readOnlyMode}
-            onValueChange={setReadOnlyMode}>
+            isSelected={!readOnlyMode}
+            onValueChange={setReadOnlyMode}
+            isDisabled>
             Bearbeitungsmodus
           </Switch>
           <Spacer x={4} />
-          <Switch defaultSelected>Favorit</Switch>
+          <Switch isSelected={userFlags?.isFavorite} isDisabled>Favorit</Switch>
           <Spacer x={4} />
-          <Switch defaultSelected>Nochmals sehen</Switch>
+          <Switch isSelected={userFlags?.isWatchAgain} isDisabled>Nochmals sehen</Switch>
         </div>
         <Spacer y={4} />
-        <MovieCard movie={movie} seenDates={[]} imageUrl={imageBaseUrl + "/" + id} />
+        <MovieCard movie={movie} seenDates={seenDates} imageUrl={imageBaseUrl + "/" + id} userFlags={userFlags} />
         <Spacer y={4} />
         { !readOnlyMode &&
         <div><Input

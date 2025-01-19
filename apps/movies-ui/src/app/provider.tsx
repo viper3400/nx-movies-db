@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import {
   ThemeProvider as NextThemesProvider,
@@ -24,13 +24,13 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <SessionProvider basePath={process.env.NEXT_PUBLIC_NEXTAUTH_URL}>
-      <NextUIProvider navigate={router.push}>
+      <HeroUIProvider navigate={router.push}>
         {isMounted ? (
           <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
         ) : (
           <div className="h-screen w-screen bg-black"></div>
         )}
-      </NextUIProvider>
+      </HeroUIProvider>
     </SessionProvider>
   );
 }

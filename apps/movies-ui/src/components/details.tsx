@@ -17,15 +17,15 @@ export const DetailsComponent = ({ id }: DetailsComponentProperties) => {
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
 
-  const inputVariant = "underlined"
+  const inputVariant = "underlined";
 
-    useEffect(() => {
-      const fetchAppBasePath = async () => {
-        const appBasePath = await getAppBasePath();
-        setImageBaseUrl(appBasePath + "/api/cover-image");
-      };
-      fetchAppBasePath();
-    });
+  useEffect(() => {
+    const fetchAppBasePath = async () => {
+      const appBasePath = await getAppBasePath();
+      setImageBaseUrl(appBasePath + "/api/cover-image");
+    };
+    fetchAppBasePath();
+  });
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -55,8 +55,8 @@ export const DetailsComponent = ({ id }: DetailsComponentProperties) => {
       <div>
         <div className="flex flex-row">
           <Switch
-          defaultSelected={!readOnlyMode}
-          onValueChange={setReadOnlyMode}>
+            defaultSelected={!readOnlyMode}
+            onValueChange={setReadOnlyMode}>
             Bearbeitungsmodus
           </Switch>
           <Spacer x={4} />
@@ -69,21 +69,21 @@ export const DetailsComponent = ({ id }: DetailsComponentProperties) => {
         <Spacer y={4} />
         { !readOnlyMode &&
         <div><Input
-              size="lg"
-              defaultValue={movie.title}
-              isReadOnly={readOnlyMode}
-              label="Titel"
-              variant={inputVariant} /><Spacer y={4} /><Input
-                size="lg"
-                defaultValue={movie.subtitle}
-                isReadOnly={readOnlyMode}
-                label="Subtitel"
-                variant={inputVariant} /><Spacer y={4} /><Input
-                size="lg"
-                defaultValue={movie.diskid}
-                isReadOnly={readOnlyMode}
-                label="Diskid"
-                variant={inputVariant} /></div>
+          size="lg"
+          defaultValue={movie.title}
+          isReadOnly={readOnlyMode}
+          label="Titel"
+          variant={inputVariant} /><Spacer y={4} /><Input
+          size="lg"
+          defaultValue={movie.subtitle}
+          isReadOnly={readOnlyMode}
+          label="Subtitel"
+          variant={inputVariant} /><Spacer y={4} /><Input
+          size="lg"
+          defaultValue={movie.diskid}
+          isReadOnly={readOnlyMode}
+          label="Diskid"
+          variant={inputVariant} /></div>
         }
       </div>
       }

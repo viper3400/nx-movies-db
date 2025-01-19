@@ -81,7 +81,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
               </div>
               <div className="flex gap-2">
                 { showDetailsButton &&
-                  <Button onPress={() => router.push('/details/' + movie.id)}>Details</Button>
+                  <Button onPress={() => router.push("/details/" + movie.id)}>Details</Button>
                 }
               </div>
             </div>

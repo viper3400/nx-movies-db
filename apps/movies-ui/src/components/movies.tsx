@@ -10,25 +10,13 @@ import { Session } from "next-auth";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { Movie } from "../interfaces";
+import { Movie, SeenDateDTO, UserFlagsDTO } from "../interfaces";
 
 interface MovieComponentProperties {
   session: Session
 }
 
-export interface SeenDateDTO {
-  movieId: string;
-  dates: string[];
-}
-
-export interface UserFlagsDTO {
-  movieId: string;
-  isWatchAgain: boolean;
-  isFavorite: boolean;
-}
-
 // Main component that handles user input and renders Data component
-
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
   const [searchTitle, setSearchTitle] = useState<string>(searchText);

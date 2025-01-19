@@ -71,6 +71,9 @@ builder.queryField("videos", (t) =>
     type: ["videodb_videodata"],
     description: "Query to fetch videos based on various filters",
     args: {
+      id: t.arg.string({
+        description: "Filter videos by id",
+      }),
       title: t.arg.string({
         description: "Filter videos by title",
       }),

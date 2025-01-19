@@ -1,4 +1,4 @@
-import { SeenDateDTO, UserFlagsDTO } from "./movies";
+import { SeenDateDTO, UserFlagsDTO } from "../interfaces";
 import { MovieCard } from "./movie-card";
 import { Movie } from "../interfaces";
 

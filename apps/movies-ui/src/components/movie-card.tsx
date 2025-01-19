@@ -1,16 +1,19 @@
-import { Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
 import Image from "next/image";
 import { UserFlagsDTO } from "./movies";
 import { FlagFilled, HeartFilled } from "./icons";
 import { Movie } from "../interfaces";
+import { useRouter } from "next/navigation";
 
 export interface MovieCardProps {
   movie: Movie;
   seenDates: string[];
   userFlags?: UserFlagsDTO;
   imageUrl: string;
+  showDetailsButton?: boolean;
 }
-export const MovieCard = ({movie, seenDates, userFlags, imageUrl} : MovieCardProps) => {
+export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsButton} : MovieCardProps) => {
+  const router = useRouter();
   return (
     <>
       <div key={movie.id}>
@@ -63,16 +66,25 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl} : MovieCardPro
             <Divider />
           </div>
 
-          <CardFooter className="flex flex-row gap-2">
-            {movie.ownerid === "999" && (
-              <Chip color="danger">Gelöschter Eintrag</Chip>
-            )}
-            {movie.genres &&
-                movie.genres.map((genreName: any) => (
-                  <Chip key={genreName} color="primary" variant="flat">
-                    {genreName}
-                  </Chip>
-                ))}
+          <CardFooter className="flex flex-row">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex gap-2">
+                {movie.ownerid === "999" && (
+                  <Chip color="danger">Gelöschter Eintrag</Chip>
+                )}
+                {movie.genres &&
+                    movie.genres.map((genreName: any) => (
+                      <Chip key={genreName} color="primary" variant="flat">
+                        {genreName}
+                      </Chip>
+                    ))}
+              </div>
+              <div className="flex gap-2">
+                { showDetailsButton &&
+                  <Button onPress={() => router.push('/details/' + movie.id)}>Details</Button>
+                }
+              </div>
+            </div>
           </CardFooter>
         </Card>
       </div>

@@ -1,3 +1,4 @@
+import NavbarComponent from "../components/navbar";
 import "./global.css";
 import { Providers } from "./provider";
 
@@ -15,7 +16,16 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          {children}
+          <div>
+            <div className="mx-auto sm:block hidden">
+              <NavbarComponent></NavbarComponent>
+              {children}
+            </div>
+            <div className="mx-auto container sm:hidden">
+              <NavbarComponent></NavbarComponent>
+              {children}
+            </div>
+          </div>
         </Providers>
       </body>
     </html>

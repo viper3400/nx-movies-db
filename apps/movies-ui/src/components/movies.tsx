@@ -6,29 +6,16 @@ import { Input } from "@nextui-org/input";
 import { MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
-import { Session } from "next-auth";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { Movie } from "../interfaces";
+import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
 
 interface MovieComponentProperties {
-  session: Session
-}
-
-export interface SeenDateDTO {
-  movieId: string;
-  dates: string[];
-}
-
-export interface UserFlagsDTO {
-  movieId: string;
-  isWatchAgain: boolean;
-  isFavorite: boolean;
+  session: MoviesDbSession;
 }
 
 // Main component that handles user input and renders Data component
-
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
   const [searchTitle, setSearchTitle] = useState<string>(searchText);
@@ -73,7 +60,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       const fetchUserFlags = async () => {
         const userFlagCollection: UserFlagsDTO[] = [];
         for (const movie of searchResult) {
-          const flags = await getUserFlagsForMovie(movie.id, "jan.graefe");
+          const flags = await getUserFlagsForMovie(movie.id, session.userName);
           if(flags.length > 0) userFlagCollection.push({ movieId: movie.id, isFavorite: flags[0].isFavorite, isWatchAgain: flags[0].isWatchAgain  });
         }
         setUserFlags(userFlagCollection);

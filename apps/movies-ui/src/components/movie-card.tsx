@@ -1,8 +1,7 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
 import Image from "next/image";
-import { UserFlagsDTO } from "./movies";
 import { FlagFilled, HeartFilled } from "./icons";
-import { Movie } from "../interfaces";
+import { Movie, UserFlagsDTO } from "../interfaces";
 import { useRouter } from "next/navigation";
 
 export interface MovieCardProps {

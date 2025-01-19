@@ -29,6 +29,7 @@ export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl }: Mo
               seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []}
               userFlags={userFlags?.find((m) => m.movieId === movie.id) ?? undefined}
               imageUrl={imageBaseUrl + "/" + movie.id}
+              showDetailsButton
             />
           )
         )}

@@ -4,10 +4,11 @@ import { getAllowedSession } from "../../services/actions/getAllowedSession";
 
 const getContentBasedOnSession = async (id: string) => {
   const session = await getAllowedSession();
+  console.log(session);
   if (session) {
     return (
       <div className="p-2">
-        <DetailsComponent id={ id } userName="jan.graefe"/>
+        <DetailsComponent id={ id } userName={session.userName}/>
       </div>
     );
   } else {

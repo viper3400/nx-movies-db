@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState, FormEvent } from "react";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { RadioGroup, Radio } from "@nextui-org/react";
+import { RadioGroup, Radio } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
 
@@ -24,6 +24,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
   const [userFlags, setUserFlags] = useState<UserFlagsDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [seenDatesLoading, setSeenDatesLoading] = useState<boolean>(true);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [deleteMode, setDeleteMode] = useState<string>("EXCLUDE_DELETED");
 
@@ -31,6 +32,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   const search = async () => {
     setLoading(true);
+    setSeenDatesLoading(true);
     const result = await getMovies(searchText, deleteMode);
 
     setLoading(false);
@@ -55,6 +57,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           seenDateCollection.push({ movieId: movie.id, dates });
         }
         setSeenDates(seenDateCollection);
+        setSeenDatesLoading(false);
       };
 
       const fetchUserFlags = async () => {
@@ -140,6 +143,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           <MovieCardDeck
             movies={searchResult}
             seenDates={seenDates ? seenDates : []}
+            seenDatesLoading={seenDatesLoading}
             userFlags={userFlags ? userFlags : []}
             imageBaseUrl={imageBaseUrl}
           />

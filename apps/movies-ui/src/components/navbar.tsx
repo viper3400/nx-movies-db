@@ -1,7 +1,7 @@
 "use client";
 
-import {  Navbar,   NavbarBrand,   NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle} from "@nextui-org/navbar";
-import { Button, Spacer, User } from "@nextui-org/react";
+import {  Navbar,   NavbarBrand,   NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle} from "@heroui/navbar";
+import { Button, Spacer, User } from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "./icons";
 import { useState } from "react";

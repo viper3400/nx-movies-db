@@ -5,7 +5,7 @@ import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "./movie-card";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Movie, UserFlagsDTO } from "../interfaces";
-import { Input, Spacer, Switch } from "@nextui-org/react";
+import { Input, Spacer, Switch } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { getSeenDates } from "../app/services/actions";
 
@@ -16,6 +16,7 @@ interface DetailsComponentProperties {
 export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) => {
   const [movie, setMovie] = useState<Movie>();
   const [loading, setLoading] = useState(true);
+  const [seenDatesLoading, setSeenDatesLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
@@ -52,6 +53,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
     const fetchSeenDates = async () => {
       const dates = await getSeenDates(id, "VG_Default");
       if(dates.length >0) setSeenDates(dates);
+      setSeenDatesLoading(false);
     };
 
     fetchMovie();
@@ -83,7 +85,12 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
           <Switch isSelected={userFlags?.isWatchAgain} isDisabled>Nochmals sehen</Switch>
         </div>
         <Spacer y={4} />
-        <MovieCard movie={movie} seenDates={seenDates} imageUrl={imageBaseUrl + "/" + id} userFlags={userFlags} />
+        <MovieCard
+          movie={movie}
+          seenDates={seenDates}
+          seenDatesLoading={seenDatesLoading}
+          imageUrl={imageBaseUrl + "/" + id}
+          userFlags={userFlags} />
         <Spacer y={4} />
         { !readOnlyMode &&
         <div><Input

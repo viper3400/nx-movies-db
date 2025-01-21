@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@heroui/react";
 import Image from "next/image";
 import { FlagFilled, HeartFilled } from "./icons";
 import { Movie, UserFlagsDTO } from "../interfaces";
@@ -7,11 +7,12 @@ import { useRouter } from "next/navigation";
 export interface MovieCardProps {
   movie: Movie;
   seenDates: string[];
+  seenDatesLoading: boolean;
   userFlags?: UserFlagsDTO;
   imageUrl: string;
   showDetailsButton?: boolean;
 }
-export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsButton} : MovieCardProps) => {
+export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsButton, seenDatesLoading} : MovieCardProps) => {
   const router = useRouter();
   return (
     <>
@@ -45,7 +46,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
           <div>
             <CardBody>
               <div>
-                <SeenChips seenDates={seenDates ? seenDates : []} />
+                <SeenChips seenDates={seenDates ? seenDates : []} loading={seenDatesLoading} />
               </div>
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -92,7 +93,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
 };
 
 
-const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
+const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDates, loading}) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -106,11 +107,29 @@ const SeenChips: React.FC<{seenDates?: string[] }> = ({ seenDates}) => {
     return `${day}.${month}.${year}`;
   };
 
+  const notSeen = seenDates?.length === 0 || !seenDates;
   return (
     <>
-      {seenDates && seenDates.length > 0 &&
+      {
+        loading &&  <Chip
+          className={"mr-4 mb-4 animate-pulse"}
+          color="secondary"
+          variant="bordered">
+          Loading ...
+        </Chip>
+      }
+      { !loading && notSeen &&
+      <Chip
+        className={"mr-4 mb-4"}
+        variant="bordered"
+        color="secondary">
+        noch nicht gesehen
+      </Chip>
+
+      }
+      {seenDates && seenDates.length > 0 && !loading &&
     <Chip
-      className="mr-4 mb-4"
+      className={"mr-4 mb-4"}
       color="secondary">
       {seenDates.length} x gesehen
     </Chip>

@@ -112,24 +112,24 @@ const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDa
     <>
       {
         loading &&  <Chip
-        className={`mr-4 mb-4 animate-pulse`}
-        color="secondary"
-        variant="bordered">
+          className={"mr-4 mb-4 animate-pulse"}
+          color="secondary"
+          variant="bordered">
           Loading ...
         </Chip>
       }
       { !loading && notSeen &&
       <Chip
-      className={`mr-4 mb-4`}
-      variant="bordered"
-      color="secondary">
+        className={"mr-4 mb-4"}
+        variant="bordered"
+        color="secondary">
         noch nicht gesehen
       </Chip>
 
       }
       {seenDates && seenDates.length > 0 && !loading &&
     <Chip
-    className={`mr-4 mb-4`}
+      className={"mr-4 mb-4"}
       color="secondary">
       {seenDates.length} x gesehen
     </Chip>

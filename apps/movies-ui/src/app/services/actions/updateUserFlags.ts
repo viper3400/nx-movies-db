@@ -1,5 +1,5 @@
 "use server";
-import { gql } from "graphql-tag";
+import { gql } from "@apollo/client";
 import { getClient } from "../../../lib/apollocient";
 
 // GraphQL mutation

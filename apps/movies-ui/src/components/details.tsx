@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "./movie-card";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer, Switch } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { getSeenDates } from "../app/services/actions";
+import { getSeenDates, updateUserFlags } from "../app/services/actions";
+import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 
 interface DetailsComponentProperties {
   id: string;
@@ -22,8 +23,31 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
   const [seenDates, setSeenDates] = useState<string[]>([]);
   const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
+  const [isWatchAgain, setIsWatchAgain] = useState<boolean>();
+  const [isFavorite, setIsFavorite] = useState<boolean>();
 
   const inputVariant = "underlined";
+
+  const preventUpdateUserSettings = useRef(true);
+
+  useEffect(() => {
+    if (preventUpdateUserSettings.current) {
+      preventUpdateUserSettings.current = false;
+    } else {
+      const onUserFlagsChanged = async () => {
+        if (isFavorite !== undefined && isWatchAgain !== undefined) {
+          setUserFlags({movieId: id, isFavorite: isFavorite, isWatchAgain: isWatchAgain});
+          const result = await updateUserFlags(
+            parseInt(id),
+            isFavorite,
+            isWatchAgain,
+            userName
+          );
+        }
+      };
+      onUserFlagsChanged();
+    }
+  }, [isFavorite, isWatchAgain, id, userName]);
 
   useEffect(() => {
     const fetchAppBasePath = async () => {
@@ -46,8 +70,16 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
     };
 
     const fetchUserFlags = async () => {
+      preventUpdateUserSettings.current = true;
       const flags = await getUserFlagsForMovie(id, userName);
-      if(flags.length > 0) setUserFlags({movieId: id, isFavorite: flags[0].isFavorite, isWatchAgain: flags[0].isWatchAgain});
+      if(flags.length > 0) {
+        setIsWatchAgain(flags[0].isWatchAgain);
+        setIsFavorite(flags[0].isFavorite);
+        setUserFlags({movieId: id, isFavorite: flags[0].isFavorite, isWatchAgain: flags[0].isWatchAgain});
+      } else {
+        setIsWatchAgain(false);
+        setIsFavorite(false);
+      }
     };
 
     const fetchSeenDates = async () => {
@@ -80,9 +112,9 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
             Bearbeitungsmodus
           </Switch>
           <Spacer x={4} />
-          <Switch isSelected={userFlags?.isFavorite} isDisabled>Favorit</Switch>
+          { isFavorite != undefined && <Switch isSelected={isFavorite} onValueChange={setIsFavorite}>Favorit</Switch> }
           <Spacer x={4} />
-          <Switch isSelected={userFlags?.isWatchAgain} isDisabled>Nochmals sehen</Switch>
+          { isWatchAgain != undefined && <Switch isSelected={isWatchAgain} onValueChange={setIsWatchAgain}>Nochmals sehen</Switch> }
         </div>
         <Spacer y={4} />
         <MovieCard

@@ -21,7 +21,7 @@ export const createOrUpdateUserFlag = async (args: {
         where: {
           id: existingEntry.id,
         },
-      })
+      });
       return null;
     } else {
       return prisma.homewebbridge_usermoviesettings.update({
@@ -44,4 +44,4 @@ export const createOrUpdateUserFlag = async (args: {
       },
     });
   }
-}
+};

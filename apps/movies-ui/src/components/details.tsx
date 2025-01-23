@@ -8,7 +8,6 @@ import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer, Switch } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { getSeenDates, updateUserFlags } from "../app/services/actions";
-import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 
 interface DetailsComponentProperties {
   id: string;

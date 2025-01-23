@@ -1,5 +1,5 @@
 import { builder } from "../builder";
-import { getUserFlagsForUser, UserFlagsForMovieArgs } from "@nx-movies-db/movies-prisma-lib";
+import { createOrUpdateUserFlag, getUserFlagsForUser, UserFlagsForMovieArgs } from "@nx-movies-db/movies-prisma-lib";
 
 builder.prismaObject("homewebbridge_usermoviesettings", {
   fields: (t: any) => ({
@@ -21,4 +21,31 @@ builder.queryField("userFlagsForUser", (t) =>
       return await getUserFlagsForUser( args as UserFlagsForMovieArgs, query);
     },
   }),
+);
+
+/* GraphQL Mutation example
+mutation {
+  createOrUpdateUserFlag(
+    isFavorite: false,
+    isWatchAgain: false,
+    movieId: 101,
+    userName: "Klaus")
+  {movieId}
+  }
+*/
+
+builder.mutationField("createOrUpdateUserFlag", (t) =>
+  t.prismaField({
+    type: "homewebbridge_usermoviesettings",
+    args: {
+      movieId: t.arg.int({ required: true }),
+      isWatchAgain: t.arg.boolean({ required: true }),
+      isFavorite: t.arg.boolean({ required: true }),
+      userName: t.arg.string({ required: true }),
+    },
+    resolve: async (query, root, args, ctx) => {
+      const result = await createOrUpdateUserFlag(args);
+      return result;
+    },
+  })
 );

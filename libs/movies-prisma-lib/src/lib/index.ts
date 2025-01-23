@@ -1,4 +1,5 @@
 export * from "./connection";
+export * from "./create-or-update-user-flags";
 export * from "./get-user-flags";
 export * from "./get-videos";
 export * from "./get-seen-dates";

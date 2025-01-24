@@ -12,12 +12,14 @@ export type VideoQueryArgs = {
   ownerid?: string;     // Optional string for filtering by owner ID
   queryPlot?: boolean;
   deleteMode?: string;
+  skip?: number;
+  take?: number;
   //deleteMode?: 'ONLY_DELETED' | 'INCLUDE_DELETED' | 'EXCLUDE_DELETED'; // New deleteMode parameter
 };
 
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode} = args;
+  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode, take, skip} = args;
 
   return await prisma.videodb_videodata.findMany({
     where: {
@@ -79,6 +81,8 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
         },
       },
     },
+    take: take,
+    skip: skip,
     ...query,
   });
 };

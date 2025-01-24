@@ -96,6 +96,12 @@ builder.queryField("videos", (t) =>
         type: DeleteMode,
         description: "Filter videos based on delete mode",
       }),
+      skip: t.arg.int({
+        description: "Elements to skip"
+      }),
+      take: t.arg.int({
+        description: "Elements to take"
+      })
     },
     resolve: async (query, _parent, args, _ctx: any, _info) => {
       //const { title, diskid, genreName, mediaType, ownerid } = args; // Extract the title and diskid from the args

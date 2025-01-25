@@ -36,7 +36,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     const result = await getMovies(searchText, deleteMode);
 
     setLoading(false);
-    setSearchResult(result); // Triggers `useEffect`
+    setSearchResult(result.videos); // Triggers `useEffect`
   };
 
 

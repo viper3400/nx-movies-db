@@ -17,48 +17,68 @@ export type VideoQueryArgs = {
   //deleteMode?: 'ONLY_DELETED' | 'INCLUDE_DELETED' | 'EXCLUDE_DELETED'; // New deleteMode parameter
 };
 
+type Video = {
+  id: number;
+  subtitle?: string | null;
+  title?: string | null;
+  diskid?: string | null;
+  owner_id: number;
+  plot?: string | null;
+  videodb_videogenre?: {
+    genre: {
+      name: string;
+    };
+  }[] | null;
+  videodb_mediatypes?: {
+    name: string;
+  } | null;
+};
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode, take, skip} = args;
-
-  return await prisma.videodb_videodata.findMany({
-    where: {
-      AND: [
-        {
-          OR: [
-            { title: title ? { contains: title } : undefined },
-            { subtitle: title ? { contains: title } : undefined },
-          ],
-        },
-        {
-          id: id ? { equals: parseInt(id, 10) } : undefined,
-        },
-        {
-          owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,
-        },
-        { diskid: diskid ? { startsWith: diskid } : undefined },
-        genreName ? {
-          videodb_videogenre: {
-            some: {
-              genre: {
-                name: genreName ? { contains: genreName } : undefined,
-              },
+  const where = {
+    AND: [
+      {
+        OR: [
+          { title: title ? { contains: title } : undefined },
+          { subtitle: title ? { contains: title } : undefined },
+        ],
+      },
+      {
+        id: id ? { equals: parseInt(id, 10) } : undefined,
+      },
+      {
+        owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,
+      },
+      { diskid: diskid ? { startsWith: diskid } : undefined },
+      genreName ? {
+        videodb_videogenre: {
+          some: {
+            genre: {
+              name: genreName ? { contains: genreName } : undefined,
             },
           },
-        } : {},
-        {
-          videodb_mediatypes: {
-            name: mediaType ? { in: mediaType } : undefined,
-          },
         },
-        // Handle deleteMode logic
-        deleteMode === "ONLY_DELETED" ? {
-          owner_id: { equals: 999 },
-        } : deleteMode === "EXCLUDE_DELETED" ? {
-          owner_id: { not: 999 },
-        } : {}, // INCLUDE_DELETED will not add any additional filters
-      ],
-    },
+      } : {},
+      {
+        videodb_mediatypes: {
+          name: mediaType ? { in: mediaType } : undefined,
+        },
+      },
+      // Handle deleteMode logic
+      deleteMode === "ONLY_DELETED" ? {
+        owner_id: { equals: 999 },
+      } : deleteMode === "EXCLUDE_DELETED" ? {
+        owner_id: { not: 999 },
+      } : {}, // INCLUDE_DELETED will not add any additional filters
+    ],
+  };
+  const totalCount = await prisma.videodb_videodata.count({
+    where: where
+  });
+
+  const videos: Video[] = await prisma.videodb_videodata.findMany({
+    where: where,
     select: {
       id: true,
       subtitle: true,
@@ -85,4 +105,9 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
     skip: skip,
     ...query,
   });
+  const result = {
+    videos, totalCount
+  };
+  console.log(result);
+  return result;
 };

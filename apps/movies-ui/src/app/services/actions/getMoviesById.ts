@@ -8,14 +8,16 @@ import { getClient } from "../../../lib/apollocient";
 const getMovieById = gql`
   query GetMovies($id: String) {
     videos(id: $id, queryPlot: true) {
-      title
-      diskid
-      genres
-      subtitle
-      mediaType
-      ownerid
-      id
-      plot
+      videos {
+        title
+        diskid
+        genres
+        subtitle
+        mediaType
+        ownerid
+        id
+        plot
+      }
     }
   }
 `;

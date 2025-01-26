@@ -31,17 +31,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   const invalidTextLength = (text: string) => text.length < 3;
 
-  const search = async () => {
-    setLoading(true);
-    setSeenDatesLoading(true);
-    const result = await getMovies(searchText, deleteMode, 10, 0);
-    setTotalMoviesCount(result.videos.requestMeta.totalCount);
-
-    setLoading(false);
-    setSearchResult(result.videos.videos); // Triggers `useEffect`
-  };
-
-
   useEffect(() => {
     const fetchAppBasePath = async () => {
       const appBasePath = await getAppBasePath();
@@ -84,7 +73,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   // New useEffect to retrigger search when deleteMode changes
   useEffect(() => {
     if (searchResult) {
-      invalidTextLength(searchText) ? validateSearch(searchText) : search();
+      invalidTextLength(searchText) ? validateSearch(searchText) : executeSearch();
     }
   }, [deleteMode]); // Run when `deleteMode` changes
 
@@ -98,13 +87,23 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     if (!invalidTextLength(searchText)) {
       setSearchTitle(searchText);
       clearSearchResult();
-      search();
+      executeSearch();
     }
   };
 
   const clearSearchResult = () => {
     setSearchResult(undefined);
     setSeenDates([]);
+  };
+
+  const executeSearch = async () => {
+    setLoading(true);
+    setSeenDatesLoading(true);
+    const result = await getMovies(searchText, deleteMode, 10, 0);
+    setTotalMoviesCount(result.videos.requestMeta.totalCount);
+
+    setLoading(false);
+    setSearchResult(result.videos.videos); // Triggers `useEffect`
   };
 
   return (

@@ -27,16 +27,18 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [seenDatesLoading, setSeenDatesLoading] = useState<boolean>(true);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [deleteMode, setDeleteMode] = useState<string>("EXCLUDE_DELETED");
+  const [totalMoviesCount, setTotalMoviesCount] = useState(0);
 
   const invalidTextLength = (text: string) => text.length < 3;
 
   const search = async () => {
     setLoading(true);
     setSeenDatesLoading(true);
-    const result = await getMovies(searchText, deleteMode);
+    const result = await getMovies(searchText, deleteMode, 10, 0);
+    setTotalMoviesCount(result.videos.requestMeta.totalCount);
 
     setLoading(false);
-    setSearchResult(result.videos); // Triggers `useEffect`
+    setSearchResult(result.videos.videos); // Triggers `useEffect`
   };
 
 
@@ -113,7 +115,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             isClearable
             errorMessage="Search must have at least 3 characters"
             isInvalid={invalidSearch}
-            label="Search"
+            label={`Search (result count: ${totalMoviesCount})`}
             placeholder="Enter search text"
             type="text"
             value={searchText}

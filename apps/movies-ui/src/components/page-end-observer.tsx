@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface PageEndObserverProps {
   onIntersect: () => void;
@@ -28,7 +28,7 @@ const PageEndObserver: React.FC<PageEndObserverProps> = ({ onIntersect }) => {
     };
   }, [onIntersect]);
 
-  return <div ref={observerRef} style={{ height: '10px' }} />;
+  return <div ref={observerRef} style={{ height: "10px" }} />;
 };
 
 export default PageEndObserver;

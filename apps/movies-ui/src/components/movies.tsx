@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState, FormEvent, useRef } from "react";
-import { Input } from "@heroui/input";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { RadioGroup, Radio } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
 import SearchForm from "./search-form";
@@ -79,7 +77,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   useEffect(() => {
     if (searchResult) {
       if (invalidTextLength(searchText))  {
-         validateSearch(searchText)}
+        validateSearch(searchText);}
       else {
         clearSearchResult();
         executeSearch(0);
@@ -104,7 +102,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
       executeSearch(nextPage);
     }
-  }
+  };
 
   const clearSearchResult = async () => {
     setLoading(true);
@@ -128,7 +126,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     } else {
       setNextPage(page);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   return (

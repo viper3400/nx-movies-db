@@ -69,7 +69,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
           <CardFooter className="flex flex-row">
             <div className="flex items-center justify-between w-full">
               <div className="flex gap-2">
-                {movie.ownerid === "999" && (
+                {movie.ownerid == "999" && (
                   <Chip color="danger">Gelöschter Eintrag</Chip>
                 )}
                 {movie.genres &&

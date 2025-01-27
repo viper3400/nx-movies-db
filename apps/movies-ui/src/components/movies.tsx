@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
-import { Input } from "@heroui/input";
+import { useEffect, useState, FormEvent, useRef } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
 import { getMovies, getSeenDates } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { RadioGroup, Radio } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
+import SearchForm from "./search-form";
+import PageEndObserver from "./page-end-observer";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -18,7 +18,6 @@ interface MovieComponentProperties {
 // Main component that handles user input and renders Data component
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
-  const [searchTitle, setSearchTitle] = useState<string>(searchText);
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
@@ -28,19 +27,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [deleteMode, setDeleteMode] = useState<string>("EXCLUDE_DELETED");
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState<number>();
+  const [nextPage, setNextPage] = useState<number>();
+  const [isClearCompleted, setIsClearCompleted] = useState(false);
+  const bottomRef = useRef(null);
 
   const invalidTextLength = (text: string) => text.length < 3;
-
-  const search = async () => {
-    setLoading(true);
-    setSeenDatesLoading(true);
-    const result = await getMovies(searchText, deleteMode, 10, 0);
-    setTotalMoviesCount(result.videos.requestMeta.totalCount);
-
-    setLoading(false);
-    setSearchResult(result.videos.videos); // Triggers `useEffect`
-  };
-
 
   useEffect(() => {
     const fetchAppBasePath = async () => {
@@ -84,7 +76,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   // New useEffect to retrigger search when deleteMode changes
   useEffect(() => {
     if (searchResult) {
-      invalidTextLength(searchText) ? validateSearch(searchText) : search();
+      if (invalidTextLength(searchText))  {
+        validateSearch(searchText);}
+      else {
+        clearSearchResult();
+        executeSearch(0);
+      }
     }
   }, [deleteMode]); // Run when `deleteMode` changes
 
@@ -92,53 +89,59 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     setInvalidSearch(invalidTextLength(text));
   };
 
-  const handleSearchSubmit = (e: FormEvent) => {
+  const handleSearchSubmit = async (e: FormEvent) => {
     e.preventDefault();
     validateSearch(searchText);
     if (!invalidTextLength(searchText)) {
-      setSearchTitle(searchText);
-      clearSearchResult();
-      search();
+      await clearSearchResult();
+      executeSearch(0);
     }
   };
 
-  const clearSearchResult = () => {
+  const handleNextPageTrigger = () => {
+    if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
+      executeSearch(nextPage);
+    }
+  };
+
+  const clearSearchResult = async () => {
+    setLoading(true);
     setSearchResult(undefined);
+    setCurrentPage(undefined);
+    setNextPage(undefined);
     setSeenDates([]);
+    setLoading(false);
+  };
+
+  const executeSearch = async (page: number) => {
+    setLoading(true);
+    setSeenDatesLoading(true);
+    const result = await getMovies(searchText, deleteMode, 10, page * 10);
+    const resultCount = result.videos.requestMeta.totalCount;
+    setTotalMoviesCount(resultCount);
+    setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
+    setCurrentPage(page);
+    if ((page + 1) * 10 < resultCount) {
+      setNextPage((prev) => prev ? prev + 1 : 1);
+    } else {
+      setNextPage(page);
+    }
+    setLoading(false);
   };
 
   return (
     <div>
-      <form onSubmit={handleSearchSubmit}>
-        <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
-          <Input
-            isClearable
-            errorMessage="Search must have at least 3 characters"
-            isInvalid={invalidSearch}
-            label={`Search (result count: ${totalMoviesCount})`}
-            placeholder="Enter search text"
-            type="text"
-            value={searchText}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSearchText(value);
-              if (invalidSearch) validateSearch(value);
-            }}
-            onClear={() => {
-              clearSearchResult();
-              setSearchText("");
-            }
-            }
-          />
-        </div>
-        <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
-          <RadioGroup label="Gelöschte Filme" value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
-            <Radio value="EXCLUDE_DELETED">Exklusive Gelöschte</Radio>
-            <Radio value="INCLUDE_DELETED">Inklusive Gelöschte</Radio>
-            <Radio value="ONLY_DELETED">Nur Gelöschte</Radio>
-          </RadioGroup>
-        </div>
-      </form>
+      <SearchForm
+        searchText={searchText}
+        setSearchText={setSearchText}
+        invalidSearch={invalidSearch}
+        validateSearch={validateSearch}
+        clearSearchResult={clearSearchResult}
+        totalMoviesCount={totalMoviesCount}
+        deleteMode={deleteMode}
+        setDeleteMode={setDeleteMode}
+        handleSearchSubmit={handleSearchSubmit}
+      />
       <div className="space-y-4">
         {loading && <div>Loading ...</div>}
         {searchResult && imageBaseUrl && (
@@ -151,6 +154,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           />
         )}
       </div>
+      <PageEndObserver onIntersect={handleNextPageTrigger} />
     </div>
   );
 };

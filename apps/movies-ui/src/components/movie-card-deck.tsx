@@ -18,7 +18,6 @@ export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl, seen
   if (movies.length === 0) {
     return <p>No movies found.</p>;
   }
-  console.log(userFlags);
   return (
     <>
       {

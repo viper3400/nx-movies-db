@@ -108,6 +108,5 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const result = {
     videos, totalCount
   };
-  console.log(result);
   return result;
 };

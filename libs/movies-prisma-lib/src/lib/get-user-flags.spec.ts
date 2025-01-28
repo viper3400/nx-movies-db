@@ -69,4 +69,25 @@ describe("Get User Flags", () => {
       }
     });
   });
+
+  test("username is case insensitive", async () => {
+    const userNames = ["user 1", "UsER 2"];
+
+    const expected = [
+        { isResultExpected: true, isFavorite: true, isWatchAgain: false }, // User 1
+        { isResultExpected: true, isFavorite: true, isWatchAgain: true }, // User 2
+      ];
+
+
+
+      for (let i = 0; i < userNames.length; i++) {
+        const args: UserFlagsForMovieArgs = { movieId: 7, userName: userNames[i] };
+        const query = "";
+        const result = await getUserFlagsForUser(args, query);
+        expect(result.length).toEqual(1);
+        expect(result[0].watchagain).toEqual(expected[i].isWatchAgain);
+        expect(result[0].is_favorite).toEqual(expected[i].isFavorite);
+        expect(result[0].asp_username.toLocaleLowerCase()).toEqual(userNames[i].toLocaleLowerCase());
+      }
+  })
 });

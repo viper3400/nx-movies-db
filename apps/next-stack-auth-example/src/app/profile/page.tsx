@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useUser, useStackApp, UserButton } from "@stackframe/stack";
 
 export default function PageClient() {

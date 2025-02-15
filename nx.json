@@ -14,7 +14,6 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
-
   "neverConnectToCloud": true,
   "targetDefaults": {
     "@nx/esbuild:esbuild": {

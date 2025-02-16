@@ -50,13 +50,15 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
               </div>
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <Image
-                    alt="Movie Cover"
-                    height={180}
-                    src={imageUrl}
-                    width={120}
-                    className="rounded"
-                  />
+                  <a href={`/details/${movie.id}`} target="_blank" rel="noopener noreferrer">
+                    <Image
+                      alt="Movie Cover"
+                      height={180}
+                      src={imageUrl}
+                      width={120}
+                      className="rounded"
+                    />
+                  </a>
                 </div>
                 <div className="flex-1 text-left">
                   <p className="text-justify">{movie.plot}</p>
@@ -81,7 +83,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
               </div>
               <div className="flex gap-2">
                 { showDetailsButton &&
-                  <Button onPress={() => router.push("/details/" + movie.id)}>Details</Button>
+                  <Button onPress={() => window.open("/details/" + movie.id, "_blank")}>Details</Button>
                 }
               </div>
             </div>

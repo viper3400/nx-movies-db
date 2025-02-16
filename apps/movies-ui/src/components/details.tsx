@@ -104,12 +104,12 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
       { movie &&
       <div>
         <div className="flex flex-row">
-          <Switch
+          {/*<Switch
             isSelected={!readOnlyMode}
             onValueChange={setReadOnlyMode}
             isDisabled>
             Bearbeitungsmodus
-          </Switch>
+          </Switch>*/}
           <Spacer x={4} />
           { isFavorite != undefined && <Switch isSelected={isFavorite} onValueChange={setIsFavorite}>Favorit</Switch> }
           <Spacer x={4} />

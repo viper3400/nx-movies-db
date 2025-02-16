@@ -25,7 +25,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [seenDatesLoading, setSeenDatesLoading] = useState<boolean>(true);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
-  const [deleteMode, setDeleteMode] = useState<string>("EXCLUDE_DELETED");
+  const [deleteMode, setDeleteMode] = useState<string>("INCLUDE_DELETED");
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();

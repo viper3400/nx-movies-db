@@ -1,0 +1,9 @@
+{
+  "name": "next-stack-auth-example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/next-stack-auth-example",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project next-stack-auth-example --web",
+  "targets": {}
+}

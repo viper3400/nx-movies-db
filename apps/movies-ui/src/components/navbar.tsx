@@ -36,19 +36,19 @@ export default function NavbarComponent() {
         {
           session  &&
             <>
-            <NavbarMenuItem>
-              <Button onPress={() => signOut()}>HomeWeb Logout</Button>
-            </NavbarMenuItem>
-            {session?.user?.email?.match(/@(gmail\.com|.*\.google\.com)$/) && (
               <NavbarMenuItem>
-              <Button onPress={() => { signOut(); window.open('https://accounts.google.com/Logout', '_blank'); }}>Google Logout</Button>
+                <Button onPress={() => signOut()}>HomeWeb Logout</Button>
               </NavbarMenuItem>
-            )}
-            {session?.user?.email?.includes('@github.com') && (
-              <NavbarMenuItem>
-              <Button onPress={() => { signOut(); window.open('https://github.com/logout', '_blank'); }}>Github Logout</Button>
-              </NavbarMenuItem>
-            )}
+              {session?.user?.email?.match(/@(gmail\.com|.*\.google\.com)$/) && (
+                <NavbarMenuItem>
+                  <Button onPress={() => { signOut(); window.open("https://accounts.google.com/Logout", "_blank"); }}>Google Logout</Button>
+                </NavbarMenuItem>
+              )}
+              {session?.user?.email?.includes("@github.com") && (
+                <NavbarMenuItem>
+                  <Button onPress={() => { signOut(); window.open("https://github.com/logout", "_blank"); }}>Github Logout</Button>
+                </NavbarMenuItem>
+              )}
             </>
         }
       </NavbarMenu>

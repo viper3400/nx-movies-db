@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FlagFilled, HeartFilled } from "./icons";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useRouter } from "next/navigation";
+import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
 
 export interface MovieCardProps {
   movie: Movie;
@@ -137,6 +138,11 @@ const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDa
     </Chip>
       }
       { seenDates && seenDates.length > 0  &&
+      <Chip color="primary" className="mr-4 mb-4">
+        {TimeElapsedFormatter.getDurationStringForDate(new Date(seenDates[seenDates.length - 1]))}
+      </Chip>
+      }
+      { seenDates && seenDates.length > 0  &&
       seenDates.map((date, index) => (
         <Chip
           key={index}
@@ -145,8 +151,7 @@ const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDa
           variant="flat">
           {formatDate(date)}
         </Chip>
-      ))
-      }
+      ))}
     </>
   );
 };

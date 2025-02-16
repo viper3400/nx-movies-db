@@ -5,7 +5,7 @@ export class TimeElapsedFormatter {
     const startMoment = moment(startDate);
     const endMoment = moment(endDate);
     const duration = moment.duration(endMoment.diff(startMoment));
-    const durationPlusOne = duration.add(1, 'days');
+    const durationPlusOne = duration.add(1, "days");
     return durationPlusOne;
   }
 

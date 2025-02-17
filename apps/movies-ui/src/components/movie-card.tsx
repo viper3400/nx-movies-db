@@ -11,9 +11,11 @@ export interface MovieCardProps {
   seenDatesLoading: boolean;
   userFlags?: UserFlagsDTO;
   imageUrl: string;
+
+  appBasePath?: string;
   showDetailsButton?: boolean;
 }
-export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsButton, seenDatesLoading} : MovieCardProps) => {
+export const MovieCard = ({movie, seenDates, userFlags, imageUrl, appBasePath, showDetailsButton, seenDatesLoading} : MovieCardProps) => {
   const router = useRouter();
   return (
     <>
@@ -51,7 +53,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
               </div>
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <a href={`/details/${movie.id}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`${appBasePath}/details/${movie.id}`} target="_blank" rel="noopener noreferrer">
                     <Image
                       alt="Movie Cover"
                       height={180}
@@ -84,7 +86,7 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, showDetailsBut
               </div>
               <div className="flex gap-2">
                 { showDetailsButton &&
-                  <Button onPress={() => window.open("/details/" + movie.id, "_blank")}>Details</Button>
+                  <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>
                 }
               </div>
             </div>

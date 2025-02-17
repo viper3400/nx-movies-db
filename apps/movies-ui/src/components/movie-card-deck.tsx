@@ -10,9 +10,10 @@ export interface MovieCardDeckProps {
   seenDatesLoading: boolean;
   userFlags?: UserFlagsDTO[];
   imageBaseUrl: string;
+  appBasePath?: string;
 }
 
-export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl, seenDatesLoading }: MovieCardDeckProps) => {
+export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl, appBasePath, seenDatesLoading }: MovieCardDeckProps) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {
@@ -30,6 +31,7 @@ export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl, seen
               seenDatesLoading={seenDatesLoading ?? false}
               userFlags={userFlags?.find((m) => m.movieId === movie.id) ?? undefined}
               imageUrl={imageBaseUrl + "/" + movie.id}
+              appBasePath={appBasePath}
               showDetailsButton
             />
           )

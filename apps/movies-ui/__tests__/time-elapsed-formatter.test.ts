@@ -21,7 +21,7 @@ describe("TimeElapsedFormatter should", () => {
     jest.setSystemTime(new Date(2025,0,27));
     const result = TimeElapsedFormatter.getDurationStringForDate(new Date(dateString));
     expect(result).toBe("2d");
-  })
+  });
 
   it.each([
     [1, new Date(2025,0,1), new Date(2025,0,1), moment.duration({ years: 0, months: 0, days: 0})],

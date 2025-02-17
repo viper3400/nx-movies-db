@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FormEvent, useRef } from "react";
+import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
@@ -31,7 +31,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
 
-  const invalidTextLength = (text: string) => text.length < 3;
+  const invalidTextLength = (text: string) => text.length < 0;
 
   useEffect(() => {
     const fetchAppBasePath = async () => {

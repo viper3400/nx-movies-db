@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FormEvent, useRef } from "react";
+import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
@@ -25,18 +25,17 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [seenDatesLoading, setSeenDatesLoading] = useState<boolean>(true);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
+  const [appBasePath, setAppBasePath] = useState<string>();
   const [deleteMode, setDeleteMode] = useState<string>("INCLUDE_DELETED");
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
-  const [isClearCompleted, setIsClearCompleted] = useState(false);
-  const bottomRef = useRef(null);
 
-  const invalidTextLength = (text: string) => text.length < 3;
+  const invalidTextLength = (text: string) => text.length < 0;
 
   useEffect(() => {
     const fetchAppBasePath = async () => {
-      const appBasePath = await getAppBasePath();
+      setAppBasePath(await getAppBasePath());
       setImageBaseUrl(appBasePath + "/api/cover-image");
     };
     fetchAppBasePath();
@@ -151,6 +150,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             seenDatesLoading={seenDatesLoading}
             userFlags={userFlags ? userFlags : []}
             imageBaseUrl={imageBaseUrl}
+            appBasePath={appBasePath}
           />
         )}
       </div>

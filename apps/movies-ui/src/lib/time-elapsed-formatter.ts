@@ -1,22 +1,21 @@
 import moment from "moment";
 
 export class TimeElapsedFormatter {
-  public static duration(startDate: Date, endDate: Date) {
-    const startMoment = moment(startDate);
-    const endMoment = moment(endDate);
+  public static duration(viewDate: Date, referenceDate: Date) {
+    const startMoment = moment(viewDate);
+    const endMoment = moment(referenceDate);
     const duration = moment.duration(endMoment.diff(startMoment));
-    const durationPlusOne = duration.add(1, "days");
-    return durationPlusOne;
+    return duration;
   }
 
-  public static durationToToday(startDate: Date) {
-    const duration = this.duration(startDate, new Date());
+  public static durationToToday(viewDate: Date) {
+    const duration = this.duration(viewDate, new Date());
     return duration;
   }
 
   public static getDurationString(duration: moment.Duration) {
     if(duration.years() == 0 && duration.months() < 3) {
-      return `${duration.asDays()}d`;
+      return `${duration.asDays().toFixed(0)}d`;
     }
     else if(duration.years() == 0 && duration.months() >= 3) {
       return `${duration.months()}M`;
@@ -29,8 +28,8 @@ export class TimeElapsedFormatter {
     }
   }
 
-  public static getDurationStringForDate(date: Date) {
-    const duration = this.durationToToday(date);
+  public static getDurationStringForDate(viewDate: Date) {
+    const duration = this.durationToToday(viewDate);
     return this.getDurationString(duration);
   }
 }

@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native","linux-arm64-openssl-3.0.x","darwin-arm64","linux-musl-arm64-openssl-3.0.x","linux-musl","linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x", "darwin-arm64", "linux-musl-arm64-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
 }
 
 generator pothos {
@@ -29,11 +29,13 @@ model homewebbridge_inventorydata {
 }
 
 model homewebbridge_usermoviesettings {
-  id           Int    @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   vdb_movieid  Int
-  asp_username String @db.VarChar(45)
+  asp_username String   @db.VarChar(45)
   is_favorite  Boolean?
   watchagain   Boolean?
+
+  video videodb_videodata @relation(fields: [vdb_movieid], references: [id])
 }
 
 model homewebbridge_userseen {
@@ -116,7 +118,8 @@ model videodb_videodata {
   videodb_mediatypes videodb_mediatypes   @relation(fields: [mediatype], references: [id])
 
   // Relation to homewebbridge_userseen
-  userSeen homewebbridge_userseen[]
+  userSeen          homewebbridge_userseen[]
+  userMovieSettings homewebbridge_usermoviesettings[]
 
   @@index([comment], map: "comment")
   @@index([diskid], map: "diskid_idx")

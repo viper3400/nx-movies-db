@@ -23,6 +23,7 @@ const Video = builder.simpleObject("Video", {
     diskid: t.string(),
     ownerid: t.int(),
     plot: t.string(),
+    favoriteOf: t.stringList(),
     genres: t.stringList(),
     mediaType: t.string()
   })
@@ -66,6 +67,18 @@ builder.queryType({
         queryPlot: t.arg.boolean({
           description: "Include plot in the result",
         }),
+        queryUserSettings: t.arg.boolean({
+          description: "Include user movie settings in the result",
+        }),
+        userName: t.arg.string({
+          description: "user name to filter user movie settings"
+        }),
+        filterFavorites: t.arg.boolean({
+          description: "Filter only for user favorites. Requires user name."
+        }),
+        filterFlagged: t.arg.boolean({
+          description: "Filter only for user favorites. Requires user name."
+        }),
         deleteMode: t.arg({
           type: DeleteMode,
           description: "Filter videos based on delete mode",
@@ -88,7 +101,9 @@ builder.queryType({
           diskid: video.diskid,
           ownerid: video.owner_id, // Make sure to match the field name
           plot: args.queryPlot ? video.plot : undefined, // Include plot based on the argument,
-          genres: video.videodb_videogenre?.map( (vg) => vg.genre.name),
+          favoriteOf: args.queryUserSettings ? video.userMovieSettings?.filter(s => s.is_favorite).map(s => s.asp_username) : undefined,
+          watchAgain: args.queryUserSettings ? video.userMovieSettings?.filter(s => s.watchagain).map(s => s.asp_username) : undefined,
+          genres: video.videodb_videogenre?.map(vg => vg.genre.name),
           mediaType: video.videodb_mediatypes?.name,
         }));
 

@@ -11,6 +11,10 @@ export type VideoQueryArgs = {
   mediaType?: string[]; // Optional array of strings for filtering by media type
   ownerid?: string;     // Optional string for filtering by owner ID
   queryPlot?: boolean;
+  queryUserSettings?: boolean;
+  filterFavorites?: boolean;
+  filterFlagged?: boolean;
+  userName?: string;
   deleteMode?: string;
   skip?: number;
   take?: number;
@@ -32,10 +36,20 @@ type Video = {
   videodb_mediatypes?: {
     name: string;
   } | null;
+  userMovieSettings?: {
+    is_favorite: boolean;
+    watchagain: boolean;
+    asp_username: string;
+  }[] | null
 };
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, deleteMode, take, skip} = args;
+  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, queryUserSettings, userName, filterFavorites, filterFlagged, deleteMode, take, skip} = args;
+
+  if ((filterFlagged || filterFavorites) && !userName) {
+    throw new Error("Username must be set");
+  }
+
   const where = {
     AND: [
       {
@@ -71,6 +85,22 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
       } : deleteMode === "EXCLUDE_DELETED" ? {
         owner_id: { not: 999 },
       } : {}, // INCLUDE_DELETED will not add any additional filters
+      userName && filterFavorites ? {
+        userMovieSettings: {
+          some: {
+            asp_username: userName,
+            is_favorite: true,
+          },
+        },
+      } : {},
+      userName && filterFlagged ? {
+        userMovieSettings: {
+          some: {
+            asp_username: userName,
+            watchagain: true,
+          },
+        },
+      } : {},
     ],
   };
   const totalCount = await prisma.videodb_videodata.count({
@@ -100,6 +130,13 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
           name: true,
         },
       },
+      userMovieSettings: queryUserSettings ? {
+        select: {
+          is_favorite: true,
+          watchagain: true,
+          asp_username: true
+        }
+      } : false
     },
     take: take,
     skip: skip,
@@ -108,5 +145,6 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const result = {
     videos, totalCount
   };
+  console.debug("result: " + JSON.stringify(result.videos[0].userMovieSettings));
   return result;
 };

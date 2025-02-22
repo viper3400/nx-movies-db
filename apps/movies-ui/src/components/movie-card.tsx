@@ -120,7 +120,7 @@ const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDa
           className={"mr-4 mb-4 animate-pulse"}
           color="secondary"
           variant="bordered">
-          Loading ...
+          Lade ...
         </Chip>
       }
       { !loading && notSeen &&

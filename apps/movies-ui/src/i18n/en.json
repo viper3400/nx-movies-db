@@ -1,0 +1,15 @@
+{
+  "search": {
+    "search": "Suche",
+    "result_count": "result count",
+    "placeholder": "Enter movie title, subtitle or shelf",
+    "deletedMoviesFilterLabel": "Deleted Movies",
+    "deletedMoviesFilterExcludeDeleted": "Exclude Deleted",
+    "deletedMoviesFilterIncludeDeleted": "Include Deleted",
+    "deletedMoviesFilterOnlyDeleted": "Only Deleted"
+  },
+  "common": {
+    "title": "Movie Database",
+    "loading": "Loading"
+  }
+}

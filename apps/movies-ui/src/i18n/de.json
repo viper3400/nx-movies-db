@@ -1,0 +1,15 @@
+{
+  "search": {
+    "search": "Suche",
+    "result_count": "Ergebnisse",
+    "placeholder": "Titel, Untertitel oder Regal eingeben",
+    "deletedMoviesFilterLabel": "Gelöschte Filme",
+    "deletedMoviesFilterExcludeDeleted": "Exklusive Gelöschte",
+    "deletedMoviesFilterIncludeDeleted": "Inklusive Gelöschte",
+    "deletedMoviesFilterOnlyDeleted": "Nur Gelöschte"
+  },
+  "common": {
+    "title": "Filmdatenbank",
+    "loading": "Lade"
+  }
+}

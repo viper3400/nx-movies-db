@@ -2,21 +2,44 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@
 import Image from "next/image";
 import { FlagFilled, HeartFilled } from "./icons";
 import { Movie, UserFlagsDTO } from "../interfaces";
-import { useRouter } from "next/navigation";
 import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
+import { useEffect, useState } from "react";
 
 export interface MovieCardProps {
   movie: Movie;
-  seenDates: string[];
-  seenDatesLoading: boolean;
   userFlags?: UserFlagsDTO;
   imageUrl: string;
-
   appBasePath?: string;
   showDetailsButton?: boolean;
+  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+  loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
 }
-export const MovieCard = ({movie, seenDates, userFlags, imageUrl, appBasePath, showDetailsButton, seenDatesLoading} : MovieCardProps) => {
-  const router = useRouter();
+export const MovieCard = ({movie, imageUrl, appBasePath, showDetailsButton, loadSeenDatesForMovie, loadUserFlagsForMovie} : MovieCardProps) => {
+  const [seenDates, setSeenDates] = useState<string[]>([]);
+  const [seenDatesLoading, setSeenDatesLoading] = useState(false);
+  const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
+  const [additionalDataLoaded, setAdditionalDatesLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchSeenDates = async () => {
+      setSeenDatesLoading(true);
+      const dates = await loadSeenDatesForMovie(movie.id);
+      setSeenDates(dates);
+      setSeenDatesLoading(false);
+    };
+
+    const fetchUserFlags = async () => {
+      const flags = await loadUserFlagsForMovie(movie.id);
+      setUserFlags(flags);
+    };
+
+    if (!additionalDataLoaded) {
+      fetchSeenDates();
+      fetchUserFlags();
+      setAdditionalDatesLoaded(true);
+    }
+  }, [movie.id]);
+
   return (
     <>
       <div key={movie.id}>

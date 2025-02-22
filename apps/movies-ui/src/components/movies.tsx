@@ -10,6 +10,7 @@ import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
+import useTranslation from "../i18n/useTranslation";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -32,6 +33,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [nextPage, setNextPage] = useState<number>();
 
   const invalidTextLength = (text: string) => text.length < 0;
+  const { t, lang, changeLanguage } = useTranslation();
 
   useEffect(() => {
     const fetchAppBasePath = async () => {
@@ -140,7 +142,17 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         deleteMode={deleteMode}
         setDeleteMode={setDeleteMode}
         handleSearchSubmit={handleSearchSubmit}
-      />
+        langResources={
+          {
+            placeholderLabel: t.search?.placeholder,
+            searchLabel: t.search?.search,
+            resultCountLabel: t.search?.result_count,
+            deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
+            deletedMoviesFilterExcludeDeleted: t.search?.deletedMoviesFilterExcludeDeleted,
+            deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
+            deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
+          }
+        }      />
       <div className="space-y-4">
         {loading && <div>Loading ...</div>}
         {searchResult && imageBaseUrl && (

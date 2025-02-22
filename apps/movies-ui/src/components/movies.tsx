@@ -154,7 +154,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           }
         }      />
       <div className="space-y-4">
-        {loading && <div>Loading ...</div>}
+        {loading && <div>{t.common?.loading} ...</div>}
         {searchResult && imageBaseUrl && (
           <MovieCardDeck
             movies={searchResult}

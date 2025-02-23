@@ -1,4 +1,4 @@
-import { SeenDateDTO, UserFlagsDTO } from "../interfaces";
+import { UserFlagsDTO } from "../interfaces";
 import { MovieCard } from "./movie-card";
 import { Movie } from "../interfaces";
 
@@ -6,14 +6,20 @@ import { Movie } from "../interfaces";
 // Define the props for the MovieCard component
 export interface MovieCardDeckProps {
   movies: Movie[];
-  seenDates?: SeenDateDTO[];
-  seenDatesLoading: boolean;
-  userFlags?: UserFlagsDTO[];
   imageBaseUrl: string;
   appBasePath?: string;
+  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+  loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
+  updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
 }
 
-export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl, appBasePath, seenDatesLoading }: MovieCardDeckProps) => {
+export const MovieCardDeck = ({
+  movies,
+  imageBaseUrl,
+  appBasePath,
+  loadSeenDatesForMovie,
+  loadUserFlagsForMovie,
+  updateFlagsForMovie }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {
@@ -27,12 +33,12 @@ export const MovieCardDeck = ({ movies, seenDates, userFlags, imageBaseUrl, appB
             <MovieCard
               key={movie.id}
               movie={movie}
-              seenDates={seenDates?.find((m) => m.movieId === movie.id)?.dates ?? []}
-              seenDatesLoading={seenDatesLoading ?? false}
-              userFlags={userFlags?.find((m) => m.movieId === movie.id) ?? undefined}
+              loadUserFlagsForMovie={loadUserFlagsForMovie}
               imageUrl={imageBaseUrl + "/" + movie.id}
               appBasePath={appBasePath}
               showDetailsButton
+              loadSeenDatesForMovie={loadSeenDatesForMovie}
+              updateFlagsForMovie={updateFlagsForMovie}
             />
           )
         )}

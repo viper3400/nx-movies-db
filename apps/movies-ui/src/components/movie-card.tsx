@@ -1,22 +1,56 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@heroui/react";
 import Image from "next/image";
-import { FlagFilled, HeartFilled } from "./icons";
 import { Movie, UserFlagsDTO } from "../interfaces";
-import { useRouter } from "next/navigation";
 import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
+import { useEffect, useState } from "react";
+import { UserFlagButton } from "./user-flag-button";
 
 export interface MovieCardProps {
   movie: Movie;
-  seenDates: string[];
-  seenDatesLoading: boolean;
-  userFlags?: UserFlagsDTO;
   imageUrl: string;
-
   appBasePath?: string;
   showDetailsButton?: boolean;
+  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+  loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
+  updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
 }
-export const MovieCard = ({movie, seenDates, userFlags, imageUrl, appBasePath, showDetailsButton, seenDatesLoading} : MovieCardProps) => {
-  const router = useRouter();
+export const MovieCard = ({
+  movie,
+  imageUrl,
+  appBasePath,
+  showDetailsButton,
+  loadSeenDatesForMovie,
+  loadUserFlagsForMovie,
+  updateFlagsForMovie} : MovieCardProps) => {
+
+  const [seenDates, setSeenDates] = useState<string[]>([]);
+  const [seenDatesLoading, setSeenDatesLoading] = useState(false);
+  const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
+  const [userFlagsLoading, setUserFlagsLoading] = useState(true);
+  const [additionalDataLoaded, setAdditionalDatesLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchSeenDates = async () => {
+      setSeenDatesLoading(true);
+      const dates = await loadSeenDatesForMovie(movie.id);
+      setSeenDates(dates);
+      setSeenDatesLoading(false);
+    };
+
+    const fetchUserFlags = async () => {
+      setUserFlagsLoading(true);
+      const flags = await loadUserFlagsForMovie(movie.id);
+      setUserFlags(flags);
+      setUserFlagsLoading(false);
+    };
+
+    if (!additionalDataLoaded) {
+      fetchSeenDates();
+      fetchUserFlags();
+      setAdditionalDatesLoaded(true);
+    }
+  }, [movie.id, additionalDataLoaded, loadSeenDatesForMovie, loadUserFlagsForMovie]);
+
   return (
     <>
       <div key={movie.id}>
@@ -27,16 +61,22 @@ export const MovieCard = ({movie, seenDates, userFlags, imageUrl, appBasePath, s
                 {movie.title}
               </div>
               <div className="flex gap-2">
-                { userFlags?.isFavorite ?
-                  <Chip className="text-left w-full" color="warning">
-                    <HeartFilled />
-                  </Chip> : ""
-                }
-                { userFlags?.isWatchAgain ?
-                  <Chip className="text-left w-full" color="warning">
-                    <FlagFilled/>
-                  </Chip> : ""
-                }
+                <UserFlagButton
+                  userFlagChipProps={ {type: "Favorite", active: userFlags?.isFavorite ?? false, loading: userFlagsLoading }}
+                  onPress={async () => {
+                    const flags: UserFlagsDTO = {movieId: movie.id, isFavorite: !userFlags?.isFavorite, isWatchAgain: userFlags?.isWatchAgain ?? false};
+                    setUserFlags(flags);
+                    updateFlagsForMovie(flags);
+                  }}
+                />
+                <UserFlagButton
+                  userFlagChipProps={ {type: "Watchagain", active: userFlags?.isWatchAgain ?? false, loading: userFlagsLoading }}
+                  onPress={async () => {
+                    const flags: UserFlagsDTO = {movieId: movie.id, isFavorite: userFlags?.isFavorite ?? false, isWatchAgain: !userFlags?.isWatchAgain};
+                    setUserFlags(flags);
+                    updateFlagsForMovie(flags);
+                  }}
+                />
                 <Chip color="secondary">{movie.mediaType}</Chip>
                 {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
               </div>
@@ -120,7 +160,7 @@ const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDa
           className={"mr-4 mb-4 animate-pulse"}
           color="secondary"
           variant="bordered">
-          Loading ...
+          Lade ...
         </Chip>
       }
       { !loading && notSeen &&

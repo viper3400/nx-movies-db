@@ -4,12 +4,13 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
-import { getMovies, getSeenDates } from "../app/services/actions";
+import { getMovies, getSeenDates, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { Movie, MoviesDbSession, SeenDateDTO, UserFlagsDTO } from "../interfaces";
+import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
+import useTranslation from "../i18n/useTranslation";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -20,10 +21,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
-  const [seenDates, setSeenDates] = useState<SeenDateDTO[]>();
   const [userFlags, setUserFlags] = useState<UserFlagsDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [seenDatesLoading, setSeenDatesLoading] = useState<boolean>(true);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [appBasePath, setAppBasePath] = useState<string>();
   const [deleteMode, setDeleteMode] = useState<string>("INCLUDE_DELETED");
@@ -32,6 +31,25 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [nextPage, setNextPage] = useState<number>();
 
   const invalidTextLength = (text: string) => text.length < 0;
+  const { t, lang, changeLanguage } = useTranslation();
+
+  const loadSeenDatesForMovie = async (movieId: string) => {
+    const seenDates = await getSeenDates(movieId, "VG_Default");
+    return seenDates;
+  };
+
+  const loadUserFlagsForMovie = async (movieId: string) => {
+    const flags = await getUserFlagsForMovie(movieId, session.userName);
+    return flags;
+  };
+
+  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
+    await updateUserFlags(
+      parseInt(flags.movieId),
+      flags.isFavorite,
+      flags.isWatchAgain,
+      session.userName);
+  };
 
   useEffect(() => {
     const fetchAppBasePath = async () => {
@@ -40,32 +58,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     };
     fetchAppBasePath();
   });
-
-  useEffect(() => {
-    if (searchResult) {
-      const fetchSeenDates = async () => {
-        const seenDateCollection: SeenDateDTO[] = [];
-        for (const movie of searchResult) {
-          const dates = await getSeenDates(movie.id, "VG_Default");
-          seenDateCollection.push({ movieId: movie.id, dates });
-        }
-        setSeenDates(seenDateCollection);
-        setSeenDatesLoading(false);
-      };
-
-      const fetchUserFlags = async () => {
-        const userFlagCollection: UserFlagsDTO[] = [];
-        for (const movie of searchResult) {
-          const flags = await getUserFlagsForMovie(movie.id, session.userName);
-          if(flags.length > 0) userFlagCollection.push({ movieId: movie.id, isFavorite: flags[0].isFavorite, isWatchAgain: flags[0].isWatchAgain  });
-        }
-        setUserFlags(userFlagCollection);
-      };
-
-      fetchSeenDates();
-      fetchUserFlags();
-    }
-  }, [searchResult]); // Run when `searchResult` changes
 
   useEffect(() => {
     invalidSearch ?? clearSearchResult();
@@ -108,13 +100,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     setSearchResult(undefined);
     setCurrentPage(undefined);
     setNextPage(undefined);
-    setSeenDates([]);
+
     setLoading(false);
   };
 
   const executeSearch = async (page: number) => {
     setLoading(true);
-    setSeenDatesLoading(true);
     const result = await getMovies(searchText, deleteMode, 10, page * 10);
     const resultCount = result.videos.requestMeta.totalCount;
     setTotalMoviesCount(resultCount);
@@ -140,17 +131,27 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         deleteMode={deleteMode}
         setDeleteMode={setDeleteMode}
         handleSearchSubmit={handleSearchSubmit}
-      />
+        langResources={
+          {
+            placeholderLabel: t.search?.placeholder,
+            searchLabel: t.search?.search,
+            resultCountLabel: t.search?.result_count,
+            deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
+            deletedMoviesFilterExcludeDeleted: t.search?.deletedMoviesFilterExcludeDeleted,
+            deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
+            deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
+          }
+        }      />
       <div className="space-y-4">
-        {loading && <div>Loading ...</div>}
+        {loading && <div>{t.common?.loading} ...</div>}
         {searchResult && imageBaseUrl && (
           <MovieCardDeck
             movies={searchResult}
-            seenDates={seenDates ? seenDates : []}
-            seenDatesLoading={seenDatesLoading}
-            userFlags={userFlags ? userFlags : []}
+            loadUserFlagsForMovie={loadUserFlagsForMovie}
             imageBaseUrl={imageBaseUrl}
             appBasePath={appBasePath}
+            loadSeenDatesForMovie={loadSeenDatesForMovie}
+            updateFlagsForMovie={updateUserFlagsForMovie}
           />
         )}
       </div>

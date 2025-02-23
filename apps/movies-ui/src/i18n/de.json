@@ -6,7 +6,9 @@
     "deletedMoviesFilterLabel": "Gelöschte Filme",
     "deletedMoviesFilterExcludeDeleted": "Exklusive Gelöschte",
     "deletedMoviesFilterIncludeDeleted": "Inklusive Gelöschte",
-    "deletedMoviesFilterOnlyDeleted": "Nur Gelöschte"
+    "deletedMoviesFilterOnlyDeleted": "Nur Gelöschte",
+    "favoriteMoviesFilterLabel": "Lieblingsfilme",
+    "watchagainMoviesFilterLabel": "Nochmal sehen"
   },
   "common": {
     "title": "Filmdatenbank",

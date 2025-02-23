@@ -1,4 +1,4 @@
-import { Input, Radio, RadioGroup } from "@heroui/react";
+import { Input, Radio, RadioGroup, Spacer, Switch } from "@heroui/react";
 import React from "react";
 
 interface SearchFormLangResources {
@@ -8,7 +8,9 @@ interface SearchFormLangResources {
   deletedMoviesFilterLabel: string;
   deletedMoviesFilterExcludeDeleted: string;
   deletedMoviesFilterIncludeDeleted: string;
-  deletedMoviesFilterOnlyDeleted: string
+  deletedMoviesFilterOnlyDeleted: string;
+  favoriteMoviesFilterLabel: string;
+  watchagainMoviesFilterLabel: string;
 
 }
 
@@ -21,6 +23,10 @@ interface SearchFormProps {
   totalMoviesCount: number;
   deleteMode: string;
   setDeleteMode: (mode: string) => void;
+  filterForFavorites: boolean;
+  setFilterForFavorites: () => void;
+  filterForWatchAgain: boolean;
+  setFilterForWatchAgain: () => void
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   langResources: SearchFormLangResources;
 }
@@ -34,6 +40,10 @@ const SearchForm: React.FC<SearchFormProps> = ({
   totalMoviesCount,
   deleteMode,
   setDeleteMode,
+  filterForFavorites,
+  setFilterForFavorites,
+  filterForWatchAgain,
+  setFilterForWatchAgain,
   handleSearchSubmit,
   langResources
 }) => {
@@ -59,12 +69,27 @@ const SearchForm: React.FC<SearchFormProps> = ({
           }}
         />
       </div>
-      <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
-        <RadioGroup label={langResources.deletedMoviesFilterLabel} value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
-          <Radio value="EXCLUDE_DELETED">{langResources.deletedMoviesFilterExcludeDeleted}</Radio>
-          <Radio value="INCLUDE_DELETED">{langResources.deletedMoviesFilterIncludeDeleted}</Radio>
-          <Radio value="ONLY_DELETED">{langResources.deletedMoviesFilterOnlyDeleted}</Radio>
-        </RadioGroup>
+      <div className="flex">
+        <div className="w-full flex-wrap md:flex-nowrap pb-4">
+          <RadioGroup label={langResources.deletedMoviesFilterLabel} value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
+            <Radio value="EXCLUDE_DELETED">{langResources.deletedMoviesFilterExcludeDeleted}</Radio>
+            <Radio value="INCLUDE_DELETED">{langResources.deletedMoviesFilterIncludeDeleted}</Radio>
+            <Radio value="ONLY_DELETED">{langResources.deletedMoviesFilterOnlyDeleted}</Radio>
+          </RadioGroup>
+          <div>
+            <Spacer y={4} />
+          </div>
+          <div className="flex w-full flex-wrap flex-row md:flex-nowrap pb-4">
+            <div className="pr-4">
+              <Switch
+                isSelected={filterForFavorites}
+                onValueChange={setFilterForFavorites}>{langResources.favoriteMoviesFilterLabel}</Switch>
+            </div>
+            <Switch
+              isSelected={filterForWatchAgain}
+              onValueChange={setFilterForWatchAgain}>{langResources.watchagainMoviesFilterLabel}</Switch>
+          </div>
+        </div>
       </div>
     </form>
   );

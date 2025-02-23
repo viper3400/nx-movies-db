@@ -3,7 +3,7 @@
 import { gql } from "@apollo/client";
 
 import { getClient } from "../../../lib/apollocient";
-import { UserFlagsDTO } from "../../../interfaces/user-flags-dto";
+//import { UserFlagsDTO } from "apps/movies-ui/src/interfaces";
 
 // GraphQL query
 const getUserFlagsQuery = gql`
@@ -24,8 +24,8 @@ export async function getUserFlagsForMovie(movieId: string, userName: string) {
   });
 
   const result = await data;
-
-  const flags: UserFlagsDTO = result.userFlagsForUser.length > 0 ?
+  console.log(result.userFlagsForUser);
+  const flags = result.userFlagsForUser.length > 0 ?
     { movieId: movieId, isFavorite: result.userFlagsForUser[0].isFavorite, isWatchAgain: result.userFlagsForUser[0].isWatchAgain } :
     { movieId: movieId, isFavorite: false, isWatchAgain: false };
   return flags;

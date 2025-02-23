@@ -1,8 +1,5 @@
 import { auth } from "../../../lib/auth";
-import {
-  getAllowedUser,
-  isUserAllowed,
-} from "../../../lib/allowed-user-parser";
+import { getAllowedUser, isUserAllowed } from "../../../lib/allowed-user-parser";
 import { MoviesDbSession } from "../../../interfaces";
 
 export async function getAllowedSession() {
@@ -14,7 +11,7 @@ export async function getAllowedSession() {
         userName: allowedUser.name,
         eMail: allowedUser.email,
         ownerId: allowedUser.id,
-        avatarUrl: session.user.image ?? "",
+        avatarUrl: session.user.image ?? ""
       };
       return moviesDbSession;
     } else return undefined;

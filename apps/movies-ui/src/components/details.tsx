@@ -13,10 +13,7 @@ interface DetailsComponentProperties {
   id: string;
   userName: string;
 }
-export const DetailsComponent = ({
-  id,
-  userName,
-}: DetailsComponentProperties) => {
+export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) => {
   const [movie, setMovie] = useState<Movie>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -40,8 +37,7 @@ export const DetailsComponent = ({
       parseInt(flags.movieId),
       flags.isFavorite,
       flags.isWatchAgain,
-      userName
-    );
+      userName);
   };
 
   useEffect(() => {
@@ -76,45 +72,35 @@ export const DetailsComponent = ({
   }
   return (
     <div>
-      {movie && (
-        <div>
-          <MovieCard
-            movie={movie}
-            imageUrl={imageBaseUrl + "/" + id}
-            loadSeenDatesForMovie={loadSeenDatesForMovie}
-            loadUserFlagsForMovie={loadUserFlagsForMovie}
-            updateFlagsForMovie={updateUserFlagsForMovie}
-          />
-          <Spacer y={4} />
-          {!readOnlyMode && (
-            <div>
-              <Input
-                size="lg"
-                defaultValue={movie.title}
-                isReadOnly={readOnlyMode}
-                label="Titel"
-                variant={inputVariant}
-              />
-              <Spacer y={4} />
-              <Input
-                size="lg"
-                defaultValue={movie.subtitle}
-                isReadOnly={readOnlyMode}
-                label="Subtitel"
-                variant={inputVariant}
-              />
-              <Spacer y={4} />
-              <Input
-                size="lg"
-                defaultValue={movie.diskid}
-                isReadOnly={readOnlyMode}
-                label="Diskid"
-                variant={inputVariant}
-              />
-            </div>
-          )}
-        </div>
-      )}
+      { movie &&
+      <div>
+        <MovieCard
+          movie={movie}
+          imageUrl={imageBaseUrl + "/" + id}
+          loadSeenDatesForMovie={loadSeenDatesForMovie}
+          loadUserFlagsForMovie={loadUserFlagsForMovie}
+          updateFlagsForMovie={updateUserFlagsForMovie} />
+        <Spacer y={4} />
+        { !readOnlyMode &&
+        <div><Input
+          size="lg"
+          defaultValue={movie.title}
+          isReadOnly={readOnlyMode}
+          label="Titel"
+          variant={inputVariant} /><Spacer y={4} /><Input
+          size="lg"
+          defaultValue={movie.subtitle}
+          isReadOnly={readOnlyMode}
+          label="Subtitel"
+          variant={inputVariant} /><Spacer y={4} /><Input
+          size="lg"
+          defaultValue={movie.diskid}
+          isReadOnly={readOnlyMode}
+          label="Diskid"
+          variant={inputVariant} /></div>
+        }
+      </div>
+      }
     </div>
   );
 };

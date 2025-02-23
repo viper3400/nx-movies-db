@@ -1,9 +1,9 @@
-import { FlatCompat } from "@eslint/eslintrc";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import js from "@eslint/js";
-import nxEslintPlugin from "@nx/eslint-plugin";
-import eslintPluginUnusedImports from "eslint-plugin-unused-imports";
+import { FlatCompat } from '@eslint/eslintrc';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import js from '@eslint/js';
+import nxEslintPlugin from '@nx/eslint-plugin';
+import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 
 const compat = new FlatCompat({
   baseDirectory: dirname(fileURLToPath(import.meta.url)),
@@ -12,64 +12,64 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["**/dist"],
+    ignores: ['**/dist'],
   },
   {
     plugins: {
-      "@nx": nxEslintPlugin,
-      "unused-imports": eslintPluginUnusedImports,
+      '@nx': nxEslintPlugin,
+      'unused-imports': eslintPluginUnusedImports,
     },
   },
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
-      "@nx/enforce-module-boundaries": [
-        "error",
+      '@nx/enforce-module-boundaries': [
+        'error',
         {
           enforceBuildableLibDependency: true,
           allow: [],
           depConstraints: [
             {
-              sourceTag: "*",
-              onlyDependOnLibsWithTags: ["*"],
+              sourceTag: '*',
+              onlyDependOnLibsWithTags: ['*'],
             },
           ],
         },
       ],
-      semi: ["error", "always"],
-      quotes: ["error", "double"],
-      indent: ["error", 2],
-      "unused-imports/no-unused-imports": "error",
+      semi: ['error', 'always'],
+      quotes: ['error', 'double'],
+      indent: ['error', 2],
+      'unused-imports/no-unused-imports': 'error',
     },
   },
   ...compat
     .config({
-      extends: ["plugin:@nx/typescript", "prettier"],
+      extends: ['plugin:@nx/typescript'],
     })
     .map((config) => ({
       ...config,
-      files: ["**/*.ts", "**/*.tsx", "**/*.cts", "**/*.mts"],
+      files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'],
       rules: {
         ...config.rules,
-        semi: ["error", "always"],
-        quotes: ["error", "double"],
-        //indent: ["error", 2],
-        "unused-imports/no-unused-imports": "error",
+        semi: ['error', 'always'],
+        quotes: ['error', 'double'],
+        indent: ['error', 2],
+        'unused-imports/no-unused-imports': 'error',
       },
     })),
   ...compat
     .config({
-      extends: ["plugin:@nx/javascript"],
+      extends: ['plugin:@nx/javascript'],
     })
     .map((config) => ({
       ...config,
-      files: ["**/*.js", "**/*.jsx", "**/*.cjs", "**/*.mjs"],
+      files: ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'],
       rules: {
         ...config.rules,
-        semi: ["error", "always"],
-        quotes: ["error", "double"],
-        indent: ["error", 2],
-        "unused-imports/no-unused-imports": "error",
+        semi: ['error', 'always'],
+        quotes: ['error', 'double'],
+        indent: ['error', 2],
+        'unused-imports/no-unused-imports': 'error',
       },
     })),
   ...compat
@@ -80,13 +80,13 @@ export default [
     })
     .map((config) => ({
       ...config,
-      files: ["**/*.spec.ts", "**/*.spec.tsx", "**/*.spec.js", "**/*.spec.jsx"],
+      files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
       rules: {
         ...config.rules,
-        semi: ["error", "always"],
-        quotes: ["error", "double"],
-        indent: ["error", 2],
-        "unused-imports/no-unused-imports": "error",
+        semi: ['error', 'always'],
+        quotes: ['error', 'double'],
+        indent: ['error', 2],
+        'unused-imports/no-unused-imports': 'error',
       },
     })),
 ];

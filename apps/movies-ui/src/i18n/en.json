@@ -3,10 +3,13 @@
     "search": "Suche",
     "result_count": "result count",
     "placeholder": "Enter movie title, subtitle or shelf",
-    "deletedMoviesFilterLabel": "Deleted Movies",
+    "deletedMoviesFilterLabel": "Filter Settings for Deleted Movies",
     "deletedMoviesFilterExcludeDeleted": "Exclude Deleted",
     "deletedMoviesFilterIncludeDeleted": "Include Deleted",
-    "deletedMoviesFilterOnlyDeleted": "Only Deleted"
+    "deletedMoviesFilterOnlyDeleted": "Only Deleted",
+    "moviesFilterLabel": "Filter Settings",
+    "favoriteMoviesFilterLabel": "Favorite Movies",
+    "watchagainMoviesFilterLabel": "Watch Again"
   },
   "common": {
     "title": "Movie Database",

@@ -21,7 +21,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [searchText, setSearchText] = useState<string>("");
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
-  const [userFlags, setUserFlags] = useState<UserFlagsDTO[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [appBasePath, setAppBasePath] = useState<string>();
@@ -29,6 +28,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
+  const [filterForFavorites, setFilterForFavorites] = useState(false);
+  const [filterForWatchAgain, setFilterForWatchAgain] = useState(false);
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t, lang, changeLanguage } = useTranslation();
@@ -67,8 +68,9 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   // New useEffect to retrigger search when deleteMode changes
   useEffect(() => {
     if (searchResult) {
-      if (invalidTextLength(searchText))  {
-        validateSearch(searchText);}
+      if (invalidTextLength(searchText)) {
+        validateSearch(searchText);
+      }
       else {
         clearSearchResult();
         executeSearch(0);
@@ -106,7 +108,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   const executeSearch = async (page: number) => {
     setLoading(true);
-    const result = await getMovies(searchText, deleteMode, 10, page * 10);
+    const result =
+      await getMovies(searchText, deleteMode, filterForFavorites, filterForWatchAgain, session.userName, 10, page * 10);
     const resultCount = result.videos.requestMeta.totalCount;
     setTotalMoviesCount(resultCount);
     setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
@@ -130,18 +133,23 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         totalMoviesCount={totalMoviesCount}
         deleteMode={deleteMode}
         setDeleteMode={setDeleteMode}
+        filterForFavorites={filterForFavorites}
+        setFilterForFavorites={() => setFilterForFavorites(!filterForFavorites)}
+        filterForWatchAgain={filterForWatchAgain}
+        setFilterForWatchAgain={() => setFilterForWatchAgain(!filterForWatchAgain)}
         handleSearchSubmit={handleSearchSubmit}
-        langResources={
-          {
-            placeholderLabel: t.search?.placeholder,
-            searchLabel: t.search?.search,
-            resultCountLabel: t.search?.result_count,
-            deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
-            deletedMoviesFilterExcludeDeleted: t.search?.deletedMoviesFilterExcludeDeleted,
-            deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
-            deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
-          }
-        }      />
+        langResources={{
+          placeholderLabel: t.search?.placeholder,
+          searchLabel: t.search?.search,
+          resultCountLabel: t.search?.result_count,
+          deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
+          deletedMoviesFilterExcludeDeleted: t.search?.deletedMoviesFilterExcludeDeleted,
+          deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
+          deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
+          favoriteMoviesFilterLabel: t.search?.favoriteMoviesFilterLabel,
+          watchagainMoviesFilterLabel: t.search?.watchagainMoviesFilterLabel,
+          moviesFilterLabel: t.search?.moviesFilterLabel
+        }} />
       <div className="space-y-4">
         {loading && <div>{t.common?.loading} ...</div>}
         {searchResult && imageBaseUrl && (

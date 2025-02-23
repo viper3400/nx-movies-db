@@ -147,7 +147,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
           deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
           favoriteMoviesFilterLabel: t.search?.favoriteMoviesFilterLabel,
-          watchagainMoviesFilterLabel: t.search?.watchagainMoviesFilterLabel
+          watchagainMoviesFilterLabel: t.search?.watchagainMoviesFilterLabel,
+          moviesFilterLabel: t.search?.moviesFilterLabel
         }} />
       <div className="space-y-4">
         {loading && <div>{t.common?.loading} ...</div>}

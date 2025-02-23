@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Input, Radio, RadioGroup, Spacer, Switch } from "@heroui/react";
+import { Accordion, AccordionItem, Input, Radio, RadioGroup, Switch } from "@heroui/react";
 import React from "react";
 
 interface SearchFormLangResources {
@@ -99,10 +99,6 @@ const SearchForm: React.FC<SearchFormProps> = ({
               </RadioGroup>
             </AccordionItem>
           </Accordion>
-          <div>
-            <Spacer y={4} />
-          </div>
-
         </div>
       </div>
     </form>

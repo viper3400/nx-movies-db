@@ -23,7 +23,6 @@ const getMovieById = gql`
 `;
 
 export async function getMoviesById(id: string, deleteMode: string) {
-
   const { data } = await getClient().query({
     query: getMovieById,
     variables: { id: id, deleteMode: deleteMode },

@@ -4,7 +4,6 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { yoga } from "@nx-movies-db/movies-graphql-lib";
 
-
 const host = process.env.HOST ?? "localhost";
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
@@ -17,7 +16,7 @@ app.use(
   cors({
     origin: (origin, cb) => cb(null, true),
     credentials: true,
-  }),
+  })
 );
 
 //setupRoutes(app)

@@ -4,7 +4,11 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
-import { getMovies, getSeenDates, updateUserFlags } from "../app/services/actions";
+import {
+  getMovies,
+  getSeenDates,
+  updateUserFlags,
+} from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
@@ -48,7 +52,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       parseInt(flags.movieId),
       flags.isFavorite,
       flags.isWatchAgain,
-      session.userName);
+      session.userName
+    );
   };
 
   useEffect(() => {
@@ -63,13 +68,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     invalidSearch ?? clearSearchResult();
   }, [invalidSearch]);
 
-
   // New useEffect to retrigger search when deleteMode changes
   useEffect(() => {
     if (searchResult) {
-      if (invalidTextLength(searchText))  {
-        validateSearch(searchText);}
-      else {
+      if (invalidTextLength(searchText)) {
+        validateSearch(searchText);
+      } else {
         clearSearchResult();
         executeSearch(0);
       }
@@ -90,7 +94,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   };
 
   const handleNextPageTrigger = () => {
-    if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
+    if (
+      !loading &&
+      nextPage !== undefined &&
+      currentPage !== undefined &&
+      nextPage > currentPage
+    ) {
       executeSearch(nextPage);
     }
   };
@@ -109,10 +118,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     const result = await getMovies(searchText, deleteMode, 10, page * 10);
     const resultCount = result.videos.requestMeta.totalCount;
     setTotalMoviesCount(resultCount);
-    setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
+    setSearchResult((prev) =>
+      prev ? [...prev, ...result.videos.videos] : result.videos.videos
+    ); // Triggers `useEffect`
     setCurrentPage(page);
     if ((page + 1) * 10 < resultCount) {
-      setNextPage((prev) => prev ? prev + 1 : 1);
+      setNextPage((prev) => (prev ? prev + 1 : 1));
     } else {
       setNextPage(page);
     }
@@ -131,17 +142,19 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         deleteMode={deleteMode}
         setDeleteMode={setDeleteMode}
         handleSearchSubmit={handleSearchSubmit}
-        langResources={
-          {
-            placeholderLabel: t.search?.placeholder,
-            searchLabel: t.search?.search,
-            resultCountLabel: t.search?.result_count,
-            deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
-            deletedMoviesFilterExcludeDeleted: t.search?.deletedMoviesFilterExcludeDeleted,
-            deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
-            deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
-          }
-        }      />
+        langResources={{
+          placeholderLabel: t.search?.placeholder,
+          searchLabel: t.search?.search,
+          resultCountLabel: t.search?.result_count,
+          deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
+          deletedMoviesFilterExcludeDeleted:
+            t.search?.deletedMoviesFilterExcludeDeleted,
+          deletedMoviesFilterIncludeDeleted:
+            t.search?.deletedMoviesFilterIncludeDeleted,
+          deletedMoviesFilterOnlyDeleted:
+            t.search?.deletedMoviesFilterOnlyDeleted,
+        }}
+      />
       <div className="space-y-4">
         {loading && <div>{t.common?.loading} ...</div>}
         {searchResult && imageBaseUrl && (

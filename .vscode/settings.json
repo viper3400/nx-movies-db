@@ -1,5 +1,7 @@
 {
-    "eslint.format.enable": true,
-    "eslint.codeActionsOnSave.rules": null,
-    "eslint.useFlatConfig": true
+  "eslint.format.enable": true,
+  "eslint.codeActionsOnSave.rules": null,
+  "eslint.useFlatConfig": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
 }

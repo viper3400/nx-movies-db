@@ -9,7 +9,7 @@ export function parseUserString(input: string): AllowedUser[] {
   const userEntries = input.split(";");
 
   // Map each entry to a User object
-  const users: AllowedUser[] = userEntries.map(entry => {
+  const users: AllowedUser[] = userEntries.map((entry) => {
     const [email, name, idStr] = entry.split(",");
 
     // Convert idStr to a number
@@ -18,17 +18,19 @@ export function parseUserString(input: string): AllowedUser[] {
     return {
       email: email.trim(),
       name: name.trim(),
-      id: isNaN(id) ? 0 : id // Default to 0 if id is not a valid number
+      id: isNaN(id) ? 0 : id, // Default to 0 if id is not a valid number
     };
   });
 
   return users;
 }
 
-export function getAllowedUser(email: string) : AllowedUser | undefined {
-  const allowedUsersEnv = process.env.ALLOWED_USERS ? process.env.ALLOWED_USERS : "";
+export function getAllowedUser(email: string): AllowedUser | undefined {
+  const allowedUsersEnv = process.env.ALLOWED_USERS
+    ? process.env.ALLOWED_USERS
+    : "";
   const allowedUsers = parseUserString(allowedUsersEnv);
-  return allowedUsers.find(u => u.email === email);
+  return allowedUsers.find((u) => u.email === email);
 }
 export function isUserAllowed(email: string): boolean {
   return getAllowedUser(email) !== undefined;

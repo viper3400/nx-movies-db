@@ -4,7 +4,7 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
-import { getMovies, getSeenDates } from "../app/services/actions";
+import { getMovies, getSeenDates, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
@@ -41,6 +41,14 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const loadUserFlagsForMovie = async (movieId: string) => {
     const flags = await getUserFlagsForMovie(movieId, session.userName);
     return flags;
+  };
+
+  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
+    await updateUserFlags(
+      parseInt(flags.movieId),
+      flags.isFavorite,
+      flags.isWatchAgain,
+      session.userName);
   };
 
   useEffect(() => {
@@ -143,6 +151,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             imageBaseUrl={imageBaseUrl}
             appBasePath={appBasePath}
             loadSeenDatesForMovie={loadSeenDatesForMovie}
+            updateFlagsForMovie={updateUserFlagsForMovie}
           />
         )}
       </div>

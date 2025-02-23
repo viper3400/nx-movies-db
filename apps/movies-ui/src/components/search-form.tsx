@@ -1,6 +1,16 @@
 import { Input, Radio, RadioGroup } from "@heroui/react";
 import React from "react";
 
+interface SearchFormLangResources {
+  placeholderLabel: string;
+  searchLabel: string;
+  resultCountLabel: string;
+  deletedMoviesFilterLabel: string;
+  deletedMoviesFilterExcludeDeleted: string;
+  deletedMoviesFilterIncludeDeleted: string;
+  deletedMoviesFilterOnlyDeleted: string
+
+}
 
 interface SearchFormProps {
   searchText: string;
@@ -12,6 +22,7 @@ interface SearchFormProps {
   deleteMode: string;
   setDeleteMode: (mode: string) => void;
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  langResources: SearchFormLangResources;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({
@@ -24,6 +35,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
   deleteMode,
   setDeleteMode,
   handleSearchSubmit,
+  langResources
 }) => {
   return (
     <form onSubmit={handleSearchSubmit}>
@@ -32,8 +44,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
           isClearable
           errorMessage="Search must have at least 3 characters"
           isInvalid={invalidSearch}
-          label={`Search (result count: ${totalMoviesCount})`}
-          placeholder="Enter search text"
+          label={`${langResources.searchLabel} (${langResources.resultCountLabel}: ${totalMoviesCount})`}
+          placeholder={langResources.placeholderLabel}
           type="text"
           value={searchText}
           onChange={(e) => {
@@ -48,10 +60,10 @@ const SearchForm: React.FC<SearchFormProps> = ({
         />
       </div>
       <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
-        <RadioGroup label="Gelöschte Filme" value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
-          <Radio value="EXCLUDE_DELETED">Exklusive Gelöschte</Radio>
-          <Radio value="INCLUDE_DELETED">Inklusive Gelöschte</Radio>
-          <Radio value="ONLY_DELETED">Nur Gelöschte</Radio>
+        <RadioGroup label={langResources.deletedMoviesFilterLabel} value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
+          <Radio value="EXCLUDE_DELETED">{langResources.deletedMoviesFilterExcludeDeleted}</Radio>
+          <Radio value="INCLUDE_DELETED">{langResources.deletedMoviesFilterIncludeDeleted}</Radio>
+          <Radio value="ONLY_DELETED">{langResources.deletedMoviesFilterOnlyDeleted}</Radio>
         </RadioGroup>
       </div>
     </form>

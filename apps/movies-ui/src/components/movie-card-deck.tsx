@@ -2,7 +2,6 @@ import { UserFlagsDTO } from "../interfaces";
 import { MovieCard } from "./movie-card";
 import { Movie } from "../interfaces";
 
-
 // Define the props for the MovieCard component
 export interface MovieCardDeckProps {
   movies: Movie[];
@@ -19,7 +18,10 @@ export const MovieCardDeck = ({
   appBasePath,
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
-  updateFlagsForMovie }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
+  updateFlagsForMovie,
+}: MovieCardDeckProps & {
+  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+}) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {
@@ -27,22 +29,18 @@ export const MovieCardDeck = ({
   }
   return (
     <>
-      {
-        movies.map(
-          ( movie : Movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={movie}
-              loadUserFlagsForMovie={loadUserFlagsForMovie}
-              imageUrl={imageBaseUrl + "/" + movie.id}
-              appBasePath={appBasePath}
-              showDetailsButton
-              loadSeenDatesForMovie={loadSeenDatesForMovie}
-              updateFlagsForMovie={updateFlagsForMovie}
-            />
-          )
-        )}
+      {movies.map((movie: Movie) => (
+        <MovieCard
+          key={movie.id}
+          movie={movie}
+          loadUserFlagsForMovie={loadUserFlagsForMovie}
+          imageUrl={imageBaseUrl + "/" + movie.id}
+          appBasePath={appBasePath}
+          showDetailsButton
+          loadSeenDatesForMovie={loadSeenDatesForMovie}
+          updateFlagsForMovie={updateFlagsForMovie}
+        />
+      ))}
     </>
   );
 };
-

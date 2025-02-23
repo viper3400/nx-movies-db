@@ -8,8 +8,7 @@ interface SearchFormLangResources {
   deletedMoviesFilterLabel: string;
   deletedMoviesFilterExcludeDeleted: string;
   deletedMoviesFilterIncludeDeleted: string;
-  deletedMoviesFilterOnlyDeleted: string
-
+  deletedMoviesFilterOnlyDeleted: string;
 }
 
 interface SearchFormProps {
@@ -35,7 +34,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
   deleteMode,
   setDeleteMode,
   handleSearchSubmit,
-  langResources
+  langResources,
 }) => {
   return (
     <form onSubmit={handleSearchSubmit}>
@@ -60,10 +59,21 @@ const SearchForm: React.FC<SearchFormProps> = ({
         />
       </div>
       <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
-        <RadioGroup label={langResources.deletedMoviesFilterLabel} value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
-          <Radio value="EXCLUDE_DELETED">{langResources.deletedMoviesFilterExcludeDeleted}</Radio>
-          <Radio value="INCLUDE_DELETED">{langResources.deletedMoviesFilterIncludeDeleted}</Radio>
-          <Radio value="ONLY_DELETED">{langResources.deletedMoviesFilterOnlyDeleted}</Radio>
+        <RadioGroup
+          label={langResources.deletedMoviesFilterLabel}
+          value={deleteMode}
+          onValueChange={setDeleteMode}
+          orientation="horizontal"
+        >
+          <Radio value="EXCLUDE_DELETED">
+            {langResources.deletedMoviesFilterExcludeDeleted}
+          </Radio>
+          <Radio value="INCLUDE_DELETED">
+            {langResources.deletedMoviesFilterIncludeDeleted}
+          </Radio>
+          <Radio value="ONLY_DELETED">
+            {langResources.deletedMoviesFilterOnlyDeleted}
+          </Radio>
         </RadioGroup>
       </div>
     </form>

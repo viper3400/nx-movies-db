@@ -6,7 +6,9 @@
     "deletedMoviesFilterLabel": "Deleted Movies",
     "deletedMoviesFilterExcludeDeleted": "Exclude Deleted",
     "deletedMoviesFilterIncludeDeleted": "Include Deleted",
-    "deletedMoviesFilterOnlyDeleted": "Only Deleted"
+    "deletedMoviesFilterOnlyDeleted": "Only Deleted",
+    "favoriteMoviesFilterLabel": "Favorite Movies",
+    "watchagainMoviesFilterLabel": "Watch Again"
   },
   "common": {
     "title": "Movie Database",

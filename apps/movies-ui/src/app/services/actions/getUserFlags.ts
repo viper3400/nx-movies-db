@@ -8,7 +8,7 @@ import { getClient } from "../../../lib/apollocient";
 // GraphQL query
 const getUserFlagsQuery = gql`
   query UserFlagsForMovie($movieId: Int, $userName: String) {
-    userFlagsForUser(movieId: $movieId, userName: $userName) {
+      userFlagsForUser(movieId: $movieId, userName: $userName) {
       movieId
       isWatchAgain
       isFavorite
@@ -17,6 +17,7 @@ const getUserFlagsQuery = gql`
 `;
 
 export async function getUserFlagsForMovie(movieId: string, userName: string) {
+
   const { data } = await getClient().query({
     query: getUserFlagsQuery,
     variables: { movieId: parseInt(movieId), userName: userName },
@@ -24,13 +25,8 @@ export async function getUserFlagsForMovie(movieId: string, userName: string) {
 
   const result = await data;
   console.log(result.userFlagsForUser);
-  const flags =
-    result.userFlagsForUser.length > 0
-      ? {
-          movieId: movieId,
-          isFavorite: result.userFlagsForUser[0].isFavorite,
-          isWatchAgain: result.userFlagsForUser[0].isWatchAgain,
-        }
-      : { movieId: movieId, isFavorite: false, isWatchAgain: false };
+  const flags = result.userFlagsForUser.length > 0 ?
+    { movieId: movieId, isFavorite: result.userFlagsForUser[0].isFavorite, isWatchAgain: result.userFlagsForUser[0].isWatchAgain } :
+    { movieId: movieId, isFavorite: false, isWatchAgain: false };
   return flags;
 }

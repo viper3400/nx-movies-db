@@ -44,7 +44,7 @@ type Video = {
 };
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, queryUserSettings, userName, filterFavorites, filterFlagged, deleteMode, take, skip} = args;
+  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, queryUserSettings, userName, filterFavorites, filterFlagged, deleteMode, take, skip } = args;
 
   if ((filterFlagged || filterFavorites) && !userName) {
     throw new Error("Username must be set");
@@ -145,6 +145,5 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const result = {
     videos, totalCount
   };
-  console.debug("result: " + JSON.stringify(result.videos[0].userMovieSettings));
   return result;
 };

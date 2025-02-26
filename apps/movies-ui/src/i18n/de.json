@@ -11,6 +11,11 @@
     "favoriteMoviesFilterLabel": "Lieblingsfilme",
     "watchagainMoviesFilterLabel": "Nochmal sehen"
   },
+  "movie_card": {
+    "seen_today": "Heute gesehen",
+    "choose_date": "Datum wählen",
+    "delted_entry": "Gelöschter Eintrag"
+  },
   "common": {
     "title": "Filmdatenbank",
     "loading": "Lade"

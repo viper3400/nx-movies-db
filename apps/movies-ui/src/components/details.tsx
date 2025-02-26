@@ -8,6 +8,7 @@ import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { getSeenDates, updateUserFlags } from "../app/services/actions";
+import useTranslation from "../i18n/useTranslation";
 
 interface DetailsComponentProperties {
   id: string;
@@ -19,6 +20,9 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const [error, setError] = useState<Error | null>(null);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
+
+  const { t, lang, changeLanguage } = useTranslation();
+
 
   const inputVariant = "underlined";
 
@@ -72,34 +76,40 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   }
   return (
     <div>
-      { movie &&
-      <div>
-        <MovieCard
-          movie={movie}
-          imageUrl={imageBaseUrl + "/" + id}
-          loadSeenDatesForMovie={loadSeenDatesForMovie}
-          loadUserFlagsForMovie={loadUserFlagsForMovie}
-          updateFlagsForMovie={updateUserFlagsForMovie} />
-        <Spacer y={4} />
-        { !readOnlyMode &&
-        <div><Input
-          size="lg"
-          defaultValue={movie.title}
-          isReadOnly={readOnlyMode}
-          label="Titel"
-          variant={inputVariant} /><Spacer y={4} /><Input
-          size="lg"
-          defaultValue={movie.subtitle}
-          isReadOnly={readOnlyMode}
-          label="Subtitel"
-          variant={inputVariant} /><Spacer y={4} /><Input
-          size="lg"
-          defaultValue={movie.diskid}
-          isReadOnly={readOnlyMode}
-          label="Diskid"
-          variant={inputVariant} /></div>
-        }
-      </div>
+      {movie &&
+        <div>
+          <MovieCard
+            movie={movie}
+            imageUrl={imageBaseUrl + "/" + id}
+            loadSeenDatesForMovie={loadSeenDatesForMovie}
+            loadUserFlagsForMovie={loadUserFlagsForMovie}
+            updateFlagsForMovie={updateUserFlagsForMovie}
+            langResources={{
+              seenTodayLabel: t.movie_card?.seen_today,
+              chooseDateLabel: t.movie_card?.choose_date,
+              deletedEntryLabel: t.movie_card?.deleted_entry
+            }} />
+          <Spacer y={4} />
+          {!readOnlyMode &&
+            <div>
+              <Input
+                size="lg"
+                defaultValue={movie.title}
+                isReadOnly={readOnlyMode}
+                label="Titel"
+                variant={inputVariant} /><Spacer y={4} /><Input
+                size="lg"
+                defaultValue={movie.subtitle}
+                isReadOnly={readOnlyMode}
+                label="Subtitel"
+                variant={inputVariant} /><Spacer y={4} /><Input
+                size="lg"
+                defaultValue={movie.diskid}
+                isReadOnly={readOnlyMode}
+                label="Diskid"
+                variant={inputVariant} /></div>
+          }
+        </div>
       }
     </div>
   );

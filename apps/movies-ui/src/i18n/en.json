@@ -11,6 +11,11 @@
     "favoriteMoviesFilterLabel": "Favorite Movies",
     "watchagainMoviesFilterLabel": "Watch Again"
   },
+  "movie_card": {
+    "seen_today": "Seen Today",
+    "choose_date": "Choose Date",
+    "deleted_entry": "Deleted Entry"
+  },
   "common": {
     "title": "Movie Database",
     "loading": "Loading"

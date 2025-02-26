@@ -160,6 +160,11 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             appBasePath={appBasePath}
             loadSeenDatesForMovie={loadSeenDatesForMovie}
             updateFlagsForMovie={updateUserFlagsForMovie}
+            movieCardLangResources={{
+              seenTodayLabel: t.movie_card?.seen_today,
+              chooseDateLabel: t.movie_card?.choose_date,
+              deletedEntryLabel: t.movie_card?.deleted_entry
+            }}
           />
         )}
       </div>

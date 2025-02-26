@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 
-import { SunFilledIcon, MoonFilledIcon } from "./icons";
+import { SunFilledIcon, MoonFilledIcon } from "../icons/icons";
 import { SwitchProps, useSwitch } from "@heroui/react";
 
 export interface ThemeSwitchProps {

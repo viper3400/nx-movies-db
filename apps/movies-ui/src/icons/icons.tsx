@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IconSvgProps } from "../icons/icon-svg-props";
+import { IconSvgProps } from "./icon-svg-props";
 
 export const SceneLogo: React.FC<IconSvgProps> = ({
   size = 36,

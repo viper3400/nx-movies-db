@@ -5,6 +5,7 @@ import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
 import { useEffect, useState } from "react";
 import { UserFlagButton } from "./user-flag-button";
 import { EyeOutlined } from "../icons/eye-outlined";
+import { DatePickerModal } from "./datepicker-modal";
 
 export interface MovieCardLangResources {
   seenTodayLabel: string;
@@ -134,7 +135,7 @@ export const MovieCard = ({
               </div>
               <div className="flex gap-2">
                 <Button startContent={<EyeOutlined />}>{langResources.seenTodayLabel}</Button>
-                <Button startContent={<EyeOutlined />}>{langResources.chooseDateLabel}</Button>
+                <DatePickerModal chooseDateButtonLabel={langResources.chooseDateLabel} />
                 {showDetailsButton &&
                   <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>
                 }

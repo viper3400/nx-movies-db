@@ -16,6 +16,9 @@
     "choose_date": "Datum wählen",
     "delted_entry": "Gelöschter Eintrag"
   },
+  "choose_date_modal": {
+    "dialog_title": "Datum auswählen"
+  },
   "common": {
     "title": "Filmdatenbank",
     "loading": "Lade"

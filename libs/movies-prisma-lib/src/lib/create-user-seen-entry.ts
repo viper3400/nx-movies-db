@@ -6,11 +6,17 @@ export const createUserSeenEntry = async (args: {
   viewGroup: string;
   viewDate: Date;
 }) => {
-  const exists = await prisma.homewebbridge_userseen.findFirst({
+  const startOfDay = new Date(Date.UTC(args.viewDate.getUTCFullYear(), args.viewDate.getUTCMonth(), args.viewDate.getUTCDate(), 0, 0, 0, 0)); // Set to the start of the day (00:00:00 UTC)
+  const endOfDay = new Date(Date.UTC(args.viewDate.getUTCFullYear(), args.viewDate.getUTCMonth(), args.viewDate.getUTCDate(), 23, 59, 59, 999)); // Set to the end of the day (23:59:59.999 UTC)
+
+  const exists = await prisma.homewebbridge_userseen.count({
     where: {
       vdb_videoid: args.movieId,
       asp_viewgroup: args.viewGroup,
-      viewdate: args.viewDate
+      viewdate: {
+        gte: startOfDay, // Includes 00:00:00
+        lte: endOfDay // Excludes 00:00:00 of the next day
+      }
     }
   });
 

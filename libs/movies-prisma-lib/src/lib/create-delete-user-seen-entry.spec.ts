@@ -20,7 +20,7 @@ describe("create seen date", () => {
     let seenDate = await getSeenDates({ movieId, viewGroup }, undefined);
     expect(seenDate.length).toBe(1);
     // delete entry
-    const deleted = await deleteUserSeenEntry({ movieId, viewGroup, viewDate });
+    await deleteUserSeenEntry({ movieId, viewGroup, viewDate });
     // check that entry does not exist
     seenDate = await getSeenDates({ movieId, viewGroup }, undefined);
     expect(seenDate.length).toBe(0);
@@ -52,7 +52,7 @@ describe("create seen date", () => {
     // create entry 2
     expect(createUserSeenEntry({
       movieId: movieId,
-      userName: userNameA,
+      userName: userNameB,
       viewGroup: viewGroup,
       viewDate: viewDate
     })).rejects.toThrow();

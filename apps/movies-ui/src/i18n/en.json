@@ -16,6 +16,9 @@
     "choose_date": "Choose Date",
     "deleted_entry": "Deleted Entry"
   },
+  "choose_date_modal": {
+    "dialog_title": "Choose Date"
+  },
   "common": {
     "title": "Movie Database",
     "loading": "Loading"

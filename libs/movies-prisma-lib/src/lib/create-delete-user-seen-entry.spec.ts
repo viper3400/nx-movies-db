@@ -51,7 +51,7 @@ describe("create seen date", () => {
     });
 
     // create entry 2
-    expect(createUserSeenEntry({
+    await expect(createUserSeenEntry({
       movieId: movieId,
       userName: userNameB,
       viewGroup: viewGroup,

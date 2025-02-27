@@ -1,4 +1,5 @@
 import { createUserSeenEntry, deleteUserSeenEntry, getSeenDates } from ".";
+import prisma from "./prisma-client";
 
 describe("create seen date", () => {
   it("should create & delete seen date for a user in a viewgroup at a given date", async () => {
@@ -67,6 +68,41 @@ describe("create seen date", () => {
     seenDate = await getSeenDates({ movieId, viewGroup }, undefined);
 
     expect(seenDate.length).toBe(0);
+
+  });
+
+  it("should raise an error if viewgroup, date, movie deletion would delete more than one entry", async () => {
+    // this should not be the case, as just one entry per day, per viewgroup is allowed, but just to be sure
+
+    const movieId = 90;
+    const viewGroup = "double_deletion";
+    const viewDate = new Date(Date.UTC(2022, 10, 5, 0, 0, 0));
+    const userName = "hans.dampf";
+    await prisma.homewebbridge_userseen.createMany({
+      data: [{
+        vdb_videoid: movieId,
+        viewdate: viewDate,
+        asp_viewgroup: viewGroup,
+        asp_username: userName
+      }, {
+        vdb_videoid: movieId,
+        viewdate: viewDate,
+        asp_viewgroup: viewGroup,
+        asp_username: userName
+      },
+      ]
+    });
+
+    await expect(deleteUserSeenEntry({ movieId, viewGroup, viewDate })).rejects.toThrow();
+
+    await prisma.homewebbridge_userseen.deleteMany({
+      where: {
+        vdb_videoid: movieId,
+        viewdate: viewDate,
+        asp_viewgroup: viewGroup,
+        asp_username: userName
+      }
+    });
 
   });
 });

@@ -62,8 +62,7 @@ describe("create seen date", () => {
     let seenDate = await getSeenDates({ movieId, viewGroup }, undefined);
     expect(seenDate.length).toBe(1);
     // delete entry
-    const deleted = await deleteUserSeenEntry({ movieId, viewGroup, viewDate });
-    console.log(deleted);
+    await deleteUserSeenEntry({ movieId, viewGroup, viewDate });
     // check that entry does not exist
     seenDate = await getSeenDates({ movieId, viewGroup }, undefined);
 

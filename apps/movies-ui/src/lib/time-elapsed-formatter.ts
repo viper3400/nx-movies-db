@@ -14,16 +14,16 @@ export class TimeElapsedFormatter {
   }
 
   public static getDurationString(duration: moment.Duration) {
-    if(duration.years() == 0 && duration.months() < 3) {
+    if (duration.years() == 0 && duration.months() < 3) {
       return `${duration.asDays().toFixed(0)}d`;
     }
-    else if(duration.years() == 0 && duration.months() >= 3) {
+    else if (duration.years() == 0 && duration.months() >= 3) {
       return `${duration.months()}M`;
     }
-    else if(duration.years() > 0 && duration.months() < 2) {
+    else if (duration.years() > 0 && duration.months() < 2) {
       return `${duration.years()}Y`;
     }
-    else if(duration.years() > 0 && duration.months() >= 2) {
+    else if (duration.years() > 0 && duration.months() >= 2) {
       return `${duration.years()}Y ${duration.months()}M`;
     }
   }
@@ -31,5 +31,11 @@ export class TimeElapsedFormatter {
   public static getDurationStringForDate(viewDate: Date) {
     const duration = this.durationToToday(viewDate);
     return this.getDurationString(duration);
+  }
+
+  public static getDurationStringForDateArray(viewDates: Date[]) {
+    viewDates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    const latestDate = viewDates[0];
+    return this.getDurationStringForDate(latestDate);
   }
 }

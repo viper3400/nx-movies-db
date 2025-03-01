@@ -1,5 +1,5 @@
 import { UserFlagsDTO } from "../interfaces";
-import { MovieCard } from "./movie-card";
+import { MovieCard, MovieCardLangResources } from "./movie-card";
 import { Movie } from "../interfaces";
 
 
@@ -11,6 +11,9 @@ export interface MovieCardDeckProps {
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
+  setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
+  deleteUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
+  movieCardLangResources: MovieCardLangResources;
 }
 
 export const MovieCardDeck = ({
@@ -19,7 +22,10 @@ export const MovieCardDeck = ({
   appBasePath,
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
-  updateFlagsForMovie }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
+  updateFlagsForMovie,
+  setUserSeenDateForMovie,
+  deleteUserSeenDateForMovie,
+  movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {
@@ -29,7 +35,7 @@ export const MovieCardDeck = ({
     <>
       {
         movies.map(
-          ( movie : Movie) => (
+          (movie: Movie) => (
             <MovieCard
               key={movie.id}
               movie={movie}
@@ -39,6 +45,10 @@ export const MovieCardDeck = ({
               showDetailsButton
               loadSeenDatesForMovie={loadSeenDatesForMovie}
               updateFlagsForMovie={updateFlagsForMovie}
+              setUserSeenDateForMovie={setUserSeenDateForMovie}
+              deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
+              langResources={movieCardLangResources}
+
             />
           )
         )}

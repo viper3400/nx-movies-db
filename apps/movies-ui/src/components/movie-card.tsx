@@ -4,7 +4,15 @@ import { Movie, UserFlagsDTO } from "../interfaces";
 import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
 import { useEffect, useState } from "react";
 import { UserFlagButton } from "./user-flag-button";
+import { EyeOutlined } from "../icons/eye-outlined";
+import { DatePickerModal } from "./datepicker-modal";
+import { DeleteSeenDateModal } from "./delete-seen-date-modal";
 
+export interface MovieCardLangResources {
+  seenTodayLabel: string;
+  chooseDateLabel: string;
+  deletedEntryLabel: string;
+}
 export interface MovieCardProps {
   movie: Movie;
   imageUrl: string;
@@ -13,6 +21,9 @@ export interface MovieCardProps {
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
+  setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
+  deleteUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
+  langResources: MovieCardLangResources;
 }
 export const MovieCard = ({
   movie,
@@ -21,13 +32,18 @@ export const MovieCard = ({
   showDetailsButton,
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
-  updateFlagsForMovie} : MovieCardProps) => {
+  updateFlagsForMovie,
+  setUserSeenDateForMovie,
+  deleteUserSeenDateForMovie,
+  langResources }: MovieCardProps) => {
 
   const [seenDates, setSeenDates] = useState<string[]>([]);
   const [seenDatesLoading, setSeenDatesLoading] = useState(false);
   const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
   const [userFlagsLoading, setUserFlagsLoading] = useState(true);
   const [additionalDataLoaded, setAdditionalDatesLoaded] = useState(false);
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+  const [deleteDate, setDeleteDate] = useState("");
 
   useEffect(() => {
     const fetchSeenDates = async () => {
@@ -62,17 +78,17 @@ export const MovieCard = ({
               </div>
               <div className="flex gap-2">
                 <UserFlagButton
-                  userFlagChipProps={ {type: "Favorite", active: userFlags?.isFavorite ?? false, loading: userFlagsLoading }}
+                  userFlagChipProps={{ type: "Favorite", active: userFlags?.isFavorite ?? false, loading: userFlagsLoading }}
                   onPress={async () => {
-                    const flags: UserFlagsDTO = {movieId: movie.id, isFavorite: !userFlags?.isFavorite, isWatchAgain: userFlags?.isWatchAgain ?? false};
+                    const flags: UserFlagsDTO = { movieId: movie.id, isFavorite: !userFlags?.isFavorite, isWatchAgain: userFlags?.isWatchAgain ?? false };
                     setUserFlags(flags);
                     updateFlagsForMovie(flags);
                   }}
                 />
                 <UserFlagButton
-                  userFlagChipProps={ {type: "Watchagain", active: userFlags?.isWatchAgain ?? false, loading: userFlagsLoading }}
+                  userFlagChipProps={{ type: "Watchagain", active: userFlags?.isWatchAgain ?? false, loading: userFlagsLoading }}
                   onPress={async () => {
-                    const flags: UserFlagsDTO = {movieId: movie.id, isFavorite: userFlags?.isFavorite ?? false, isWatchAgain: !userFlags?.isWatchAgain};
+                    const flags: UserFlagsDTO = { movieId: movie.id, isFavorite: userFlags?.isFavorite ?? false, isWatchAgain: !userFlags?.isWatchAgain };
                     setUserFlags(flags);
                     updateFlagsForMovie(flags);
                   }}
@@ -89,7 +105,22 @@ export const MovieCard = ({
           <div>
             <CardBody>
               <div>
-                <SeenChips seenDates={seenDates ? seenDates : []} loading={seenDatesLoading} />
+                <SeenChips
+                  seenDates={seenDates ? seenDates : []}
+                  loading={seenDatesLoading}
+                  deleteSeenDate={async (date) => {
+                    setDeleteDate(date);
+                    setDeleteModalIsOpen(true);
+                  }} />
+                <DeleteSeenDateModal
+                  isOpen={deleteModalIsOpen}
+                  date={deleteDate}
+                  onOpenChange={() => setDeleteModalIsOpen(!deleteModalIsOpen)}
+                  chooseDateButtonLabel={"Löschen"}
+                  onDeleteConfirmed={async (date) => {
+                    await deleteUserSeenDateForMovie(movie.id, new Date(date));
+                    setAdditionalDatesLoaded(false);
+                  }} />
               </div>
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -115,17 +146,33 @@ export const MovieCard = ({
             <div className="flex items-center justify-between w-full">
               <div className="flex gap-2">
                 {movie.ownerid == "999" && (
-                  <Chip color="danger">Gelöschter Eintrag</Chip>
+                  <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
                 )}
                 {movie.genres &&
-                    movie.genres.map((genreName: any) => (
-                      <Chip key={genreName} color="primary" variant="flat">
-                        {genreName}
-                      </Chip>
-                    ))}
+                  movie.genres.map((genreName: any) => (
+                    <Chip key={genreName} color="primary" variant="flat">
+                      {genreName}
+                    </Chip>
+                  ))}
               </div>
               <div className="flex gap-2">
-                { showDetailsButton &&
+                <Button
+                  startContent={<EyeOutlined />}
+                  onPress={() => {
+                    setUserSeenDateForMovie(movie.id, new Date());
+                    setAdditionalDatesLoaded(false);
+                  }}>
+                  {langResources.seenTodayLabel}
+                </Button>
+                <DatePickerModal
+                  chooseDateButtonLabel={langResources.chooseDateLabel}
+                  onDateSelected={(date) => {
+                    if (date) {
+                      setUserSeenDateForMovie(movie.id, date);
+                      setAdditionalDatesLoaded(false);
+                    }
+                  }} />
+                {showDetailsButton &&
                   <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>
                 }
               </div>
@@ -137,8 +184,11 @@ export const MovieCard = ({
   );
 };
 
-
-const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDates, loading}) => {
+const SeenChips: React.FC<{
+  seenDates?: string[],
+  loading: boolean
+  deleteSeenDate: (date: string) => Promise<void>;
+}> = ({ seenDates, loading, deleteSeenDate }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -153,47 +203,49 @@ const SeenChips: React.FC<{seenDates?: string[], loading: boolean }> = ({ seenDa
   };
 
   const notSeen = seenDates?.length === 0 || !seenDates;
+
   return (
     <>
       {
-        loading &&  <Chip
+        loading && <Chip
           className={"mr-4 mb-4 animate-pulse"}
           color="secondary"
           variant="bordered">
           Lade ...
         </Chip>
       }
-      { !loading && notSeen &&
-      <Chip
-        className={"mr-4 mb-4"}
-        variant="bordered"
-        color="secondary">
-        noch nicht gesehen
-      </Chip>
+      {!loading && notSeen &&
+        <Chip
+          className={"mr-4 mb-4"}
+          variant="bordered"
+          color="secondary">
+          noch nicht gesehen
+        </Chip>
 
       }
       {seenDates && seenDates.length > 0 && !loading &&
-    <Chip
-      className={"mr-4 mb-4"}
-      color="secondary">
-      {seenDates.length} x gesehen
-    </Chip>
-      }
-      { seenDates && seenDates.length > 0  &&
-      <Chip color="primary" className="mr-4 mb-4">
-        {TimeElapsedFormatter.getDurationStringForDate(new Date(seenDates[seenDates.length - 1]))}
-      </Chip>
-      }
-      { seenDates && seenDates.length > 0  &&
-      seenDates.map((date, index) => (
         <Chip
-          key={index}
-          className="mr-4 mb-4"
-          color="secondary"
-          variant="flat">
-          {formatDate(date)}
+          className={"mr-4 mb-4"}
+          color="secondary">
+          {seenDates.length} x gesehen
         </Chip>
-      ))}
+      }
+      {seenDates && seenDates.length > 0 &&
+        <Chip color="primary" className="mr-4 mb-4">
+          {TimeElapsedFormatter.getDurationStringForDate(new Date(seenDates[seenDates.length - 1]))}
+        </Chip>
+      }
+      {seenDates && seenDates.length > 0 &&
+        seenDates.map((date, index) => (
+          <Chip
+            key={index}
+            className="mr-4 mb-4"
+            color="secondary"
+            variant="flat"
+            onClose={() => deleteSeenDate(date)}>
+            {formatDate(date)}
+          </Chip>
+        ))}
     </>
   );
 };

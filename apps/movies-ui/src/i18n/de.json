@@ -17,10 +17,17 @@
     "delted_entry": "Gelöschter Eintrag"
   },
   "choose_date_modal": {
-    "dialog_title": "Datum auswählen"
+    "dialog_title": "Datum auswählen",
+    "discard": "Abbrechen",
+    "select": "Auswählen"
+  },
+  "delete_date_modal": {
+    "dialog_title": "Datum löschen"
   },
   "common": {
     "title": "Filmdatenbank",
-    "loading": "Lade"
+    "loading": "Lade",
+    "discard": "Abbrechen",
+    "delete": "Löschen"
   }
 }

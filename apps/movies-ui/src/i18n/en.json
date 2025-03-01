@@ -17,10 +17,17 @@
     "deleted_entry": "Deleted Entry"
   },
   "choose_date_modal": {
-    "dialog_title": "Choose Date"
+    "dialog_title": "Choose Date",
+    "discard": "Discard",
+    "select": "Save"
+  },
+  "delete_date_modal": {
+    "dialog_title": "Delete Date"
   },
   "common": {
     "title": "Movie Database",
-    "loading": "Loading"
+    "loading": "Loading",
+    "discard": "Discard",
+    "delete": "Delete"
   }
 }

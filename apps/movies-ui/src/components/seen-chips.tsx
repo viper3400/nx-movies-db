@@ -2,7 +2,7 @@ import { Chip } from "@heroui/react";
 import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
 
 export const SeenChips: React.FC<{
-  seenDates?: string[],
+  seenDates?: Date[],
   loading: boolean
   deleteSeenDate: (date: string) => Promise<void>;
 }> = ({ seenDates, loading, deleteSeenDate }) => {
@@ -59,8 +59,8 @@ export const SeenChips: React.FC<{
             className="mr-4 mb-4"
             color="secondary"
             variant="flat"
-            onClose={() => deleteSeenDate(date)}>
-            {formatDate(date)}
+            onClose={() => deleteSeenDate(date.toString())}>
+            {formatDate(date.toString())}
           </Chip>
         ))}
     </>

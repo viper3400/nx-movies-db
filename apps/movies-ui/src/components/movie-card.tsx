@@ -18,7 +18,7 @@ export interface MovieCardProps {
   imageUrl: string;
   appBasePath?: string;
   showDetailsButton?: boolean;
-  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+  loadSeenDatesForMovie: (movieId: string) => Promise<Date[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
   setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
@@ -37,7 +37,7 @@ export const MovieCard = ({
   deleteUserSeenDateForMovie,
   langResources }: MovieCardProps) => {
 
-  const [seenDates, setSeenDates] = useState<string[]>([]);
+  const [seenDates, setSeenDates] = useState<Date[]>([]);
   const [seenDatesLoading, setSeenDatesLoading] = useState(false);
   const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
   const [userFlagsLoading, setUserFlagsLoading] = useState(true);

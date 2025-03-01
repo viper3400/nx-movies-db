@@ -7,7 +7,7 @@ import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { getSeenDates, updateUserFlags } from "../app/services/actions";
+import { deleteUserSeenDate, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import useTranslation from "../i18n/useTranslation";
 
 interface DetailsComponentProperties {
@@ -42,6 +42,21 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
       flags.isFavorite,
       flags.isWatchAgain,
       userName);
+  };
+
+  const setUserSeenDateForMovie = async (movieId: string, date: Date) => {
+    await setUserSeenDate(
+      parseInt(movieId),
+      userName,
+      date.toISOString().slice(0, 10),
+      "VG_Default");
+  };
+
+  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
+    await deleteUserSeenDate(
+      parseInt(movieId),
+      date.toISOString().slice(0, 10),
+      "VG_Default");
   };
 
   useEffect(() => {
@@ -84,6 +99,8 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
             loadSeenDatesForMovie={loadSeenDatesForMovie}
             loadUserFlagsForMovie={loadUserFlagsForMovie}
             updateFlagsForMovie={updateUserFlagsForMovie}
+            setUserSeenDateForMovie={setUserSeenDateForMovie}
+            deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
             langResources={{
               seenTodayLabel: t.movie_card?.seen_today,
               chooseDateLabel: t.movie_card?.choose_date,

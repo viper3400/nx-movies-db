@@ -9,10 +9,12 @@
     "@apollo/experimental-nextjs-app-support": "^0.11.6",
     "@graphql-yoga/plugin-jwt": "^3.4.3",
     "@heroui/react": "2.7.2",
+    "@internationalized/date": "^3.7.0",
     "@pothos/core": "^4.3.0",
     "@pothos/plugin-prisma": "^4.3.1",
     "@pothos/plugin-simple-objects": "^4.1.0",
     "@prisma/client": "^6.0.0",
+    "@react-aria/i18n": "^3.12.5",
     "@stackframe/stack": "^2.7.14",
     "axios": "^1.6.0",
     "cors": "^2.8.5",
@@ -20,6 +22,7 @@
     "framer-motion": "^12.0.0",
     "graphql": "^16.9.0",
     "graphql-yoga": "^5.10.3",
+    "i18next": "^24.2.2",
     "moment": "^2.30.1",
     "next": "15.1.7",
     "next-auth": "^4.24.11",
@@ -27,6 +30,7 @@
     "prisma": "^6.0.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-i18next": "^15.4.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

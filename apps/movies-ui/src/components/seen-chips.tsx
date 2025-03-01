@@ -49,7 +49,7 @@ export const SeenChips: React.FC<{
       }
       {seenDates && seenDates.length > 0 &&
         <Chip color="primary" className="mr-4 mb-4">
-          {TimeElapsedFormatter.getDurationStringForDate(new Date(seenDates[seenDates.length - 1]))}
+          {TimeElapsedFormatter.getDurationStringForDateArray(seenDates)}
         </Chip>
       }
       {seenDates && seenDates.length > 0 &&

@@ -1,12 +1,12 @@
 import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@heroui/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
-import { TimeElapsedFormatter } from "../lib/time-elapsed-formatter";
 import { useEffect, useState } from "react";
 import { UserFlagButton } from "./user-flag-button";
 import { EyeOutlined } from "../icons/eye-outlined";
 import { DatePickerModal } from "./datepicker-modal";
 import { DeleteSeenDateModal } from "./delete-seen-date-modal";
+import { SeenChips } from "./seen-chips";
 
 export interface MovieCardLangResources {
   seenTodayLabel: string;
@@ -18,7 +18,7 @@ export interface MovieCardProps {
   imageUrl: string;
   appBasePath?: string;
   showDetailsButton?: boolean;
-  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+  loadSeenDatesForMovie: (movieId: string) => Promise<Date[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
   setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
@@ -37,7 +37,7 @@ export const MovieCard = ({
   deleteUserSeenDateForMovie,
   langResources }: MovieCardProps) => {
 
-  const [seenDates, setSeenDates] = useState<string[]>([]);
+  const [seenDates, setSeenDates] = useState<Date[]>([]);
   const [seenDatesLoading, setSeenDatesLoading] = useState(false);
   const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
   const [userFlagsLoading, setUserFlagsLoading] = useState(true);
@@ -105,11 +105,11 @@ export const MovieCard = ({
           <div>
             <CardBody>
               <div className="flex flex-row">
-                <div className="mr-4 mb-4">
-                  {movie.ownerid == "999" && (
+                {movie.ownerid == "999" && (
+                  <div className="mr-4 mb-4">
                     <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
-                  )}
-                </div>
+                  </div>
+                )}
                 <SeenChips
                   seenDates={seenDates ? seenDates : []}
                   loading={seenDatesLoading}
@@ -182,72 +182,6 @@ export const MovieCard = ({
           </CardFooter>
         </Card>
       </div>
-    </>
-  );
-};
-
-const SeenChips: React.FC<{
-  seenDates?: string[],
-  loading: boolean
-  deleteSeenDate: (date: string) => Promise<void>;
-}> = ({ seenDates, loading, deleteSeenDate }) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return "Invalid Date";
-    }
-    // Format as DD.MM.YYYY
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}.${month}.${year}`;
-  };
-
-  const notSeen = seenDates?.length === 0 || !seenDates;
-
-  return (
-    <>
-      {
-        loading && <Chip
-          className={"mr-4 mb-4 animate-pulse"}
-          color="secondary"
-          variant="bordered">
-          Lade ...
-        </Chip>
-      }
-      {!loading && notSeen &&
-        <Chip
-          className={"mr-4 mb-4"}
-          variant="bordered"
-          color="secondary">
-          noch nicht gesehen
-        </Chip>
-
-      }
-      {seenDates && seenDates.length > 0 && !loading &&
-        <Chip
-          className={"mr-4 mb-4"}
-          color="secondary">
-          {seenDates.length} x gesehen
-        </Chip>
-      }
-      {seenDates && seenDates.length > 0 &&
-        <Chip color="primary" className="mr-4 mb-4">
-          {TimeElapsedFormatter.getDurationStringForDate(new Date(seenDates[seenDates.length - 1]))}
-        </Chip>
-      }
-      {seenDates && seenDates.length > 0 &&
-        seenDates.map((date, index) => (
-          <Chip
-            key={index}
-            className="mr-4 mb-4"
-            color="secondary"
-            variant="flat"
-            onClose={() => deleteSeenDate(date)}>
-            {formatDate(date)}
-          </Chip>
-        ))}
     </>
   );
 };

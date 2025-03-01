@@ -105,11 +105,11 @@ export const MovieCard = ({
           <div>
             <CardBody>
               <div className="flex flex-row">
-                <div className="mr-4 mb-4">
-                  {movie.ownerid == "999" && (
+                {movie.ownerid == "999" && (
+                  <div className="mr-4 mb-4">
                     <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
-                  )}
-                </div>
+                  </div>
+                )}
                 <SeenChips
                   seenDates={seenDates ? seenDates : []}
                   loading={seenDatesLoading}

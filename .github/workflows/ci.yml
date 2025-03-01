@@ -42,4 +42,4 @@ jobs:
       - run: npx nx run-many -t lint build --skip-nx-cache --parallel
 
       # Now run movies-ui integration tests
-      - run: npx nx movies-ui:test --skip-nx-cache
+      - run: npx nx run movies-ui:test --skip-nx-cache

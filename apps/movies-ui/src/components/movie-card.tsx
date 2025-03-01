@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { UserFlagButton } from "./user-flag-button";
 import { EyeOutlined } from "../icons/eye-outlined";
 import { DatePickerModal } from "./datepicker-modal";
+import { DeleteSeenDateModal } from "./delete-seen-date-modal";
 
 export interface MovieCardLangResources {
   seenTodayLabel: string;
@@ -20,6 +21,8 @@ export interface MovieCardProps {
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
+  setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
+  deleteUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
   langResources: MovieCardLangResources;
 }
 export const MovieCard = ({
@@ -30,6 +33,8 @@ export const MovieCard = ({
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
   updateFlagsForMovie,
+  setUserSeenDateForMovie,
+  deleteUserSeenDateForMovie,
   langResources }: MovieCardProps) => {
 
   const [seenDates, setSeenDates] = useState<string[]>([]);
@@ -37,6 +42,8 @@ export const MovieCard = ({
   const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
   const [userFlagsLoading, setUserFlagsLoading] = useState(true);
   const [additionalDataLoaded, setAdditionalDatesLoaded] = useState(false);
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+  const [deleteDate, setDeleteDate] = useState("");
 
   useEffect(() => {
     const fetchSeenDates = async () => {
@@ -98,7 +105,22 @@ export const MovieCard = ({
           <div>
             <CardBody>
               <div>
-                <SeenChips seenDates={seenDates ? seenDates : []} loading={seenDatesLoading} />
+                <SeenChips
+                  seenDates={seenDates ? seenDates : []}
+                  loading={seenDatesLoading}
+                  deleteSeenDate={async (date) => {
+                    setDeleteDate(date);
+                    setDeleteModalIsOpen(true);
+                  }} />
+                <DeleteSeenDateModal
+                  isOpen={deleteModalIsOpen}
+                  date={deleteDate}
+                  onOpenChange={() => setDeleteModalIsOpen(!deleteModalIsOpen)}
+                  chooseDateButtonLabel={"Löschen"}
+                  onDeleteConfirmed={async (date) => {
+                    await deleteUserSeenDateForMovie(movie.id, new Date(date));
+                    setAdditionalDatesLoaded(false);
+                  }} />
               </div>
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -134,8 +156,22 @@ export const MovieCard = ({
                   ))}
               </div>
               <div className="flex gap-2">
-                <Button startContent={<EyeOutlined />}>{langResources.seenTodayLabel}</Button>
-                <DatePickerModal chooseDateButtonLabel={langResources.chooseDateLabel} />
+                <Button
+                  startContent={<EyeOutlined />}
+                  onPress={() => {
+                    setUserSeenDateForMovie(movie.id, new Date());
+                    setAdditionalDatesLoaded(false);
+                  }}>
+                  {langResources.seenTodayLabel}
+                </Button>
+                <DatePickerModal
+                  chooseDateButtonLabel={langResources.chooseDateLabel}
+                  onDateSelected={(date) => {
+                    if (date) {
+                      setUserSeenDateForMovie(movie.id, date);
+                      setAdditionalDatesLoaded(false);
+                    }
+                  }} />
                 {showDetailsButton &&
                   <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>
                 }
@@ -148,8 +184,11 @@ export const MovieCard = ({
   );
 };
 
-
-const SeenChips: React.FC<{ seenDates?: string[], loading: boolean }> = ({ seenDates, loading }) => {
+const SeenChips: React.FC<{
+  seenDates?: string[],
+  loading: boolean
+  deleteSeenDate: (date: string) => Promise<void>;
+}> = ({ seenDates, loading, deleteSeenDate }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -164,6 +203,7 @@ const SeenChips: React.FC<{ seenDates?: string[], loading: boolean }> = ({ seenD
   };
 
   const notSeen = seenDates?.length === 0 || !seenDates;
+
   return (
     <>
       {
@@ -201,7 +241,8 @@ const SeenChips: React.FC<{ seenDates?: string[], loading: boolean }> = ({ seenD
             key={index}
             className="mr-4 mb-4"
             color="secondary"
-            variant="flat">
+            variant="flat"
+            onClose={() => deleteSeenDate(date)}>
             {formatDate(date)}
           </Chip>
         ))}

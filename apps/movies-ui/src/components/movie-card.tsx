@@ -104,7 +104,12 @@ export const MovieCard = ({
           <Divider />
           <div>
             <CardBody>
-              <div>
+              <div className="flex flex-row">
+                <div className="mr-4 mb-4">
+                  {movie.ownerid == "999" && (
+                    <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
+                  )}
+                </div>
                 <SeenChips
                   seenDates={seenDates ? seenDates : []}
                   loading={seenDatesLoading}
@@ -145,9 +150,6 @@ export const MovieCard = ({
           <CardFooter className="flex flex-row">
             <div className="flex items-center justify-between w-full">
               <div className="flex gap-2">
-                {movie.ownerid == "999" && (
-                  <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
-                )}
                 {movie.genres &&
                   movie.genres.map((genreName: any) => (
                     <Chip key={genreName} color="primary" variant="flat">

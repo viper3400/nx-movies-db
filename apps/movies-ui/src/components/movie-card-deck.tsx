@@ -8,7 +8,7 @@ export interface MovieCardDeckProps {
   movies: Movie[];
   imageBaseUrl: string;
   appBasePath?: string;
-  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
+  loadSeenDatesForMovie: (movieId: string) => Promise<Date[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
   setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
@@ -25,7 +25,7 @@ export const MovieCardDeck = ({
   updateFlagsForMovie,
   setUserSeenDateForMovie,
   deleteUserSeenDateForMovie,
-  movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
+  movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<Date[]> }) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {

@@ -4,7 +4,7 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck } from "./movie-card-deck";
 
-import { getMovies, getSeenDates, updateUserFlags } from "../app/services/actions";
+import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
@@ -50,6 +50,21 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       flags.isFavorite,
       flags.isWatchAgain,
       session.userName);
+  };
+
+  const setUserSeenDateForMovie = async (movieId: string, date: Date) => {
+    await setUserSeenDate(
+      parseInt(movieId),
+      session.userName,
+      date.toISOString().slice(0, 10),
+      "VG_Default");
+  };
+
+  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
+    await deleteUserSeenDate(
+      parseInt(movieId),
+      date.toISOString().slice(0, 10),
+      "VG_Default");
   };
 
   useEffect(() => {
@@ -160,6 +175,13 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             appBasePath={appBasePath}
             loadSeenDatesForMovie={loadSeenDatesForMovie}
             updateFlagsForMovie={updateUserFlagsForMovie}
+            setUserSeenDateForMovie={setUserSeenDateForMovie}
+            deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
+            movieCardLangResources={{
+              seenTodayLabel: t.movie_card?.seen_today,
+              chooseDateLabel: t.movie_card?.choose_date,
+              deletedEntryLabel: t.movie_card?.deleted_entry
+            }}
           />
         )}
       </div>

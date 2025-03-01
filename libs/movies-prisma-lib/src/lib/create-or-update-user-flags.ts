@@ -24,7 +24,7 @@ export const createOrUpdateUserFlag = async (args: {
       });
       return null;
     } else {
-      return prisma.homewebbridge_usermoviesettings.update({
+      return await prisma.homewebbridge_usermoviesettings.update({
         where: {
           id: existingEntry.id,
         },
@@ -35,7 +35,7 @@ export const createOrUpdateUserFlag = async (args: {
       });
     }
   } else {
-    return prisma.homewebbridge_usermoviesettings.create({
+    return await prisma.homewebbridge_usermoviesettings.create({
       data: {
         vdb_movieid: args.movieId,
         watchagain: args.isWatchAgain,

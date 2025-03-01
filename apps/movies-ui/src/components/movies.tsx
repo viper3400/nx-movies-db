@@ -117,7 +117,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     setSearchResult(undefined);
     setCurrentPage(undefined);
     setNextPage(undefined);
-
+    setTotalMoviesCount(0);
     setLoading(false);
   };
 

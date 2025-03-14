@@ -10,7 +10,7 @@ import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
-import useTranslation from "../i18n/useTranslation";
+import { useTranslation } from "react-i18next";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -32,7 +32,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [filterForWatchAgain, setFilterForWatchAgain] = useState(false);
 
   const invalidTextLength = (text: string) => text.length < 0;
-  const { t, lang, changeLanguage } = useTranslation();
+  const { t } = useTranslation();
 
   const loadSeenDatesForMovie = async (movieId: string) => {
     const seenDates = await getSeenDates(movieId, "VG_Default");
@@ -154,19 +154,19 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setFilterForWatchAgain={() => setFilterForWatchAgain(!filterForWatchAgain)}
         handleSearchSubmit={handleSearchSubmit}
         langResources={{
-          placeholderLabel: t.search?.placeholder,
-          searchLabel: t.search?.search,
-          resultCountLabel: t.search?.result_count,
-          deletedMoviesFilterLabel: t.search?.deletedMoviesFilterLabel,
-          deletedMoviesFilterExcludeDeleted: t.search?.deletedMoviesFilterExcludeDeleted,
-          deletedMoviesFilterIncludeDeleted: t.search?.deletedMoviesFilterIncludeDeleted,
-          deletedMoviesFilterOnlyDeleted: t.search?.deletedMoviesFilterOnlyDeleted,
-          favoriteMoviesFilterLabel: t.search?.favoriteMoviesFilterLabel,
-          watchagainMoviesFilterLabel: t.search?.watchagainMoviesFilterLabel,
-          moviesFilterLabel: t.search?.moviesFilterLabel
+          placeholderLabel: t("search.placeholder"),
+          searchLabel: t("search.search"),
+          resultCountLabel: t("search.result_count"),
+          deletedMoviesFilterLabel: t("search.deletedMoviesFilterLabel"),
+          deletedMoviesFilterExcludeDeleted: t("search.deletedMoviesFilterExcludeDeleted"),
+          deletedMoviesFilterIncludeDeleted: t("search.deletedMoviesFilterIncludeDeleted"),
+          deletedMoviesFilterOnlyDeleted: t("search.deletedMoviesFilterOnlyDeleted"),
+          favoriteMoviesFilterLabel: t("search.favoriteMoviesFilterLabel"),
+          watchagainMoviesFilterLabel: t("search.watchagainMoviesFilterLabel"),
+          moviesFilterLabel: t("search.moviesFilterLabel")
         }} />
       <div className="space-y-4">
-        {loading && <div>{t.common?.loading} ...</div>}
+        {loading && <div>{t("common.loading")} ...</div>}
         {searchResult && imageBaseUrl && (
           <MovieCardDeck
             movies={searchResult}
@@ -178,9 +178,9 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             setUserSeenDateForMovie={setUserSeenDateForMovie}
             deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
             movieCardLangResources={{
-              seenTodayLabel: t.movie_card?.seen_today,
-              chooseDateLabel: t.movie_card?.choose_date,
-              deletedEntryLabel: t.movie_card?.deleted_entry
+              seenTodayLabel: t("movie_card.seen_today"),
+              chooseDateLabel: t("movie_card.choose_date"),
+              deletedEntryLabel: t("movie_card.deleted_entry")
             }}
           />
         )}

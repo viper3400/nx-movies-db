@@ -8,7 +8,7 @@ import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { deleteUserSeenDate, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
-import useTranslation from "../i18n/useTranslation";
+import { useTranslation } from "react-i18next";
 
 interface DetailsComponentProperties {
   id: string;
@@ -21,7 +21,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
 
-  const { t, lang, changeLanguage } = useTranslation();
+  const { t } = useTranslation();
 
 
   const inputVariant = "underlined";
@@ -102,9 +102,9 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
             setUserSeenDateForMovie={setUserSeenDateForMovie}
             deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
             langResources={{
-              seenTodayLabel: t.movie_card?.seen_today,
-              chooseDateLabel: t.movie_card?.choose_date,
-              deletedEntryLabel: t.movie_card?.deleted_entry
+              seenTodayLabel: t("movie_card.seen_today"),
+              chooseDateLabel: t("movie_card.choose_date"),
+              deletedEntryLabel: t("movie_card.deleted_entry")
             }} />
           <Spacer y={4} />
           {!readOnlyMode &&

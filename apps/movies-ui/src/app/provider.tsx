@@ -9,7 +9,7 @@ import {
 } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { I18nextProvider } from "react-i18next";
-import i18n from "../i18n/i18nx";
+import i18n from "../i18n/i18n";
 
 export interface ProvidersProps {
   children: React.ReactNode;

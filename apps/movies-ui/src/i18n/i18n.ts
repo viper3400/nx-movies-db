@@ -1,34 +1,28 @@
-import en from "./en.json";
+// filepath: /Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/i18n/i18n.js
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
 import de from "./de.json";
+import en from "./en.json";
 
-interface TranslationResources {
-  [key: string]: {
-    translation: {
-      search: {
-        result_count: string;
-      };
-      common: {
-        title: string;
-      };
-    };
-  };
-}
+i18n
+  .use(initReactI18next)
+  .init({
+    resources: {
+      de: {
+        translation: de
+      },
+      en: {
+        translation: en
+      }
+    },
+    lng: "de",
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false
+    }
+  });
 
-const resources: TranslationResources = {
-  en: {
-    translation: en,
-  },
-  de: {
-    translation: de,
-  },
+export const changeLanguage = (lng: string) => {
+  i18n.changeLanguage(lng);
 };
-
-const i18n = {
-  lng: "de", // default language
-  resources,
-  interpolation: {
-    escapeValue: false, // react already safes from xss
-  },
-};
-
 export default i18n;

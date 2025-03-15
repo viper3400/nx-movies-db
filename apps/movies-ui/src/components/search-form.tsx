@@ -1,10 +1,12 @@
-import { Accordion, AccordionItem, Input, Radio, RadioGroup, Switch } from "@heroui/react";
+import { Input } from "@heroui/react";
 import React from "react";
+import FilterDrawer from "./filter-drawer";
 
 interface SearchFormLangResources {
   placeholderLabel: string;
   searchLabel: string;
   resultCountLabel: string;
+  closeLabel: string;
   deletedMoviesFilterLabel: string;
   deletedMoviesFilterExcludeDeleted: string;
   deletedMoviesFilterIncludeDeleted: string;
@@ -50,7 +52,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 }) => {
   return (
     <form onSubmit={handleSearchSubmit}>
-      <div className="flex w-full flex-wrap md:flex-nowrap pb-4">
+      <div className="flex w-full flex-wrap md:flex-nowrap pb-4 gap-4 pr-4">
         <Input
           isClearable
           errorMessage="Search must have at least 3 characters"
@@ -69,39 +71,25 @@ const SearchForm: React.FC<SearchFormProps> = ({
             setSearchText("");
           }}
         />
-      </div>
-      <div>
-        <div className="w-full flex-wrap md:flex-nowrap pb-4">
-          <Accordion variant="bordered" defaultExpandedKeys={["1"]}>
-            <AccordionItem
-              key="1"
-              aria-label={langResources.moviesFilterLabel}
-              title={langResources.moviesFilterLabel}>
-              <div className="flex w-full flex-row flex-wrap md:flex-nowrap">
-                <div className="pr-4">
-                  <Switch
-                    isSelected={filterForFavorites}
-                    onValueChange={setFilterForFavorites}>{langResources.favoriteMoviesFilterLabel}</Switch>
-                </div>
-                <Switch
-                  isSelected={filterForWatchAgain}
-                  onValueChange={setFilterForWatchAgain}>{langResources.watchagainMoviesFilterLabel}</Switch>
-              </div>
-            </AccordionItem>
-            <AccordionItem
-              key="2"
-              aria-label={langResources.deletedMoviesFilterLabel}
-              title={langResources.deletedMoviesFilterLabel}>
-              <RadioGroup value={deleteMode} onValueChange={setDeleteMode} orientation="horizontal">
-                <Radio value="EXCLUDE_DELETED">{langResources.deletedMoviesFilterExcludeDeleted}</Radio>
-                <Radio value="INCLUDE_DELETED">{langResources.deletedMoviesFilterIncludeDeleted}</Radio>
-                <Radio value="ONLY_DELETED">{langResources.deletedMoviesFilterOnlyDeleted}</Radio>
-              </RadioGroup>
-            </AccordionItem>
-          </Accordion>
+        <div className="place-content-center">
+          <FilterDrawer
+            labelFilterOptions={langResources.moviesFilterLabel}
+            labelClose={langResources.closeLabel}
+            labelExcludeDeleted={langResources.deletedMoviesFilterExcludeDeleted}
+            labelIncludeDeleted={langResources.deletedMoviesFilterIncludeDeleted}
+            labelOnlyDeleted={langResources.deletedMoviesFilterOnlyDeleted}
+            labelDeleteModeHeading={langResources.deletedMoviesFilterLabel}
+            deleteMode={deleteMode}
+            setDeleteMode={setDeleteMode}
+            filterForFavorites={filterForFavorites}
+            setFilterForFavorites={setFilterForFavorites}
+            filterForWatchAgain={filterForWatchAgain}
+            setFilterForWatchAgain={setFilterForWatchAgain}
+            favoriteMoviesFilterLabel={langResources.favoriteMoviesFilterLabel}
+            watchagainMoviesFilterLabel={langResources.watchagainMoviesFilterLabel} />
         </div>
       </div>
-    </form>
+    </form >
   );
 };
 

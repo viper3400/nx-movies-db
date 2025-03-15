@@ -154,6 +154,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setFilterForWatchAgain={() => setFilterForWatchAgain(!filterForWatchAgain)}
         handleSearchSubmit={handleSearchSubmit}
         langResources={{
+          closeLabel: t("common.close"),
           placeholderLabel: t("search.placeholder"),
           searchLabel: t("search.search"),
           resultCountLabel: t("search.result_count"),

@@ -27,6 +27,7 @@ type Video = {
   title?: string | null;
   diskid?: string | null;
   owner_id: number;
+  istv: number;
   plot?: string | null;
   videodb_videogenre?: {
     genre: {
@@ -115,6 +116,7 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
       title: true,
       diskid: true,
       owner_id: true,
+      istv: true,
       plot: queryPlot,
       videodb_videogenre: {
         select: {

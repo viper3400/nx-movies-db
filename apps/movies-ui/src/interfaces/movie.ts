@@ -7,5 +7,6 @@ export interface Movie {
   mediaType: string;
   genres: string[];
   ownerid: string;
+  istv: boolean;
   plot: string;
 }

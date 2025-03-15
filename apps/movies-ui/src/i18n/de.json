@@ -28,6 +28,7 @@
     "title": "Filmdatenbank",
     "loading": "Lade",
     "discard": "Abbrechen",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "close": "Schliessen"
   }
 }

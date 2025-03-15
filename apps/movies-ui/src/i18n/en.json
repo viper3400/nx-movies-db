@@ -28,6 +28,7 @@
     "title": "Movie Database",
     "loading": "Loading",
     "discard": "Discard",
-    "delete": "Delete"
+    "delete": "Delete",
+    "close": "Close"
   }
 }

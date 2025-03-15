@@ -7,6 +7,7 @@ import { EyeOutlined } from "../icons/eye-outlined";
 import { DatePickerModal } from "./datepicker-modal";
 import { DeleteSeenDateModal } from "./delete-seen-date-modal";
 import { SeenChips } from "./seen-chips";
+import { TvNextOutlined } from "../icons";
 
 export interface MovieCardLangResources {
   seenTodayLabel: string;
@@ -93,6 +94,11 @@ export const MovieCard = ({
                     updateFlagsForMovie(flags);
                   }}
                 />
+                {movie.istv &&
+                  <Chip className="bg-primary-500">
+                    <TvNextOutlined />
+                  </Chip>
+                }
                 <Chip color="secondary">{movie.mediaType}</Chip>
                 {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
               </div>

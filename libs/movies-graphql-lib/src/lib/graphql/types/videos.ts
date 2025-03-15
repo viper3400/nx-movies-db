@@ -1,5 +1,5 @@
 import { builder } from "../builder";
-import {getVideos } from "@nx-movies-db/movies-prisma-lib";
+import { getVideos } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoQueryArgs } from "@nx-movies-db/movies-prisma-lib";
 
 export const DeleteMode = builder.enumType("DeleteMode", {
@@ -22,6 +22,7 @@ const Video = builder.simpleObject("Video", {
     subtitle: t.string(),
     diskid: t.string(),
     ownerid: t.int(),
+    istv: t.boolean(),
     plot: t.string(),
     favoriteOf: t.stringList(),
     genres: t.stringList(),
@@ -100,6 +101,7 @@ builder.queryType({
           subtitle: video.subtitle,
           diskid: video.diskid,
           ownerid: video.owner_id, // Make sure to match the field name
+          istv: video.istv == 1 ? true : false,
           plot: args.queryPlot ? video.plot : undefined, // Include plot based on the argument,
           favoriteOf: args.queryUserSettings ? video.userMovieSettings?.filter(s => s.is_favorite).map(s => s.asp_username) : undefined,
           watchAgain: args.queryUserSettings ? video.userMovieSettings?.filter(s => s.watchagain).map(s => s.asp_username) : undefined,

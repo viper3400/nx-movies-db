@@ -52,3 +52,7 @@ staging/*.config
 
 development-db/db
 development-db/*.config
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+
+storybook-static

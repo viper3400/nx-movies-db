@@ -18,7 +18,11 @@
       "@nx-movies-db/movies-graphql-lib": [
         "libs/movies-graphql-lib/src/index.ts"
       ],
-      "@nx-movies-db/movies-prisma-lib": ["libs/movies-prisma-lib/src/index.ts"]
+      "@nx-movies-db/movies-prisma-lib": [
+        "libs/movies-prisma-lib/src/index.ts"
+      ],
+      "@nx-movies-db/shared": ["shared/src/index.ts"],
+      "@nx-movies-db/shared/server": ["shared/src/server.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

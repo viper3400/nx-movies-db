@@ -1,4 +1,5 @@
 import { Chip } from "@heroui/react";
+import { TimeElapsedFormatter } from "../lib";
 
 export const SeenChips: React.FC<{
   seenDates?: Date[],
@@ -44,6 +45,11 @@ export const SeenChips: React.FC<{
           className={"mr-4 mb-4"}
           color="secondary">
           {seenDates.length} x gesehen
+        </Chip>
+      }
+      {seenDates && seenDates.length > 0 &&
+        <Chip color="primary" className="mr-4 mb-4">
+          {TimeElapsedFormatter.getDurationStringForDateArray(seenDates)}
         </Chip>
       }
       {seenDates && seenDates.length > 0 &&

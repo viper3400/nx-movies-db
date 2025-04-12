@@ -6,8 +6,8 @@ import { UserFlagButton } from "./user-flag-button";
 import { EyeOutlined } from "../icons/eye-outlined";
 import { DatePickerModal } from "./datepicker-modal";
 import { DeleteSeenDateModal } from "./delete-seen-date-modal";
-import { SeenChips } from "./seen-chips";
 import { TvNextOutlined } from "../icons";
+import { SeenChips } from "@nx-movies-db/shared-ui";
 
 export interface MovieCardLangResources {
   seenTodayLabel: string;

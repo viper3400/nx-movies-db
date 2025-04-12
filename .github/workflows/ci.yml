@@ -43,3 +43,6 @@ jobs:
 
       # Now run movies-ui integration tests
       - run: npx nx run movies-ui:test --skip-nx-cache
+
+      # Now run shared-ui tests
+      - run: npx nx run shared-ui:test --skip-nx-cache

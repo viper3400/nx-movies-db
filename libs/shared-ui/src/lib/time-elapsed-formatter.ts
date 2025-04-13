@@ -5,6 +5,7 @@ export class TimeElapsedFormatter {
     const startMoment = moment(viewDate);
     const endMoment = moment(referenceDate);
     const duration = moment.duration(endMoment.diff(startMoment));
+    console.log(duration);
     return duration;
   }
 
@@ -14,17 +15,16 @@ export class TimeElapsedFormatter {
   }
 
   public static getDurationString(duration: moment.Duration) {
-    if (duration.years() == 0 && duration.months() < 3) {
-      return `${duration.asDays().toFixed(0)}d`;
-    }
-    else if (duration.years() == 0 && duration.months() >= 3) {
-      return `${duration.months()}M`;
-    }
-    else if (duration.years() > 0 && duration.months() < 2) {
-      return `${duration.years()}Y`;
-    }
-    else if (duration.years() > 0 && duration.months() >= 2) {
-      return `${duration.years()}Y ${duration.months()}M`;
+    if (duration.asSeconds() < 86400) {
+      return "0d";
+    } else if (duration.asMonths() < 3) {
+      return `${Math.floor(duration.asDays())}d`;
+    } else if (duration.asYears() < 1) {
+      return `${Math.floor(duration.asMonths())}M`;
+    } else {
+      const years = Math.floor(duration.asYears());
+      const months = Math.floor(duration.asMonths() % 12);
+      return months > 0 ? `${years}Y ${months}M` : `${years}Y`;
     }
   }
 

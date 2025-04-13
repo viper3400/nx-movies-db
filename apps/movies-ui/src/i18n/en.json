@@ -14,7 +14,8 @@
   "movie_card": {
     "seen_today": "Seen Today",
     "choose_date": "Choose Date",
-    "deleted_entry": "Deleted Entry"
+    "deleted_entry": "Deleted Entry",
+    "not_seen": "not seen"
   },
   "choose_date_modal": {
     "dialog_title": "Choose Date",

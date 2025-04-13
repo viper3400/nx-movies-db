@@ -10,14 +10,27 @@ const meta: Meta<typeof SeenChips> = {
 export default meta;
 type Story = StoryObj<typeof SeenChips>;
 
-export const Seen = {
+export const SeenToday = {
   args: {
     seenDates: ["2023-01-01", "2023-02-15", "2023-03-10", new Date()],
+    seenTodayLabel: "seen today"
   },
 };
 
-export const NotSeen: Story = {
-  args: {},
+export const NotSeenDefault: Story = {
+  args: {
+    notSeenLabel: "not seen"
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.getByText(/not seen/gi)).toBeTruthy();
+  },
+};
+
+export const NotSeenLocalized: Story = {
+  args: {
+    notSeenLabel: "noch nicht gesehen",
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(canvas.getByText(/noch nicht gesehen/gi)).toBeTruthy();

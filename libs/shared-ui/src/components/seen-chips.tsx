@@ -3,9 +3,11 @@ import { TimeElapsedFormatter } from "../lib";
 
 export const SeenChips: React.FC<{
   seenDates?: Date[],
+  notSeenLabel: string,
+  seenTodayLabel: string,
   loading: boolean
   deleteSeenDate: (date: string) => Promise<void>;
-}> = ({ seenDates, loading, deleteSeenDate }) => {
+}> = ({ seenDates, notSeenLabel, seenTodayLabel, loading, deleteSeenDate }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -20,6 +22,11 @@ export const SeenChips: React.FC<{
   };
 
   const notSeen = seenDates?.length === 0 || !seenDates;
+  const durationString = (seenDates: Date[]) => {
+    const durationString = TimeElapsedFormatter.getDurationStringForDateArray(seenDates);
+    if (durationString === "0d") return seenTodayLabel;
+    return durationString;
+  };
 
   return (
     <>
@@ -36,7 +43,7 @@ export const SeenChips: React.FC<{
           className={"mr-4 mb-4"}
           variant="bordered"
           color="secondary">
-          noch nicht gesehen
+          {notSeenLabel}
         </Chip>
 
       }
@@ -49,7 +56,7 @@ export const SeenChips: React.FC<{
       }
       {seenDates && seenDates.length > 0 &&
         <Chip color="primary" className="mr-4 mb-4">
-          {TimeElapsedFormatter.getDurationStringForDateArray(seenDates)}
+          {durationString(seenDates)}
         </Chip>
       }
       {seenDates && seenDates.length > 0 &&

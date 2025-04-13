@@ -18,9 +18,16 @@ describe("TimeElapsedFormatter should", () => {
 
   it("returns duration for given date string", () => {
     const dateString = "2025-01-25T00:00:00.000Z";
-    jest.setSystemTime(new Date(2025, 0, 27));
+    jest.setSystemTime(new Date("2025-01-27T00:00:00.000Z"));
     const result = TimeElapsedFormatter.getDurationStringForDate(new Date(dateString));
     expect(result).toBe("2d");
+  });
+
+  it("returns duration for given date string with TZ", () => {
+    const dateString = "2025-01-23T23:00:00.000Z";
+    jest.setSystemTime(new Date(2025, 0, 24));
+    const result = TimeElapsedFormatter.getDurationStringForDate(new Date(dateString));
+    expect(result).toBe("0d");
   });
 
   it.each([
@@ -28,7 +35,8 @@ describe("TimeElapsedFormatter should", () => {
     [2, new Date(2025, 0, 1), new Date(2025, 0, 31), moment.duration({ years: 0, months: 0, days: 30 })],
     [3, new Date(2025, 0, 1), new Date(2025, 1, 2), moment.duration({ years: 0, months: 1, days: 1 })],
     [4, new Date(2023, 0, 31), new Date(2024, 0, 31), moment.duration({ years: 0, months: 11, days: 30 })],
-    [5, new Date(2023, 0, 31, 20, 20, 25, 222), new Date(2023, 0, 31), moment.duration({ years: 0, months: 0, days: 0 })]
+    [5, new Date(2023, 0, 31, 20, 20, 25, 222), new Date(2023, 0, 31), moment.duration({ years: 0, months: 0, days: 0 })],
+    [6, new Date(2023, 0, 31), new Date(2024, 1, 31), moment.duration({ years: 1, months: 1, days: 0 })]
   ])("(%s) calculate duration between viewdate %s and reference date  %s", (tc, viewDate, referenceDate, expected) => {
     jest.setSystemTime(referenceDate);
     const duration = TimeElapsedFormatter.durationToToday(viewDate);
@@ -43,8 +51,8 @@ describe("TimeElapsedFormatter should", () => {
     [moment.duration({ days: 92 }), "3M"],
     [moment.duration({ months: 1 }), "30d"],
     [moment.duration({ months: 3 }), "3M"],
-    [moment.duration({ years: 1 }), "1Y"],
-    [moment.duration({ years: 1, months: 1 }), "1Y"],
+    [moment.duration({ years: 1, months: 0 }), "1Y"],
+    [moment.duration({ years: 1, months: 1 }), "1Y 1M"],
     [moment.duration({ years: 1, months: 2 }), "1Y 2M"],
     [moment.duration({ years: 2 }), "2Y"],
     [moment.duration({ years: 2, months: 2 }), "2Y 2M"]
@@ -66,12 +74,13 @@ describe("TimeElapsedFormatter should", () => {
 
   it("returns the duration for the latest date in an array", () => {
     const dateArray: Date[] = [
-      new Date("2023-04-01"),
-      new Date("2022-12-15"),
-      new Date("2024-12-02"),
-      new Date("2023-02-28")];
-    jest.setSystemTime(new Date(2024, 11, 3));
+      new Date(Date.UTC(2023, 3, 1)), // April 1, 2023
+      new Date(Date.UTC(2022, 11, 15)), // December 15, 2022
+      new Date(Date.UTC(2024, 11, 2)), // December 2, 2024
+      new Date(Date.UTC(2023, 1, 28)) // February 28, 2023
+    ];
+    jest.setSystemTime(new Date(Date.UTC(2024, 11, 2))); // December 2, 2024
     const result = TimeElapsedFormatter.getDurationStringForDateArray(dateArray);
-    expect(result).toBe("1d");
+    expect(result).toBe("0d");
   });
 });

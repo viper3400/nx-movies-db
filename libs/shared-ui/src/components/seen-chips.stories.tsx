@@ -10,16 +10,16 @@ const meta: Meta<typeof SeenChips> = {
 export default meta;
 type Story = StoryObj<typeof SeenChips>;
 
-export const Primary = {
+export const Seen = {
   args: {
-    seenDates: ["2023-01-01", "2023-02-15", "2023-03-10"],
+    seenDates: ["2023-01-01", "2023-02-15", "2023-03-10", new Date()],
   },
 };
 
-export const Heading: Story = {
+export const NotSeen: Story = {
   args: {},
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(canvas.getByText(/Welcome to Shared!/gi)).toBeTruthy();
+    expect(canvas.getByText(/noch nicht gesehen/gi)).toBeTruthy();
   },
 };

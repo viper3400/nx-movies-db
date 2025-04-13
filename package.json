@@ -87,7 +87,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-node": "^29.7.0",
     "jiti": "2.4.2",
-    "jsdom": "~26.0.0",
+    "jsdom": "~26.1.0",
     "nx": "20.7.2",
     "postcss": "8.5.3",
     "prettier": "^3.0.0",

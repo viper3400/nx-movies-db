@@ -79,7 +79,7 @@ describe("TimeElapsedFormatter should", () => {
       new Date(Date.UTC(2024, 11, 2)), // December 2, 2024
       new Date(Date.UTC(2023, 1, 28)) // February 28, 2023
     ];
-    jest.setSystemTime(new Date(Date.UTC(2024, 11, 3))); // December 3, 2024
+    jest.setSystemTime(new Date(Date.UTC(2024, 11, 2))); // December 2, 2024
     const result = TimeElapsedFormatter.getDurationStringForDateArray(dateArray);
     expect(result).toBe("0d");
   });

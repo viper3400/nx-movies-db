@@ -74,11 +74,12 @@ describe("TimeElapsedFormatter should", () => {
 
   it("returns the duration for the latest date in an array", () => {
     const dateArray: Date[] = [
-      new Date("2023-04-01"),
-      new Date("2022-12-15"),
-      new Date("2024-12-02"),
-      new Date("2023-02-28")];
-    jest.setSystemTime(new Date(2024, 11, 3));
+      new Date(Date.UTC(2023, 3, 1)), // April 1, 2023
+      new Date(Date.UTC(2022, 11, 15)), // December 15, 2022
+      new Date(Date.UTC(2024, 11, 2)), // December 2, 2024
+      new Date(Date.UTC(2023, 1, 28)) // February 28, 2023
+    ];
+    jest.setSystemTime(new Date(Date.UTC(2024, 11, 3))); // December 3, 2024
     const result = TimeElapsedFormatter.getDurationStringForDateArray(dateArray);
     expect(result).toBe("0d");
   });

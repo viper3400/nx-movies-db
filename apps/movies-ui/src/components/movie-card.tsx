@@ -13,6 +13,7 @@ export interface MovieCardLangResources {
   seenTodayLabel: string;
   chooseDateLabel: string;
   deletedEntryLabel: string;
+  notSeenLabel: string;
 }
 export interface MovieCardProps {
   movie: Movie;
@@ -118,6 +119,8 @@ export const MovieCard = ({
                 )}
                 <SeenChips
                   seenDates={seenDates ? seenDates : []}
+                  notSeenLabel={langResources.notSeenLabel}
+                  seenTodayLabel={langResources.seenTodayLabel}
                   loading={seenDatesLoading}
                   deleteSeenDate={async (date) => {
                     setDeleteDate(date);

@@ -10,10 +10,18 @@ const meta: Meta<typeof SeenChips> = {
 export default meta;
 type Story = StoryObj<typeof SeenChips>;
 
+
+export const Loading = {
+  args: {
+    loading: true,
+    notSeenLabel: "not seen"
+  },
+};
 export const SeenToday = {
   args: {
     seenDates: ["2023-01-01", "2023-02-15", "2023-03-10", new Date()],
-    seenTodayLabel: "seen today"
+    seenTodayLabel: "seen today",
+    loading: false
   },
 };
 

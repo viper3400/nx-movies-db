@@ -91,7 +91,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         executeSearch(0);
       }
     }
-  }, [deleteMode]); // Run when `deleteMode` changes
+  }, [deleteMode, filterForFavorites, filterForWatchAgain]); // Run on changes
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -149,9 +149,9 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         deleteMode={deleteMode}
         setDeleteMode={setDeleteMode}
         filterForFavorites={filterForFavorites}
-        setFilterForFavorites={() => setFilterForFavorites(!filterForFavorites)}
+        setFilterForFavorites={setFilterForFavorites}
         filterForWatchAgain={filterForWatchAgain}
-        setFilterForWatchAgain={() => setFilterForWatchAgain(!filterForWatchAgain)}
+        setFilterForWatchAgain={setFilterForWatchAgain}
         handleSearchSubmit={handleSearchSubmit}
         langResources={{
           closeLabel: t("common.close"),

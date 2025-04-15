@@ -12,6 +12,7 @@ export const Default = {
   args: {
     labelFilterOptions: "Filter Settings",
     labelClose: "Close",
+    labelApply: "Apply",
     labelExcludeDeleted: "Exclude Deleted",
     labelIncludeDeleted: "Include Deleted",
     labelOnlyDeleted: "Only Deleted",

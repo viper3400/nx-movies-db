@@ -155,6 +155,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         handleSearchSubmit={handleSearchSubmit}
         langResources={{
           closeLabel: t("common.close"),
+          applyLabel: t("common.apply"),
           placeholderLabel: t("search.placeholder"),
           searchLabel: t("search.search"),
           resultCountLabel: t("search.result_count"),

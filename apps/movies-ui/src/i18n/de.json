@@ -30,6 +30,7 @@
     "loading": "Lade",
     "discard": "Abbrechen",
     "delete": "Löschen",
-    "close": "Schliessen"
+    "close": "Schliessen",
+    "apply": "Anwenden"
   }
 }

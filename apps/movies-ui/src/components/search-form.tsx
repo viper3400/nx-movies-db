@@ -7,6 +7,7 @@ interface SearchFormLangResources {
   searchLabel: string;
   resultCountLabel: string;
   closeLabel: string;
+  applyLabel: string;
   deletedMoviesFilterLabel: string;
   deletedMoviesFilterExcludeDeleted: string;
   deletedMoviesFilterIncludeDeleted: string;
@@ -87,7 +88,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
             setFilterForWatchAgain={setFilterForWatchAgain}
             favoriteMoviesFilterLabel={langResources.favoriteMoviesFilterLabel}
             watchagainMoviesFilterLabel={langResources.watchagainMoviesFilterLabel}
-            labelApply={"Apply"} />
+            labelApply={langResources.applyLabel} />
         </div>
       </div>
     </form >

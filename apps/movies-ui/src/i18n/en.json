@@ -30,6 +30,7 @@
     "loading": "Loading",
     "discard": "Discard",
     "delete": "Delete",
-    "close": "Close"
+    "close": "Close",
+    "apply": "Apply"
   }
 }

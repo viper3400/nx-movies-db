@@ -1,12 +1,13 @@
 import { Input } from "@heroui/react";
 import React from "react";
-import FilterDrawer from "./filter-drawer";
+import { FilterDrawer } from "@nx-movies-db/shared-ui";
 
 interface SearchFormLangResources {
   placeholderLabel: string;
   searchLabel: string;
   resultCountLabel: string;
   closeLabel: string;
+  applyLabel: string;
   deletedMoviesFilterLabel: string;
   deletedMoviesFilterExcludeDeleted: string;
   deletedMoviesFilterIncludeDeleted: string;
@@ -27,9 +28,9 @@ interface SearchFormProps {
   deleteMode: string;
   setDeleteMode: (mode: string) => void;
   filterForFavorites: boolean;
-  setFilterForFavorites: () => void;
+  setFilterForFavorites: (value: boolean) => void;
   filterForWatchAgain: boolean;
-  setFilterForWatchAgain: () => void
+  setFilterForWatchAgain: (value: boolean) => void;
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   langResources: SearchFormLangResources;
 }
@@ -86,7 +87,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
             filterForWatchAgain={filterForWatchAgain}
             setFilterForWatchAgain={setFilterForWatchAgain}
             favoriteMoviesFilterLabel={langResources.favoriteMoviesFilterLabel}
-            watchagainMoviesFilterLabel={langResources.watchagainMoviesFilterLabel} />
+            watchagainMoviesFilterLabel={langResources.watchagainMoviesFilterLabel}
+            labelApply={langResources.applyLabel} />
         </div>
       </div>
     </form >

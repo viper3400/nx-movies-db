@@ -11,10 +11,12 @@ import {
   Switch,
 } from "@heroui/react";
 import { Tune } from "../icons";
+import { useState } from "react";
 
 interface FilterDrawerProperties {
   labelFilterOptions: string;
   labelClose: string;
+  labelApply: string;
   labelExcludeDeleted: string;
   labelIncludeDeleted: string;
   labelOnlyDeleted: string;
@@ -22,34 +24,58 @@ interface FilterDrawerProperties {
   deleteMode: string;
   setDeleteMode: (mode: string) => void;
   filterForFavorites: boolean;
-  setFilterForFavorites: () => void;
+  setFilterForFavorites: (value: boolean) => void;
   filterForWatchAgain: boolean;
-  setFilterForWatchAgain: () => void;
+  setFilterForWatchAgain: (value: boolean) => void;
   favoriteMoviesFilterLabel: string;
   watchagainMoviesFilterLabel: string;
 }
+
 export function FilterDrawer(
   {
     labelClose,
+    labelApply,
     labelFilterOptions,
     labelExcludeDeleted,
     labelIncludeDeleted,
     labelOnlyDeleted,
     labelDeleteModeHeading,
-    filterForFavorites,
-    setFilterForFavorites,
-    filterForWatchAgain,
-    setFilterForWatchAgain,
     favoriteMoviesFilterLabel,
     watchagainMoviesFilterLabel,
-    deleteMode,
-    setDeleteMode }:
-    FilterDrawerProperties) {
+
+    deleteMode: parentDeleteMode,
+    setDeleteMode,
+    filterForFavorites: parentFilterForFavorites,
+    setFilterForFavorites,
+    filterForWatchAgain: parentFilterForWatchAgain,
+    setFilterForWatchAgain,
+  }: FilterDrawerProperties) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  // Local state to manage changes within the component
+  const [localDeleteMode, setLocalDeleteMode] = useState(parentDeleteMode);
+  const [localFilterForFavorites, setLocalFilterForFavorites] = useState(parentFilterForFavorites);
+  const [localFilterForWatchAgain, setLocalFilterForWatchAgain] = useState(parentFilterForWatchAgain);
+
+  // Sync local state with parent state when the drawer is opened
+  const handleOpen = () => {
+    setLocalDeleteMode(parentDeleteMode);
+    setLocalFilterForFavorites(parentFilterForFavorites);
+    setLocalFilterForWatchAgain(parentFilterForWatchAgain);
+    onOpen();
+  };
+
+  // Apply changes to the parent state
+  const handleApply = async (onClose: () => void) => {
+    setDeleteMode(localDeleteMode);
+    setFilterForFavorites(localFilterForFavorites);
+    setFilterForWatchAgain(localFilterForWatchAgain);
+    onClose(); // Close the drawer
+  };
 
   return (
     <>
-      <Button size="lg" variant="ghost" onPress={onOpen} startContent={<Tune />}>
+      <Button size="lg" variant="ghost" onPress={handleOpen} startContent={<Tune />}>
         Filter
       </Button>
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -61,16 +87,16 @@ export function FilterDrawer(
                 <div className="flex w-full flex-col">
                   <div className="pb-4">
                     <Switch
-                      isSelected={filterForFavorites}
-                      onValueChange={setFilterForFavorites}>{favoriteMoviesFilterLabel}</Switch>
+                      isSelected={localFilterForFavorites}
+                      onValueChange={setLocalFilterForFavorites}>{favoriteMoviesFilterLabel}</Switch>
                   </div>
                   <Switch
-                    isSelected={filterForWatchAgain}
-                    onValueChange={setFilterForWatchAgain}>{watchagainMoviesFilterLabel}</Switch>
+                    isSelected={localFilterForWatchAgain}
+                    onValueChange={setLocalFilterForWatchAgain}>{watchagainMoviesFilterLabel}</Switch>
                 </div>
                 <RadioGroup
-                  value={deleteMode}
-                  onValueChange={setDeleteMode}
+                  value={localDeleteMode}
+                  onValueChange={setLocalDeleteMode}
                   orientation="vertical"
                   label={labelDeleteModeHeading}>
                   <Radio value="EXCLUDE_DELETED">{labelExcludeDeleted}</Radio>
@@ -82,10 +108,17 @@ export function FilterDrawer(
                 <Button color="danger" variant="light" onPress={onClose}>
                   {labelClose}
                 </Button>
+                <Button color="default" onPress={
+                  () => {
+                    handleApply(onClose);
+                    onClose();
+                  }}>
+                  {labelApply}
+                </Button>
               </DrawerFooter>
             </>
           )}
-        </DrawerContent >
+        </DrawerContent>
       </Drawer >
     </>
   );

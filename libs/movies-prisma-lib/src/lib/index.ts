@@ -3,6 +3,7 @@ export * from "./create-or-update-user-flags";
 export * from "./create-user-seen-entry";
 export * from "./delete-user-seen-entry";
 export * from "./get-seen-dates";
+export * from "./get-seen-list";
 export * from "./get-user-flags";
 export * from "./get-videos";
 export * from "./movies-prisma-lib";

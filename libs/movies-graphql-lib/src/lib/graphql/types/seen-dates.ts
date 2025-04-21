@@ -4,6 +4,7 @@ import { createUserSeenEntry, deleteUserSeenEntry, getSeenDates, VideoSeenDateAr
 builder.prismaObject("homewebbridge_userseen", {
   fields: (t: any) => ({
     username: t.exposeString("asp_username"),
+    movieId: t.exposeInt("vdb_videoid"),
     viewdate: t.string({
       resolve: (parent: any) => {
         // Assuming viewdate is a timestamp (number)

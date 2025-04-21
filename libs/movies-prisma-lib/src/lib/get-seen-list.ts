@@ -6,9 +6,11 @@ export type GetSeenListArgs = {
   fromDate?: Date;
   toDate?: Date;
   viewGroup: string;
+  skip?: number;
+  take?: number;
 }
 export const getSeenList = async (args: GetSeenListArgs, query: any) => {
-  const { fromDate, toDate, viewGroup } = args;
+  const { fromDate, toDate, viewGroup, take, skip } = args;
 
   const where: any = {
     asp_viewgroup: viewGroup
@@ -32,11 +34,13 @@ export const getSeenList = async (args: GetSeenListArgs, query: any) => {
     select: {
       asp_username: true,
       viewdate: true,
-      id: true
+      vdb_videoid: true
     },
     orderBy: {
       viewdate: "desc",
     },
+    take: take,
+    skip: skip,
     ...query,
   });
 };

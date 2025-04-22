@@ -15,7 +15,8 @@
     "seen_today": "Seen Today",
     "choose_date": "Choose Date",
     "deleted_entry": "Deleted Entry",
-    "not_seen": "not seen"
+    "not_seen": "not seen",
+    "times_seen": "times seen"
   },
   "choose_date_modal": {
     "dialog_title": "Choose Date",

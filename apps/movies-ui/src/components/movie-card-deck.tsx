@@ -25,7 +25,7 @@ export const MovieCardDeck = ({
   updateFlagsForMovie,
   setUserSeenDateForMovie,
   deleteUserSeenDateForMovie,
-  movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<Date[]> }) => {
+  movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
   //console.log(movieCardProps);
 
   if (movies.length === 0) {

@@ -19,7 +19,7 @@ export interface MovieCardProps {
   imageUrl: string;
   appBasePath?: string;
   showDetailsButton?: boolean;
-  loadSeenDatesForMovie: (movieId: string) => Promise<Date[]>;
+  loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
   setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;

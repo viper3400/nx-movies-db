@@ -13,7 +13,7 @@ const getSeenDateQuery = gql`
   }
 `;
 
-export async function getSeenDates(movieId: string, viewGroup: string): Promise<Date[]> {
+export async function getSeenDates(movieId: string, viewGroup: string): Promise<string[]> {
 
   const { data } = await getClient().query({
     query: getSeenDateQuery,

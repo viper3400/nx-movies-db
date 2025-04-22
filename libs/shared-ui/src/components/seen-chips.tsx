@@ -1,13 +1,14 @@
 import { Chip } from "@heroui/react";
 import { TimeElapsedFormatter } from "../lib";
+import { useTranslation } from "react-i18next";
 
 export const SeenChips: React.FC<{
-  seenDates?: Date[],
-  notSeenLabel: string,
-  seenTodayLabel: string,
+  seenDates?: string[],
   loading: boolean
   deleteSeenDate: (date: string) => Promise<void>;
-}> = ({ seenDates, notSeenLabel, seenTodayLabel, loading, deleteSeenDate }) => {
+}> = ({ seenDates, loading, deleteSeenDate }) => {
+  const { t } = useTranslation();
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -24,44 +25,53 @@ export const SeenChips: React.FC<{
   const notSeen = seenDates?.length === 0 || !seenDates;
   const durationString = (seenDates: Date[]) => {
     const durationString = TimeElapsedFormatter.getDurationStringForDateArray(seenDates);
-    if (durationString === "0d") return seenTodayLabel;
+    if (durationString === "0d") return t("movie_card.seen_today");
     return durationString;
   };
+
+  const parsedDates = seenDates?.map(date => new Date(date)).filter(date => !isNaN(date.getTime())) || [];
 
   return (
     <>
       {
         loading && <Chip
+          data-testid="loading_chip"
           className={"mr-4 mb-4 animate-pulse"}
           color="secondary"
           variant="bordered">
-          Lade ...
+          {t("common.loading")}
         </Chip>
       }
       {!loading && notSeen &&
         <Chip
+          data-testid="not_seen_chip"
           className={"mr-4 mb-4"}
           variant="bordered"
           color="secondary">
-          {notSeenLabel}
+          {t("movie_card.not_seen")}
         </Chip>
 
       }
       {seenDates && seenDates.length > 0 && !loading &&
         <Chip
+          data-testid="times_seen_chip"
           className={"mr-4 mb-4"}
           color="secondary">
-          {seenDates.length} x gesehen
+          {seenDates.length} {t("movie_card.times_seen")}
         </Chip>
       }
       {seenDates && seenDates.length > 0 &&
-        <Chip color="primary" className="mr-4 mb-4">
-          {durationString(seenDates)}
+        <Chip
+          data-testid="seen_date_duration_chip"
+          color="primary"
+          className="mr-4 mb-4">
+          {durationString(parsedDates)}
         </Chip>
       }
       {seenDates && seenDates.length > 0 &&
         seenDates.map((date, index) => (
           <Chip
+            data-testid="seen_date_chip"
             key={index}
             className="mr-4 mb-4"
             color="secondary"

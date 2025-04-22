@@ -46,3 +46,18 @@ jobs:
 
       # Now run shared-ui tests
       - run: npx nx run shared-ui:test --skip-nx-cache
+
+      - name: Start Storybook
+        run: npx nx run shared-ui:storybook -p 6006 & # Start Storybook in the background
+        env:
+          CI: true # Set CI environment variable if needed
+
+      - name: Install playwright
+        run:  npx playwright install
+
+      - name: Wait for Storybook to be ready
+        run: |
+          sleep 10
+
+      - name: Run Storybook Tests
+        run: npx nx run shared-ui:test-storybook # Adjust this command based on your test setup

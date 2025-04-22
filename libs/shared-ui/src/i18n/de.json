@@ -15,7 +15,8 @@
     "seen_today": "Heute gesehen",
     "choose_date": "Datum wählen",
     "deleted_entry": "Gelöschter Eintrag",
-    "not_seen": "noch nicht gesehen"
+    "not_seen": "noch nicht gesehen",
+    "times_seen": "x gesehen"
   },
   "choose_date_modal": {
     "dialog_title": "Datum auswählen",

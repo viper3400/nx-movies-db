@@ -57,4 +57,4 @@ jobs:
           sleep 10
 
       - name: Run Storybook Tests
-        run: npx nx run shared-ui:test-storyboard # Adjust this command based on your test setup
+        run: npx nx run shared-ui:test-storybook # Adjust this command based on your test setup

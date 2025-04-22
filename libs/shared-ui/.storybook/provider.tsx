@@ -6,6 +6,8 @@ import {
   ThemeProvider as NextThemesProvider,
   ThemeProviderProps,
 } from "next-themes";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../src/i18n/i18n";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -14,8 +16,10 @@ export interface ProvidersProps {
 
 export function Providers({ children, themeProps }: ProvidersProps) {
   return (
-    <HeroUIProvider>
-      <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-    </HeroUIProvider>
+    <I18nextProvider i18n={i18n}>
+      <HeroUIProvider>
+        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      </HeroUIProvider>
+    </I18nextProvider>
   );
 }

@@ -13,7 +13,6 @@ export interface MovieCardLangResources {
   seenTodayLabel: string;
   chooseDateLabel: string;
   deletedEntryLabel: string;
-  notSeenLabel: string;
 }
 export interface MovieCardProps {
   movie: Movie;
@@ -39,7 +38,7 @@ export const MovieCard = ({
   deleteUserSeenDateForMovie,
   langResources }: MovieCardProps) => {
 
-  const [seenDates, setSeenDates] = useState<Date[]>([]);
+  const [seenDates, setSeenDates] = useState<string[]>([]);
   const [seenDatesLoading, setSeenDatesLoading] = useState(false);
   const [userFlags, setUserFlags] = useState<UserFlagsDTO>();
   const [userFlagsLoading, setUserFlagsLoading] = useState(true);
@@ -51,6 +50,7 @@ export const MovieCard = ({
     const fetchSeenDates = async () => {
       setSeenDatesLoading(true);
       const dates = await loadSeenDatesForMovie(movie.id);
+
       setSeenDates(dates);
       setSeenDatesLoading(false);
     };
@@ -119,8 +119,6 @@ export const MovieCard = ({
                 )}
                 <SeenChips
                   seenDates={seenDates ? seenDates : []}
-                  notSeenLabel={langResources.notSeenLabel}
-                  seenTodayLabel={langResources.seenTodayLabel}
                   loading={seenDatesLoading}
                   deleteSeenDate={async (date) => {
                     setDeleteDate(date);

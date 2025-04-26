@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
-import { MovieCard } from "./movie-card";
+import { MovieCard } from "@nx-movies-db/shared-ui";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";

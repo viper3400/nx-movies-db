@@ -7,7 +7,7 @@ import { getClient } from "../../../lib/apollocient";
 // GraphQL query
 const getSeenDateQuery = gql`
   query GetSeenDates($movieId: Int, $viewGroup: String) {
-      seenData(movieId: $movieId, viewGroup: $viewGroup) {
+      seenData(movieId: $movieId, viewGroup: $viewGroup, sortOrder: "desc") {
       viewdate
     }
   }

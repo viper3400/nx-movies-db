@@ -20,6 +20,7 @@ builder.queryField("seenData", (t) =>
     args: {
       movieId: t.arg.int(),
       viewGroup: t.arg.string(),
+      sortOrder: t.arg.string(),
     },
     resolve: async (query, _parent, args, _ctx: any, _info) => {
       return await getSeenDates(args as VideoSeenDateArgs, query);

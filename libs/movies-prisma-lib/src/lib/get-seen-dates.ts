@@ -6,10 +6,11 @@ const prisma = new PrismaClient();
 export type VideoSeenDateArgs = {
   movieId: number;
   viewGroup: string;
+  sortOrder?: string;
 };
 
 export const getSeenDates = async (args: VideoSeenDateArgs, query: any) => {
-  const { movieId, viewGroup } = args;
+  const { movieId, viewGroup, sortOrder = "asc" } = args;
 
   return await prisma.homewebbridge_userseen.findMany({
     where: {
@@ -20,6 +21,9 @@ export const getSeenDates = async (args: VideoSeenDateArgs, query: any) => {
       asp_username: true,
       viewdate: true
     },
-    ...query,
+    orderBy: {
+      viewdate: sortOrder
+    },
+    ...query
   });
 };

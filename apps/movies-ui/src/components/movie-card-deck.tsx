@@ -1,5 +1,5 @@
 import { UserFlagsDTO } from "../interfaces";
-import { MovieCard, MovieCardLangResources } from "./movie-card";
+import { MovieCard, MovieCardLangResources } from "@nx-movies-db/shared-ui";
 import { Movie } from "../interfaces";
 
 

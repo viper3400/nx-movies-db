@@ -28,10 +28,10 @@ export const SeenToday: Story = {
   args: {
     //seenDates: [new Date("2023,0,1"), new Date("2023,1,15"), new Date("2023,2,10"), new Date()],
     seenDates: [
-      "2023-01-01T00:00:00Z",
-      "2023-02-15T00:00:00Z",
+      new Date().toISOString(),
       "2023-03-10T00:00:00Z",
-      new Date().toISOString()
+      "2023-02-15T00:00:00Z",
+      "2023-01-01T00:00:00Z"
     ],
     loading: false
   },

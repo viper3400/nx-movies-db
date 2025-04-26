@@ -16,13 +16,10 @@ import { useState } from "react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 
 interface DatePickerModalProps {
-  chooseDateButtonLabel: string;
-  dialogTitle?: string;
-
   onDateSelected: (date: Date | null) => void;
 }
 
-export const DatePickerModal = ({ chooseDateButtonLabel, dialogTitle, onDateSelected }: DatePickerModalProps) => {
+export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
   const now = today(getLocalTimeZone());
   const [dateValue, setDateValue] = useState<DateValue | null>(now);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -67,3 +64,4 @@ export const DatePickerModal = ({ chooseDateButtonLabel, dialogTitle, onDateSele
     </>
   );
 };
+

@@ -6,10 +6,8 @@ interface UserFlagButtonProperties {
 }
 export const UserFlagButton = ({userFlagChipProps, onPress} : UserFlagButtonProperties) => {
   return (
-    <>
-      <button onClick={onPress} disabled={userFlagChipProps.loading}>
-        <UserFlagChip type={userFlagChipProps.type} active={userFlagChipProps.active} loading={userFlagChipProps.loading}/>
-      </button>
-    </>
+    <button onClick={onPress} disabled={userFlagChipProps.loading}>
+      <UserFlagChip type={userFlagChipProps.type} active={userFlagChipProps.active} loading={userFlagChipProps.loading}/>
+    </button>
   );
 };

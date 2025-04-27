@@ -1,5 +1,5 @@
 import { UserFlagsDTO } from "../interfaces";
-import { MovieCard, MovieCardLangResources } from "@nx-movies-db/shared-ui";
+import { MovieCard, MovieCardLangResources } from "./movie-card";
 import { Movie } from "../interfaces";
 
 
@@ -32,7 +32,7 @@ export const MovieCardDeck = ({
     return <p>No movies found.</p>;
   }
   return (
-    <>
+    <div className="space-y-4">
       {
         movies.map(
           (movie: Movie) => (
@@ -52,7 +52,7 @@ export const MovieCardDeck = ({
             />
           )
         )}
-    </>
+    </div>
   );
 };
 

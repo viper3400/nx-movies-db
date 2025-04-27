@@ -2,7 +2,7 @@
 
 import { useEffect, useState, FormEvent } from "react";
 
-import { MovieCardDeck } from "./movie-card-deck";
+import { MovieCardDeck } from "@nx-movies-db/shared-ui";
 
 import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
@@ -167,7 +167,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           watchagainMoviesFilterLabel: t("search.watchagainMoviesFilterLabel"),
           moviesFilterLabel: t("search.moviesFilterLabel")
         }} />
-      <div className="space-y-4">
+      <div>
         {loading && <div>{t("common.loading")} ...</div>}
         {searchResult && imageBaseUrl && (
           <MovieCardDeck

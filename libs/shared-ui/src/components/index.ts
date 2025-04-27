@@ -1,4 +1,5 @@
 export * from "./filter-drawer";
+export * from "./movie-card-deck";
 export * from "./movie-card";
 export * from "./seen-chips";
 export * from "./shared";

@@ -9,11 +9,11 @@ const getContentBasedOnSession = async () => {
     console.log(session);
     return (
       <div className="p-2">
-        <MovieComponent session={ session }/>
+        <MovieComponent session={session} />
       </div>
     );
   } else {
-    return ( <SignInFirstComponent />);
+    return (<SignInFirstComponent />);
   }
 };
 
@@ -21,7 +21,7 @@ export default async function Home() {
   const content = await getContentBasedOnSession();
   return (
     <div>
-      { content }
+      {content}
     </div>
   );
 }

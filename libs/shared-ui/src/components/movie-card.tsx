@@ -111,7 +111,7 @@ export const MovieCard = ({
         <div>
           <CardBody>
             <div className="flex flex-row">
-              {movie.ownerid == "999" && (
+              {movie.ownerid === "999" && (
                 <div className="mr-4 mb-4">
                   <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
                 </div>
@@ -156,7 +156,7 @@ export const MovieCard = ({
           <div className="flex items-center justify-between w-full">
             <div className="flex gap-2">
               {movie.genres &&
-                movie.genres.map((genreName: any) => (
+                movie.genres.map((genreName: string) => (
                   <Chip key={genreName} color="primary" variant="flat">
                     {genreName}
                   </Chip>

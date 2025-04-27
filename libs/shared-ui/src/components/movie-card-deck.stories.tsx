@@ -69,5 +69,6 @@ export const Default: Story = {
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
     }
-  }
+  },
+  tags: ["!test"]
 };

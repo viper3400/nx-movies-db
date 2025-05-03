@@ -43,6 +43,7 @@ export const MovieCardDeck = ({
               imageUrl={imageBaseUrl + "/" + movie.id}
               appBasePath={appBasePath}
               showDetailsButton
+              showMarkAsSeenButtons
               loadSeenDatesForMovie={loadSeenDatesForMovie}
               updateFlagsForMovie={updateFlagsForMovie}
               setUserSeenDateForMovie={setUserSeenDateForMovie}

@@ -19,6 +19,7 @@ export interface MovieCardProps {
   imageUrl: string;
   appBasePath?: string;
   showDetailsButton?: boolean;
+  showMarkAsSeenButtons?: boolean;
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
@@ -31,6 +32,7 @@ export const MovieCard = ({
   imageUrl,
   appBasePath,
   showDetailsButton,
+  showMarkAsSeenButtons,
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
   updateFlagsForMovie,
@@ -163,21 +165,25 @@ export const MovieCard = ({
                 ))}
             </div>
             <div className="flex gap-2">
-              <Button
-                startContent={<EyeOutlined />}
-                onPress={() => {
-                  setUserSeenDateForMovie(movie.id, new Date());
-                  setAdditionalDatesLoaded(false);
-                }}>
-                {langResources.seenTodayLabel}
-              </Button>
-              <DatePickerModal
-                onDateSelected={(date) => {
-                  if (date) {
-                    setUserSeenDateForMovie(movie.id, date);
-                    setAdditionalDatesLoaded(false);
-                  }
-                }} />
+              {showMarkAsSeenButtons &&
+                <div className="flex gap-2">
+                  <Button
+                    startContent={<EyeOutlined />}
+                    onPress={() => {
+                      setUserSeenDateForMovie(movie.id, new Date());
+                      setAdditionalDatesLoaded(false);
+                    }}>
+                    {langResources.seenTodayLabel}
+                  </Button>
+                  <DatePickerModal
+                    onDateSelected={(date) => {
+                      if (date) {
+                        setUserSeenDateForMovie(movie.id, date);
+                        setAdditionalDatesLoaded(false);
+                      }
+                    }} />
+                </div>
+              }
               {showDetailsButton &&
                 <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>
               }

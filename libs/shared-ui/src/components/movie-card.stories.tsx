@@ -25,6 +25,7 @@ export const Default: Story = {
     imageUrl: "https://placehold.co/120x180",
     appBasePath: "/movies",
     showDetailsButton: true,
+    showMarkAsSeenButtons: true,
     loadSeenDatesForMovie: async () => ["2025-04-25", "2025-04-20"],
     loadUserFlagsForMovie: async () => ({
       movieId: "1",

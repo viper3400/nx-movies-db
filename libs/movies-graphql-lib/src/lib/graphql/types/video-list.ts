@@ -1,46 +1,7 @@
 import { builder } from "../builder";
 import { getVideos } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoQueryArgs } from "@nx-movies-db/movies-prisma-lib";
-
-export const DeleteMode = builder.enumType("DeleteMode", {
-  values: ["ONLY_DELETED", "INCLUDE_DELETED", "EXCLUDE_DELETED"] as const,
-  description: "Modes for filtering deleted videos",
-});
-
-const RequestMeta = builder.simpleObject("TotalCount", {
-  fields: (t) => ({
-    totalCount: t.int({
-      nullable: false,
-    }),
-  }),
-});
-
-const Video = builder.simpleObject("Video", {
-  fields: (t) => ({
-    id: t.int(),
-    title: t.string(),
-    subtitle: t.string(),
-    diskid: t.string(),
-    ownerid: t.int(),
-    istv: t.boolean(),
-    plot: t.string(),
-    favoriteOf: t.stringList(),
-    genres: t.stringList(),
-    mediaType: t.string()
-  })
-});
-
-const Videos = builder.simpleObject("Videos", {
-  fields: (t) => ({
-    requestMeta: t.field({
-      type: RequestMeta
-    }),
-    videos: t.field({
-      type: [Video],
-      description: "Query to fetch videos based on various filters",
-    }),
-  })
-});
+import { DeleteMode, Videos } from "../objects";
 
 builder.queryType({
   fields: (t) => ({

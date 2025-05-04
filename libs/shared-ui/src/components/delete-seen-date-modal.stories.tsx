@@ -11,7 +11,6 @@ export default meta;
 
 type Story = StoryObj<typeof DeleteSeenDateModal>;
 
-
 export const OpenModal: Story = {
   render: () => <OpenModalComponent />,
 };
@@ -30,7 +29,8 @@ const OpenModalComponent = () => {
         isOpen={isOpen}
         onOpenChange={() => setIsOpen(false)}
         date="2025-04-26"
-        onDeleteConfirmed={handleDeleteConfirmed} />
+        onDeleteConfirmed={handleDeleteConfirmed}
+      />
     </>
   );
 };

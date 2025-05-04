@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { within } from "@storybook/testing-library";
-import { expect } from "@storybook/jest";
+import { within } from "@storybook/test";
+import { expect } from "@storybook/test";
 import { SeenChips } from "./seen-chips";
 
 const meta: Meta<typeof SeenChips> = {
@@ -9,7 +9,6 @@ const meta: Meta<typeof SeenChips> = {
 };
 export default meta;
 type Story = StoryObj<typeof SeenChips>;
-
 
 export const Loading: Story = {
   args: {
@@ -31,9 +30,9 @@ export const SeenToday: Story = {
       new Date().toISOString(),
       "2023-03-10T00:00:00Z",
       "2023-02-15T00:00:00Z",
-      "2023-01-01T00:00:00Z"
+      "2023-01-01T00:00:00Z",
     ],
-    loading: false
+    loading: false,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

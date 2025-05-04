@@ -12,7 +12,7 @@ export const Default: Story = {
   args: {
     userFlagChipProps: {
       type: "Favorite",
-      active: true
-    }
+      active: true,
+    },
   },
 };

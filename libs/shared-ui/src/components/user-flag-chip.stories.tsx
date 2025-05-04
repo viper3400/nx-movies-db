@@ -10,12 +10,12 @@ type Story = StoryObj<typeof UserFlagChip>;
 
 export const Watchagain: Story = {
   args: {
-    type: "Watchagain"
+    type: "Watchagain",
   },
 };
 
 export const Favorite: Story = {
   args: {
-    type: "Favorite"
-  }
+    type: "Favorite",
+  },
 };

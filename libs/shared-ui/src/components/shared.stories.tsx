@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Shared } from './shared';
-import { within } from '@storybook/test';
-import { expect } from '@storybook/test';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Shared } from "./shared";
+import { within } from "@storybook/test";
+import { expect } from "@storybook/test";
 
 const meta: Meta<typeof Shared> = {
   component: Shared,
-  title: 'Shared',
+  title: "Shared",
 };
 export default meta;
 type Story = StoryObj<typeof Shared>;

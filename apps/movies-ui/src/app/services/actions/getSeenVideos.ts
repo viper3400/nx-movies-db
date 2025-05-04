@@ -18,6 +18,8 @@ const getSeenVideosGql = gql`
         viewGroup: $viewGroup,
         fromDate: $fromDate,
         toDate: $toDate,
+        queryPlot: true,
+        queryUserSettings: true,
         take: $take,
         skip: $skip) {
       requestMeta {
@@ -27,8 +29,20 @@ const getSeenVideosGql = gql`
         movieId
         userName
         viewDate
+        video {
+          title
+          plot
+          genres
+          diskid
+          favoriteOf
+          id
+          istv
+          mediaType
+          ownerid
+          subtitle
+        }
       }
-      }
+    }
   }
 `;
 

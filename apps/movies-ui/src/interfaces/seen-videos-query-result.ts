@@ -1,3 +1,5 @@
+import { Movie } from "./movie";
+
 export interface SeenVideosQueryResult {
   seenVideos: {
     requestMeta: {
@@ -7,6 +9,7 @@ export interface SeenVideosQueryResult {
       movieId: string;
       userName: string;
       viewDate: string;
+      video: Movie;
     }[];
   };
 }

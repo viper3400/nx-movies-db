@@ -1,22 +1,6 @@
 import { getSeenList, GetSeenListArgs } from "@nx-movies-db/movies-prisma-lib";
 import { builder } from "../builder";
-
-const RequestMeta = builder.simpleObject("TotalCounXt", {
-  fields: (t) => ({
-    totalCount: t.int({
-      nullable: false,
-    }),
-  }),
-});
-
-const SeenEntry = builder.simpleObject("SeenEntry", {
-  fields: (t) => ({
-    viewDate: t.string(),
-    userName: t.string(),
-    movieId: t.int()
-  })
-});
-
+import { RequestMeta, SeenEntry } from "../objects";
 
 const SeenEntries = builder.simpleObject("SeenEntries", {
   fields: (t) => ({
@@ -48,7 +32,7 @@ builder.queryType({
       resolve: async (_parent, args, _ctx: any) => {
         const seenData = await getSeenList(args as GetSeenListArgs, null);
 
-        const mappedSeenData = seenData.map((entry) => ({
+        const mappedSeenData = seenData.map((entry: any) => ({
           viewDate: entry.viewdate.toISOString(),
           userName: entry.asp_username,
           movieId: entry.vdb_videoid,

@@ -68,7 +68,7 @@ export const Default: Story = {
       seenTodayLabel: "Seen Today",
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
-    }
+    },
   },
-  tags: ["!test"]
+  tags: ["!test"],
 };

@@ -2,7 +2,18 @@ import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
   stories: ["../src/components/**/*.@(mdx|stories.@(js|jsx|ts|tsx))"],
-  addons: ["@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/addon-postcss"],
+
+  core: {
+    disableTelemetry: true,
+  },
+
+  addons: [
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@storybook/addon-styling-webpack",
+    "@chromatic-com/storybook"
+  ],
+
   framework: {
     name: "@storybook/experimental-nextjs-vite",
     options: {
@@ -11,6 +22,12 @@ const config: StorybookConfig = {
       },
     },
   },
+
+  docs: {},
+
+  typescript: {
+    reactDocgen: "react-docgen-typescript"
+  }
 };
 
 export default config;

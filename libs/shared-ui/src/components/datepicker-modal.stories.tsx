@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { DatePickerModal } from './datepicker-modal';
+import type { Meta, StoryObj } from "@storybook/react";
+import { DatePickerModal } from "./datepicker-modal";
 
 const meta: Meta<typeof DatePickerModal> = {
   component: DatePickerModal,
-  title: 'DatePickerModal',
+  title: "DatePickerModal",
 };
 export default meta;
 

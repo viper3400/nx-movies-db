@@ -1,21 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { UserFlagChip } from './user-flag-chip';
+import type { Meta, StoryObj } from "@storybook/react";
+import { UserFlagChip } from "./user-flag-chip";
 
 const meta: Meta<typeof UserFlagChip> = {
   component: UserFlagChip,
-  title: 'UserFlagChip',
+  title: "UserFlagChip",
 };
 export default meta;
 type Story = StoryObj<typeof UserFlagChip>;
 
 export const Watchagain: Story = {
   args: {
-    type: 'Watchagain',
+    type: "Watchagain",
   },
 };
 
 export const Favorite: Story = {
   args: {
-    type: 'Favorite',
+    type: "Favorite",
   },
 };

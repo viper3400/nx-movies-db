@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { DeleteSeenDateModal } from './delete-seen-date-modal';
-import { Button } from '@heroui/react';
+import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { DeleteSeenDateModal } from "./delete-seen-date-modal";
+import { Button } from "@heroui/react";
 
 const meta: Meta<typeof DeleteSeenDateModal> = {
   component: DeleteSeenDateModal,
-  title: 'DeleteSeenDateModal',
+  title: "DeleteSeenDateModal",
 };
 export default meta;
 

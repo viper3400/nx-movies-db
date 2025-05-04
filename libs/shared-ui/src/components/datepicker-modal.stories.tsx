@@ -9,8 +9,6 @@ export default meta;
 
 type Story = StoryObj<typeof DatePickerModal>;
 
-
 export const Default: Story = {
-  args: {
-  }
+  args: {},
 };

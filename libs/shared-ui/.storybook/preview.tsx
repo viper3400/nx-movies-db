@@ -20,6 +20,7 @@ const preview: Preview = {
       );
     },
   ],
+
   globalTypes: {
     locale: {
       description: "Internationalization locale",
@@ -36,11 +37,15 @@ const preview: Preview = {
       },
     },
   },
+
   initialGlobals: {
     locale: "en",
   },
+
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: {
+      handles: ["onClick", "onSubmit", "onChange"], // Add the actions relevant to your project
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -50,7 +55,9 @@ const preview: Preview = {
     docs: {
       //theme: themes.light,
     },
-  }
+  },
+
+  tags: ["autodocs"]
 };
 
 export default preview;

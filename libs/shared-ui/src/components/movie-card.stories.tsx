@@ -32,14 +32,20 @@ export const Default: Story = {
       isFavorite: true,
       isWatchAgain: false,
     }),
-    updateFlagsForMovie: async () => { console.log("update flags"); },
-    setUserSeenDateForMovie: async () => { console.log("set user seen date"); },
-    deleteUserSeenDateForMovie: async () => { console.log("delete user seen Date"); },
+    updateFlagsForMovie: async () => {
+      console.log("update flags");
+    },
+    setUserSeenDateForMovie: async () => {
+      console.log("set user seen date");
+    },
+    deleteUserSeenDateForMovie: async () => {
+      console.log("delete user seen Date");
+    },
     langResources: {
       seenTodayLabel: "Seen Today",
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
-    }
+    },
   },
-  tags: ["!test"]
+  tags: ["!test"],
 };

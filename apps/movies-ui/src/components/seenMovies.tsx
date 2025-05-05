@@ -26,7 +26,7 @@ export const SeenMoviesComponent = () => {
   return (
     <div>
       {seenMovies ? (
-        seenMovies.seenVideos.SeenEntries.map((entry) => (<p key={entry.movieId}>{entry.movieId}</p>))
+        seenMovies.seenVideos.SeenEntries.map((entry) => (<p key={entry.movieId}>{entry.video.title}</p>))
       ) : (
         <p>Loading...</p>
       )}

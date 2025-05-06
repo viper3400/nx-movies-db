@@ -24,7 +24,6 @@ export async function getUserFlagsForMovie(movieId: string, userName: string) {
   });
 
   const result = await data;
-  console.log(result.userFlagsForUser);
   const flags = result.userFlagsForUser.length > 0 ?
     { movieId: movieId, isFavorite: result.userFlagsForUser[0].isFavorite, isWatchAgain: result.userFlagsForUser[0].isWatchAgain } :
     { movieId: movieId, isFavorite: false, isWatchAgain: false };

@@ -5,7 +5,6 @@ export class TimeElapsedFormatter {
     const startMoment = moment(viewDate);
     const endMoment = moment(referenceDate);
     const duration = moment.duration(endMoment.diff(startMoment));
-    console.log(duration);
     return duration;
   }
 

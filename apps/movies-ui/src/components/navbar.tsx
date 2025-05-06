@@ -9,7 +9,6 @@ import { signOut, useSession } from "next-auth/react";
 export default function NavbarComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
-  console.log(session);
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isBordered position="sticky">
       <NavbarBrand>

@@ -16,7 +16,6 @@ export const SeenMoviesComponent = () => {
         20,
         0
       );
-      console.log(movies);
       setSeenMovies(movies);
     };
 

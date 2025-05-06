@@ -1,16 +1,20 @@
 "use client";
 
 import { Navbar, NavbarBrand, NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@heroui/navbar";
-import { Button, Spacer, User } from "@heroui/react";
+import { Button, Link, Spacer, User } from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "../icons/icons";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 export default function NavbarComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
   const { data: session } = useSession();
+
   return (
-    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isBordered position="sticky">
+    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
       <NavbarBrand>
         <SceneLogo />
         <Spacer x={4} />
@@ -36,6 +40,19 @@ export default function NavbarComponent() {
           session &&
           <>
             <NavbarMenuItem>
+              <Link onPress={() => {
+                router.push("/");
+                setIsMenuOpen(false);
+              }}>Filmsuche</Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Link
+                onPress={() => {
+                  router.push("/seen");
+                  setIsMenuOpen(false);
+                }}>Gesehene Filme</Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
               <Button onPress={() => signOut()}>HomeWeb Logout</Button>
             </NavbarMenuItem>
             {session?.user?.email?.match(/@(gmail\.com|.*\.google\.com)$/) && (
@@ -51,6 +68,6 @@ export default function NavbarComponent() {
           </>
         }
       </NavbarMenu>
-    </Navbar>
+    </Navbar >
   );
 }

@@ -4,11 +4,10 @@ import { getAllowedSession } from "../../services/actions/getAllowedSession";
 
 const getContentBasedOnSession = async (id: string) => {
   const session = await getAllowedSession();
-  console.log(session);
   if (session) {
     return (
       <div className="p-2">
-        <DetailsComponent id={ id } userName={session.userName}/>
+        <DetailsComponent id={id} userName={session.userName} />
       </div>
     );
   } else {
@@ -21,15 +20,15 @@ const getContentBasedOnSession = async (id: string) => {
 };
 
 
-export default async function Page( { params,
+export default async function Page({ params,
 }: {
-  params: Promise<{ id: string }>})
-{
+  params: Promise<{ id: string }>
+}) {
   const id = (await params).id;
   const content = (await getContentBasedOnSession(id));
   return (
     <>
-      { content }
+      {content}
     </>
   );
 }

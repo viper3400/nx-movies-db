@@ -29,7 +29,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     imagePath = path.join(coverImagePath, "not_found.jpg");
   }
 
-  console.log("image path: "+ imagePath);
   // Create a manual Web Stream from the file
   const stream = fs.createReadStream(imagePath);
 

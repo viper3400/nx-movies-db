@@ -44,7 +44,6 @@ builder.queryType({
             queryUserSettings: args.queryUserSettings ?? false
           }, undefined);
           const video = videos.videos[0];
-          console.log(video);
           return {
             viewDate: entry.viewdate.toISOString(),
             userName: entry.asp_username,

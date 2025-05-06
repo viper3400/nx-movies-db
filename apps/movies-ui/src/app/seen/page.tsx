@@ -4,7 +4,6 @@ import { getAllowedSession } from "../services/actions/getAllowedSession";
 
 const getContentBasedOnSession = async (id: string) => {
   const session = await getAllowedSession();
-  console.log(session);
   if (session) {
     return (
       <div className="p-2">

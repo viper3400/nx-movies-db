@@ -32,6 +32,9 @@
     "discard": "Discard",
     "delete": "Delete",
     "close": "Close",
-    "apply": "Apply"
+    "apply": "Apply",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "dateSelection": "Dates Selection"
   }
 }

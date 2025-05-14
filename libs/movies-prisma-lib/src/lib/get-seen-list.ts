@@ -29,7 +29,8 @@ export const getSeenList = async (args: GetSeenListArgs, query: any) => {
     };
   }
 
-  return await prisma.homewebbridge_userseen.findMany({
+  const totalCount = await prisma.homewebbridge_userseen.count({ where: where });
+  const movies = await prisma.homewebbridge_userseen.findMany({
     where,
     select: {
       asp_username: true,
@@ -43,5 +44,8 @@ export const getSeenList = async (args: GetSeenListArgs, query: any) => {
     skip: skip,
     ...query,
   });
+
+  return { movies, totalCount };
+
 };
 

@@ -1,23 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { deleteUserSeenDate, getSeenDates, getSeenVideos, updateUserFlags } from "../app/services/actions";
-import { SeenVideosQueryResult, UserFlagsDTO } from "../interfaces";
-import { MovieCard } from "@nx-movies-db/shared-ui";
+import { SeenEntry, UserFlagsDTO } from "../interfaces";
+import { DateRange, DateRangeDrawerComponent, MovieCard } from "@nx-movies-db/shared-ui";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { DatePicker, DateValue, Spacer } from "@heroui/react";
+import { addToast, Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
-import { I18nProvider } from "@react-aria/i18n";
+import PageEndObserver from "./page-end-observer";
+
 
 interface SeenMoviesComponentProperties {
   userName: string
 }
 export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties) => {
-  const [seenMovies, setSeenMovies] = useState<SeenVideosQueryResult>();
+  const [seenMovies, setSeenMovies] = useState<SeenEntry[] | undefined>();
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
-  const [fromDate, setFromDate] = useState<DateValue | null>(parseDate("2010-01-01"));
-  const [toDate, setToDate] = useState<DateValue | null>(parseDate("2099-01-01"));
+  const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
+  const [loading, setLoading] = useState<boolean>(false);
+  const totalMoviesCount = useRef(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [nextPage, setNextPage] = useState<number>();
+
 
   const loadUserFlagsForMovie = async (movieId: string) => {
     const flags = await getUserFlagsForMovie(movieId, userName);
@@ -45,50 +50,65 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   };
 
   useEffect(() => {
+    console.log("use effect called");
     const fetchAppBasePath = async () => {
       const appBasePath = await getAppBasePath();
       setImageBaseUrl(appBasePath + "/api/cover-image");
     };
     fetchAppBasePath();
-  });
+  }, []);
 
-  useEffect(() => {
-    const fetchSeenMovies = async () => {
-      const movies = await getSeenVideos(
-        "VG_Default",
-        (fromDate ? fromDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2010-01-01T00:00:00Z"),
-        (toDate ? toDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2099-01-01T00:00:00Z"),
-        20,
-        0
-      );
-      setSeenMovies(movies);
-    };
-    fetchSeenMovies();
-  }, [fromDate, toDate]);
+
+  const fetchSeenMoviesAsync = async (page: number, range: DateRange) => {
+    setLoading(true);
+    console.log(`current page: ${currentPage}, fromDate: ${range.startDate}, toDate: ${range.endDate}`);
+    const queryResult = await getSeenVideos(
+      "VG_Default",
+      (range.startDate ? range.startDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2010-01-01T00:00:00Z"),
+      (range.endDate ? range.endDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2099-01-01T00:00:00Z"),
+      10,
+      page * 10
+    );
+    totalMoviesCount.current = queryResult.seenVideos.requestMeta.totalCount;
+    setSeenMovies((prev) => prev ? [...prev, ...queryResult.seenVideos.SeenEntries] : queryResult.seenVideos.SeenEntries);
+
+    setCurrentPage(page);
+    if ((page + 1) * 10 < queryResult.seenVideos.requestMeta.totalCount) {
+      setNextPage((prev) => prev ? prev + 1 : 1);
+    } else {
+      setNextPage(page);
+    }
+    console.log(`current page: ${currentPage}, total count: ${queryResult.seenVideos.requestMeta.totalCount}`);
+    setLoading(false);
+  };
+
+  const onDateRangeChanged = async (dateRange: DateRange): Promise<void> => {
+    console.log("on date range changed");
+    setSeenMovies(undefined);
+    totalMoviesCount.current = 0;
+    setDateRange(dateRange);
+    await fetchSeenMoviesAsync(0, dateRange);
+
+  };
+  async function handleNextPageTrigger(): Promise<void> {
+    if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
+      addToast({
+        title: "next page trigger: " + nextPage,
+      });
+      await fetchSeenMoviesAsync(nextPage, dateRange);
+    }
+  }
 
   return (
     <div>
-      <div className="flex">
-        <I18nProvider locale="de">
-          <DatePicker
-            firstDayOfWeek="mon"
-            showMonthAndYearPickers
-            value={fromDate}
-            onChange={setFromDate}
-            label="from date" />
-          <Spacer x={4} />
-          <DatePicker
-            firstDayOfWeek="mon"
-            showMonthAndYearPickers
-            label="to date"
-            value={toDate}
-            onChange={setToDate} />
-        </I18nProvider>
+      <div>
+        <DateRangeDrawerComponent onApply={onDateRangeChanged} />
+        {totalMoviesCount.current}
       </div>
       <div>
         {seenMovies && imageBaseUrl ? (
-          seenMovies.seenVideos.SeenEntries.map((entry) => (
-            <div key={entry.movieId}>
+          seenMovies.map((entry) => (
+            <div key={`${entry.movieId}_${currentPage}`}>
               <Spacer y={4} />
               <MovieCard
                 movie={entry.video}
@@ -112,6 +132,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
           <p>Loading...</p>
         )}
       </div>
+      <PageEndObserver onIntersect={handleNextPageTrigger} />
     </div>
   );
 };

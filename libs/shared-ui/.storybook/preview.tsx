@@ -44,7 +44,12 @@ const preview: Preview = {
 
   parameters: {
     actions: {
-      handles: ["onClick", "onSubmit", "onChange"], // Add the actions relevant to your project
+      handles: [
+        "onClick",
+        "onSubmit",
+        "onChange",
+        "onPress",
+        "onApply"], // Add the actions relevant to your project
     },
     controls: {
       matchers: {

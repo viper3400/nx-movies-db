@@ -32,6 +32,9 @@
     "discard": "Abbrechen",
     "delete": "Löschen",
     "close": "Schliessen",
-    "apply": "Anwenden"
+    "apply": "Anwenden",
+    "startDate": "Datum Start",
+    "endDate": "Datum Ende",
+    "dateSelection": "Datumsauswahl"
   }
 }

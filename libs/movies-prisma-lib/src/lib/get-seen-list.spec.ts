@@ -5,7 +5,7 @@ describe("get seen list for view group", () => {
     const result = await getSeenList({
       viewGroup: "VG_Default"
     }, null);
-    expect(result.length).toBe(22);
+    expect(result.movies.length).toBe(22);
   });
 
   it("should return a list of movie ids and dates with fromDate filter", async () => {
@@ -14,8 +14,8 @@ describe("get seen list for view group", () => {
       fromDate,
       viewGroup: "VG_Default"
     }, null);
-    expect(result.length).toBe(11);
-    result.forEach(item => {
+    expect(result.movies.length).toBe(11);
+    result.movies.forEach(item => {
       expect(item.viewdate.getTime()).toBeGreaterThanOrEqual(fromDate.getTime());
     });
   });
@@ -26,8 +26,8 @@ describe("get seen list for view group", () => {
       toDate,
       viewGroup: "VG_Default"
     }, null);
-    expect(result.length).toBe(12);
-    result.forEach(item => {
+    expect(result.movies.length).toBe(12);
+    result.movies.forEach(item => {
       expect(item.viewdate.getTime()).toBeLessThanOrEqual(toDate.getTime());
     });
   });
@@ -40,17 +40,24 @@ describe("get seen list for view group", () => {
       toDate,
       viewGroup: "VG_Default"
     }, null);
-    expect(result.length).toBe(11);
-    result.forEach(item => {
+    expect(result.movies.length).toBe(11);
+    result.movies.forEach(item => {
       expect(item.viewdate.getTime()).toBeGreaterThanOrEqual(fromDate.getTime());
       expect(item.viewdate.getTime()).toBeLessThanOrEqual(toDate.getTime());
     });
   });
 
+  it("should return a total count of movie even if paging is active", async () => {
+    const result = await getSeenList({
+      viewGroup: "VG_Default"
+    }, { take: 10 });
+    expect(result.movies.length).toBe(10);
+    expect(result.totalCount).toBe(22);
+  });
   it("should return a list of movie ids and dates for a different view group", async () => {
     const result = await getSeenList({
       viewGroup: "VG_NewGroup"
     }, null);
-    expect(result.length).toBe(4);
+    expect(result.movies.length).toBe(4);
   });
 });

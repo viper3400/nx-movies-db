@@ -1,15 +1,29 @@
 "use client";
 
 import { Navbar, NavbarBrand, NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@heroui/navbar";
-import { Divider, Link, Spacer, User } from "@heroui/react";
+import { Avatar, Button, Divider, Link, Spacer, User } from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "../icons/icons";
 import { useState } from "react";
-import { signOut, useSession } from "next-auth/react";
-
-export default function NavbarComponent() {
+export interface NavbarComponentProperties {
+  isValidSession: boolean;
+  userName?: string;
+  userImage?: string;
+  userEmail?: string;
+  handleSignOut: () => void;
+  handleGoogleLogout: () => void;
+  handleGithubLogout: () => void;
+}
+export const NavbarComponent = ({
+  isValidSession,
+  userName,
+  userImage,
+  userEmail,
+  handleSignOut,
+  handleGoogleLogout,
+  handleGithubLogout
+}: NavbarComponentProperties) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session } = useSession();
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
@@ -20,6 +34,9 @@ export default function NavbarComponent() {
       </NavbarBrand>
 
       <NavbarContent justify="end">
+        <Button isIconOnly variant="light">
+          <Avatar src={userImage} />
+        </Button>
         <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
@@ -27,15 +44,15 @@ export default function NavbarComponent() {
       <NavbarMenu className="place-items-center space-y-4">
         <NavbarMenuItem>
           {
-            session?.user?.image && session.user.name &&
+            isValidSession &&
             <User
-              avatarProps={{ src: session?.user?.image }}
-              name={session?.user?.name}
-              description={session.user.email} />
+              avatarProps={{ src: userImage }}
+              name={userName}
+              description={userEmail} />
           }
         </NavbarMenuItem>
         {
-          session &&
+          isValidSession &&
           <>
             <Divider orientation="horizontal" />
             <NavbarMenuItem>
@@ -58,29 +75,29 @@ export default function NavbarComponent() {
               <Link
                 href=""
                 onPress={() => {
-                  signOut();
+                  handleSignOut();
                   setIsMenuOpen(false);
                 }}>HomeWeb Logout</Link>
             </NavbarMenuItem>
-            {session?.user?.email?.match(/@(gmail\.com|.*\.google\.com)$/) && (
+            {userEmail?.match(/@(gmail\.com|.*\.google\.com)$/) && (
               <>
                 <Divider orientation="horizontal" />
                 <NavbarMenuItem>
                   <Link
                     href=""
                     isExternal
-                    onPress={() => { signOut(); window.open("https://accounts.google.com/Logout"); }}>Google Logout</Link>
+                    onPress={() => { handleGoogleLogout(); }}>Google Logout</Link>
                 </NavbarMenuItem>
               </>
             )}
-            {session?.user?.email?.includes("@github.com") && (
+            {userEmail?.includes("@github.com") && (
               <>
                 <Divider orientation="horizontal" />
                 <NavbarMenuItem>
                   <Link
                     href=""
                     isExternal
-                    onPress={() => { signOut(); window.open("https://github.com/logout",); }}>Github Logout</Link>
+                    onPress={() => { handleGithubLogout(); }}>Github Logout</Link>
                 </NavbarMenuItem>
               </>
             )}
@@ -89,4 +106,4 @@ export default function NavbarComponent() {
       </NavbarMenu>
     </Navbar >
   );
-}
+};

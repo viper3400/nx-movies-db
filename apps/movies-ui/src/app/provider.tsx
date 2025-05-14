@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import {
   ThemeProvider as NextThemesProvider,
@@ -28,6 +28,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
     <SessionProvider basePath={process.env.NEXT_PUBLIC_NEXTAUTH_URL}>
       <I18nextProvider i18n={i18n}>
         <HeroUIProvider navigate={router.push}>
+          <ToastProvider placement="top-center" />
           {isMounted ? (
             <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
           ) : (

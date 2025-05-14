@@ -7,7 +7,7 @@ const getContentBasedOnSession = async (id: string) => {
   if (session) {
     return (
       <div className="p-2">
-        <SeenMoviesComponent />
+        <SeenMoviesComponent userName={session.userName} />
       </div>
     );
   } else {

@@ -1,3 +1,4 @@
+export * from "./date-range-drawer";
 export * from "./filter-drawer";
 export * from "./movie-card-deck";
 export * from "./movie-card";

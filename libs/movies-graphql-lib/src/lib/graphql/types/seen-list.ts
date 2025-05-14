@@ -37,7 +37,7 @@ builder.queryType({
       },
       resolve: async (_parent, args, _ctx: any) => {
         const seenData = await getSeenList(args as GetSeenListArgs, null);
-        const mappedSeenData = await Promise.all(seenData.map(async (entry) => {
+        const mappedSeenData = await Promise.all(seenData.movies.map(async (entry) => {
           const videos = await getVideos({
             id: entry.vdb_videoid.toString(),
             queryPlot: args.queryPlot ?? false,
@@ -63,7 +63,7 @@ builder.queryType({
           };
         }));
 
-        const count = mappedSeenData.length;
+        const count = seenData.totalCount;
 
         return {
           requestMeta: {

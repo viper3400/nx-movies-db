@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { FilterDrawer } from "./filter-drawer";
+import { fn } from "@storybook/test";
 
 const meta: Meta<typeof FilterDrawer> = {
   component: FilterDrawer,
@@ -20,5 +21,9 @@ export const Default = {
     favoriteMoviesFilterLabel: "Favorites",
     watchagainMoviesFilterLabel: "Watch Again",
     deleteMode: "INCLUDE_DELETED",
+    setDeleteMode: fn(),
+    setFilterForFavorites: fn(),
+    setFilterForWatchAgain: fn()
+
   },
 };

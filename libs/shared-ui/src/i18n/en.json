@@ -26,6 +26,10 @@
   "delete_date_modal": {
     "dialog_title": "Delete Date"
   },
+  "result_status_indicator": {
+    "no_results": "no results found",
+    "no_more_results": "no more results found."
+  },
   "common": {
     "title": "Movie Database",
     "loading": "Loading",

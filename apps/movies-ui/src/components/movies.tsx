@@ -2,7 +2,7 @@
 
 import { useEffect, useState, FormEvent } from "react";
 
-import { MovieCardDeck } from "@nx-movies-db/shared-ui";
+import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
 import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
@@ -168,7 +168,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           moviesFilterLabel: t("search.moviesFilterLabel")
         }} />
       <div>
-        {loading && <div>{t("common.loading")} ...</div>}
         {searchResult && imageBaseUrl && (
           <MovieCardDeck
             movies={searchResult}
@@ -187,6 +186,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           />
         )}
       </div>
+      <ResultsStatusIndicator isLoading={loading} hasNoResults={searchResult?.length == 0} hasNoMoreResults={searchResult?.length == totalMoviesCount && totalMoviesCount != 0} />
       <PageEndObserver onIntersect={handleNextPageTrigger} />
     </div>
   );

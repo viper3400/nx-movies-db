@@ -26,6 +26,10 @@
   "delete_date_modal": {
     "dialog_title": "Datum löschen"
   },
+  "result_status_indicator": {
+    "no_results": "Keine Ergebnisse gefunden",
+    "no_more_results": "Keine weiteren Ergebnisse gefunden"
+  },
   "common": {
     "title": "Filmdatenbank",
     "loading": "Lade",

@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { deleteUserSeenDate, getSeenDates, getSeenVideos, updateUserFlags } from "../app/services/actions";
 import { SeenEntry, UserFlagsDTO } from "../interfaces";
-import { DateRange, DateRangeDrawerComponent, MovieCard } from "@nx-movies-db/shared-ui";
+import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { addToast, Spacer } from "@heroui/react";
+import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
 
@@ -19,9 +19,11 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
   const [loading, setLoading] = useState<boolean>(false);
-  const totalMoviesCount = useRef(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [nextPage, setNextPage] = useState<number>();
+
+  const totalMoviesCount = useRef(0);
+  const isInitialLoading = useRef(true);
 
 
   const loadUserFlagsForMovie = async (movieId: string) => {
@@ -50,18 +52,25 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   };
 
   useEffect(() => {
-    console.log("use effect called");
     const fetchAppBasePath = async () => {
       const appBasePath = await getAppBasePath();
       setImageBaseUrl(appBasePath + "/api/cover-image");
     };
-    fetchAppBasePath();
-  }, []);
+
+    const fetchInitialMovies = async () => {
+      await fetchSeenMoviesAsync(0, dateRange);
+    };
+
+    if (isInitialLoading.current) {
+      isInitialLoading.current = false;
+      fetchAppBasePath();
+      fetchInitialMovies();
+    }
+  });
 
 
   const fetchSeenMoviesAsync = async (page: number, range: DateRange) => {
     setLoading(true);
-    console.log(`current page: ${currentPage}, fromDate: ${range.startDate}, toDate: ${range.endDate}`);
     const queryResult = await getSeenVideos(
       "VG_Default",
       (range.startDate ? range.startDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2010-01-01T00:00:00Z"),
@@ -78,12 +87,10 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
     } else {
       setNextPage(page);
     }
-    console.log(`current page: ${currentPage}, total count: ${queryResult.seenVideos.requestMeta.totalCount}`);
     setLoading(false);
   };
 
   const onDateRangeChanged = async (dateRange: DateRange): Promise<void> => {
-    console.log("on date range changed");
     setSeenMovies(undefined);
     totalMoviesCount.current = 0;
     setDateRange(dateRange);
@@ -92,9 +99,6 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   };
   async function handleNextPageTrigger(): Promise<void> {
     if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
-      addToast({
-        title: "next page trigger: " + nextPage,
-      });
       await fetchSeenMoviesAsync(nextPage, dateRange);
     }
   }
@@ -103,10 +107,9 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
     <div>
       <div>
         <DateRangeDrawerComponent onApply={onDateRangeChanged} />
-        {totalMoviesCount.current}
       </div>
       <div>
-        {seenMovies && imageBaseUrl ? (
+        {seenMovies && imageBaseUrl && (
           seenMovies.map((entry) => (
             <div key={`${entry.movieId}_${currentPage}`}>
               <Spacer y={4} />
@@ -128,9 +131,8 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
                 }} />
             </div>
           ))
-        ) : (
-          <p>Loading...</p>
         )}
+        <ResultsStatusIndicator isLoading={loading} hasNoResults={seenMovies?.length == 0} hasNoMoreResults={(seenMovies?.length) === totalMoviesCount.current} />
       </div>
       <PageEndObserver onIntersect={handleNextPageTrigger} />
     </div>

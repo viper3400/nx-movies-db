@@ -27,9 +27,6 @@ export const MovieCardDeck = ({
   deleteUserSeenDateForMovie,
   movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
 
-  if (movies.length === 0) {
-    return <p>No movies found.</p>;
-  }
   return (
     <div className="space-y-4">
       {

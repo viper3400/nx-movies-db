@@ -110,8 +110,8 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
       </div>
       <div>
         {seenMovies && imageBaseUrl && (
-          seenMovies.map((entry) => (
-            <div key={`${entry.movieId}_${currentPage}`}>
+          seenMovies.map((entry, idx) => (
+            <div key={`${idx}`}>
               <Spacer y={4} />
               <MovieCard
                 movie={entry.video}

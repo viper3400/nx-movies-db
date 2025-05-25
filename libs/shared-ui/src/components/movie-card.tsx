@@ -74,45 +74,43 @@ export const MovieCard = ({
   return (
     <div key={movie.id}>
       <Card>
-        <CardHeader className="flex flex-col px-4 py-2">
-          <div className="flex items-center justify-between w-full">
-            <div className="text-left font-semibold text-lg pr-2">
-              {movie.title}
-            </div>
-            <div className="flex gap-2">
-              <UserFlagButton
-                userFlagChipProps={{ type: "Favorite", active: userFlags?.isFavorite ?? false, loading: userFlagsLoading }}
-                onPress={async () => {
-                  const flags: UserFlagsDTO = { movieId: movie.id, isFavorite: !userFlags?.isFavorite, isWatchAgain: userFlags?.isWatchAgain ?? false };
-                  setUserFlags(flags);
-                  updateFlagsForMovie(flags);
-                }}
-              />
-              <UserFlagButton
-                userFlagChipProps={{ type: "Watchagain", active: userFlags?.isWatchAgain ?? false, loading: userFlagsLoading }}
-                onPress={async () => {
-                  const flags: UserFlagsDTO = { movieId: movie.id, isFavorite: userFlags?.isFavorite ?? false, isWatchAgain: !userFlags?.isWatchAgain };
-                  setUserFlags(flags);
-                  updateFlagsForMovie(flags);
-                }}
-              />
-              {movie.istv &&
-                <Chip className="bg-primary-500">
-                  <TvNextOutlined />
-                </Chip>
-              }
-              <Chip color="secondary">{movie.mediaType}</Chip>
-              {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
-            </div>
+        <CardHeader className="flex flex-col md:flex-row items-start gap-1 px-4 py-2">
+          <div className="flex-1 min-w-0">
+            <div className="text-left font-semibold text-lg pr-2">{movie.title}</div>
+            {movie.subtitle && (
+              <div className="text-left text-sm">{movie.subtitle}</div>
+            )}
           </div>
-          {movie.subtitle && (
-            <div className="text-left text-sm w-full">{movie.subtitle}</div>
-          )}
+          <div className="flex gap-2 flex-wrap mt-2 flex-shrink-0">
+            <UserFlagButton
+              userFlagChipProps={{ type: "Favorite", active: userFlags?.isFavorite ?? false, loading: userFlagsLoading }}
+              onPress={async () => {
+                const flags: UserFlagsDTO = { movieId: movie.id, isFavorite: !userFlags?.isFavorite, isWatchAgain: userFlags?.isWatchAgain ?? false };
+                setUserFlags(flags);
+                updateFlagsForMovie(flags);
+              }}
+            />
+            <UserFlagButton
+              userFlagChipProps={{ type: "Watchagain", active: userFlags?.isWatchAgain ?? false, loading: userFlagsLoading }}
+              onPress={async () => {
+                const flags: UserFlagsDTO = { movieId: movie.id, isFavorite: userFlags?.isFavorite ?? false, isWatchAgain: !userFlags?.isWatchAgain };
+                setUserFlags(flags);
+                updateFlagsForMovie(flags);
+              }}
+            />
+            {movie.istv && (
+              <Chip className="bg-primary-500">
+                <TvNextOutlined />
+              </Chip>
+            )}
+            <Chip color="secondary">{movie.mediaType}</Chip>
+            {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
+          </div>
         </CardHeader>
         <Divider />
         <div>
           <CardBody>
-            <div className="flex flex-row">
+            <div className="flex flex-col md:flex-row items-start ">
               {movie.ownerid === "999" && (
                 <div className="mr-4 mb-4">
                   <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
@@ -154,8 +152,8 @@ export const MovieCard = ({
           <Divider />
         </div>
 
-        <CardFooter className="flex flex-row">
-          <div className="flex items-center justify-between w-full">
+        <CardFooter>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
             <div className="flex gap-2">
               {movie.genres &&
                 movie.genres.map((genreName: string) => (
@@ -164,9 +162,9 @@ export const MovieCard = ({
                   </Chip>
                 ))}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row gap-2">
               {showMarkAsSeenButtons &&
-                <div className="flex gap-2">
+                <>
                   <Button
                     startContent={<EyeOutlined />}
                     onPress={() => {
@@ -182,7 +180,7 @@ export const MovieCard = ({
                         setAdditionalDatesLoaded(false);
                       }
                     }} />
-                </div>
+                </>
               }
               {showDetailsButton &&
                 <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>

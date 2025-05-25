@@ -32,7 +32,7 @@ export const SeenChips: React.FC<{
   const parsedDates = seenDates?.map(date => new Date(date)).filter(date => !isNaN(date.getTime())) || [];
 
   return (
-    <>
+    <div className="flex flex-col md:flex-row items-left">
       {
         loading && <Chip
           data-testid="loading_chip"
@@ -53,34 +53,39 @@ export const SeenChips: React.FC<{
 
       }
       {seenDates && seenDates.length > 0 && !loading &&
-        <Chip
-          data-testid="times_seen_chip"
-          className={"mr-4 mb-4"}
-          color="secondary">
-          {seenDates.length} {t("movie_card.times_seen")}
-        </Chip>
-      }
-      {seenDates && seenDates.length > 0 &&
-        <Chip
-          data-testid="seen_date_duration_chip"
-          color="primary"
-          className="mr-4 mb-4">
-          {durationString(parsedDates)}
-        </Chip>
-      }
-      {seenDates && seenDates.length > 0 &&
-        seenDates.map((date, index) => (
+        <div className="flex flex-row">
           <Chip
-            data-testid="seen_date_chip"
-            key={index}
-            className="mr-4 mb-4"
-            color="secondary"
-            variant="flat"
-            onClose={() => deleteSeenDate(date.toString())}>
-            {formatDate(date.toString())}
+            data-testid="times_seen_chip"
+            className={"mr-4 mb-4"}
+            color="secondary">
+            {seenDates.length} {t("movie_card.times_seen")}
           </Chip>
-        ))}
-    </>
+
+          <Chip
+            data-testid="seen_date_duration_chip"
+            color="primary"
+            className="mr-4 mb-4">
+            {durationString(parsedDates)}
+          </Chip>
+        </div>
+      }
+      {seenDates && seenDates.length > 0 && !loading &&
+        <div className="flex flex-row flex-wrap">
+          {
+            seenDates.map((date, index) => (
+              <Chip
+                data-testid="seen_date_chip"
+                key={index}
+                className="mr-4 mb-4"
+                color="secondary"
+                variant="flat"
+                onClose={() => deleteSeenDate(date.toString())}>
+                {formatDate(date.toString())}
+              </Chip>
+            ))}
+        </div>
+      }
+    </div>
   );
 };
 

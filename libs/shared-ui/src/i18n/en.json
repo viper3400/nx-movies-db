@@ -7,6 +7,10 @@
     "deletedMoviesFilterExcludeDeleted": "Exclude Deleted",
     "deletedMoviesFilterIncludeDeleted": "Include Deleted",
     "deletedMoviesFilterOnlyDeleted": "Only Deleted",
+    "tvSeriesFilterLabel": "Filter Settings for Tv Series",
+    "tvSeriesFilterExcludeTvSeries": "Exclude Tv Series",
+    "tvSeriesFilterIncludeTvSeries": "Include Tv Series",
+    "tvSeriesFilterOnlyTvSeries": "Only Tv Series",
     "moviesFilterLabel": "Filter Settings",
     "favoriteMoviesFilterLabel": "Favorite Movies",
     "watchagainMoviesFilterLabel": "Watch Again"

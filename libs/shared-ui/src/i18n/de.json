@@ -7,6 +7,10 @@
     "deletedMoviesFilterExcludeDeleted": "Exklusive Gelöschte",
     "deletedMoviesFilterIncludeDeleted": "Inklusive Gelöschte",
     "deletedMoviesFilterOnlyDeleted": "Nur Gelöschte",
+    "tvSeriesFilterLabel": "Filtereinstellung für TV Serien",
+    "tvSeriesFilterExcludeTvSeries": "Exklusive TV Serien",
+    "tvSeriesFilterIncludeTvSeries": "Inklusive TV Serien",
+    "tvSeriesFilterOnlyTvSeries": "Nur TV Serien",
     "moviesFilterLabel": "Filtereinstellungen",
     "favoriteMoviesFilterLabel": "Lieblingsfilme",
     "watchagainMoviesFilterLabel": "Nochmal sehen"

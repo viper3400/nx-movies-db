@@ -11,16 +11,9 @@ type Story = StoryObj<typeof FilterDrawer>;
 
 export const Default = {
   args: {
-    labelFilterOptions: "Filter Settings",
-    labelClose: "Close",
-    labelApply: "Apply",
-    labelExcludeDeleted: "Exclude Deleted",
-    labelIncludeDeleted: "Include Deleted",
-    labelOnlyDeleted: "Only Deleted",
-    labelDeleteModeHeading: "Delete Mode",
-    favoriteMoviesFilterLabel: "Favorites",
-    watchagainMoviesFilterLabel: "Watch Again",
     deleteMode: "INCLUDE_DELETED",
+    tvSeriesMode: "INCLUDE_TVSERIES",
+    setTvSeriesMode: fn(),
     setDeleteMode: fn(),
     setFilterForFavorites: fn(),
     setFilterForWatchAgain: fn()

@@ -12,39 +12,25 @@ import {
 } from "@heroui/react";
 import { Tune } from "../icons";
 import { useState } from "react";
+import { t } from "i18next";
 
 interface FilterDrawerProperties {
-  labelFilterOptions: string;
-  labelClose: string;
-  labelApply: string;
-  labelExcludeDeleted: string;
-  labelIncludeDeleted: string;
-  labelOnlyDeleted: string;
-  labelDeleteModeHeading: string;
   deleteMode: string;
   setDeleteMode: (mode: string) => void;
+  tvSeriesMode: string;
+  setTvSeriesMode: (mode: string) => void;
   filterForFavorites: boolean;
   setFilterForFavorites: (value: boolean) => void;
   filterForWatchAgain: boolean;
   setFilterForWatchAgain: (value: boolean) => void;
-  favoriteMoviesFilterLabel: string;
-  watchagainMoviesFilterLabel: string;
 }
 
 export function FilterDrawer(
   {
-    labelClose,
-    labelApply,
-    labelFilterOptions,
-    labelExcludeDeleted,
-    labelIncludeDeleted,
-    labelOnlyDeleted,
-    labelDeleteModeHeading,
-    favoriteMoviesFilterLabel,
-    watchagainMoviesFilterLabel,
-
     deleteMode: parentDeleteMode,
     setDeleteMode,
+    tvSeriesMode: parentTvSeriesMode,
+    setTvSeriesMode,
     filterForFavorites: parentFilterForFavorites,
     setFilterForFavorites,
     filterForWatchAgain: parentFilterForWatchAgain,
@@ -54,12 +40,14 @@ export function FilterDrawer(
 
   // Local state to manage changes within the component
   const [localDeleteMode, setLocalDeleteMode] = useState(parentDeleteMode);
+  const [localTvSeriesMode, setLocalTvSeriesMode] = useState(parentTvSeriesMode);
   const [localFilterForFavorites, setLocalFilterForFavorites] = useState(parentFilterForFavorites);
   const [localFilterForWatchAgain, setLocalFilterForWatchAgain] = useState(parentFilterForWatchAgain);
 
   // Sync local state with parent state when the drawer is opened
   const handleOpen = () => {
     setLocalDeleteMode(parentDeleteMode);
+    setLocalTvSeriesMode(parentTvSeriesMode);
     setLocalFilterForFavorites(parentFilterForFavorites);
     setLocalFilterForWatchAgain(parentFilterForWatchAgain);
     onOpen();
@@ -68,6 +56,7 @@ export function FilterDrawer(
   // Apply changes to the parent state
   const handleApply = async (onClose: () => void) => {
     setDeleteMode(localDeleteMode);
+    setTvSeriesMode(localTvSeriesMode);
     setFilterForFavorites(localFilterForFavorites);
     setFilterForWatchAgain(localFilterForWatchAgain);
     onClose(); // Close the drawer
@@ -82,38 +71,47 @@ export function FilterDrawer(
         <DrawerContent>
           {(onClose) => (
             <>
-              <DrawerHeader className="flex flex-col gap-1">{labelFilterOptions}</DrawerHeader>
+              <DrawerHeader className="flex flex-col gap-1">{t("search.moviesFilterLabel")}</DrawerHeader>
               <DrawerBody>
                 <div className="flex w-full flex-col">
                   <div className="pb-4">
                     <Switch
                       isSelected={localFilterForFavorites}
-                      onValueChange={setLocalFilterForFavorites}>{favoriteMoviesFilterLabel}</Switch>
+                      onValueChange={setLocalFilterForFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
                   </div>
                   <Switch
                     isSelected={localFilterForWatchAgain}
-                    onValueChange={setLocalFilterForWatchAgain}>{watchagainMoviesFilterLabel}</Switch>
+                    onValueChange={setLocalFilterForWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
                 </div>
+                <RadioGroup
+                  value={localTvSeriesMode}
+                  onValueChange={setLocalTvSeriesMode}
+                  orientation="vertical"
+                  label={t("search.tvSeriesFilterLabel")}>
+                  <Radio value="EXCLUDE_TVSERIES">{t("search.tvSeriesFilterExcludeTvSeries")}</Radio>
+                  <Radio value="INCLUDE_TVSERIES">{t("search.tvSeriesFilterIncludeTvSeries")}</Radio>
+                  <Radio value="ONLY_TVSERIES">{t("search.tvSeriesFilterOnlyTvSeries")}</Radio>
+                </RadioGroup>
                 <RadioGroup
                   value={localDeleteMode}
                   onValueChange={setLocalDeleteMode}
                   orientation="vertical"
-                  label={labelDeleteModeHeading}>
-                  <Radio value="EXCLUDE_DELETED">{labelExcludeDeleted}</Radio>
-                  <Radio value="INCLUDE_DELETED">{labelIncludeDeleted}</Radio>
-                  <Radio value="ONLY_DELETED">{labelOnlyDeleted}</Radio>
+                  label={t("search.deletedMoviesFilterLabel")}>
+                  <Radio value="EXCLUDE_DELETED">{t("search.deletedMoviesFilterExcludeDeleted")}</Radio>
+                  <Radio value="INCLUDE_DELETED">{t("search.deletedMoviesFilterIncludeDeleted")}</Radio>
+                  <Radio value="ONLY_DELETED">{t("search.deletedMoviesFilterOnlyDeleted")}</Radio>
                 </RadioGroup>
               </DrawerBody>
               <DrawerFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  {labelClose}
+                  {t("common.close")}
                 </Button>
                 <Button color="default" onPress={
                   () => {
                     handleApply(onClose);
                     onClose();
                   }}>
-                  {labelApply}
+                  {t("common.apply")}
                 </Button>
               </DrawerFooter>
             </>

@@ -1,7 +1,7 @@
 import { builder } from "../builder";
 import { getVideos } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoQueryArgs } from "@nx-movies-db/movies-prisma-lib";
-import { DeleteMode, Videos } from "../objects";
+import { DeleteMode, TvSeriesMode, Videos } from "../objects";
 
 builder.queryType({
   fields: (t) => ({
@@ -44,6 +44,10 @@ builder.queryType({
         deleteMode: t.arg({
           type: DeleteMode,
           description: "Filter videos based on delete mode",
+        }),
+        tvSeriesMode: t.arg({
+          type: TvSeriesMode,
+          description: "Filter videos based on there istv flag"
         }),
         skip: t.arg.int({
           description: "Elements to skip"

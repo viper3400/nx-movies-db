@@ -6,15 +6,6 @@ interface SearchFormLangResources {
   placeholderLabel: string;
   searchLabel: string;
   resultCountLabel: string;
-  closeLabel: string;
-  applyLabel: string;
-  deletedMoviesFilterLabel: string;
-  deletedMoviesFilterExcludeDeleted: string;
-  deletedMoviesFilterIncludeDeleted: string;
-  deletedMoviesFilterOnlyDeleted: string;
-  moviesFilterLabel: string;
-  favoriteMoviesFilterLabel: string;
-  watchagainMoviesFilterLabel: string;
 
 }
 
@@ -27,6 +18,8 @@ interface SearchFormProps {
   totalMoviesCount: number;
   deleteMode: string;
   setDeleteMode: (mode: string) => void;
+  tvSeriesMode: string;
+  setTvSeriesMode: (mode: string) => void;
   filterForFavorites: boolean;
   setFilterForFavorites: (value: boolean) => void;
   filterForWatchAgain: boolean;
@@ -44,6 +37,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
   totalMoviesCount,
   deleteMode,
   setDeleteMode,
+  tvSeriesMode,
+  setTvSeriesMode,
   filterForFavorites,
   setFilterForFavorites,
   filterForWatchAgain,
@@ -74,21 +69,14 @@ const SearchForm: React.FC<SearchFormProps> = ({
         />
         <div className="place-content-center">
           <FilterDrawer
-            labelFilterOptions={langResources.moviesFilterLabel}
-            labelClose={langResources.closeLabel}
-            labelExcludeDeleted={langResources.deletedMoviesFilterExcludeDeleted}
-            labelIncludeDeleted={langResources.deletedMoviesFilterIncludeDeleted}
-            labelOnlyDeleted={langResources.deletedMoviesFilterOnlyDeleted}
-            labelDeleteModeHeading={langResources.deletedMoviesFilterLabel}
             deleteMode={deleteMode}
             setDeleteMode={setDeleteMode}
+            tvSeriesMode={tvSeriesMode}
+            setTvSeriesMode={setTvSeriesMode}
             filterForFavorites={filterForFavorites}
             setFilterForFavorites={setFilterForFavorites}
             filterForWatchAgain={filterForWatchAgain}
-            setFilterForWatchAgain={setFilterForWatchAgain}
-            favoriteMoviesFilterLabel={langResources.favoriteMoviesFilterLabel}
-            watchagainMoviesFilterLabel={langResources.watchagainMoviesFilterLabel}
-            labelApply={langResources.applyLabel} />
+            setFilterForWatchAgain={setFilterForWatchAgain} />
         </div>
       </div>
     </form >

@@ -10,6 +10,7 @@ const getMovieByTitle = gql`
     $title: String!,
     $diskid: String!,
     $deleteMode: DeleteMode,
+    $tvSeriesMode: TvSeriesMode,
     $filterFavorites: Boolean!,
     $filterFlagged: Boolean!,
     $userName: String!,
@@ -20,6 +21,7 @@ const getMovieByTitle = gql`
       title: $title,
       diskid: $diskid,
       deleteMode: $deleteMode,
+      tvSeriesMode: $tvSeriesMode
       filterFavorites: $filterFavorites,
       filterFlagged: $filterFlagged,
       userName: $userName,
@@ -48,6 +50,7 @@ const getMovieByTitle = gql`
 export async function getMovies(
   searchString: string,
   deleteMode: string,
+  tvSeriesMode: string,
   filterFavorites: boolean,
   filterFlagged: boolean,
   userName: string,
@@ -69,6 +72,7 @@ export async function getMovies(
       title: searchTitle,
       diskid: searchDiskId,
       deleteMode: deleteMode,
+      tvSeriesMode: tvSeriesMode,
       filterFavorites: filterFavorites,
       filterFlagged: filterFlagged,
       userName: userName,

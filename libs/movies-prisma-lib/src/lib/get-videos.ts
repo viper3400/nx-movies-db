@@ -16,9 +16,9 @@ export type VideoQueryArgs = {
   filterFlagged?: boolean;
   userName?: string;
   deleteMode?: string;
+  tvSeriesMode?: string;
   skip?: number;
   take?: number;
-  //deleteMode?: 'ONLY_DELETED' | 'INCLUDE_DELETED' | 'EXCLUDE_DELETED'; // New deleteMode parameter
 };
 
 type Video = {
@@ -45,11 +45,19 @@ type Video = {
 };
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, queryUserSettings, userName, filterFavorites, filterFlagged, deleteMode, take, skip } = args;
+  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, queryUserSettings, userName, filterFavorites, filterFlagged, deleteMode, tvSeriesMode, take, skip } = args;
 
   if ((filterFlagged || filterFavorites) && !userName) {
     throw new Error("Username must be set");
   }
+
+  // Helper for tvSeriesMode
+  const tvSeriesFilter =
+    tvSeriesMode === "ONLY_TVSERIES"
+      ? { istv: { equals: 1 } }
+      : tvSeriesMode === "EXCLUDE_TVSERIES"
+        ? { istv: { equals: 0 } }
+        : {};
 
   const where = {
     AND: [
@@ -86,6 +94,7 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
       } : deleteMode === "EXCLUDE_DELETED" ? {
         owner_id: { not: 999 },
       } : {}, // INCLUDE_DELETED will not add any additional filters
+      tvSeriesFilter,
       userName && filterFavorites ? {
         userMovieSettings: {
           some: {

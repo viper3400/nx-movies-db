@@ -157,18 +157,9 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setTvSeriesMode={setTvSeriesMode}
         handleSearchSubmit={handleSearchSubmit}
         langResources={{
-          closeLabel: t("common.close"),
-          applyLabel: t("common.apply"),
           placeholderLabel: t("search.placeholder"),
           searchLabel: t("search.search"),
           resultCountLabel: t("search.result_count"),
-          deletedMoviesFilterLabel: t("search.deletedMoviesFilterLabel"),
-          deletedMoviesFilterExcludeDeleted: t("search.deletedMoviesFilterExcludeDeleted"),
-          deletedMoviesFilterIncludeDeleted: t("search.deletedMoviesFilterIncludeDeleted"),
-          deletedMoviesFilterOnlyDeleted: t("search.deletedMoviesFilterOnlyDeleted"),
-          favoriteMoviesFilterLabel: t("search.favoriteMoviesFilterLabel"),
-          watchagainMoviesFilterLabel: t("search.watchagainMoviesFilterLabel"),
-          moviesFilterLabel: t("search.moviesFilterLabel")
         }} />
       <div>
         {searchResult && imageBaseUrl && (

@@ -6,15 +6,6 @@ interface SearchFormLangResources {
   placeholderLabel: string;
   searchLabel: string;
   resultCountLabel: string;
-  closeLabel: string;
-  applyLabel: string;
-  deletedMoviesFilterLabel: string;
-  deletedMoviesFilterExcludeDeleted: string;
-  deletedMoviesFilterIncludeDeleted: string;
-  deletedMoviesFilterOnlyDeleted: string;
-  moviesFilterLabel: string;
-  favoriteMoviesFilterLabel: string;
-  watchagainMoviesFilterLabel: string;
 
 }
 

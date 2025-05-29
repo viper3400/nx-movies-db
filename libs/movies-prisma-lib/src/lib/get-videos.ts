@@ -48,6 +48,9 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
     },
     take: take,
     skip: skip,
+    orderBy: {
+      title: "asc"
+    },
     ...query,
   });
   const result = {

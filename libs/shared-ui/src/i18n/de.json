@@ -13,7 +13,8 @@
     "tvSeriesFilterOnlyTvSeries": "Nur TV Serien",
     "moviesFilterLabel": "Filtereinstellungen",
     "favoriteMoviesFilterLabel": "Lieblingsfilme",
-    "watchagainMoviesFilterLabel": "Nochmal sehen"
+    "watchagainMoviesFilterLabel": "Nochmal sehen",
+    "randomMoviesFilterLabel": "Zufällig"
   },
   "movie_card": {
     "seen_today": "Heute gesehen",

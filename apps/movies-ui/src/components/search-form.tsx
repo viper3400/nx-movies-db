@@ -24,6 +24,8 @@ interface SearchFormProps {
   setFilterForFavorites: (value: boolean) => void;
   filterForWatchAgain: boolean;
   setFilterForWatchAgain: (value: boolean) => void;
+  randomOrder: boolean;
+  setRandomOrder: (value: boolean) => void;
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   langResources: SearchFormLangResources;
 }
@@ -43,6 +45,8 @@ const SearchForm: React.FC<SearchFormProps> = ({
   setFilterForFavorites,
   filterForWatchAgain,
   setFilterForWatchAgain,
+  randomOrder,
+  setRandomOrder,
   handleSearchSubmit,
   langResources
 }) => {
@@ -76,7 +80,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
             filterForFavorites={filterForFavorites}
             setFilterForFavorites={setFilterForFavorites}
             filterForWatchAgain={filterForWatchAgain}
-            setFilterForWatchAgain={setFilterForWatchAgain} />
+            setFilterForWatchAgain={setFilterForWatchAgain}
+            filterForRandomMovies={randomOrder}
+            setFilterForRandomMovies={setRandomOrder} />
         </div>
       </div>
     </form >

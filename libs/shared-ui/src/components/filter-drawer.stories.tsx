@@ -16,7 +16,7 @@ export const Default = {
     setTvSeriesMode: fn(),
     setDeleteMode: fn(),
     setFilterForFavorites: fn(),
-    setFilterForWatchAgain: fn()
-
+    setFilterForWatchAgain: fn(),
+    setFilterForRandomMovies: fn()
   },
 };

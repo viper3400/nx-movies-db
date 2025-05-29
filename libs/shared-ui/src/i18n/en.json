@@ -13,7 +13,8 @@
     "tvSeriesFilterOnlyTvSeries": "Only Tv Series",
     "moviesFilterLabel": "Filter Settings",
     "favoriteMoviesFilterLabel": "Favorite Movies",
-    "watchagainMoviesFilterLabel": "Watch Again"
+    "watchagainMoviesFilterLabel": "Watch Again",
+    "randomMoviesFilterLabel": "Random"
   },
   "movie_card": {
     "seen_today": "Seen Today",

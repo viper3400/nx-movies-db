@@ -42,6 +42,8 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
       diskid: true,
       owner_id: true,
       istv: true,
+      runtime: true,
+      rating: true,
       plot: queryPlot,
       videodb_videogenre: {
         select: {

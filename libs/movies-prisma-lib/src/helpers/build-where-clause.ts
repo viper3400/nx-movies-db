@@ -1,7 +1,7 @@
 import { VideoQueryArgs } from "../types";
 
 export const buildWhereClause = (args: VideoQueryArgs): any => {
-  const { id, title, diskid, genreName, mediaType, ownerid, userName, filterFavorites, filterFlagged, deleteMode, tvSeriesMode } = args;
+  const { ids, title, diskid, genreName, mediaType, ownerid, userName, filterFavorites, filterFlagged, deleteMode, tvSeriesMode } = args;
 
   if ((filterFlagged || filterFavorites) && !userName) {
     throw new Error("Username must be set");
@@ -24,7 +24,7 @@ export const buildWhereClause = (args: VideoQueryArgs): any => {
         ],
       },
       {
-        id: id ? { equals: parseInt(id, 10) } : undefined,
+        id: ids ? { in: ids.map((id) => parseInt(id, 10)) } : undefined,
       },
       {
         owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,

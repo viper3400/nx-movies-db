@@ -27,7 +27,7 @@ export async function getMoviesById(id: string, deleteMode: string) {
 
   const { data } = await getClient().query({
     query: getMovieById,
-    variables: { id: id, deleteMode: deleteMode },
+    variables: { ids: [id], deleteMode: deleteMode },
   });
 
   const result = await data;

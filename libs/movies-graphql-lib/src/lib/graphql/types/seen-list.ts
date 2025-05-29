@@ -39,7 +39,7 @@ builder.queryType({
         const seenData = await getSeenList(args as GetSeenListArgs, null);
         const mappedSeenData = await Promise.all(seenData.movies.map(async (entry) => {
           const videos = await getVideos({
-            id: entry.vdb_videoid.toString(),
+            ids: [entry.vdb_videoid.toString()],
             queryPlot: args.queryPlot ?? false,
             queryUserSettings: args.queryUserSettings ?? false
           }, undefined);

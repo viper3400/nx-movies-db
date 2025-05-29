@@ -8,8 +8,8 @@ builder.queryType({
     videos: t.field({
       type: Videos,
       args: {
-        id: t.arg.string({
-          description: "Filter videos by id",
+        ids: t.arg.stringList({
+          description: "Filter videos by ids",
         }),
         title: t.arg.string({
           description: "Filter videos by title",

@@ -8,8 +8,8 @@ builder.queryType({
     videos: t.field({
       type: Videos,
       args: {
-        id: t.arg.string({
-          description: "Filter videos by id",
+        ids: t.arg.stringList({
+          description: "Filter videos by ids",
         }),
         title: t.arg.string({
           description: "Filter videos by title",
@@ -31,6 +31,9 @@ builder.queryType({
         }),
         queryUserSettings: t.arg.boolean({
           description: "Include user movie settings in the result",
+        }),
+        randomOrder: t.arg.boolean({
+          description: "return result in random order"
         }),
         userName: t.arg.string({
           description: "user name to filter user movie settings"

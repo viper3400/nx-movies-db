@@ -6,8 +6,8 @@ import { getClient } from "../../../lib/apollocient";
 
 // GraphQL query
 const getMovieById = gql`
-  query GetMovies($id: String) {
-    videos(id: $id, queryPlot: true) {
+  query GetMovies($ids: [String!]) {
+    videos(ids: $ids, queryPlot: true) {
       videos {
         title
         diskid

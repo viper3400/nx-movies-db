@@ -6,9 +6,28 @@ import { buildWhereClause } from "../helpers";
 const prisma = new PrismaClient();
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { queryPlot, queryUserSettings, take, skip } = args;
+  const { queryPlot, queryUserSettings, randomOrder, take, skip } = args;
 
-  const where = buildWhereClause(args);
+  let where = buildWhereClause(args);
+
+  if (randomOrder) {
+    const allIds = await prisma.videodb_videodata.findMany({
+      where: where,
+      select: {
+        id: true
+      }
+    });
+    // Shuffle allIds and take the first 10
+    const shuffledIds = allIds
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value.id)
+      .slice(0, 10);
+
+    const shuffledIdsAsStrings = shuffledIds.map(id => id.toString());
+    const newArgs = { ...args, ids: shuffledIdsAsStrings };
+    where = buildWhereClause(newArgs);
+  }
 
   const totalCount = await prisma.videodb_videodata.count({
     where: where

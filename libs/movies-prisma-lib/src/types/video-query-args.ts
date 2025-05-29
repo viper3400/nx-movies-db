@@ -7,6 +7,7 @@ export type VideoQueryArgs = {
   ownerid?: string;     // Optional string for filtering by owner ID
   queryPlot?: boolean;
   queryUserSettings?: boolean;
+  randomOrder?: boolean;
   filterFavorites?: boolean;
   filterFlagged?: boolean;
   userName?: string;

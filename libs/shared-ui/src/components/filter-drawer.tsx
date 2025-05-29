@@ -23,8 +23,9 @@ interface FilterDrawerProperties {
   setFilterForFavorites: (value: boolean) => void;
   filterForWatchAgain: boolean;
   setFilterForWatchAgain: (value: boolean) => void;
+  filterForRandomMovies: boolean;
+  setFilterForRandomMovies: (value: boolean) => void;
 }
-
 export function FilterDrawer(
   {
     deleteMode: parentDeleteMode,
@@ -35,6 +36,8 @@ export function FilterDrawer(
     setFilterForFavorites,
     filterForWatchAgain: parentFilterForWatchAgain,
     setFilterForWatchAgain,
+    filterForRandomMovies: parentFilterForRandomMovies,
+    setFilterForRandomMovies
   }: FilterDrawerProperties) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -43,6 +46,7 @@ export function FilterDrawer(
   const [localTvSeriesMode, setLocalTvSeriesMode] = useState(parentTvSeriesMode);
   const [localFilterForFavorites, setLocalFilterForFavorites] = useState(parentFilterForFavorites);
   const [localFilterForWatchAgain, setLocalFilterForWatchAgain] = useState(parentFilterForWatchAgain);
+  const [localFilterForRandomMovies, setLocalFilterForRandomMovies] = useState(parentFilterForRandomMovies);
 
   // Sync local state with parent state when the drawer is opened
   const handleOpen = () => {
@@ -50,6 +54,7 @@ export function FilterDrawer(
     setLocalTvSeriesMode(parentTvSeriesMode);
     setLocalFilterForFavorites(parentFilterForFavorites);
     setLocalFilterForWatchAgain(parentFilterForWatchAgain);
+    setLocalFilterForRandomMovies(parentFilterForRandomMovies);
     onOpen();
   };
 
@@ -59,6 +64,7 @@ export function FilterDrawer(
     setTvSeriesMode(localTvSeriesMode);
     setFilterForFavorites(localFilterForFavorites);
     setFilterForWatchAgain(localFilterForWatchAgain);
+    setFilterForRandomMovies(localFilterForRandomMovies);
     onClose(); // Close the drawer
   };
 
@@ -73,15 +79,16 @@ export function FilterDrawer(
             <>
               <DrawerHeader className="flex flex-col gap-1">{t("search.moviesFilterLabel")}</DrawerHeader>
               <DrawerBody>
-                <div className="flex w-full flex-col">
-                  <div className="pb-4">
-                    <Switch
-                      isSelected={localFilterForFavorites}
-                      onValueChange={setLocalFilterForFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
-                  </div>
+                <div className="flex w-full flex-col gap-4">
+                  <Switch
+                    isSelected={localFilterForFavorites}
+                    onValueChange={setLocalFilterForFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
                   <Switch
                     isSelected={localFilterForWatchAgain}
                     onValueChange={setLocalFilterForWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
+                  <Switch
+                    isSelected={localFilterForRandomMovies}
+                    onValueChange={setLocalFilterForRandomMovies}>{t("search.randomMoviesFilterLabel")}</Switch>
                 </div>
                 <RadioGroup
                   value={localTvSeriesMode}

@@ -32,6 +32,9 @@ builder.queryType({
         queryUserSettings: t.arg.boolean({
           description: "Include user movie settings in the result",
         }),
+        randomOrder: t.arg.boolean({
+          description: "return result in random order"
+        }),
         userName: t.arg.string({
           description: "user name to filter user movie settings"
         }),

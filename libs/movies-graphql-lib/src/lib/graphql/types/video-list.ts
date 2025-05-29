@@ -70,6 +70,8 @@ builder.queryType({
           diskid: video.diskid,
           ownerid: video.owner_id, // Make sure to match the field name
           istv: video.istv == 1 ? true : false,
+          runtime: video.runtime,
+          rating: video.rating,
           plot: args.queryPlot ? video.plot : undefined, // Include plot based on the argument,
           favoriteOf: args.queryUserSettings ? video.userMovieSettings?.filter(s => s.is_favorite).map(s => s.asp_username) : undefined,
           watchAgain: args.queryUserSettings ? video.userMovieSettings?.filter(s => s.watchagain).map(s => s.asp_username) : undefined,

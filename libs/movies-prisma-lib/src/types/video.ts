@@ -5,6 +5,8 @@ export type Video = {
   diskid?: string | null;
   owner_id: number;
   istv: number;
+  runtime: number | null;
+  rating: string | null;
   plot?: string | null;
   videodb_videogenre?: {
     genre: {

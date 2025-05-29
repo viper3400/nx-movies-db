@@ -11,6 +11,8 @@ export const Video = builder.simpleObject("Video", {
     plot: t.string(),
     favoriteOf: t.stringList(),
     genres: t.stringList(),
-    mediaType: t.string()
+    mediaType: t.string(),
+    rating: t.string(),
+    runtime: t.int()
   })
 });

@@ -13,6 +13,20 @@ export const Default = {
   args: {
     deleteMode: "INCLUDE_DELETED",
     tvSeriesMode: "INCLUDE_TVSERIES",
+    isDefaultFilter: true,
+    setTvSeriesMode: fn(),
+    setDeleteMode: fn(),
+    setFilterForFavorites: fn(),
+    setFilterForWatchAgain: fn(),
+    setFilterForRandomMovies: fn()
+  },
+};
+
+export const NonDefaultFilter = {
+  args: {
+    deleteMode: "INCLUDE_DELETED",
+    tvSeriesMode: "INCLUDE_TVSERIES",
+    isDefaultFilter: false,
     setTvSeriesMode: fn(),
     setDeleteMode: fn(),
     setFilterForFavorites: fn(),

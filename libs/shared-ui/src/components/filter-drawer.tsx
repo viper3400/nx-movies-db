@@ -9,6 +9,7 @@ import {
   Radio,
   RadioGroup,
   Switch,
+  Badge,
 } from "@heroui/react";
 import { Tune } from "../icons";
 import { useState } from "react";
@@ -25,6 +26,7 @@ interface FilterDrawerProperties {
   setFilterForWatchAgain: (value: boolean) => void;
   filterForRandomMovies: boolean;
   setFilterForRandomMovies: (value: boolean) => void;
+  isDefaultFilter: boolean;
 }
 export function FilterDrawer(
   {
@@ -37,7 +39,8 @@ export function FilterDrawer(
     filterForWatchAgain: parentFilterForWatchAgain,
     setFilterForWatchAgain,
     filterForRandomMovies: parentFilterForRandomMovies,
-    setFilterForRandomMovies
+    setFilterForRandomMovies,
+    isDefaultFilter
   }: FilterDrawerProperties) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -70,9 +73,24 @@ export function FilterDrawer(
 
   return (
     <>
-      <Button size="lg" variant="ghost" onPress={handleOpen} startContent={<Tune />}>
+
+      <Button
+        size="lg"
+        variant="ghost"
+        onPress={handleOpen}
+        startContent={
+          isDefaultFilter ? (
+            <Tune />
+          ) : (
+            <Badge color="success" content="" placement="bottom-right" shape="circle">
+              <Tune />
+            </Badge>
+          )
+        }
+      >
         Filter
       </Button>
+
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           {(onClose) => (

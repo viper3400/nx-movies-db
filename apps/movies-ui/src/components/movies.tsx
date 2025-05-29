@@ -24,14 +24,21 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [appBasePath, setAppBasePath] = useState<string>();
-  const [deleteMode, setDeleteMode] = useState<string>("INCLUDE_DELETED");
+  const initialDeleteMode = "INCLUDE_DELETED";
+  const initialFilterForFavorites = false;
+  const initialFilterForWatchAgain = false;
+  const initialTvSeriesMode = "INCLUDE_TVSERIES";
+  const initialFilterForRandomMovies = false;
+
+  const [deleteMode, setDeleteMode] = useState<string>(initialDeleteMode);
+  const [filterForFavorites, setFilterForFavorites] = useState(initialFilterForFavorites);
+  const [filterForWatchAgain, setFilterForWatchAgain] = useState(initialFilterForWatchAgain);
+  const [tvSeriesMode, setTvSeriesMode] = useState(initialTvSeriesMode);
+  const [filterForRandomMovies, setFilterForRandomMovies] = useState(initialFilterForRandomMovies);
+  const [isDefaultFilter, setIsDefaultFilter] = useState(true);
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
-  const [filterForFavorites, setFilterForFavorites] = useState(false);
-  const [filterForWatchAgain, setFilterForWatchAgain] = useState(false);
-  const [tvSeriesMode, setTvSeriesMode] = useState("INCLUDE_TVSERIES");
-  const [filterForRandomMovies, setFilterForRandomMovies] = useState(false);
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -94,6 +101,16 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       }
     }
   }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies]); // Run on changes
+
+  useEffect(() => {
+    const isDefault =
+      deleteMode === initialDeleteMode &&
+      filterForFavorites === initialFilterForFavorites &&
+      filterForWatchAgain === initialFilterForWatchAgain &&
+      tvSeriesMode === initialTvSeriesMode &&
+      filterForRandomMovies === initialFilterForRandomMovies;
+    setIsDefaultFilter(isDefault);
+  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies]);
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -159,6 +176,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         tvSeriesMode={tvSeriesMode}
         setTvSeriesMode={setTvSeriesMode}
         handleSearchSubmit={handleSearchSubmit}
+        isDefaultFilter={isDefaultFilter}
         langResources={{
           placeholderLabel: t("search.placeholder"),
           searchLabel: t("search.search"),

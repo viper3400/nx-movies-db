@@ -1,118 +1,15 @@
 // videoQueries.ts
 import { PrismaClient } from "@prisma/client";
+import { Video, VideoQueryArgs } from "../types";
+import { buildWhereClause } from "../helpers";
 
 const prisma = new PrismaClient();
 
-export type VideoQueryArgs = {
-  id?: string;          // Optional string for filtering by id
-  title?: string;       // Optional string for filtering by title
-  diskid?: string;      // Optional string for filtering by disk ID
-  genreName?: string;   // Optional string for filtering by genre name
-  mediaType?: string[]; // Optional array of strings for filtering by media type
-  ownerid?: string;     // Optional string for filtering by owner ID
-  queryPlot?: boolean;
-  queryUserSettings?: boolean;
-  filterFavorites?: boolean;
-  filterFlagged?: boolean;
-  userName?: string;
-  deleteMode?: string;
-  tvSeriesMode?: string;
-  skip?: number;
-  take?: number;
-};
-
-type Video = {
-  id: number;
-  subtitle?: string | null;
-  title?: string | null;
-  diskid?: string | null;
-  owner_id: number;
-  istv: number;
-  plot?: string | null;
-  videodb_videogenre?: {
-    genre: {
-      name: string;
-    };
-  }[] | null;
-  videodb_mediatypes?: {
-    name: string;
-  } | null;
-  userMovieSettings?: {
-    is_favorite: boolean;
-    watchagain: boolean;
-    asp_username: string;
-  }[] | null
-};
-
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
-  const { id, title, diskid, genreName, mediaType, ownerid, queryPlot, queryUserSettings, userName, filterFavorites, filterFlagged, deleteMode, tvSeriesMode, take, skip } = args;
+  const { queryPlot, queryUserSettings, take, skip } = args;
 
-  if ((filterFlagged || filterFavorites) && !userName) {
-    throw new Error("Username must be set");
-  }
+  const where = buildWhereClause(args);
 
-  // Helper for tvSeriesMode
-  const tvSeriesFilter =
-    tvSeriesMode === "ONLY_TVSERIES"
-      ? { istv: { equals: 1 } }
-      : tvSeriesMode === "EXCLUDE_TVSERIES"
-        ? { istv: { equals: 0 } }
-        : {};
-
-  const where = {
-    AND: [
-      {
-        OR: [
-          { title: title ? { contains: title } : undefined },
-          { subtitle: title ? { contains: title } : undefined },
-        ],
-      },
-      {
-        id: id ? { equals: parseInt(id, 10) } : undefined,
-      },
-      {
-        owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,
-      },
-      { diskid: diskid ? { startsWith: diskid } : undefined },
-      genreName ? {
-        videodb_videogenre: {
-          some: {
-            genre: {
-              name: genreName ? { contains: genreName } : undefined,
-            },
-          },
-        },
-      } : {},
-      {
-        videodb_mediatypes: {
-          name: mediaType ? { in: mediaType } : undefined,
-        },
-      },
-      // Handle deleteMode logic
-      deleteMode === "ONLY_DELETED" ? {
-        owner_id: { equals: 999 },
-      } : deleteMode === "EXCLUDE_DELETED" ? {
-        owner_id: { not: 999 },
-      } : {}, // INCLUDE_DELETED will not add any additional filters
-      tvSeriesFilter,
-      userName && filterFavorites ? {
-        userMovieSettings: {
-          some: {
-            asp_username: userName,
-            is_favorite: true,
-          },
-        },
-      } : {},
-      userName && filterFlagged ? {
-        userMovieSettings: {
-          some: {
-            asp_username: userName,
-            watchagain: true,
-          },
-        },
-      } : {},
-    ],
-  };
   const totalCount = await prisma.videodb_videodata.count({
     where: where
   });

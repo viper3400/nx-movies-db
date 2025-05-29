@@ -13,6 +13,7 @@ const getMovieByTitle = gql`
     $tvSeriesMode: TvSeriesMode,
     $filterFavorites: Boolean!,
     $filterFlagged: Boolean!,
+    $randomOrder: Boolean!,
     $userName: String!,
     $take: Int!,
     $skip: Int!)
@@ -24,6 +25,7 @@ const getMovieByTitle = gql`
       tvSeriesMode: $tvSeriesMode
       filterFavorites: $filterFavorites,
       filterFlagged: $filterFlagged,
+      randomOrder: $randomOrder,
       userName: $userName,
       queryPlot: true,
       take: $take,
@@ -53,6 +55,7 @@ export async function getMovies(
   tvSeriesMode: string,
   filterFavorites: boolean,
   filterFlagged: boolean,
+  filterRandom: boolean,
   userName: string,
   take: number,
   skip: number) {
@@ -75,6 +78,7 @@ export async function getMovies(
       tvSeriesMode: tvSeriesMode,
       filterFavorites: filterFavorites,
       filterFlagged: filterFlagged,
+      randomOrder: filterRandom,
       userName: userName,
       take: take,
       skip: skip

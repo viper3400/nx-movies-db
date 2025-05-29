@@ -31,6 +31,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [filterForFavorites, setFilterForFavorites] = useState(false);
   const [filterForWatchAgain, setFilterForWatchAgain] = useState(false);
   const [tvSeriesMode, setTvSeriesMode] = useState("INCLUDE_TVSERIES");
+  const [filterForRandomMovies, setFilterForRandomMovies] = useState(false);
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -92,7 +93,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         executeSearch(0);
       }
     }
-  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode]); // Run on changes
+  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies]); // Run on changes
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -125,7 +126,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const executeSearch = async (page: number) => {
     setLoading(true);
     const result =
-      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, session.userName, 10, page * 10);
+      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, filterForRandomMovies, session.userName, 10, page * 10);
     const resultCount = result.videos.requestMeta.totalCount;
     setTotalMoviesCount(resultCount);
     setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
@@ -153,6 +154,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setFilterForFavorites={setFilterForFavorites}
         filterForWatchAgain={filterForWatchAgain}
         setFilterForWatchAgain={setFilterForWatchAgain}
+        randomOrder={filterForRandomMovies}
+        setRandomOrder={setFilterForRandomMovies}
         tvSeriesMode={tvSeriesMode}
         setTvSeriesMode={setTvSeriesMode}
         handleSearchSubmit={handleSearchSubmit}

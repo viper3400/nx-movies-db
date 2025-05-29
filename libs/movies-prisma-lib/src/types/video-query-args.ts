@@ -1,5 +1,5 @@
 export type VideoQueryArgs = {
-  id?: string;          // Optional string for filtering by id
+  ids?: string[];          // Optional string for filtering by id
   title?: string;       // Optional string for filtering by title
   diskid?: string;      // Optional string for filtering by disk ID
   genreName?: string;   // Optional string for filtering by genre name

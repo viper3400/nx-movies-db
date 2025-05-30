@@ -82,7 +82,7 @@ export function FilterDrawer(
           isDefaultFilter ? (
             <Tune />
           ) : (
-            <Badge color="success" content="" placement="bottom-right" shape="circle">
+            <Badge color="secondary" content="" placement="bottom-right" shape="circle">
               <Tune />
             </Badge>
           )

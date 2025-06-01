@@ -55,6 +55,8 @@ builder.queryType({
               diskid: video.diskid,
               ownerid: video.owner_id,
               istv: Boolean(video.istv),
+              runtime: video.runtime,
+              rating: video.rating,
               plot: video.plot,
               favoriteOf: video.userMovieSettings?.map((setting) => setting.asp_username) || [],
               genres: video.videodb_videogenre?.map((genre) => genre.genre.name) || [],

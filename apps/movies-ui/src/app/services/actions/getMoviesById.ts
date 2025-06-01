@@ -15,6 +15,8 @@ const getMovieById = gql`
         subtitle
         mediaType
         ownerid
+        rating
+        runtime
         istv
         id
         plot

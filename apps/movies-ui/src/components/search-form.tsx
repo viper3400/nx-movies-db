@@ -1,6 +1,6 @@
 import { Input } from "@heroui/react";
 import React from "react";
-import { FilterDrawer } from "@nx-movies-db/shared-ui";
+import { CheckboxValue, FilterDrawer } from "@nx-movies-db/shared-ui";
 
 interface SearchFormLangResources {
   placeholderLabel: string;
@@ -29,6 +29,9 @@ interface SearchFormProps {
   isDefaultFilter: boolean;
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   langResources: SearchFormLangResources;
+  mediaTypes: CheckboxValue[];
+  filterForMediaTypes: string[];
+  setFilterForMediaTypes: (values: string[]) => void;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({
@@ -46,6 +49,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
   setFilterForFavorites,
   filterForWatchAgain,
   setFilterForWatchAgain,
+  mediaTypes,
+  filterForMediaTypes,
+  setFilterForMediaTypes,
   randomOrder,
   setRandomOrder,
   handleSearchSubmit,
@@ -85,6 +91,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
             setFilterForWatchAgain={setFilterForWatchAgain}
             filterForRandomMovies={randomOrder}
             setFilterForRandomMovies={setRandomOrder}
+            mediaTypes={mediaTypes}
+            filterForMediaTypes={filterForMediaTypes}
+            setFilterForMediaTypes={setFilterForMediaTypes}
             isDefaultFilter={isDefaultFilter} />
         </div>
       </div>

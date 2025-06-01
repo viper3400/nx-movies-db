@@ -1,4 +1,4 @@
-import { Spacer, Spinner } from "@heroui/react";
+import { Chip, Spacer, Spinner } from "@heroui/react";
 import { t } from "i18next";
 
 interface ResultsStatusIndicatorProperties {
@@ -16,10 +16,10 @@ export const ResultsStatusIndicator = ({ isLoading, hasNoResults, hasNoMoreResul
         <Spinner color="secondary" />)
       }
       {
-        !isLoading && hasNoResults && <p>{t("result_status_indicator.no_results")}</p>
+        !isLoading && hasNoResults && <Chip color="warning" variant="faded" size="lg">{t("result_status_indicator.no_results")}</Chip>
       }
       {
-        !isLoading && hasNoMoreResults && <p>{t("result_status_indicator.no_more_results")}</p>
+        !isLoading && hasNoMoreResults && <Chip color="warning" variant="faded" size="lg">{t("result_status_indicator.no_more_results")}</Chip>
       }
       <Spacer y={4} />
     </>

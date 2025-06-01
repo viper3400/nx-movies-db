@@ -21,6 +21,8 @@ export const Default: Story = {
       istv: false,
       diskid: "R12F01D02",
       ownerid: "999",
+      runtime: 125,
+      rating: "5.7"
     },
     imageUrl: "https://placehold.co/120x180",
     appBasePath: "/movies",

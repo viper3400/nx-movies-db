@@ -14,14 +14,17 @@
     "moviesFilterLabel": "Filtereinstellungen",
     "favoriteMoviesFilterLabel": "Lieblingsfilme",
     "watchagainMoviesFilterLabel": "Nochmal sehen",
-    "randomMoviesFilterLabel": "Zufällig"
+    "randomMoviesFilterLabel": "Zufällig",
+    "mediaTypeFilterLabel": "Filtereinstellung für Medientyp",
+    "nofilter": "Kein Filter gesetzt"
   },
   "movie_card": {
     "seen_today": "Heute gesehen",
     "choose_date": "Datum wählen",
     "deleted_entry": "Gelöschter Eintrag",
     "not_seen": "noch nicht gesehen",
-    "times_seen": "x gesehen"
+    "times_seen": "x gesehen",
+    "rating": "Bewertung"
   },
   "choose_date_modal": {
     "dialog_title": "Datum auswählen",
@@ -32,8 +35,8 @@
     "dialog_title": "Datum löschen"
   },
   "result_status_indicator": {
-    "no_results": "Keine Ergebnisse gefunden",
-    "no_more_results": "Keine weiteren Ergebnisse gefunden"
+    "no_results": "Keine Ergebnisse gefunden.",
+    "no_more_results": "Keine weiteren Ergebnisse gefunden."
   },
   "common": {
     "title": "Filmdatenbank",

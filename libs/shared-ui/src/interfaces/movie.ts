@@ -4,6 +4,9 @@ export interface Movie {
   title: string;
   subtitle: string;
   diskid?: string; // Optional
+  runtime?: number;
+
+  rating?: string
   mediaType: string;
   genres: string[];
   ownerid: string;

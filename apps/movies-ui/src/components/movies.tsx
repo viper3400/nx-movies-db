@@ -29,12 +29,14 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const initialFilterForWatchAgain = false;
   const initialTvSeriesMode = "INCLUDE_TVSERIES";
   const initialFilterForRandomMovies = false;
+  const initialFilterForMediaTypes: string[] = [];
 
   const [deleteMode, setDeleteMode] = useState<string>(initialDeleteMode);
   const [filterForFavorites, setFilterForFavorites] = useState(initialFilterForFavorites);
   const [filterForWatchAgain, setFilterForWatchAgain] = useState(initialFilterForWatchAgain);
   const [tvSeriesMode, setTvSeriesMode] = useState(initialTvSeriesMode);
   const [filterForRandomMovies, setFilterForRandomMovies] = useState(initialFilterForRandomMovies);
+  const [filterForMediaTypes, setFilterForMediaTypes] = useState(initialFilterForMediaTypes);
   const [isDefaultFilter, setIsDefaultFilter] = useState(true);
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
@@ -100,7 +102,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         executeSearch(0);
       }
     }
-  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies]); // Run on changes
+  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies, filterForMediaTypes]); // Run on changes
 
   useEffect(() => {
     const isDefault =
@@ -108,9 +110,12 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       filterForFavorites === initialFilterForFavorites &&
       filterForWatchAgain === initialFilterForWatchAgain &&
       tvSeriesMode === initialTvSeriesMode &&
-      filterForRandomMovies === initialFilterForRandomMovies;
+      filterForRandomMovies === initialFilterForRandomMovies &&
+      filterForMediaTypes.length === initialFilterForMediaTypes.length &&
+      filterForMediaTypes.every((val) => initialFilterForMediaTypes.includes(val)) &&
+      initialFilterForMediaTypes.every((val) => filterForMediaTypes.includes(val));
     setIsDefaultFilter(isDefault);
-  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies]);
+  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies, filterForMediaTypes]);
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -175,6 +180,15 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setRandomOrder={setFilterForRandomMovies}
         tvSeriesMode={tvSeriesMode}
         setTvSeriesMode={setTvSeriesMode}
+        mediaTypes={[
+          { value: "dvd", label: "DVD" },
+          { value: "blue-ray", label: "Blue Ray" },
+          { value: "blue-ray-3d", label: "Blu Ray 3D" },
+          { value: "hdd", label: "HDD" },
+          { value: "UHD", label: "UHD 4K" },
+        ]}
+        filterForMediaTypes={filterForMediaTypes}
+        setFilterForMediaTypes={setFilterForMediaTypes}
         handleSearchSubmit={handleSearchSubmit}
         isDefaultFilter={isDefaultFilter}
         langResources={{

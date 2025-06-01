@@ -18,7 +18,15 @@ export const Default = {
     setDeleteMode: fn(),
     setFilterForFavorites: fn(),
     setFilterForWatchAgain: fn(),
-    setFilterForRandomMovies: fn()
+    setFilterForRandomMovies: fn(),
+    mediaTypes:
+      [
+        { value: "dvd", label: "DVD" },
+        { value: "blue-ray", label: "Blue Ray" },
+        { value: "blue-ray-3d", label: "Blu Ray 3D" },
+        { value: "hdd", label: "HDD" },
+        { value: "UHD", label: "UHD 4K" },
+      ]
   },
 };
 
@@ -27,10 +35,20 @@ export const NonDefaultFilter = {
     deleteMode: "INCLUDE_DELETED",
     tvSeriesMode: "INCLUDE_TVSERIES",
     isDefaultFilter: false,
+    mediaTypes:
+      [
+        { value: "dvd", label: "DVD" },
+        { value: "blue-ray", label: "Blue Ray" },
+        { value: "blue-ray-3d", label: "Blu Ray 3D" },
+        { value: "hdd", label: "HDD" },
+        { value: "uhd", label: "UHD 4K" },
+      ],
+    filterForMediaTypes: ["dvd", "uhd"],
     setTvSeriesMode: fn(),
     setDeleteMode: fn(),
     setFilterForFavorites: fn(),
     setFilterForWatchAgain: fn(),
-    setFilterForRandomMovies: fn()
+    setFilterForRandomMovies: fn(),
+    setFilterForMediaTypes: fn()
   },
 };

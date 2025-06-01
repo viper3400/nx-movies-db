@@ -17,7 +17,7 @@ interface SeenMoviesComponentProperties {
 export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties) => {
   const [seenMovies, setSeenMovies] = useState<SeenEntry[] | undefined>();
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
-  const [appBasePath, setAppBasePath] = useState();
+  const [appBasePath, setAppBasePath] = useState<string>();
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);

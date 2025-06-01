@@ -112,7 +112,7 @@ export const MovieCard = ({
         <div>
           <CardBody>
             <div className="flex flex-col md:flex-row items-start ">
-              {movie.ownerid === "999" && (
+              {String(movie.ownerid) === "999" && (
                 <div className="mr-4 mb-4">
                   <Chip color="danger">{langResources.deletedEntryLabel}</Chip>
                 </div>

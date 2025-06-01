@@ -8,6 +8,7 @@ import { DatePickerModal } from "./datepicker-modal";
 import { DeleteSeenDateModal } from "./delete-seen-date-modal";
 import { TvNextOutlined } from "../icons";
 import { SeenChips } from "./seen-chips";
+import { t } from "i18next";
 
 export interface MovieCardLangResources {
   seenTodayLabel: string;
@@ -154,13 +155,23 @@ export const MovieCard = ({
 
         <CardFooter>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
-            <div className="flex gap-2">
-              {movie.genres &&
-                movie.genres.map((genreName: string) => (
-                  <Chip key={genreName} color="primary" variant="flat">
-                    {genreName}
-                  </Chip>
-                ))}
+            <div className="flex gap-4 md:flex-row flex-col">
+              <div className="flex gap-2">
+                {movie.genres &&
+                  movie.genres.map((genreName: string) => (
+                    <Chip key={genreName} color="primary" variant="flat">
+                      {genreName}
+                    </Chip>
+                  ))}
+              </div>
+              <div className="flex gap-2">
+                {movie.runtime &&
+                  <Chip color="secondary" variant="flat">{movie.runtime} min</Chip>
+                }
+                {movie.rating &&
+                  <Chip color="warning" variant="flat">{`${t("movie_card.rating")} ${movie.rating}`}</Chip>
+                }
+              </div>
             </div>
             <div className="flex flex-col md:flex-row gap-2">
               {showMarkAsSeenButtons &&

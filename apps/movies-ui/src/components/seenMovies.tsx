@@ -17,6 +17,7 @@ interface SeenMoviesComponentProperties {
 export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties) => {
   const [seenMovies, setSeenMovies] = useState<SeenEntry[] | undefined>();
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
+  const [appBasePath, setAppBasePath] = useState();
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -54,6 +55,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   useEffect(() => {
     const fetchAppBasePath = async () => {
       const appBasePath = await getAppBasePath();
+      setAppBasePath(appBasePath);
       setImageBaseUrl(appBasePath + "/api/cover-image");
     };
 
@@ -117,6 +119,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
                 movie={entry.video}
                 showMarkAsSeenButtons={false}
                 showDetailsButton
+                appBasePath={appBasePath}
                 imageUrl={imageBaseUrl + "/" + entry.movieId}
                 loadSeenDatesForMovie={loadSeenDatesForMovie}
                 loadUserFlagsForMovie={loadUserFlagsForMovie}

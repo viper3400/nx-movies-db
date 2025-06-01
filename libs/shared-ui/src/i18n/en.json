@@ -14,14 +14,17 @@
     "moviesFilterLabel": "Filter Settings",
     "favoriteMoviesFilterLabel": "Favorite Movies",
     "watchagainMoviesFilterLabel": "Watch Again",
-    "randomMoviesFilterLabel": "Random"
+    "randomMoviesFilterLabel": "Random",
+    "mediaTypeFilterLabel": "Filter Settings for Media Type",
+    "nofilter": "No filter set."
   },
   "movie_card": {
     "seen_today": "Seen Today",
     "choose_date": "Choose Date",
     "deleted_entry": "Deleted Entry",
     "not_seen": "not seen",
-    "times_seen": "times seen"
+    "times_seen": "times seen",
+    "rating": "Rating"
   },
   "choose_date_modal": {
     "dialog_title": "Choose Date",
@@ -32,8 +35,8 @@
     "dialog_title": "Delete Date"
   },
   "result_status_indicator": {
-    "no_results": "no results found",
-    "no_more_results": "no more results found."
+    "no_results": "No results found.",
+    "no_more_results": "No more results found."
   },
   "common": {
     "title": "Movie Database",

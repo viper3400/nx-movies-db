@@ -36,6 +36,8 @@ const getSeenVideosGql = gql`
           diskid
           favoriteOf
           id
+          runtime
+          rating
           istv
           mediaType
           ownerid

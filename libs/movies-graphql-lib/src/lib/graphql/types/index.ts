@@ -1,3 +1,4 @@
+export * from "./genres";
 export * from "./media-types";
 export * from "./seen-dates";
 export * from "./seen-list";

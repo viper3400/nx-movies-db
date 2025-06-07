@@ -14,11 +14,13 @@ export const Default = {
     deleteMode: "INCLUDE_DELETED",
     tvSeriesMode: "INCLUDE_TVSERIES",
     isDefaultFilter: true,
+    filterForMediaTypes: [],
     setTvSeriesMode: fn(),
     setDeleteMode: fn(),
     setFilterForFavorites: fn(),
     setFilterForWatchAgain: fn(),
     setFilterForRandomMovies: fn(),
+    setFilterForMediaTypes: fn(),
     mediaTypes:
       [
         { value: "dvd", label: "DVD" },

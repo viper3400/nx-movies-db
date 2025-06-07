@@ -68,6 +68,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
           label={`${langResources.searchLabel} (${langResources.resultCountLabel}: ${totalMoviesCount})`}
           placeholder={langResources.placeholderLabel}
           type="text"
+          size="lg"
           value={searchText}
           onChange={(e) => {
             const value = e.target.value;

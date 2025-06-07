@@ -2,6 +2,7 @@ export * from "./connection";
 export * from "./create-or-update-user-flags";
 export * from "./create-user-seen-entry";
 export * from "./delete-user-seen-entry";
+export * from "./get-media-types";
 export * from "./get-seen-dates";
 export * from "./get-seen-list";
 export * from "./get-user-flags";

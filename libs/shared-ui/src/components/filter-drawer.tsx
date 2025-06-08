@@ -122,7 +122,7 @@ export function FilterDrawer(
                     isSelected={localFilterForRandomMovies}
                     onValueChange={setLocalFilterForRandomMovies}>{t("search.randomMoviesFilterLabel")}</Switch>
                 </div>
-                <Accordion disabledKeys={["1"]}>
+                <Accordion>
                   <AccordionItem
                     key="1"
                     aria-label="local-mediatype-filter"

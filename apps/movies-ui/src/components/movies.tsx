@@ -4,7 +4,7 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
-import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
+import { deleteUserSeenDate, getMediaTypes, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
@@ -41,6 +41,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
+  const [availableMediaTypes, setAvailableMediaTypes] = useState<{ label: string; value: string }[]>();
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -48,6 +49,16 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const loadSeenDatesForMovie = async (movieId: string) => {
     const seenDates = await getSeenDates(movieId, "VG_Default");
     return seenDates;
+  };
+
+  const getMediaTypeNameFromIds = (ids: string[]): string[] => {
+    if (!availableMediaTypes) return [];
+    return ids
+      .map(id => {
+        const mt = availableMediaTypes.find((mt: any) => mt.value === id);
+        return mt ? mt.label : undefined;
+      })
+      .filter((label): label is string => typeof label === "string");
   };
 
   const loadUserFlagsForMovie = async (movieId: string) => {
@@ -85,6 +96,19 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     };
     fetchAppBasePath();
   });
+
+  useEffect(() => {
+    const fetchMediaTypes = async () => {
+      const data = await getMediaTypes();
+      setAvailableMediaTypes(
+        data.mediaTypes.map((mt: any) => ({
+          label: mt.name,
+          value: String(mt.id),
+        }))
+      );
+    };
+    fetchMediaTypes();
+  }, []);
 
   useEffect(() => {
     invalidSearch ?? clearSearchResult();
@@ -148,7 +172,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const executeSearch = async (page: number) => {
     setLoading(true);
     const result =
-      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, filterForRandomMovies, session.userName, 10, page * 10);
+      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, filterForRandomMovies, getMediaTypeNameFromIds(filterForMediaTypes), session.userName, 10, page * 10);
     const resultCount = result.videos.requestMeta.totalCount;
     setTotalMoviesCount(resultCount);
     setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
@@ -180,13 +204,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         setRandomOrder={setFilterForRandomMovies}
         tvSeriesMode={tvSeriesMode}
         setTvSeriesMode={setTvSeriesMode}
-        mediaTypes={[
-          { value: "dvd", label: "DVD" },
-          { value: "blue-ray", label: "Blue Ray" },
-          { value: "blue-ray-3d", label: "Blu Ray 3D" },
-          { value: "hdd", label: "HDD" },
-          { value: "UHD", label: "UHD 4K" },
-        ]}
+        mediaTypes={availableMediaTypes ?? []}
         filterForMediaTypes={filterForMediaTypes}
         setFilterForMediaTypes={setFilterForMediaTypes}
         handleSearchSubmit={handleSearchSubmit}

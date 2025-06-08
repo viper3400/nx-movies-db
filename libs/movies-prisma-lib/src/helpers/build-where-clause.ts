@@ -41,7 +41,7 @@ export const buildWhereClause = (args: VideoQueryArgs): any => {
       } : {},
       {
         videodb_mediatypes: {
-          name: mediaType ? { in: mediaType } : undefined,
+          name: mediaType && mediaType.length > 0 ? { in: mediaType } : undefined,
         },
       },
       // Handle deleteMode logic

@@ -9,7 +9,7 @@ export interface Movie {
   rating?: string
   mediaType: string;
   genres: string[];
-  ownerid: string;
+  ownerid: number;
   istv: boolean;
   plot: string;
 }

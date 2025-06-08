@@ -21,7 +21,7 @@ export const Default: Story = {
       mediaType: "Blu-Ray",
       istv: false,
       diskid: "R12F01D02",
-      ownerid: "3",
+      ownerid: 3,
       runtime: 125,
       rating: "5.7"
     },
@@ -70,7 +70,7 @@ export const Deleted: Story = {
       mediaType: "Blu-Ray",
       istv: false,
       diskid: "R12F01D02",
-      ownerid: "999",
+      ownerid: 999,
       runtime: 125,
       rating: "5.7"
     },

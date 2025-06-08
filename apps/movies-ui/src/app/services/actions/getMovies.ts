@@ -13,6 +13,7 @@ const getMovieByTitle = gql`
     $tvSeriesMode: TvSeriesMode,
     $filterFavorites: Boolean!,
     $filterFlagged: Boolean!,
+    $mediaType: [String!]!,
     $randomOrder: Boolean!,
     $userName: String!,
     $take: Int!,
@@ -25,6 +26,7 @@ const getMovieByTitle = gql`
       tvSeriesMode: $tvSeriesMode
       filterFavorites: $filterFavorites,
       filterFlagged: $filterFlagged,
+      mediaType: $mediaType,
       randomOrder: $randomOrder,
       userName: $userName,
       queryPlot: true,
@@ -58,6 +60,7 @@ export async function getMovies(
   filterFavorites: boolean,
   filterFlagged: boolean,
   filterRandom: boolean,
+  mediaType: string[],
   userName: string,
   take: number,
   skip: number) {
@@ -71,6 +74,22 @@ export async function getMovies(
     ? (searchDiskId = searchString)
     : (searchTitle = searchString);
 
+  // Log the query and variables for debugging
+  console.log("GraphQL Query:", getMovieByTitle.loc?.source.body);
+  console.log("Variables:", {
+    title: searchTitle,
+    diskid: searchDiskId,
+    deleteMode: deleteMode,
+    tvSeriesMode: tvSeriesMode,
+    filterFavorites: filterFavorites,
+    filterFlagged: filterFlagged,
+    mediaType: mediaType,
+    randomOrder: filterRandom,
+    userName: userName,
+    take: take,
+    skip: skip
+  });
+
   const { data } = await getClient().query({
     query: getMovieByTitle,
     variables: {
@@ -80,6 +99,7 @@ export async function getMovies(
       tvSeriesMode: tvSeriesMode,
       filterFavorites: filterFavorites,
       filterFlagged: filterFlagged,
+      mediaType: mediaType,
       randomOrder: filterRandom,
       userName: userName,
       take: take,

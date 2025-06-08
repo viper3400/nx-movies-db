@@ -48,8 +48,11 @@ export const MovieCard = ({
   const [additionalDataLoaded, setAdditionalDatesLoaded] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
   const [deleteDate, setDeleteDate] = useState("");
+  const [isDeletedMovie, setIsDeletedMovie] = useState(false);
 
-  const isDeletedMovie = () => movie.ownerid === "999";
+  useEffect(() => {
+    setIsDeletedMovie(movie.ownerid === 999);
+  }, [movie]);
 
   useEffect(() => {
     const fetchSeenDates = async () => {
@@ -114,14 +117,14 @@ export const MovieCard = ({
         <div>
           <CardBody>
             <div className="flex flex-col md:flex-row items-start ">
-              {isDeletedMovie() && (
+              {isDeletedMovie &&
                 <div className="mr-4 mb-4">
                   <Chip
                     data-testid="deleted-chip"
                     color="danger"
                   >{langResources.deletedEntryLabel}</Chip>
                 </div>
-              )}
+              }
               <SeenChips
                 seenDates={seenDates ? seenDates : []}
                 loading={seenDatesLoading}
@@ -179,7 +182,7 @@ export const MovieCard = ({
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-2">
-              {showMarkAsSeenButtons && !isDeletedMovie() &&
+              {showMarkAsSeenButtons && !isDeletedMovie &&
                 <>
                   <Button
                     data-testid="seen-today-button"
@@ -207,6 +210,6 @@ export const MovieCard = ({
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </div >
   );
 };

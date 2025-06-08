@@ -6,7 +6,7 @@ export interface Movie {
   diskid?: string; // Optional
   mediaType: string;
   genres: string[];
-  ownerid: string;
+  ownerid: number;
   istv: boolean;
   plot: string;
 }

@@ -1,3 +1,4 @@
+export * from "./getGenres";
 export * from "./getMediaTypes";
 export * from "./getMovies";
 export * from "./getSeenDates";

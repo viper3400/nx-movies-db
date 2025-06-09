@@ -17,7 +17,7 @@ builder.queryType({
         diskid: t.arg.string({
           description: "Filter videos by disk ID",
         }),
-        genreName: t.arg.string({
+        genreName: t.arg.stringList({
           description: "Filter videos by genre name",
         }),
         mediaType: t.arg.stringList({

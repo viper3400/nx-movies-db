@@ -35,6 +35,11 @@ interface FilterDrawerProperties {
   mediaTypes: CheckboxValue[];
   filterForMediaTypes: string[];
   setFilterForMediaTypes: (values: string[]) => void;
+  genres: CheckboxValue[];
+  filterForGenres: string[];
+  setFilterForGenres: (values: string[]) => void;
+
+
 }
 export function FilterDrawer(
   {
@@ -52,6 +57,9 @@ export function FilterDrawer(
     mediaTypes,
     filterForMediaTypes: parentFilterForMediaTypes,
     setFilterForMediaTypes,
+    genres,
+    filterForGenres: parentFilterForGenres,
+    setFilterForGenres
   }: FilterDrawerProperties) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -62,6 +70,7 @@ export function FilterDrawer(
   const [localFilterForWatchAgain, setLocalFilterForWatchAgain] = useState(parentFilterForWatchAgain);
   const [localFilterForRandomMovies, setLocalFilterForRandomMovies] = useState(parentFilterForRandomMovies);
   const [localFilterForMediaTypes, setLocalFilterForMediaTypes] = useState(parentFilterForMediaTypes);
+  const [localFilterForGenres, setLocalFilterForGenres] = useState(parentFilterForGenres);
 
   // Sync local state with parent state when the drawer is opened
   const handleOpen = () => {
@@ -71,6 +80,7 @@ export function FilterDrawer(
     setLocalFilterForWatchAgain(parentFilterForWatchAgain);
     setLocalFilterForRandomMovies(parentFilterForRandomMovies);
     setLocalFilterForMediaTypes(parentFilterForMediaTypes);
+    setLocalFilterForGenres(parentFilterForGenres);
     onOpen();
   };
 
@@ -82,6 +92,7 @@ export function FilterDrawer(
     setFilterForWatchAgain(localFilterForWatchAgain);
     setFilterForRandomMovies(localFilterForRandomMovies);
     setFilterForMediaTypes(localFilterForMediaTypes);
+    setFilterForGenres(localFilterForGenres);
     onClose(); // Close the drawer
   };
 
@@ -140,6 +151,27 @@ export function FilterDrawer(
                       onValueChange={setLocalFilterForMediaTypes}
                     >
                       {mediaTypes.map((mt) => (
+                        <Checkbox key={mt.value} value={mt.value}>{mt.label}</Checkbox>
+                      ))}
+                    </CheckboxGroup>
+                  </AccordionItem>
+                  <AccordionItem
+                    key="2"
+                    aria-label="local-genre-filter"
+                    title={t("search.genreFilterLabel")}
+                    subtitle={localFilterForGenres.length !== 0 ?
+                      localFilterForGenres
+                        .map((mt) => genres.find((m) => m.value === mt)?.label)
+                        .filter(Boolean)
+                        .join(", ") :
+                      t("search.nofilter")
+                    }
+                  >
+                    <CheckboxGroup
+                      value={localFilterForGenres}
+                      onValueChange={setLocalFilterForGenres}
+                    >
+                      {genres.map((mt) => (
                         <Checkbox key={mt.value} value={mt.value}>{mt.label}</Checkbox>
                       ))}
                     </CheckboxGroup>

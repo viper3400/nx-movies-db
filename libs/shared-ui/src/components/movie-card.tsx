@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider, ScrollShadow } from "@heroui/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useEffect, useState } from "react";
@@ -152,10 +152,11 @@ export const MovieCard = ({
                     className="rounded"
                   />
                 </a>
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-justify">{movie.plot}</p>
-              </div>
+              </div> <ScrollShadow className="h-[280px]">
+                <div className="flex-1 text-left">
+                  <p className="text-justify">{movie.plot}</p>
+                </div>
+              </ScrollShadow>
             </div>
           </CardBody>
           <Divider />

@@ -4,7 +4,7 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
-import { deleteUserSeenDate, getMediaTypes, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
+import { deleteUserSeenDate, getGenres, getMediaTypes, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
@@ -30,6 +30,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const initialTvSeriesMode = "INCLUDE_TVSERIES";
   const initialFilterForRandomMovies = false;
   const initialFilterForMediaTypes: string[] = [];
+  const initialFilterForGenres: string[] = [];
 
   const [deleteMode, setDeleteMode] = useState<string>(initialDeleteMode);
   const [filterForFavorites, setFilterForFavorites] = useState(initialFilterForFavorites);
@@ -42,6 +43,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
   const [availableMediaTypes, setAvailableMediaTypes] = useState<{ label: string; value: string }[]>();
+  const [availableGenres, setAvailableGenres] = useState<{ label: string; value: string }[]>();
+  const [filterForGenres, setFilterForGenres] = useState(initialFilterForGenres);
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -51,11 +54,11 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     return seenDates;
   };
 
-  const getMediaTypeNameFromIds = (ids: string[]): string[] => {
-    if (!availableMediaTypes) return [];
+  const getNameFromId = (ids: string[], searchArray: any): string[] => {
+    if (!searchArray) return [];
     return ids
       .map(id => {
-        const mt = availableMediaTypes.find((mt: any) => mt.value === id);
+        const mt = searchArray.find((mt: any) => mt.value === id);
         return mt ? mt.label : undefined;
       })
       .filter((label): label is string => typeof label === "string");
@@ -107,7 +110,17 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         }))
       );
     };
+    const fetchGenres = async () => {
+      const data = await getGenres();
+      setAvailableGenres(
+        data.genres.map((mt: any) => ({
+          label: mt.name,
+          value: String(mt.id),
+        }))
+      );
+    };
     fetchMediaTypes();
+    fetchGenres();
   }, []);
 
   useEffect(() => {
@@ -137,9 +150,21 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       filterForRandomMovies === initialFilterForRandomMovies &&
       filterForMediaTypes.length === initialFilterForMediaTypes.length &&
       filterForMediaTypes.every((val) => initialFilterForMediaTypes.includes(val)) &&
-      initialFilterForMediaTypes.every((val) => filterForMediaTypes.includes(val));
+      initialFilterForMediaTypes.every((val) => filterForMediaTypes.includes(val)) &&
+
+      filterForGenres.length === initialFilterForGenres.length &&
+      filterForGenres.every((val) => initialFilterForGenres.includes(val)) &&
+      initialFilterForGenres.every((val) => initialFilterForGenres.includes(val));
     setIsDefaultFilter(isDefault);
-  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies, filterForMediaTypes]);
+  }, [
+    deleteMode,
+    filterForFavorites,
+    filterForWatchAgain,
+    tvSeriesMode,
+    filterForRandomMovies,
+    filterForMediaTypes,
+    filterForGenres
+  ]);
 
   const validateSearch = (text: string) => {
     setInvalidSearch(invalidTextLength(text));
@@ -172,7 +197,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const executeSearch = async (page: number) => {
     setLoading(true);
     const result =
-      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, filterForRandomMovies, getMediaTypeNameFromIds(filterForMediaTypes), session.userName, 10, page * 10);
+      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, filterForRandomMovies, getNameFromId(filterForMediaTypes, availableMediaTypes), getNameFromId(filterForGenres, availableGenres), session.userName, 10, page * 10);
     const resultCount = result.videos.requestMeta.totalCount;
     setTotalMoviesCount(resultCount);
     setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
@@ -213,7 +238,10 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           placeholderLabel: t("search.placeholder"),
           searchLabel: t("search.search"),
           resultCountLabel: t("search.result_count"),
-        }} />
+        }}
+        genres={availableGenres ?? []}
+        filterForGenres={filterForGenres}
+        setFilerForGenres={setFilterForGenres} />
       <div>
         {searchResult && imageBaseUrl && (
           <MovieCardDeck

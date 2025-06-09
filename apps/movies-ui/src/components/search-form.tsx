@@ -32,6 +32,9 @@ interface SearchFormProps {
   mediaTypes: CheckboxValue[];
   filterForMediaTypes: string[];
   setFilterForMediaTypes: (values: string[]) => void;
+  genres: CheckboxValue[];
+  filterForGenres: string[];
+  setFilerForGenres: (values: string[]) => void;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({
@@ -52,6 +55,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
   mediaTypes,
   filterForMediaTypes,
   setFilterForMediaTypes,
+  genres,
+  filterForGenres,
+  setFilerForGenres,
   randomOrder,
   setRandomOrder,
   handleSearchSubmit,
@@ -95,7 +101,10 @@ const SearchForm: React.FC<SearchFormProps> = ({
             mediaTypes={mediaTypes}
             filterForMediaTypes={filterForMediaTypes}
             setFilterForMediaTypes={setFilterForMediaTypes}
-            isDefaultFilter={isDefaultFilter} />
+            filterForGenres={filterForGenres}
+            setFilterForGenres={setFilerForGenres}
+            isDefaultFilter={isDefaultFilter}
+            genres={genres} />
         </div>
       </div>
     </form >

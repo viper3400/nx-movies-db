@@ -16,6 +16,7 @@
     "watchagainMoviesFilterLabel": "Nochmal sehen",
     "randomMoviesFilterLabel": "Zufällig",
     "mediaTypeFilterLabel": "Filtereinstellung für Medientyp",
+    "genreFilterLabel": "Filtereinstellung für Genre",
     "nofilter": "Kein Filter gesetzt"
   },
   "movie_card": {

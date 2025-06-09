@@ -30,11 +30,11 @@ export const buildWhereClause = (args: VideoQueryArgs): any => {
         owner_id: ownerid ? { equals: parseInt(ownerid, 10) } : undefined,
       },
       { diskid: diskid ? { startsWith: diskid } : undefined },
-      genreName ? {
+      genreName && genreName.length > 0 ? {
         videodb_videogenre: {
           some: {
             genre: {
-              name: genreName ? { contains: genreName } : undefined,
+              name: genreName ? { in: genreName } : undefined,
             },
           },
         },

@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "@nx-movies-db/shared-ui";
-import { Movie, UserFlagsDTO } from "../interfaces";
+import { Movie } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";
-import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { deleteUserSeenDate, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
+import { deleteUserSeenDate, getSeenDates, setUserSeenDate } from "../app/services/actions";
 import { useTranslation } from "react-i18next";
-import { useAppBasePath } from "../hooks";
+import { useAppBasePath, useUserFlags } from "../hooks";
 
 interface DetailsComponentProperties {
   id: string;
@@ -21,6 +20,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
 
   const { imageBaseUrl } = useAppBasePath();
+  const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
 
   const { t } = useTranslation();
 
@@ -30,19 +30,6 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const loadSeenDatesForMovie = async (movieId: string) => {
     const seenDates = await getSeenDates(movieId, "VG_Default");
     return seenDates;
-  };
-
-  const loadUserFlagsForMovie = async (movieId: string) => {
-    const flags = await getUserFlagsForMovie(movieId, userName);
-    return flags;
-  };
-
-  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
-    await updateUserFlags(
-      parseInt(flags.movieId),
-      flags.isFavorite,
-      flags.isWatchAgain,
-      userName);
   };
 
   const setUserSeenDateForMovie = async (movieId: string, date: Date) => {

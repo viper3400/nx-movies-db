@@ -5,9 +5,8 @@ import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "@nx-movies-db/shared-ui";
 import { Movie } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";
-import { deleteUserSeenDate, getSeenDates, setUserSeenDate } from "../app/services/actions";
 import { useTranslation } from "react-i18next";
-import { useAppBasePath, useUserFlags } from "../hooks";
+import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 
 interface DetailsComponentProperties {
   id: string;
@@ -21,31 +20,11 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
 
   const { imageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
+  const { loadSeenDatesForMovie, setUserSeenDateForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
 
   const { t } = useTranslation();
 
-
   const inputVariant = "underlined";
-
-  const loadSeenDatesForMovie = async (movieId: string) => {
-    const seenDates = await getSeenDates(movieId, "VG_Default");
-    return seenDates;
-  };
-
-  const setUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await setUserSeenDate(
-      parseInt(movieId),
-      userName,
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
-
-  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await deleteUserSeenDate(
-      parseInt(movieId),
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
 
   useEffect(() => {
     const fetchMovie = async () => {

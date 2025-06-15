@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { deleteUserSeenDate, getSeenDates, getSeenVideos } from "../app/services/actions";
+import { getSeenVideos } from "../app/services/actions";
 import { SeenEntry } from "../interfaces";
 import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
-import { useAppBasePath, useUserFlags } from "../hooks";
+import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 
 
 interface SeenMoviesComponentProperties {
@@ -22,22 +22,11 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
 
   const { appBasePath, imageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
+  const { loadSeenDatesForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
 
 
   const totalMoviesCount = useRef(0);
   const isInitialLoading = useRef(true);
-
-  const loadSeenDatesForMovie = async (movieId: string) => {
-    const seenDates = await getSeenDates(movieId, "VG_Default");
-    return seenDates;
-  };
-
-  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await deleteUserSeenDate(
-      parseInt(movieId),
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
 
   useEffect(() => {
     const fetchInitialMovies = async () => {

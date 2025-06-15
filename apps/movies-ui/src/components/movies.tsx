@@ -4,12 +4,12 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
-import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate } from "../app/services/actions";
+import { getMovies } from "../app/services/actions";
 import { Movie, MoviesDbSession } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
 import { useTranslation } from "react-i18next";
-import { useAppBasePath, useAvailableMediaAndGenres, useUserFlags } from "../hooks";
+import { useAppBasePath, useAvailableMediaAndGenres, useSeenDates, useUserFlags } from "../hooks";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -44,14 +44,10 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
   const { appBasePath, imageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(session.userName);
+  const { loadSeenDatesForMovie, setUserSeenDateForMovie, deleteUserSeenDateForMovie } = useSeenDates(session.userName);
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
-
-  const loadSeenDatesForMovie = async (movieId: string) => {
-    const seenDates = await getSeenDates(movieId, "VG_Default");
-    return seenDates;
-  };
 
   const getNameFromId = (ids: string[], searchArray: any): string[] => {
     if (!searchArray) return [];
@@ -61,21 +57,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         return mt ? mt.label : undefined;
       })
       .filter((label): label is string => typeof label === "string");
-  };
-
-  const setUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await setUserSeenDate(
-      parseInt(movieId),
-      session.userName,
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
-
-  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await deleteUserSeenDate(
-      parseInt(movieId),
-      date.toISOString().slice(0, 10),
-      "VG_Default");
   };
 
   useEffect(() => {

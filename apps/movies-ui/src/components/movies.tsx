@@ -4,13 +4,12 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
-import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
-import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
+import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate } from "../app/services/actions";
+import { Movie, MoviesDbSession } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
 import { useTranslation } from "react-i18next";
-import { useAppBasePath, useAvailableMediaAndGenres } from "../hooks";
+import { useAppBasePath, useAvailableMediaAndGenres, useUserFlags } from "../hooks";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -44,6 +43,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
   const { appBasePath, imageBaseUrl } = useAppBasePath();
+  const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(session.userName);
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -61,19 +61,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         return mt ? mt.label : undefined;
       })
       .filter((label): label is string => typeof label === "string");
-  };
-
-  const loadUserFlagsForMovie = async (movieId: string) => {
-    const flags = await getUserFlagsForMovie(movieId, session.userName);
-    return flags;
-  };
-
-  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
-    await updateUserFlags(
-      parseInt(flags.movieId),
-      flags.isFavorite,
-      flags.isWatchAgain,
-      session.userName);
   };
 
   const setUserSeenDateForMovie = async (movieId: string, date: Date) => {

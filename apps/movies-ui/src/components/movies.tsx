@@ -5,13 +5,12 @@ import { useEffect, useState, FormEvent } from "react";
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
 import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
-import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
 import { useTranslation } from "react-i18next";
-import { useAvailableMediaAndGenres } from "../hooks";
+import { useAppBasePath, useAvailableMediaAndGenres } from "../hooks";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -23,8 +22,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [imageBaseUrl, setImageBaseUrl] = useState<string>();
-  const [appBasePath, setAppBasePath] = useState<string>();
   const initialDeleteMode = "INCLUDE_DELETED";
   const initialFilterForFavorites = false;
   const initialFilterForWatchAgain = false;
@@ -46,6 +43,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [filterForGenres, setFilterForGenres] = useState(initialFilterForGenres);
 
   const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
+  const { appBasePath, imageBaseUrl } = useAppBasePath();
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -92,14 +90,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
       date.toISOString().slice(0, 10),
       "VG_Default");
   };
-
-  useEffect(() => {
-    const fetchAppBasePath = async () => {
-      setAppBasePath(await getAppBasePath());
-      setImageBaseUrl(appBasePath + "/api/cover-image");
-    };
-    fetchAppBasePath();
-  });
 
   useEffect(() => {
     invalidSearch ?? clearSearchResult();

@@ -5,10 +5,10 @@ import { deleteUserSeenDate, getSeenDates, getSeenVideos, updateUserFlags } from
 import { SeenEntry, UserFlagsDTO } from "../interfaces";
 import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
+import { useAppBasePath } from "../hooks";
 
 
 interface SeenMoviesComponentProperties {
@@ -16,12 +16,13 @@ interface SeenMoviesComponentProperties {
 }
 export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties) => {
   const [seenMovies, setSeenMovies] = useState<SeenEntry[] | undefined>();
-  const [imageBaseUrl, setImageBaseUrl] = useState<string>();
-  const [appBasePath, setAppBasePath] = useState<string>();
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [nextPage, setNextPage] = useState<number>();
+
+  const { appBasePath, imageBaseUrl } = useAppBasePath();
+
 
   const totalMoviesCount = useRef(0);
   const isInitialLoading = useRef(true);
@@ -53,19 +54,12 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   };
 
   useEffect(() => {
-    const fetchAppBasePath = async () => {
-      const appBasePath = await getAppBasePath();
-      setAppBasePath(appBasePath);
-      setImageBaseUrl(appBasePath + "/api/cover-image");
-    };
-
     const fetchInitialMovies = async () => {
       await fetchSeenMoviesAsync(0, dateRange);
     };
 
     if (isInitialLoading.current) {
       isInitialLoading.current = false;
-      fetchAppBasePath();
       fetchInitialMovies();
     }
   });

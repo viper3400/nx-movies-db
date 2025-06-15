@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { deleteUserSeenDate, getSeenDates, getSeenVideos, updateUserFlags } from "../app/services/actions";
-import { SeenEntry, UserFlagsDTO } from "../interfaces";
+import { deleteUserSeenDate, getSeenDates, getSeenVideos } from "../app/services/actions";
+import { SeenEntry } from "../interfaces";
 import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
-import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
-import { useAppBasePath } from "../hooks";
+import { useAppBasePath, useUserFlags } from "../hooks";
 
 
 interface SeenMoviesComponentProperties {
@@ -22,28 +21,15 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   const [nextPage, setNextPage] = useState<number>();
 
   const { appBasePath, imageBaseUrl } = useAppBasePath();
+  const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
 
 
   const totalMoviesCount = useRef(0);
   const isInitialLoading = useRef(true);
 
-
-  const loadUserFlagsForMovie = async (movieId: string) => {
-    const flags = await getUserFlagsForMovie(movieId, userName);
-    return flags;
-  };
-
   const loadSeenDatesForMovie = async (movieId: string) => {
     const seenDates = await getSeenDates(movieId, "VG_Default");
     return seenDates;
-  };
-
-  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
-    await updateUserFlags(
-      parseInt(flags.movieId),
-      flags.isFavorite,
-      flags.isWatchAgain,
-      userName);
   };
 
   const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {

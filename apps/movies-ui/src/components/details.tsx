@@ -3,12 +3,10 @@
 import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "@nx-movies-db/shared-ui";
-import { getAppBasePath } from "../app/services/actions/getAppBasePath";
-import { Movie, UserFlagsDTO } from "../interfaces";
+import { Movie } from "../interfaces";
 import { Input, Spacer } from "@heroui/react";
-import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { deleteUserSeenDate, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { useTranslation } from "react-i18next";
+import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 
 interface DetailsComponentProperties {
   id: string;
@@ -18,54 +16,15 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const [movie, setMovie] = useState<Movie>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [imageBaseUrl, setImageBaseUrl] = useState<string>();
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
+
+  const { imageBaseUrl } = useAppBasePath();
+  const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
+  const { loadSeenDatesForMovie, setUserSeenDateForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
 
   const { t } = useTranslation();
 
-
   const inputVariant = "underlined";
-
-  const loadSeenDatesForMovie = async (movieId: string) => {
-    const seenDates = await getSeenDates(movieId, "VG_Default");
-    return seenDates;
-  };
-
-  const loadUserFlagsForMovie = async (movieId: string) => {
-    const flags = await getUserFlagsForMovie(movieId, userName);
-    return flags;
-  };
-
-  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
-    await updateUserFlags(
-      parseInt(flags.movieId),
-      flags.isFavorite,
-      flags.isWatchAgain,
-      userName);
-  };
-
-  const setUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await setUserSeenDate(
-      parseInt(movieId),
-      userName,
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
-
-  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await deleteUserSeenDate(
-      parseInt(movieId),
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
-
-  useEffect(() => {
-    const fetchAppBasePath = async () => {
-      const appBasePath = await getAppBasePath();
-      setImageBaseUrl(appBasePath + "/api/cover-image");
-    };
-    fetchAppBasePath();
-  });
 
   useEffect(() => {
     const fetchMovie = async () => {

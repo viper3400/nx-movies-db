@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
-
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
-import { getMovies } from "../app/services/actions";
-import { Movie, MoviesDbSession } from "../interfaces";
+import { MoviesDbSession } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
 import { useTranslation } from "react-i18next";
-import { useAppBasePath, useAvailableMediaAndGenres, useSeenDates, useUserFlags } from "../hooks";
+import { useAppBasePath, useAvailableMediaAndGenres, useMovieSearch, useSeenDates, useUserFlags } from "../hooks";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -17,171 +14,51 @@ interface MovieComponentProperties {
 
 // Main component that handles user input and renders Data component
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
-  const [searchText, setSearchText] = useState<string>("");
-  const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
-  const [searchResult, setSearchResult] = useState<Movie[]>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const initialDeleteMode = "INCLUDE_DELETED";
-  const initialFilterForFavorites = false;
-  const initialFilterForWatchAgain = false;
-  const initialTvSeriesMode = "INCLUDE_TVSERIES";
-  const initialFilterForRandomMovies = false;
-  const initialFilterForMediaTypes: string[] = [];
-  const initialFilterForGenres: string[] = [];
-
-  const [deleteMode, setDeleteMode] = useState<string>(initialDeleteMode);
-  const [filterForFavorites, setFilterForFavorites] = useState(initialFilterForFavorites);
-  const [filterForWatchAgain, setFilterForWatchAgain] = useState(initialFilterForWatchAgain);
-  const [tvSeriesMode, setTvSeriesMode] = useState(initialTvSeriesMode);
-  const [filterForRandomMovies, setFilterForRandomMovies] = useState(initialFilterForRandomMovies);
-  const [filterForMediaTypes, setFilterForMediaTypes] = useState(initialFilterForMediaTypes);
-  const [isDefaultFilter, setIsDefaultFilter] = useState(true);
-  const [totalMoviesCount, setTotalMoviesCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState<number>();
-  const [nextPage, setNextPage] = useState<number>();
-  const [filterForGenres, setFilterForGenres] = useState(initialFilterForGenres);
-
   const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
   const { appBasePath, imageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(session.userName);
   const { loadSeenDatesForMovie, setUserSeenDateForMovie, deleteUserSeenDateForMovie } = useSeenDates(session.userName);
+  const search = useMovieSearch({ session, availableMediaTypes, availableGenres });
 
-  const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
-
-  const getNameFromId = (ids: string[], searchArray: any): string[] => {
-    if (!searchArray) return [];
-    return ids
-      .map(id => {
-        const mt = searchArray.find((mt: any) => mt.value === id);
-        return mt ? mt.label : undefined;
-      })
-      .filter((label): label is string => typeof label === "string");
-  };
-
-  useEffect(() => {
-    invalidSearch ?? clearSearchResult();
-  }, [invalidSearch]);
-
-
-  // New useEffect to retrigger search when deleteMode changes
-  useEffect(() => {
-    if (searchResult) {
-      if (invalidTextLength(searchText)) {
-        validateSearch(searchText);
-      }
-      else {
-        clearSearchResult();
-        executeSearch(0);
-      }
-    }
-  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies, filterForMediaTypes]); // Run on changes
-
-  useEffect(() => {
-    const isDefault =
-      deleteMode === initialDeleteMode &&
-      filterForFavorites === initialFilterForFavorites &&
-      filterForWatchAgain === initialFilterForWatchAgain &&
-      tvSeriesMode === initialTvSeriesMode &&
-      filterForRandomMovies === initialFilterForRandomMovies &&
-      filterForMediaTypes.length === initialFilterForMediaTypes.length &&
-      filterForMediaTypes.every((val) => initialFilterForMediaTypes.includes(val)) &&
-      initialFilterForMediaTypes.every((val) => filterForMediaTypes.includes(val)) &&
-
-      filterForGenres.length === initialFilterForGenres.length &&
-      filterForGenres.every((val) => initialFilterForGenres.includes(val)) &&
-      initialFilterForGenres.every((val) => initialFilterForGenres.includes(val));
-    setIsDefaultFilter(isDefault);
-  }, [
-    deleteMode,
-    filterForFavorites,
-    filterForWatchAgain,
-    tvSeriesMode,
-    filterForRandomMovies,
-    filterForMediaTypes,
-    filterForGenres
-  ]);
-
-  const validateSearch = (text: string) => {
-    setInvalidSearch(invalidTextLength(text));
-  };
-
-  const handleSearchSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    validateSearch(searchText);
-    if (!invalidTextLength(searchText)) {
-      await clearSearchResult();
-      executeSearch(0);
-    }
-  };
-
-  const handleNextPageTrigger = () => {
-    if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
-      executeSearch(nextPage);
-    }
-  };
-
-  const clearSearchResult = async () => {
-    setLoading(true);
-    setSearchResult(undefined);
-    setCurrentPage(undefined);
-    setNextPage(undefined);
-    setTotalMoviesCount(0);
-    setLoading(false);
-  };
-
-  const executeSearch = async (page: number) => {
-    setLoading(true);
-    const result =
-      await getMovies(searchText, deleteMode, tvSeriesMode, filterForFavorites, filterForWatchAgain, filterForRandomMovies, getNameFromId(filterForMediaTypes, availableMediaTypes), getNameFromId(filterForGenres, availableGenres), session.userName, 10, page * 10);
-    const resultCount = result.videos.requestMeta.totalCount;
-    setTotalMoviesCount(resultCount);
-    setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos); // Triggers `useEffect`
-    setCurrentPage(page);
-    if ((page + 1) * 10 < resultCount) {
-      setNextPage((prev) => prev ? prev + 1 : 1);
-    } else {
-      setNextPage(page);
-    }
-    setLoading(false);
-  };
 
   return (
     <div>
       <SearchForm
-        searchText={searchText}
-        setSearchText={setSearchText}
-        invalidSearch={invalidSearch}
-        validateSearch={validateSearch}
-        clearSearchResult={clearSearchResult}
-        totalMoviesCount={totalMoviesCount}
-        deleteMode={deleteMode}
-        setDeleteMode={setDeleteMode}
-        filterForFavorites={filterForFavorites}
-        setFilterForFavorites={setFilterForFavorites}
-        filterForWatchAgain={filterForWatchAgain}
-        setFilterForWatchAgain={setFilterForWatchAgain}
-        randomOrder={filterForRandomMovies}
-        setRandomOrder={setFilterForRandomMovies}
-        tvSeriesMode={tvSeriesMode}
-        setTvSeriesMode={setTvSeriesMode}
+        searchText={search.searchText}
+        setSearchText={search.setSearchText}
+        invalidSearch={search.invalidSearch}
+        validateSearch={search.validateSearch}
+        clearSearchResult={search.clearSearchResult}
+        totalMoviesCount={search.totalMoviesCount}
+        deleteMode={search.deleteMode}
+        setDeleteMode={search.setDeleteMode}
+        filterForFavorites={search.filterForFavorites}
+        setFilterForFavorites={search.setFilterForFavorites}
+        filterForWatchAgain={search.filterForWatchAgain}
+        setFilterForWatchAgain={search.setFilterForWatchAgain}
+        randomOrder={search.filterForRandomMovies}
+        setRandomOrder={search.setFilterForRandomMovies}
+        tvSeriesMode={search.tvSeriesMode}
+        setTvSeriesMode={search.setTvSeriesMode}
         mediaTypes={availableMediaTypes ?? []}
-        filterForMediaTypes={filterForMediaTypes}
-        setFilterForMediaTypes={setFilterForMediaTypes}
-        handleSearchSubmit={handleSearchSubmit}
-        isDefaultFilter={isDefaultFilter}
+        filterForMediaTypes={search.filterForMediaTypes}
+        setFilterForMediaTypes={search.setFilterForMediaTypes}
+        handleSearchSubmit={search.handleSearchSubmit}
+        isDefaultFilter={search.isDefaultFilter}
         langResources={{
           placeholderLabel: t("search.placeholder"),
           searchLabel: t("search.search"),
           resultCountLabel: t("search.result_count"),
         }}
         genres={availableGenres ?? []}
-        filterForGenres={filterForGenres}
-        setFilerForGenres={setFilterForGenres} />
+        filterForGenres={search.filterForGenres}
+        setFilerForGenres={search.setFilterForGenres}
+      />
       <div>
-        {searchResult && imageBaseUrl && (
+        {search.searchResult && imageBaseUrl && (
           <MovieCardDeck
-            movies={searchResult}
+            movies={search.searchResult ?? []}
             loadUserFlagsForMovie={loadUserFlagsForMovie}
             imageBaseUrl={imageBaseUrl}
             appBasePath={appBasePath}
@@ -197,8 +74,8 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
           />
         )}
       </div>
-      <ResultsStatusIndicator isLoading={loading} hasNoResults={searchResult?.length == 0} hasNoMoreResults={searchResult?.length == totalMoviesCount && totalMoviesCount != 0} />
-      <PageEndObserver onIntersect={handleNextPageTrigger} />
+      <ResultsStatusIndicator isLoading={search.loading} hasNoResults={search.searchResult?.length == 0} hasNoMoreResults={search.searchResult?.length == search.totalMoviesCount && search.totalMoviesCount != 0} />
+      <PageEndObserver onIntersect={search.handleNextPageTrigger} />
     </div>
   );
 };

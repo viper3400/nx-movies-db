@@ -4,13 +4,14 @@ import { useEffect, useState, FormEvent } from "react";
 
 import { MovieCardDeck, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
 
-import { deleteUserSeenDate, getGenres, getMediaTypes, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
+import { deleteUserSeenDate, getMovies, getSeenDates, setUserSeenDate, updateUserFlags } from "../app/services/actions";
 import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
 import { Movie, MoviesDbSession, UserFlagsDTO } from "../interfaces";
 import SearchForm from "./search-form";
 import PageEndObserver from "./page-end-observer";
 import { useTranslation } from "react-i18next";
+import { useAvailableMediaAndGenres } from "../hooks";
 
 interface MovieComponentProperties {
   session: MoviesDbSession;
@@ -42,9 +43,9 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState<number>();
   const [nextPage, setNextPage] = useState<number>();
-  const [availableMediaTypes, setAvailableMediaTypes] = useState<{ label: string; value: string }[]>();
-  const [availableGenres, setAvailableGenres] = useState<{ label: string; value: string }[]>();
   const [filterForGenres, setFilterForGenres] = useState(initialFilterForGenres);
+
+  const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
 
   const invalidTextLength = (text: string) => text.length < 0;
   const { t } = useTranslation();
@@ -99,29 +100,6 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     };
     fetchAppBasePath();
   });
-
-  useEffect(() => {
-    const fetchMediaTypes = async () => {
-      const data = await getMediaTypes();
-      setAvailableMediaTypes(
-        data.mediaTypes.map((mt: any) => ({
-          label: mt.name,
-          value: String(mt.id),
-        }))
-      );
-    };
-    const fetchGenres = async () => {
-      const data = await getGenres();
-      setAvailableGenres(
-        data.genres.map((mt: any) => ({
-          label: mt.name,
-          value: String(mt.id),
-        }))
-      );
-    };
-    fetchMediaTypes();
-    fetchGenres();
-  }, []);
 
   useEffect(() => {
     invalidSearch ?? clearSearchResult();

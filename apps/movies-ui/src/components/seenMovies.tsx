@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { deleteUserSeenDate, getSeenDates, getSeenVideos, updateUserFlags } from "../app/services/actions";
-import { SeenEntry, UserFlagsDTO } from "../interfaces";
+import { getSeenVideos } from "../app/services/actions";
+import { SeenEntry } from "../interfaces";
 import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
-import { getUserFlagsForMovie } from "../app/services/actions/getUserFlags";
-import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
+import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 
 
 interface SeenMoviesComponentProperties {
@@ -16,56 +15,26 @@ interface SeenMoviesComponentProperties {
 }
 export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties) => {
   const [seenMovies, setSeenMovies] = useState<SeenEntry[] | undefined>();
-  const [imageBaseUrl, setImageBaseUrl] = useState<string>();
-  const [appBasePath, setAppBasePath] = useState<string>();
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [nextPage, setNextPage] = useState<number>();
 
+  const { appBasePath, imageBaseUrl } = useAppBasePath();
+  const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
+  const { loadSeenDatesForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
+
+
   const totalMoviesCount = useRef(0);
   const isInitialLoading = useRef(true);
 
-
-  const loadUserFlagsForMovie = async (movieId: string) => {
-    const flags = await getUserFlagsForMovie(movieId, userName);
-    return flags;
-  };
-
-  const loadSeenDatesForMovie = async (movieId: string) => {
-    const seenDates = await getSeenDates(movieId, "VG_Default");
-    return seenDates;
-  };
-
-  const updateUserFlagsForMovie = async (flags: UserFlagsDTO) => {
-    await updateUserFlags(
-      parseInt(flags.movieId),
-      flags.isFavorite,
-      flags.isWatchAgain,
-      userName);
-  };
-
-  const deleteUserSeenDateForMovie = async (movieId: string, date: Date) => {
-    await deleteUserSeenDate(
-      parseInt(movieId),
-      date.toISOString().slice(0, 10),
-      "VG_Default");
-  };
-
   useEffect(() => {
-    const fetchAppBasePath = async () => {
-      const appBasePath = await getAppBasePath();
-      setAppBasePath(appBasePath);
-      setImageBaseUrl(appBasePath + "/api/cover-image");
-    };
-
     const fetchInitialMovies = async () => {
       await fetchSeenMoviesAsync(0, dateRange);
     };
 
     if (isInitialLoading.current) {
       isInitialLoading.current = false;
-      fetchAppBasePath();
       fetchInitialMovies();
     }
   });

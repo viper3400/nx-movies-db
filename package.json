@@ -37,7 +37,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
-    "@chromatic-com/storybook": "^3.2.6",
+    "@chromatic-com/storybook": "^4.0.0",
     "@eslint/compat": "^1.1.1",
     "@eslint/eslintrc": "^3.0.0",
     "@eslint/js": "~9.29.0",

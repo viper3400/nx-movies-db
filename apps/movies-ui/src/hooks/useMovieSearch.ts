@@ -140,10 +140,12 @@ export function useMovieSearch({
 
   const handleSearchSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    validateSearch(searchText);
-    if (!invalidTextLength(searchText)) {
+    const trimmed = searchText.trim();
+    setSearchText(trimmed);
+    validateSearch(trimmed);
+    if (!invalidTextLength(trimmed)) {
       await clearSearchResult();
-      executeSearch(0);
+      executeSearch(0, trimmed);
     }
   };
 

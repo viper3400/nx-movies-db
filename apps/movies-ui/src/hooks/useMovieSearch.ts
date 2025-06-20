@@ -100,7 +100,7 @@ export function useMovieSearch({
 
   useEffect(() => {
     // Restore filters
-    const storedFilters = sessionStorage.getItem(FILTERS_KEY);
+    const storedFilters = localStorage.getItem(FILTERS_KEY);
     if (storedFilters) {
       try {
         const filters = JSON.parse(storedFilters);
@@ -114,7 +114,7 @@ export function useMovieSearch({
       } catch { throw new Error("Error on restore filters."); }
     }
     // Restore search term
-    const stored = sessionStorage.getItem(SEARCH_TERM_KEY);
+    const stored = localStorage.getItem(SEARCH_TERM_KEY);
     if (stored) {
       setSearchText(stored);
     }
@@ -126,7 +126,7 @@ export function useMovieSearch({
   const initialSearchDone = useRef(false);
   useEffect(() => {
     if (restoring || initialSearchDone.current) return;
-    const stored = sessionStorage.getItem(SEARCH_TERM_KEY);
+    const stored = localStorage.getItem(SEARCH_TERM_KEY);
     if (stored) {
       executeSearch(0, stored);
       initialSearchDone.current = true;
@@ -156,7 +156,7 @@ export function useMovieSearch({
   };
 
   const clearSearchResult = async () => {
-    sessionStorage.removeItem(SEARCH_TERM_KEY);
+    localStorage.removeItem(SEARCH_TERM_KEY);
     setLoading(true);
     setSearchResult(undefined);
     setCurrentPage(undefined);
@@ -170,7 +170,7 @@ export function useMovieSearch({
     const effectiveSearchText = customSearchText !== undefined ? customSearchText : searchText;
     // Store searchText in session storage whenever a search is executed
     if (effectiveSearchText) {
-      sessionStorage.setItem(SEARCH_TERM_KEY, effectiveSearchText);
+      localStorage.setItem(SEARCH_TERM_KEY, effectiveSearchText);
     }
     const result =
       await getMovies(
@@ -209,7 +209,7 @@ export function useMovieSearch({
       filterForMediaTypes,
       filterForGenres,
     };
-    sessionStorage.setItem(FILTERS_KEY, JSON.stringify(filters));
+    localStorage.setItem(FILTERS_KEY, JSON.stringify(filters));
   }, [
     restoring, // <-- Add restoring as a dependency
     deleteMode,

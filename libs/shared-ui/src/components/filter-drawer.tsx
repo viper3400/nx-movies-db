@@ -18,83 +18,62 @@ import {
 import { Tune } from "../icons";
 import { useState } from "react";
 import { t } from "i18next";
-import { CheckboxValue } from "../interfaces";
+import { CheckboxValue, DeleteMode, MovieSearchFilters, TvSeriesMode } from "../interfaces";
 
 interface FilterDrawerProperties {
-  deleteMode: string;
-  setDeleteMode: (mode: string) => void;
-  tvSeriesMode: string;
-  setTvSeriesMode: (mode: string) => void;
-  filterForFavorites: boolean;
-  setFilterForFavorites: (value: boolean) => void;
-  filterForWatchAgain: boolean;
-  setFilterForWatchAgain: (value: boolean) => void;
-  filterForRandomMovies: boolean;
-  setFilterForRandomMovies: (value: boolean) => void;
+  filters: MovieSearchFilters;
+  setFilters: (f: MovieSearchFilters) => void;
   isDefaultFilter: boolean;
   mediaTypes: CheckboxValue[];
-  filterForMediaTypes: string[];
-  setFilterForMediaTypes: (values: string[]) => void;
   genres: CheckboxValue[];
-  filterForGenres: string[];
-  setFilterForGenres: (values: string[]) => void;
 
 
 }
 export function FilterDrawer(
   {
-    deleteMode: parentDeleteMode,
-    setDeleteMode,
-    tvSeriesMode: parentTvSeriesMode,
-    setTvSeriesMode,
-    filterForFavorites: parentFilterForFavorites,
-    setFilterForFavorites,
-    filterForWatchAgain: parentFilterForWatchAgain,
-    setFilterForWatchAgain,
-    filterForRandomMovies: parentFilterForRandomMovies,
-    setFilterForRandomMovies,
+    filters: parent,
+    setFilters: setParent,
     isDefaultFilter,
     mediaTypes,
-    filterForMediaTypes: parentFilterForMediaTypes,
-    setFilterForMediaTypes,
     genres,
-    filterForGenres: parentFilterForGenres,
-    setFilterForGenres
   }: FilterDrawerProperties) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // Local state to manage changes within the component
-  const [localDeleteMode, setLocalDeleteMode] = useState(parentDeleteMode);
-  const [localTvSeriesMode, setLocalTvSeriesMode] = useState(parentTvSeriesMode);
-  const [localFilterForFavorites, setLocalFilterForFavorites] = useState(parentFilterForFavorites);
-  const [localFilterForWatchAgain, setLocalFilterForWatchAgain] = useState(parentFilterForWatchAgain);
-  const [localFilterForRandomMovies, setLocalFilterForRandomMovies] = useState(parentFilterForRandomMovies);
-  const [localFilterForMediaTypes, setLocalFilterForMediaTypes] = useState(parentFilterForMediaTypes);
-  const [localFilterForGenres, setLocalFilterForGenres] = useState(parentFilterForGenres);
+  const [local, setLocal] = useState<MovieSearchFilters>(parent);
 
   // Sync local state with parent state when the drawer is opened
   const handleOpen = () => {
-    setLocalDeleteMode(parentDeleteMode);
-    setLocalTvSeriesMode(parentTvSeriesMode);
-    setLocalFilterForFavorites(parentFilterForFavorites);
-    setLocalFilterForWatchAgain(parentFilterForWatchAgain);
-    setLocalFilterForRandomMovies(parentFilterForRandomMovies);
-    setLocalFilterForMediaTypes(parentFilterForMediaTypes);
-    setLocalFilterForGenres(parentFilterForGenres);
+    setLocal(parent); // Sync local state with parent when opening
     onOpen();
   };
 
   // Apply changes to the parent state
   const handleApply = async (onClose: () => void) => {
-    setDeleteMode(localDeleteMode);
-    setTvSeriesMode(localTvSeriesMode);
-    setFilterForFavorites(localFilterForFavorites);
-    setFilterForWatchAgain(localFilterForWatchAgain);
-    setFilterForRandomMovies(localFilterForRandomMovies);
-    setFilterForMediaTypes(localFilterForMediaTypes);
-    setFilterForGenres(localFilterForGenres);
+    setParent(local); // <-- This updates the parent with the new filters!
     onClose(); // Close the drawer
   };
+
+  const createLocalUpdater = <K extends keyof MovieSearchFilters>(key: K) =>
+    (value: MovieSearchFilters[K]) =>
+      setLocal(prev => ({ ...prev, [key]: value }));
+
+  const updateFavorites = createLocalUpdater("filterForFavorites");
+  const updateWatchAgain = createLocalUpdater("filterForWatchAgain");
+  const updateRandomMovies = createLocalUpdater("filterForRandomMovies");
+  const updateMediaTypes = createLocalUpdater("filterForMediaTypes");
+  const updateGenres = createLocalUpdater("filterForGenres");
+  const updateTvSeriesMode = (value: string) =>
+    setLocal(prev => ({
+      ...prev,
+      tvSeriesMode: value as TvSeriesMode,
+    }));
+
+  const updateDeleteMode = (value: string) =>
+    setLocal(prev => ({
+      ...prev,
+      deleteMode: value as DeleteMode,
+    }));
 
   return (
     <>
@@ -124,22 +103,22 @@ export function FilterDrawer(
               <DrawerBody>
                 <div className="flex w-full flex-col gap-4">
                   <Switch
-                    isSelected={localFilterForFavorites}
-                    onValueChange={setLocalFilterForFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
+                    isSelected={local.filterForFavorites}
+                    onValueChange={updateFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
                   <Switch
-                    isSelected={localFilterForWatchAgain}
-                    onValueChange={setLocalFilterForWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
+                    isSelected={local.filterForWatchAgain}
+                    onValueChange={updateWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
                   <Switch
-                    isSelected={localFilterForRandomMovies}
-                    onValueChange={setLocalFilterForRandomMovies}>{t("search.randomMoviesFilterLabel")}</Switch>
+                    isSelected={local.filterForRandomMovies}
+                    onValueChange={updateRandomMovies}>{t("search.randomMoviesFilterLabel")}</Switch>
                 </div>
                 <Accordion>
                   <AccordionItem
                     key="1"
                     aria-label="local-mediatype-filter"
                     title={t("search.mediaTypeFilterLabel")}
-                    subtitle={localFilterForMediaTypes.length !== 0 ?
-                      localFilterForMediaTypes
+                    subtitle={local.filterForMediaTypes.length !== 0 ?
+                      local.filterForMediaTypes
                         .map((mt) => mediaTypes.find((m) => m.value === mt)?.label)
                         .filter(Boolean)
                         .join(", ") :
@@ -147,8 +126,8 @@ export function FilterDrawer(
                     }
                   >
                     <CheckboxGroup
-                      value={localFilterForMediaTypes}
-                      onValueChange={setLocalFilterForMediaTypes}
+                      value={local.filterForMediaTypes}
+                      onValueChange={updateMediaTypes}
                     >
                       {mediaTypes.map((mt) => (
                         <Checkbox key={mt.value} value={mt.value}>{mt.label}</Checkbox>
@@ -159,8 +138,8 @@ export function FilterDrawer(
                     key="2"
                     aria-label="local-genre-filter"
                     title={t("search.genreFilterLabel")}
-                    subtitle={localFilterForGenres.length !== 0 ?
-                      localFilterForGenres
+                    subtitle={local.filterForGenres.length !== 0 ?
+                      local.filterForGenres
                         .map((mt) => genres.find((m) => m.value === mt)?.label)
                         .filter(Boolean)
                         .join(", ") :
@@ -168,8 +147,8 @@ export function FilterDrawer(
                     }
                   >
                     <CheckboxGroup
-                      value={localFilterForGenres}
-                      onValueChange={setLocalFilterForGenres}
+                      value={local.filterForGenres}
+                      onValueChange={updateGenres}
                     >
                       {genres.map((mt) => (
                         <Checkbox key={mt.value} value={mt.value}>{mt.label}</Checkbox>
@@ -180,17 +159,17 @@ export function FilterDrawer(
                     title={t("search.tvSeriesFilterLabel")}
                     subtitle={
                       `${t(
-                        localTvSeriesMode === "EXCLUDE_TVSERIES"
+                        local.tvSeriesMode === "EXCLUDE_TVSERIES"
                           ? "search.tvSeriesFilterExcludeTvSeries"
-                          : localTvSeriesMode === "INCLUDE_TVSERIES"
+                          : local.tvSeriesMode === "INCLUDE_TVSERIES"
                             ? "search.tvSeriesFilterIncludeTvSeries"
                             : "search.tvSeriesFilterOnlyTvSeries"
                       )
                       }`
                     }>
                     <RadioGroup
-                      value={localTvSeriesMode}
-                      onValueChange={setLocalTvSeriesMode}
+                      value={local.tvSeriesMode}
+                      onValueChange={updateTvSeriesMode}
                       orientation="vertical"
                     >
                       <Radio value="EXCLUDE_TVSERIES">{t("search.tvSeriesFilterExcludeTvSeries")}</Radio>
@@ -204,9 +183,9 @@ export function FilterDrawer(
                     title={t("search.deletedMoviesFilterLabel")}
                     subtitle={
                       `${t(
-                        localDeleteMode === "EXCLUDE_DELETED"
+                        local.deleteMode === "EXCLUDE_DELETED"
                           ? "search.deletedMoviesFilterExcludeDeleted"
-                          : localDeleteMode === "INCLUDE_DELETED"
+                          : local.deleteMode === "INCLUDE_DELETED"
                             ? "search.deletedMoviesFilterIncludeDeleted"
                             : "search.deletedMoviesFilterOnlyDeleted"
                       )
@@ -214,8 +193,8 @@ export function FilterDrawer(
                     }
                   >
                     <RadioGroup
-                      value={localDeleteMode}
-                      onValueChange={setLocalDeleteMode}
+                      value={local.deleteMode}
+                      onValueChange={updateDeleteMode}
                       orientation="vertical"
                     >
                       <Radio value="EXCLUDE_DELETED">{t("search.deletedMoviesFilterExcludeDeleted")}</Radio>

@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, FormEvent } from "react";
+import { useState, useEffect, FormEvent, useRef } from "react";
 import { getMovies } from "../app/services/actions";
-import { Movie } from "../interfaces";
+import { Movie, moviesSearchInitialFilters } from "../interfaces";
+import { MovieSearchFilters } from "@nx-movies-db/shared-ui";
 
 interface UseMovieSearchProps {
   session: { userName: string };
@@ -8,234 +9,166 @@ interface UseMovieSearchProps {
   availableGenres: any[];
 }
 
-const SEARCH_TERM_KEY = "moviesSearchTerm";
-const FILTERS_KEY = "moviesFilters";
+const SEARCH_STATE_KEY = "moviesSearchState";
+
+// Helper to map IDs to labels
+const getNameFromId = (ids: string[], options: any[]): string[] =>
+  ids
+    .map(id => options.find(o => o.value === id)?.label)
+    .filter((lbl): lbl is string => Boolean(lbl));
+
+type SearchState = {
+  filters: MovieSearchFilters;
+  searchText: string;
+};
 
 export function useMovieSearch({
   session,
   availableMediaTypes,
   availableGenres,
 }: UseMovieSearchProps) {
-  // All your search/pagination/filter state moves here
-  const initialDeleteMode = "INCLUDE_DELETED";
-  const initialFilterForFavorites = false;
-  const initialFilterForWatchAgain = false;
-  const initialTvSeriesMode = "INCLUDE_TVSERIES";
-  const initialFilterForRandomMovies = false;
-  const initialFilterForMediaTypes: string[] = [];
-  const initialFilterForGenres: string[] = [];
+  // Restore filters & searchText from localStorage on first render
+  const [searchState, setSearchState] = useState<SearchState>(() => {
+    const stored = localStorage.getItem(SEARCH_STATE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return {
+          filters: { ...moviesSearchInitialFilters, ...parsed.filters },
+          searchText: parsed.searchText ?? "",
+        };
+      } catch {
+        // ignore
+      }
+    }
+    return { filters: moviesSearchInitialFilters, searchText: "" };
+  });
 
-  const [searchText, setSearchText] = useState<string>("");
-  const [invalidSearch, setInvalidSearch] = useState<boolean>(false);
+  const { filters, searchText } = searchState;
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isDefaultFilter, setIsDefaultFilter] = useState<boolean>(true);
+  const [totalMoviesCount, setTotalMoviesCount] = useState<number>(0);
+  const currentPageRef = useRef<number | null>(null);
+  const nextPageRef = useRef<number>(1);
+  const loadingRef = useRef(false);
 
-  const [deleteMode, setDeleteMode] = useState<string>(initialDeleteMode);
-  const [filterForFavorites, setFilterForFavorites] = useState(initialFilterForFavorites);
-  const [filterForWatchAgain, setFilterForWatchAgain] = useState(initialFilterForWatchAgain);
-  const [tvSeriesMode, setTvSeriesMode] = useState(initialTvSeriesMode);
-  const [filterForRandomMovies, setFilterForRandomMovies] = useState(initialFilterForRandomMovies);
-  const [filterForMediaTypes, setFilterForMediaTypes] = useState(initialFilterForMediaTypes);
-  const [isDefaultFilter, setIsDefaultFilter] = useState(true);
-  const [totalMoviesCount, setTotalMoviesCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState<number>();
-  const [nextPage, setNextPage] = useState<number>();
-  const [filterForGenres, setFilterForGenres] = useState(initialFilterForGenres);
+  const [currentPage, setCurrentPage] = useState<number | null>(null);
+  const [nextPage, setNextPage] = useState<number>(1);
 
-  const [restoring, setRestoring] = useState(true); // Add this line
-
-  const invalidTextLength = (text: string) => text.length < 0;
-
-  // Helper
-  const getNameFromId = (ids: string[], searchArray: any): string[] => {
-    if (!searchArray) return [];
-    return ids
-      .map(id => {
-        const mt = searchArray.find((mt: any) => mt.value === id);
-        return mt ? mt.label : undefined;
-      })
-      .filter((label): label is string => typeof label === "string");
-  };
-
+  // Keep refs in sync with state
   useEffect(() => {
-    invalidSearch ?? clearSearchResult();
-  }, [invalidSearch]);
-
+    currentPageRef.current = currentPage;
+  }, [currentPage]);
   useEffect(() => {
-    if (searchResult) {
-      if (invalidTextLength(searchText)) {
-        validateSearch(searchText);
-      }
-      else {
-        clearSearchResult();
-        executeSearch(0);
-      }
-    }
-  }, [deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies, filterForMediaTypes]); // Run on changes
-
+    nextPageRef.current = nextPage;
+  }, [nextPage]);
   useEffect(() => {
-    const isDefault =
-      deleteMode === initialDeleteMode &&
-      filterForFavorites === initialFilterForFavorites &&
-      filterForWatchAgain === initialFilterForWatchAgain &&
-      tvSeriesMode === initialTvSeriesMode &&
-      filterForRandomMovies === initialFilterForRandomMovies &&
-      filterForMediaTypes.length === initialFilterForMediaTypes.length &&
-      filterForMediaTypes.every((val) => initialFilterForMediaTypes.includes(val)) &&
-      initialFilterForMediaTypes.every((val) => filterForMediaTypes.includes(val)) &&
+    loadingRef.current = loading;
+  }, [loading]);
 
-      filterForGenres.length === initialFilterForGenres.length &&
-      filterForGenres.every((val) => initialFilterForGenres.includes(val)) &&
-      initialFilterForGenres.every((val) => initialFilterForGenres.includes(val));
-    setIsDefaultFilter(isDefault);
-  }, [
-    deleteMode,
-    filterForFavorites,
-    filterForWatchAgain,
-    tvSeriesMode,
-    filterForRandomMovies,
-    filterForMediaTypes,
-    filterForGenres
-  ]);
-
+  // Persist searchState whenever it changes
   useEffect(() => {
-    // Restore filters
-    const storedFilters = sessionStorage.getItem(FILTERS_KEY);
-    if (storedFilters) {
-      try {
-        const filters = JSON.parse(storedFilters);
-        if (filters.deleteMode) setDeleteMode(filters.deleteMode);
-        if (typeof filters.filterForFavorites === "boolean") setFilterForFavorites(filters.filterForFavorites);
-        if (typeof filters.filterForWatchAgain === "boolean") setFilterForWatchAgain(filters.filterForWatchAgain);
-        if (filters.tvSeriesMode) setTvSeriesMode(filters.tvSeriesMode);
-        if (typeof filters.filterForRandomMovies === "boolean") setFilterForRandomMovies(filters.filterForRandomMovies);
-        if (Array.isArray(filters.filterForMediaTypes)) setFilterForMediaTypes(filters.filterForMediaTypes);
-        if (Array.isArray(filters.filterForGenres)) setFilterForGenres(filters.filterForGenres);
-      } catch { throw new Error("Error on restore filters."); }
-    }
-    // Restore search term
-    const stored = sessionStorage.getItem(SEARCH_TERM_KEY);
-    if (stored) {
-      setSearchText(stored);
-    }
-    setRestoring(false); // Restoration done
+    localStorage.setItem(SEARCH_STATE_KEY, JSON.stringify(searchState));
+  }, [searchState]);
 
-  }, []);
-
-  // Initial search effect: only runs once, after restoration is done
-  const initialSearchDone = useRef(false);
+  // Compute if filters match initial defaults
   useEffect(() => {
-    if (restoring || initialSearchDone.current) return;
-    const stored = sessionStorage.getItem(SEARCH_TERM_KEY);
-    if (stored) {
-      executeSearch(0, stored);
-      initialSearchDone.current = true;
+    setIsDefaultFilter(
+      JSON.stringify(filters) === JSON.stringify(moviesSearchInitialFilters)
+    );
+  }, [filters]);
+
+  // Only run search on filter change if searchText is NOT empty
+  useEffect(() => {
+    if (searchText.trim() !== "") {
+      clearSearchResult();
+      executeSearch(0, searchText);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restoring, deleteMode, filterForFavorites, filterForWatchAgain, tvSeriesMode, filterForRandomMovies, filterForMediaTypes, filterForGenres]);
+  }, [filters]);
 
-  const validateSearch = (text: string) => {
-    setInvalidSearch(invalidTextLength(text));
-  };
-
+  // Form submit handler: always search, even if searchText is empty
   const handleSearchSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const trimmed = searchText.trim();
-    setSearchText(trimmed);
-    validateSearch(trimmed);
-    if (!invalidTextLength(trimmed)) {
-      await clearSearchResult();
-      executeSearch(0, trimmed);
-    }
+    clearSearchResult();
+    await executeSearch(0, searchText.trim());
   };
 
+  // Pagination trigger
   const handleNextPageTrigger = () => {
-    if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
-      executeSearch(nextPage);
+    // Only allow loading the next page in sequence, and only if a search has been performed
+    if (
+      currentPage !== null &&
+      !loading &&
+      searchResult &&
+      searchResult.length > 0 &&
+      nextPage === currentPage + 1 &&
+      totalMoviesCount > searchResult.length
+    ) {
+      executeSearch(nextPage, searchText);
     }
   };
 
-  const clearSearchResult = async () => {
-    sessionStorage.removeItem(SEARCH_TERM_KEY);
-    setLoading(true);
+  // Clear search results and reset pagination
+  const clearSearchResult = () => {
     setSearchResult(undefined);
-    setCurrentPage(undefined);
-    setNextPage(undefined);
+    setCurrentPage(null);
+    setNextPage(1);
     setTotalMoviesCount(0);
-    setLoading(false);
   };
 
+  // Core search execution
   const executeSearch = async (page: number, customSearchText?: string) => {
     setLoading(true);
-    const effectiveSearchText = customSearchText !== undefined ? customSearchText : searchText;
-    // Store searchText in session storage whenever a search is executed
-    if (effectiveSearchText) {
-      sessionStorage.setItem(SEARCH_TERM_KEY, effectiveSearchText);
-    }
-    const result =
-      await getMovies(
-        effectiveSearchText,
-        deleteMode,
-        tvSeriesMode,
-        filterForFavorites,
-        filterForWatchAgain,
-        filterForRandomMovies,
-        getNameFromId(filterForMediaTypes, availableMediaTypes),
-        getNameFromId(filterForGenres, availableGenres),
-        session.userName,
-        10,
-        page * 10
-      );
-    const resultCount = result.videos.requestMeta.totalCount;
-    setTotalMoviesCount(resultCount);
-    setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos);
-    setCurrentPage(page);
-    if ((page + 1) * 10 < resultCount) {
-      setNextPage((prev) => prev ? prev + 1 : 1);
-    } else {
-      setNextPage(page);
+    const query = customSearchText ?? searchText;
+
+    const result = await getMovies(
+      query,
+      filters.deleteMode,
+      filters.tvSeriesMode,
+      filters.filterForFavorites,
+      filters.filterForWatchAgain,
+      filters.filterForRandomMovies,
+      getNameFromId(filters.filterForMediaTypes, availableMediaTypes),
+      getNameFromId(filters.filterForGenres, availableGenres),
+      session.userName,
+      10,
+      page * 10
+    );
+
+    const total = result.videos.requestMeta.totalCount;
+    setTotalMoviesCount(total);
+
+    if (page === 0) {
+      setSearchResult(result.videos.videos);
+      setCurrentPage(0);
+      setNextPage(result.videos.videos.length < total ? 1 : 0);
+    } else if (currentPage !== null && page === currentPage + 1) {
+      setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos);
+      setCurrentPage(page);
+      setNextPage((page + 1) * 10 < total ? page + 1 : page);
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (restoring) return; // <-- Prevent persisting during restoration
-    const filters = {
-      deleteMode,
-      filterForFavorites,
-      filterForWatchAgain,
-      tvSeriesMode,
-      filterForRandomMovies,
-      filterForMediaTypes,
-      filterForGenres,
-    };
-    sessionStorage.setItem(FILTERS_KEY, JSON.stringify(filters));
-  }, [
-    restoring, // <-- Add restoring as a dependency
-    deleteMode,
-    filterForFavorites,
-    filterForWatchAgain,
-    tvSeriesMode,
-    filterForRandomMovies,
-    filterForMediaTypes,
-    filterForGenres,
-  ]);
+  // Setters for searchText and filters that update the combined state
+  const setSearchText = (text: string) =>
+    setSearchState(prev => ({ ...prev, searchText: text }));
+
+  const setFilters = (f: MovieSearchFilters) =>
+    setSearchState(prev => ({ ...prev, filters: f }));
 
   return {
-    // State and actions your component needs:
-    searchText, setSearchText,
-    invalidSearch,
+    searchText,
+    setSearchText,
+    invalidSearch: false, // No validation needed
     searchResult,
     loading,
-    validateSearch,
+    validateSearch: () => true, // No validation needed
     totalMoviesCount,
-    deleteMode, setDeleteMode,
-    filterForFavorites, setFilterForFavorites,
-    filterForWatchAgain, setFilterForWatchAgain,
-    tvSeriesMode, setTvSeriesMode,
-    filterForRandomMovies, setFilterForRandomMovies,
-    filterForMediaTypes, setFilterForMediaTypes,
-    filterForGenres, setFilterForGenres,
+    filters,
+    setFilters,
     isDefaultFilter,
     handleSearchSubmit,
     clearSearchResult,

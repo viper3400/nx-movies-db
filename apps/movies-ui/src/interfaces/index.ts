@@ -1,4 +1,5 @@
 export * from "./movie-db-session";
+export * from "./movie-search-initial-filters";
 export * from "./movie";
 export * from "./seen-date-dto";
 export * from "./seen-videos-query-result";

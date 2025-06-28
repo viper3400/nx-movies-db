@@ -77,22 +77,28 @@ export async function getMovies(
     ? (searchDiskId = searchString)
     : (searchTitle = searchString);
 
+  const variables = {
+    title: searchTitle,
+    diskid: searchDiskId,
+    deleteMode: deleteMode,
+    tvSeriesMode: tvSeriesMode,
+    filterFavorites: filterFavorites,
+    filterFlagged: filterFlagged,
+    mediaType: mediaType,
+    genreName: genreName,
+    randomOrder: filterRandom,
+    userName: userName,
+    take: take,
+    skip: skip
+  };
+
+  // Log the query and variables
+  console.log("GraphQL Query:\n", getMovieByTitle.loc?.source.body);
+  console.log("Variables:\n", variables);
+
   const { data } = await getClient().query({
     query: getMovieByTitle,
-    variables: {
-      title: searchTitle,
-      diskid: searchDiskId,
-      deleteMode: deleteMode,
-      tvSeriesMode: tvSeriesMode,
-      filterFavorites: filterFavorites,
-      filterFlagged: filterFlagged,
-      mediaType: mediaType,
-      genreName: genreName,
-      randomOrder: filterRandom,
-      userName: userName,
-      take: take,
-      skip: skip
-    },
+    variables,
   });
 
   const result = await data;

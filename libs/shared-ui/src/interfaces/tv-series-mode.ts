@@ -1,0 +1,1 @@
+export type TvSeriesMode = "INCLUDE_TVSERIES" | "EXCLUDE_TVSERIES" | "ONLY_TVSERIES";

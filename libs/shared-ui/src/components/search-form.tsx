@@ -1,6 +1,7 @@
-import { Input } from "@heroui/react";
+import { Input, PressEvent } from "@heroui/react";
 import React from "react";
 import { CheckboxValue, FilterDrawer, MovieSearchFilters } from "..";
+import { SurpriseButton } from "./surprise-button";
 
 
 interface SearchFormLangResources {
@@ -20,6 +21,7 @@ interface SearchFormProps {
   setFilters: (filters: MovieSearchFilters) => void;
   isDefaultFilter: boolean;
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  handleRandomSearchRequest: (event: PressEvent) => void;
   langResources: SearchFormLangResources;
   mediaTypes: CheckboxValue[];
   genres: CheckboxValue[];
@@ -36,6 +38,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   setFilters,
   isDefaultFilter,
   handleSearchSubmit,
+  handleRandomSearchRequest,
   langResources,
   mediaTypes,
   genres,
@@ -62,14 +65,19 @@ export const SearchForm: React.FC<SearchFormProps> = ({
             setSearchText("");
           }}
         />
-        <div className="place-content-center">
-          <FilterDrawer
-            filters={filters}
-            setFilters={setFilters}
-            isDefaultFilter={isDefaultFilter}
-            mediaTypes={mediaTypes}
-            genres={genres}
-          />
+        <div className="flex place-content-center space-x-2">
+          <div className="place-content-center ">
+            <SurpriseButton onPress={handleRandomSearchRequest} />
+          </div>
+          <div className="place-content-center ">
+            <FilterDrawer
+              filters={filters}
+              setFilters={setFilters}
+              isDefaultFilter={isDefaultFilter}
+              mediaTypes={mediaTypes}
+              genres={genres}
+            />
+          </div>
         </div>
       </div>
     </form>

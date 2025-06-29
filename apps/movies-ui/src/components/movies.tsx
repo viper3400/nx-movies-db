@@ -31,6 +31,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     filters,
     setFilters,
     handleSearchSubmit,
+    handleRandomSearchRequest,
     loading,
     searchResult,
     isDefaultFilter,
@@ -51,6 +52,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
         filters={filters}
         setFilters={setFilters}
         handleSearchSubmit={handleSearchSubmit}
+        handleRandomSearchRequest={handleRandomSearchRequest}
         isDefaultFilter={isDefaultFilter}
         langResources={{
           placeholderLabel: t("search.placeholder"),

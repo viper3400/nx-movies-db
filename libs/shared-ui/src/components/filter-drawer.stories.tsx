@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
 import { FilterDrawer } from "./filter-drawer";
 import { CheckboxValue, MovieSearchFilters } from "../interfaces";
 
@@ -23,7 +23,6 @@ const defaultFilters: MovieSearchFilters = {
   tvSeriesMode: "INCLUDE_TVSERIES",
   filterForFavorites: false,
   filterForWatchAgain: false,
-  filterForRandomMovies: false,
   filterForMediaTypes: [],
   filterForGenres: [],
 };
@@ -33,7 +32,6 @@ const nonDefaultFilters: MovieSearchFilters = {
   tvSeriesMode: "INCLUDE_TVSERIES",
   filterForFavorites: false,
   filterForWatchAgain: false,
-  filterForRandomMovies: false,
   filterForMediaTypes: ["1", "5"],
   filterForGenres: ["1", "3"],
 };

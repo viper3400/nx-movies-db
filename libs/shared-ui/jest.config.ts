@@ -7,4 +7,9 @@ export default {
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   coverageDirectory: "../coverage/shared",
+  modulePathIgnorePatterns: [
+    "<rootDir>/dist/",
+    "<rootDir>/libs/dist/",
+    "<rootDir>/apps/movies-ui/.next/",
+  ],
 };

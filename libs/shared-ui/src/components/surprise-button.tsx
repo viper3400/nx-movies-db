@@ -1,13 +1,13 @@
 import { Button, PressEvent, Tooltip } from "@heroui/react";
 import { Surprise } from "../icons";
+import { t } from "i18next";
 
 interface SurpriseButtonProperties {
   onPress?: (e: PressEvent) => void;
-  tooltip?: string;
 }
-export const SurpriseButton = ({ onPress, tooltip }: SurpriseButtonProperties) => {
+export const SurpriseButton = ({ onPress }: SurpriseButtonProperties) => {
   return (
-    <Tooltip content={tooltip}>
+    <Tooltip content={t("search.randomMoviesFilterLabel")}>
       <Button onPress={onPress} isIconOnly variant="ghost" size="lg">
         <Surprise />
       </Button>

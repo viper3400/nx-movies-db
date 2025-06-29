@@ -5,7 +5,6 @@ export interface MovieSearchFilters {
   tvSeriesMode: TvSeriesMode;
   filterForFavorites: boolean;
   filterForWatchAgain: boolean;
-  filterForRandomMovies: boolean;
   filterForMediaTypes: string[];
   filterForGenres: string[];
 }

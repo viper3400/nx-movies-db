@@ -67,7 +67,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
         />
         <div className="flex place-content-center space-x-2">
           <div className="place-content-center ">
-            <SurpriseButton tooltip="Surprise" onPress={handleRandomSearchRequest} />
+            <SurpriseButton onPress={handleRandomSearchRequest} />
           </div>
           <div className="place-content-center ">
             <FilterDrawer

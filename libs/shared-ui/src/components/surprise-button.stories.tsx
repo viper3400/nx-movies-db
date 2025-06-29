@@ -12,6 +12,5 @@ type Story = StoryObj<typeof SurpriseButton>;
 export const Default: Story = {
   args: {
     onPress: fn(),
-    tooltip: "Surprise"
   },
 };

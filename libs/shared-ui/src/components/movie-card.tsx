@@ -165,7 +165,7 @@ export const MovieCard = ({
         <CardFooter>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
             <div className="flex gap-4 md:flex-row flex-col">
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {movie.genres &&
                   movie.genres.map((genreName: string) => (
                     <Chip key={genreName} color="primary" variant="flat">

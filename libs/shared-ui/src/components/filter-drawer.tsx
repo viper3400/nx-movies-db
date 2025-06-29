@@ -60,7 +60,6 @@ export function FilterDrawer(
 
   const updateFavorites = createLocalUpdater("filterForFavorites");
   const updateWatchAgain = createLocalUpdater("filterForWatchAgain");
-  const updateRandomMovies = createLocalUpdater("filterForRandomMovies");
   const updateMediaTypes = createLocalUpdater("filterForMediaTypes");
   const updateGenres = createLocalUpdater("filterForGenres");
   const updateTvSeriesMode = (value: string) =>
@@ -108,9 +107,6 @@ export function FilterDrawer(
                   <Switch
                     isSelected={local.filterForWatchAgain}
                     onValueChange={updateWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
-                  <Switch
-                    isSelected={local.filterForRandomMovies}
-                    onValueChange={updateRandomMovies}>{t("search.randomMoviesFilterLabel")}</Switch>
                 </div>
                 <Accordion>
                   <AccordionItem

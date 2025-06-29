@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MovieCardDeck } from "./movie-card-deck";
 
 const meta: Meta<typeof MovieCardDeck> = {
@@ -21,7 +21,7 @@ export const Default: Story = {
         genres: ["Action", "Sci-Fi"],
         mediaType: "Movie",
         istv: false,
-        ownerid: "123",
+        ownerid: 123,
         diskid: "D001",
       },
       {
@@ -32,7 +32,7 @@ export const Default: Story = {
         genres: ["Action", "Drama"],
         mediaType: "Movie",
         istv: false,
-        ownerid: "123",
+        ownerid: 123,
         diskid: "D002",
       },
       {
@@ -43,7 +43,7 @@ export const Default: Story = {
         genres: ["Adventure", "Drama", "Sci-Fi"],
         mediaType: "Movie",
         istv: false,
-        ownerid: "123",
+        ownerid: 123,
         diskid: "D003",
       },
     ],

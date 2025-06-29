@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { within } from "@storybook/test";
-import { expect } from "@storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { within } from "storybook/test";
+import { expect } from "storybook/test";
 import { SeenChips } from "./seen-chips";
 
 const meta: Meta<typeof SeenChips> = {

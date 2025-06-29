@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { UserFlagChip } from "./user-flag-chip";
 
 const meta: Meta<typeof UserFlagChip> = {

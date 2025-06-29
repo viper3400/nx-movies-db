@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { UserFlagButton } from "./user-flag-button";
 
 const meta: Meta<typeof UserFlagButton> = {

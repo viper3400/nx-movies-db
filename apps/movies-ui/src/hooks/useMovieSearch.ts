@@ -2,6 +2,7 @@ import { useState, useEffect, FormEvent, useRef } from "react";
 import { getMovies } from "../app/services/actions";
 import { Movie, moviesSearchInitialFilters } from "../interfaces";
 import { MovieSearchFilters } from "@nx-movies-db/shared-ui";
+import { PressEvent } from "@heroui/react";
 
 interface UseMovieSearchProps {
   session: { userName: string };
@@ -52,6 +53,7 @@ export function useMovieSearch({
   const currentPageRef = useRef<number | null>(null);
   const nextPageRef = useRef<number>(1);
   const loadingRef = useRef(false);
+  const randomSearchRef = useRef(false);
 
   const [currentPage, setCurrentPage] = useState<number | null>(null);
   const [nextPage, setNextPage] = useState<number>(1);
@@ -79,19 +81,29 @@ export function useMovieSearch({
     );
   }, [filters]);
 
-  // Only run search on filter change if searchText is NOT empty
   useEffect(() => {
-    if (searchText.trim() !== "") {
+    if (randomSearchRef.current === true) {
+      randomSearchRef.current = false;
+      clearSearchResult();
+    }
+    else if (searchText.trim() !== "" || searchResult) {
       clearSearchResult();
       executeSearch(0, searchText);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [filters]);
 
   // Form submit handler: always search, even if searchText is empty
   const handleSearchSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    randomSearchRef.current = false;
     clearSearchResult();
+    await executeSearch(0, searchText.trim());
+  };
+
+  const handleRandomSearchRequest = async (e: PressEvent) => {
+    clearSearchResult();
+    randomSearchRef.current = true;
     await executeSearch(0, searchText.trim());
   };
 
@@ -129,7 +141,7 @@ export function useMovieSearch({
       filters.tvSeriesMode,
       filters.filterForFavorites,
       filters.filterForWatchAgain,
-      filters.filterForRandomMovies,
+      randomSearchRef.current,
       getNameFromId(filters.filterForMediaTypes, availableMediaTypes),
       getNameFromId(filters.filterForGenres, availableGenres),
       session.userName,
@@ -171,6 +183,7 @@ export function useMovieSearch({
     setFilters,
     isDefaultFilter,
     handleSearchSubmit,
+    handleRandomSearchRequest,
     clearSearchResult,
     handleNextPageTrigger,
   };

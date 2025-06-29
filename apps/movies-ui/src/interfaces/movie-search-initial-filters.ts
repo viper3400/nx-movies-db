@@ -5,7 +5,6 @@ export const moviesSearchInitialFilters: MovieSearchFilters = {
   tvSeriesMode: "INCLUDE_TVSERIES",
   filterForFavorites: false,
   filterForWatchAgain: false,
-  filterForRandomMovies: false,
   filterForMediaTypes: [],
   filterForGenres: [],
 };

@@ -1,12 +1,11 @@
 import { PrismaClient, videodb_videodata } from "@prisma/client";
-import { Video } from "../types";
 
 
 const prisma = new PrismaClient();
 
 export type VideoDataInput = Partial<Omit<videodb_videodata, "id">> & { id?: number };
 
-export async function upsertVideoData(data: VideoDataInput): Promise<Video> {
+export async function upsertVideoData(data: VideoDataInput): Promise<videodb_videodata> {
   const { id, ...rest } = data;
 
   if (id) {

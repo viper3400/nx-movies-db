@@ -14,7 +14,7 @@ describe("getVideos", () => {
   });
 
   it("should filter by id", async () => {
-    const args = { id: "253" };
+    const args = { ids: ["253"] };
     const result = await getVideos(args, undefined);
     expect(result.videos.every(v => v.id === 253)).toBe(true);
   });
@@ -26,7 +26,7 @@ describe("getVideos", () => {
   });
 
   it("should filter by genreName", async () => {
-    const args = { genreName: "Comedy" };
+    const args = { genreName: ["Comedy"] };
     const result = await getVideos(args, undefined);
     expect(result.videos.some(v =>
       v.videodb_videogenre?.some(g => g.genre.name.includes("Comedy"))

@@ -87,7 +87,7 @@ export const MovieCard = ({
               <div className="text-left text-sm">{movie.subtitle}</div>
             )}
           </div>
-          <div className="flex gap-2 flex-wrap mt-2 flex-shrink-0">
+          <div className="flex gap-2 flex-wrap mt-2 shrink-0">
             <UserFlagButton
               userFlagChipProps={{ type: "Favorite", active: userFlags?.isFavorite ?? false, loading: userFlagsLoading }}
               onPress={async () => {
@@ -142,7 +142,7 @@ export const MovieCard = ({
                 }} />
             </div>
             <div className="flex gap-4">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <a href={`${appBasePath}/details/${movie.id}`} target="_blank" rel="noopener noreferrer">
                   <Image
                     alt="Movie Cover"

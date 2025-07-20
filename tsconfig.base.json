@@ -21,8 +21,7 @@
       "@nx-movies-db/movies-prisma-lib": [
         "libs/movies-prisma-lib/src/index.ts"
       ],
-      "@nx-movies-db/shared-ui": ["libs/shared-ui/src/index.ts"],
-
+      "@nx-movies-db/shared-ui": ["libs/shared-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

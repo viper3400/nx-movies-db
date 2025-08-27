@@ -17,14 +17,9 @@
       "platformAutomerge": true
     },
     {
-      "groupName": "apollo",
+      "groupName": "g: graphql-apollo",
       "matchPackagePatterns": [
-        "^@apollo/"
-      ]
-    },
-    {
-      "groupName": "graphql",
-      "matchPackagePatterns": [
+        "^@apollo/",
         "^graphql$",
         "^graphql-",
         "^@graphql-",

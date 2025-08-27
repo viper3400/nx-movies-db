@@ -15,6 +15,23 @@
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
+    },
+    {
+      "groupName": "apollo",
+      "matchPackagePatterns": [
+        "^@apollo/"
+      ]
+    },
+    {
+      "groupName": "graphql",
+      "matchPackagePatterns": [
+        "^graphql$",
+        "^graphql-",
+        "^@graphql-",
+        "^@pothos/",
+        "^graphql-yoga$",
+        "^graphql-scalars$"
+      ]
     }
   ]
 }

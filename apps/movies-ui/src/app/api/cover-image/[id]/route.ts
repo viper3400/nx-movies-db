@@ -6,7 +6,7 @@ import { isUserAllowed } from "../../../../lib/allowed-user-parser";
 
 const coverImagePath = process.env.COVER_IMAGE_PATH || process.cwd();
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: number }> }) {
+export async function GET(_req: NextRequest, ctx: RouteContext<"/api/cover-image/[id]">) {
   const session = await auth();
   if (!session?.user?.email || !isUserAllowed(session.user?.email)) {
     return new Response(
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     );
   }
 
-  const id = (await params).id;
+  const { id } = await ctx.params;
 
   let imagePath = path.join(coverImagePath, `${id}.jpg`);
   try {

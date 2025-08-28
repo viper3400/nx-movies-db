@@ -6,7 +6,7 @@ import { isUserAllowed } from "../../../../lib/allowed-user-parser";
 
 const coverImagePath = process.env.COVER_IMAGE_PATH || process.cwd();
 
-export async function GET(_req: NextRequest, ctx: RouteContext<'/api/cover-image/[id]'>) {
+export async function GET(_req: NextRequest, ctx: RouteContext<"/api/cover-image/[id]">) {
   const session = await auth();
   if (!session?.user?.email || !isUserAllowed(session.user?.email)) {
     return new Response(

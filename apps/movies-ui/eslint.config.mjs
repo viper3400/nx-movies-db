@@ -11,7 +11,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["**/dist"],
+    ignores: ["**/dist",".next/**/*","next-env.d.ts"],
   },
   ...baseConfig,
   ...compat.extends(
@@ -48,7 +48,4 @@ export default [
         ...config.rules,
       },
     })),
-  {
-    ignores: [".next/**/*"],
-  },
 ];

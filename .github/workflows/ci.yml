@@ -41,6 +41,9 @@ jobs:
       # Now run lint and build in parallel
       - run: npx nx run-many -t lint build --skip-nx-cache --parallel
 
+      # Now run shared-types tests
+      - run: npx nx run shared-types:test --skip-nx-cache
+
       # Now run movies-ui integration tests
       - run: npx nx run movies-ui:test --skip-nx-cache
 

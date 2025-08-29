@@ -3,16 +3,23 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared-types/src",
   "projectType": "library",
-  "tags": [],
+  "tags": [
+    "type:shared",
+    "scope:shared"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/shared-types",
         "main": "libs/shared-types/src/index.ts",
         "tsConfig": "libs/shared-types/tsconfig.lib.json",
-        "assets": ["libs/shared-types/*.md"]
+        "assets": [
+          "libs/shared-types/*.md"
+        ]
       }
     }
   }

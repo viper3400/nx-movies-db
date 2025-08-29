@@ -1,6 +1,6 @@
 // libs/shared-types/src/lib/iso-date.ts
 declare const ISO_DATE_BRAND: unique symbol;
-export type IsoDate = string & { readonly [ISO_DATE_BRAND]: 'IsoDate' };
+export type IsoDate = string & { readonly [ISO_DATE_BRAND]: "IsoDate" };
 
 const ISO_DATE_REGEX =
   /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;

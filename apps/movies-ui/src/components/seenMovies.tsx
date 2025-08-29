@@ -104,7 +104,11 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
             </div>
           ))
         )}
-        <ResultsStatusIndicator isLoading={loading} hasNoResults={seenMovies?.length == 0} hasNoMoreResults={(seenMovies?.length) === totalMoviesCount.current} />
+        <ResultsStatusIndicator
+          isLoading={loading}
+          hasNoResults={Array.isArray(seenMovies) && seenMovies.length === 0}
+          hasNoMoreResults={Array.isArray(seenMovies) && seenMovies.length > 0 && seenMovies.length === totalMoviesCount.current}
+        />
       </div>
       <PageEndObserver onIntersect={handleNextPageTrigger} />
     </div>

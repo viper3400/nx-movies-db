@@ -5,13 +5,15 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CalendarRangeOutlined } from "../icons";
 import { DateRange } from "../interfaces";
+import { IsoDate, makeIsoDate } from "@nx-movies-db/shared-types";
 
 interface DateRangeDrawerComponentProps {
   onApply: (dateRange: DateRange) => void;
 }
 export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentProps) => {
-  const [startDate, setStartDate] = useState<DateValue | null>(parseDate("2010-01-01"));
-  const [endDate, setEndDate] = useState<DateValue | null>(parseDate("2099-01-01"));
+  const [startIso, setStartIso] = useState<IsoDate>(makeIsoDate("2010-01-01"));
+  const [endIso, setEndIso] = useState<IsoDate>(makeIsoDate("2099-01-01"));
+
   const [selectedStartDate, setSelectedStartDate] = useState<DateValue | null>(parseDate("2010-01-01"));
   const [selectedEndDate, setSelectedEndDate] = useState<DateValue | null>(parseDate("2099-01-01"));
 
@@ -19,9 +21,9 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
   const { t } = useTranslation();
 
   const handleApply = async () => {
-    setSelectedStartDate(startDate);
-    setSelectedEndDate(endDate);
-    const dateRange: DateRange = { startDate: startDate, endDate: endDate };
+    setSelectedStartDate(parseDate(startIso));
+    setSelectedEndDate(parseDate(endIso));
+    const dateRange: DateRange = { startDate: parseDate(startIso), endDate: parseDate(endIso) };
     onApply(dateRange);
   };
 
@@ -55,15 +57,15 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
                   <DatePicker
                     firstDayOfWeek="mon"
                     showMonthAndYearPickers
-                    value={startDate}
-                    onChange={setStartDate}
+                    value={parseDate(startIso)}
+                    onChange={(v) => v && setStartIso(makeIsoDate(v.toString()))}
                     label={t("common.startDate")} />
                   <DatePicker
                     firstDayOfWeek="mon"
                     showMonthAndYearPickers
                     label={t("common.endDate")}
-                    value={endDate}
-                    onChange={setEndDate} />
+                    value={parseDate(endIso)}
+                    onChange={(v) => v && setEndIso(makeIsoDate(v.toString()))} />
                 </I18nProvider>
               </DrawerBody>
               <DrawerFooter>

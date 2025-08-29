@@ -9,12 +9,12 @@
     "@apollo/experimental-nextjs-app-support": "^0.12.0",
     "@graphql-yoga/plugin-jwt": "^3.4.3",
     "@heroui/react": "2.8.2",
-    "@internationalized/date": "^3.7.0",
+    "@internationalized/date": "3.9.0",
     "@pothos/core": "^4.3.0",
     "@pothos/plugin-prisma": "^4.3.1",
     "@pothos/plugin-simple-objects": "^4.1.0",
     "@prisma/client": "^6.0.0",
-    "@react-aria/i18n": "^3.12.5",
+    "@react-aria/i18n": "^3.12.12",
     "@stackframe/stack": "^2.7.14",
     "@storybook/addon-styling-webpack": "^2.0.0",
     "@tailwindcss/postcss": "^4.1.11",
@@ -35,6 +35,9 @@
     "react-dom": "19.1.1",
     "react-i18next": "^15.4.1",
     "tslib": "^2.3.0"
+  },
+  "overrides": {
+    "@internationalized/date": "3.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

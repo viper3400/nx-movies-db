@@ -1,11 +1,48 @@
 "use server";
 
-import { gql } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@apollo/client";
+import type { GraphQLError } from "graphql";
 
 import { getClient } from "../../../lib/apollocient";
 
 // GraphQL query
-const getMovieByTitle = gql`
+type GetMoviesResult = {
+  videos: {
+    videos: Array<{
+      title: string;
+      diskid?: string;
+      genres: string[];
+      subtitle: string;
+      mediaType: string;
+      ownerid: number;
+      istv: boolean;
+      runtime: number | null;
+      rating: string | null;
+      id: string;
+      plot: string;
+    }>;
+    requestMeta: {
+      totalCount: number;
+    };
+  };
+};
+
+type GetMoviesVariables = {
+  title: string;
+  diskid: string;
+  deleteMode: string; // GraphQL enum DeleteMode
+  tvSeriesMode: string; // GraphQL enum TvSeriesMode
+  filterFavorites: boolean;
+  filterFlagged: boolean;
+  mediaType: string[];
+  genreName: string[];
+  randomOrder: boolean;
+  userName: string;
+  take: number;
+  skip: number;
+};
+
+const getMovieByTitle: TypedDocumentNode<GetMoviesResult, GetMoviesVariables> = gql`
   query GetMovies(
     $title: String!,
     $diskid: String!,
@@ -77,7 +114,7 @@ export async function getMovies(
     ? (searchDiskId = searchString)
     : (searchTitle = searchString);
 
-  const variables = {
+  const variables: GetMoviesVariables = {
     title: searchTitle,
     diskid: searchDiskId,
     deleteMode: deleteMode,
@@ -96,12 +133,11 @@ export async function getMovies(
   console.log("GraphQL Query:\n", getMovieByTitle.loc?.source.body);
   console.log("Variables:\n", variables);
 
-  const { data } = await getClient().query({
+  const { data, error } = await getClient().query<GetMoviesResult, GetMoviesVariables>({
     query: getMovieByTitle,
     variables,
   });
+  if (error) throw new Error(error.message)
+  return data;
 
-  const result = await data;
-
-  return result;
 }

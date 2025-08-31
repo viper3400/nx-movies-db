@@ -40,6 +40,15 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   });
 
 
+  interface SeenVideosQueryResult {
+    seenVideos: {
+      requestMeta: {
+        totalCount: number;
+      };
+      SeenEntries: SeenEntry[];
+    };
+  }
+
   const fetchSeenMoviesAsync = async (page: number, range: DateRange) => {
     setLoading(true);
     const queryResult = await getSeenVideos(
@@ -48,8 +57,8 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
       (range.endDate ? range.endDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2099-01-01T00:00:00Z"),
       10,
       page * 10
-    );
-    totalMoviesCount.current = queryResult.seenVideos.requestMeta.totalCount;
+    ) as SeenVideosQueryResult;
+    totalMoviesCount.current = queryResult?.seenVideos.requestMeta.totalCount;
     setSeenMovies((prev) => prev ? [...prev, ...queryResult.seenVideos.SeenEntries] : queryResult.seenVideos.SeenEntries);
 
     setCurrentPage(page);

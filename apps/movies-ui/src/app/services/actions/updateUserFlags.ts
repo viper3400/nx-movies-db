@@ -1,6 +1,5 @@
 "use server";
 import { gql, type TypedDocumentNode } from "@apollo/client";
-import type { GraphQLError } from "graphql";
 import { getClient } from "../../../lib/apollocient";
 
 // GraphQL mutation

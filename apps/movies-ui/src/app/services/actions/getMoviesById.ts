@@ -1,13 +1,28 @@
 "use server";
 
-import { gql } from "@apollo/client";
-
+import { gql, type TypedDocumentNode } from "@apollo/client";
+import type { Movie } from "../../../interfaces/movie";
 import { getClient } from "../../../lib/apollocient";
 
+// Result and variables typing
+type GetMoviesByIdResult = {
+  videos: {
+    videos: Movie[];
+  };
+};
+
+type GetMoviesByIdVariables = {
+  ids: string[];
+  deleteMode?: string; // matches server enum name DeleteMode in schema
+};
+
 // GraphQL query
-const getMovieById = gql`
-  query GetMovies($ids: [String!]) {
-    videos(ids: $ids, queryPlot: true) {
+const getMovieById: TypedDocumentNode<
+  GetMoviesByIdResult,
+  GetMoviesByIdVariables
+> = gql`
+  query GetMovies($ids: [String!], $deleteMode: DeleteMode) {
+    videos(ids: $ids, queryPlot: true, deleteMode: $deleteMode) {
       videos {
         title
         diskid
@@ -26,13 +41,10 @@ const getMovieById = gql`
 `;
 
 export async function getMoviesById(id: string, deleteMode: string) {
-
-  const { data } = await getClient().query({
+  const { data } = await getClient().query<GetMoviesByIdResult, GetMoviesByIdVariables>({
     query: getMovieById,
-    variables: { ids: [id], deleteMode: deleteMode },
+    variables: { ids: [id], deleteMode },
   });
 
-  const result = await data;
-
-  return result.videos;
+  return data?.videos;
 }

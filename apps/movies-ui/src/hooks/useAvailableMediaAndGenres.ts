@@ -9,7 +9,7 @@ export function useAvailableMediaAndGenres() {
     const fetchMediaTypes = async () => {
       const data = await getMediaTypes();
       setAvailableMediaTypes(
-        data.mediaTypes.map((mt: any) => ({
+        data.mediaTypes.map((mt) => ({
           label: mt.name,
           value: String(mt.id),
         }))
@@ -18,7 +18,7 @@ export function useAvailableMediaAndGenres() {
     const fetchGenres = async () => {
       const data = await getGenres();
       setAvailableGenres(
-        data.genres.map((g: any) => ({
+        data.genres.map((g) => ({
           label: g.name,
           value: String(g.id),
         }))

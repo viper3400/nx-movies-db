@@ -1,9 +1,26 @@
 "use server";
-import { gql } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@apollo/client";
+import type { GraphQLError } from "graphql";
 import { getClient } from "../../../lib/apollocient";
 
 // GraphQL mutation
-const setUserFlagsMutation = gql`
+type UpdateUserFlagsResult = {
+  createOrUpdateUserFlag: {
+    movieId: number;
+  };
+};
+
+type UpdateUserFlagsVariables = {
+  movieId: number;
+  isFavorite: boolean;
+  isWatchAgain: boolean;
+  userName: string;
+};
+
+const setUserFlagsMutation: TypedDocumentNode<
+  UpdateUserFlagsResult,
+  UpdateUserFlagsVariables
+> = gql`
   mutation CreateOrUpdateUserFlag($movieId: Int!, $isFavorite: Boolean!, $isWatchAgain: Boolean!, $userName: String!) {
     createOrUpdateUserFlag(movieId: $movieId, isFavorite: $isFavorite, isWatchAgain: $isWatchAgain, userName: $userName) {
       movieId
@@ -14,22 +31,17 @@ const setUserFlagsMutation = gql`
 export async function updateUserFlags(movieId: number, isFavorite: boolean, isWatchAgain: boolean, username: string) {
   const client = getClient();
 
-  const variables = {
+  const variables: UpdateUserFlagsVariables = {
     movieId,
     isFavorite,
     isWatchAgain,
     userName: username,
   };
 
-  try {
-    const response = await client.mutate({
-      mutation: setUserFlagsMutation,
-      variables,
-    });
+  const response = await client.mutate<UpdateUserFlagsResult, UpdateUserFlagsVariables>({
+    mutation: setUserFlagsMutation,
+    variables,
+  });
 
-    return response.data.createOrUpdateUserFlag;
-  } catch (error) {
-    console.error("Error setting user flags:", error);
-    throw error;
-  }
+  return response.data?.createOrUpdateUserFlag ?? null;
 }

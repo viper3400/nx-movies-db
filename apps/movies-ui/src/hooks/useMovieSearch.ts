@@ -6,14 +6,14 @@ import { PressEvent } from "@heroui/react";
 
 interface UseMovieSearchProps {
   session: { userName: string };
-  availableMediaTypes: any[];
-  availableGenres: any[];
+  availableMediaTypes: Array<{ label: string; value: string }>;
+  availableGenres: Array<{ label: string; value: string }>;
 }
 
 const SEARCH_STATE_KEY = "moviesSearchState";
 
 // Helper to map IDs to labels
-const getNameFromId = (ids: string[], options: any[]): string[] =>
+const getNameFromId = (ids: string[], options: Array<{ label: string; value: string }>): string[] =>
   ids
     .map(id => options.find(o => o.value === id)?.label)
     .filter((lbl): lbl is string => Boolean(lbl));
@@ -108,7 +108,7 @@ export function useMovieSearch({
   };
 
   // Pagination trigger
-  const handleNextPageTrigger = () => {
+  const handleNextPageTrigger: () => void = () => {
     // Only allow loading the next page in sequence, and only if a search has been performed
     if (
       currentPage !== null &&
@@ -133,35 +133,39 @@ export function useMovieSearch({
   // Core search execution
   const executeSearch = async (page: number, customSearchText?: string) => {
     setLoading(true);
-    const query = customSearchText ?? searchText;
+    try {
+      const query = customSearchText ?? searchText;
 
-    const result = await getMovies(
-      query,
-      filters.deleteMode,
-      filters.tvSeriesMode,
-      filters.filterForFavorites,
-      filters.filterForWatchAgain,
-      randomSearchRef.current,
-      getNameFromId(filters.filterForMediaTypes, availableMediaTypes),
-      getNameFromId(filters.filterForGenres, availableGenres),
-      session.userName,
-      10,
-      page * 10
-    );
+      const data = await getMovies(
+        query,
+        filters.deleteMode,
+        filters.tvSeriesMode,
+        filters.filterForFavorites,
+        filters.filterForWatchAgain,
+        randomSearchRef.current,
+        getNameFromId(filters.filterForMediaTypes, availableMediaTypes),
+        getNameFromId(filters.filterForGenres, availableGenres),
+        session.userName,
+        10,
+        page * 10
+      );
 
-    const total = result.videos.requestMeta.totalCount;
-    setTotalMoviesCount(total);
+      const list = data?.videos?.videos ?? [];
+      const total = data?.videos?.requestMeta?.totalCount ?? 0;
+      setTotalMoviesCount(total);
 
-    if (page === 0) {
-      setSearchResult(result.videos.videos);
-      setCurrentPage(0);
-      setNextPage(result.videos.videos.length < total ? 1 : 0);
-    } else if (currentPage !== null && page === currentPage + 1) {
-      setSearchResult((prev) => prev ? [...prev, ...result.videos.videos] : result.videos.videos);
-      setCurrentPage(page);
-      setNextPage((page + 1) * 10 < total ? page + 1 : page);
+      if (page === 0) {
+        setSearchResult(list);
+        setCurrentPage(0);
+        setNextPage(list.length < total ? 1 : 0);
+      } else if (currentPage !== null && page === currentPage + 1) {
+        setSearchResult((prev) => (prev ? [...prev, ...list] : list));
+        setCurrentPage(page);
+        setNextPage((page + 1) * 10 < total ? page + 1 : page);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Setters for searchText and filters that update the combined state

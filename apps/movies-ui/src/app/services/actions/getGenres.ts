@@ -1,11 +1,16 @@
 "use server";
 
-import { gql } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@apollo/client";
+import type { GraphQLError } from "graphql";
 
 import { getClient } from "../../../lib/apollocient";
 
+type GetGenresResult = {
+  genres: Array<{ id: number; name: string }>;
+};
+
 // GraphQL query
-const getGenresQuery = gql`
+const getGenresQuery: TypedDocumentNode<GetGenresResult> = gql`
   query GetGenres {
     genres {
       id
@@ -14,12 +19,9 @@ const getGenresQuery = gql`
   }
 `;
 
-export async function getGenres() {
-
-  const { data } = await getClient().query({
+export async function getGenres(): Promise<GetGenresResult> {
+  const { data } = await getClient().query<GetGenresResult>({
     query: getGenresQuery,
   });
-
-  const result = await data;
-  return result;
+  return data ? data : { genres: [] };
 }

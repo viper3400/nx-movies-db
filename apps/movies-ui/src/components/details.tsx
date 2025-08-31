@@ -30,7 +30,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
     const fetchMovie = async () => {
       try {
         const fetchedMovie = await getMoviesById(id, "INCLUDE_DELETED");
-        setMovie(fetchedMovie.videos[0]);
+        setMovie(fetchedMovie?.videos[0]);
       } catch (err: any) {
         setError(err);
       } finally {

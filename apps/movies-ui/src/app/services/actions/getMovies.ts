@@ -1,7 +1,6 @@
 "use server";
 
 import { gql, type TypedDocumentNode } from "@apollo/client";
-import type { GraphQLError } from "graphql";
 
 import { getClient } from "../../../lib/apollocient";
 
@@ -137,7 +136,7 @@ export async function getMovies(
     query: getMovieByTitle,
     variables,
   });
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(error.message);
   return data;
 
 }

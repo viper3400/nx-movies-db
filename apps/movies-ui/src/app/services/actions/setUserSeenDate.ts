@@ -1,9 +1,26 @@
 "use server";
-import { gql } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@apollo/client";
 import { getClient } from "../../../lib/apollocient";
 
 // GraphQL mutation
-const setUserSeenDateMutation = gql`
+type CreateUserSeenEntryResult = {
+  createUserSeenEntry: {
+    username: string;
+    viewdate: string;
+  };
+};
+
+type CreateUserSeenEntryVariables = {
+  movieId: number;
+  userName: string;
+  viewDate: string;
+  viewGroup: string;
+};
+
+const setUserSeenDateMutation: TypedDocumentNode<
+  CreateUserSeenEntryResult,
+  CreateUserSeenEntryVariables
+> = gql`
   mutation CreateUserSeenEntry($movieId: Int!, $userName: String!, $viewDate: String!, $viewGroup: String!) {
     createUserSeenEntry(movieId: $movieId, userName: $userName, viewDate: $viewDate, viewGroup: $viewGroup) {
       username
@@ -19,23 +36,17 @@ export async function setUserSeenDate(
   viewGroup: string) {
   const client = getClient();
 
-  const variables = {
+  const variables: CreateUserSeenEntryVariables = {
     movieId,
     userName,
     viewDate,
     viewGroup,
   };
 
-  try {
-    const response = await client.mutate({
-      mutation: setUserSeenDateMutation,
-      variables,
-    });
+  const response = await client.mutate<CreateUserSeenEntryResult, CreateUserSeenEntryVariables>({
+    mutation: setUserSeenDateMutation,
+    variables,
+  });
 
-    return response.data.createUserSeenEntry;
-  } catch (error) {
-    console.error("Error setting user seen date:", error);
-    throw error;
-  }
+  return response.data?.createUserSeenEntry ?? null;
 }
-

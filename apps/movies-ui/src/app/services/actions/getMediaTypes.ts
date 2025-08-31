@@ -1,11 +1,15 @@
 "use server";
 
-import { gql } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@apollo/client";
 
 import { getClient } from "../../../lib/apollocient";
 
+type GetMediaTypesResult = {
+  mediaTypes: Array<{ id: number; name: string }>;
+};
+
 // GraphQL query
-const getMediaTypesQuery = gql`
+const getMediaTypesQuery: TypedDocumentNode<GetMediaTypesResult> = gql`
   query GetMediaType {
     mediaTypes {
       id
@@ -14,12 +18,9 @@ const getMediaTypesQuery = gql`
   }
 `;
 
-export async function getMediaTypes() {
-
-  const { data } = await getClient().query({
+export async function getMediaTypes(): Promise<GetMediaTypesResult> {
+  const { data } = await getClient().query<GetMediaTypesResult>({
     query: getMediaTypesQuery,
   });
-
-  const result = await data;
-  return result;
+  return data ? data : { mediaTypes: [] };
 }

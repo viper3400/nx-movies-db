@@ -48,7 +48,7 @@ builder.mutationField("upsertVideoData", (t) =>
       _root,
       args,
       _ctx
-    ): Promise<Prisma.videodb_videodataGetPayload<{}>> => {
+    ): Promise<Prisma.videodb_videodataGetPayload<object>> => {
       // Parse ISO-8601 date strings into Date objects
       /*       const filedate = args.filedate ? new Date(Date.parse(args.filedate)) : undefined;
       const lastupdate = args.lastupdate ? new Date(Date.parse(args.lastupdate)) : undefined;

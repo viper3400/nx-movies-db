@@ -2,6 +2,7 @@ import { VideoDbVideoData } from "./videodata";
 import { builder } from "../builder";
 import { upsertVideoData } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoDataInput } from "@nx-movies-db/movies-prisma-lib";
+import type { Prisma } from "@prisma/client";
 
 builder.mutationField("upsertVideoData", (t) =>
   t.prismaField({
@@ -26,23 +27,28 @@ builder.mutationField("upsertVideoData", (t) =>
       plot: t.arg.string(),
       rating: t.arg.string(),
       filename: t.arg.string(),
-      filesize: t.arg.string(),
-      filedate: t.arg.string(),
+      filesize: t.arg({ type: "BigInt" }),
+      filedate: t.arg({ type: "DateTime" }),
       audio_codec: t.arg.string(),
       video_codec: t.arg.string(),
       video_width: t.arg.int(),
       video_height: t.arg.int(),
       istv: t.arg.int(),
-      lastupdate: t.arg.string(),
+      lastupdate: t.arg({ type: "DateTime" }),
       mediatype: t.arg.int(),
       custom1: t.arg.string(),
       custom2: t.arg.string(),
       custom3: t.arg.string(),
       custom4: t.arg.string(),
-      created: t.arg.string(),
+      created: t.arg({ type: "DateTime" }),
       owner_id: t.arg.int(),
     },
-    resolve: async (_query, _root, args, _ctx) => {
+    resolve: async (
+      _query,
+      _root,
+      args,
+      _ctx
+    ): Promise<Prisma.videodb_videodataGetPayload<object>> => {
       // Parse ISO-8601 date strings into Date objects
       /*       const filedate = args.filedate ? new Date(Date.parse(args.filedate)) : undefined;
       const lastupdate = args.lastupdate ? new Date(Date.parse(args.lastupdate)) : undefined;

@@ -6,3 +6,4 @@ export * from "./updateUserFlags";
 export * from "./setUserSeenDate";
 export * from "./getSeenVideos";
 export * from "./deleteUserSeenDate";
+export * from "./upsertVideoData";

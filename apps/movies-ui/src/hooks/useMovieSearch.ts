@@ -28,21 +28,44 @@ export function useMovieSearch({
   availableMediaTypes,
   availableGenres,
 }: UseMovieSearchProps) {
+  // Helpers for robust equality and normalization
+  const sameSet = (a: string[] = [], b: string[] = []) => {
+    if (a.length !== b.length) return false;
+    const aa = [...a].sort();
+    const bb = [...b].sort();
+    return aa.every((v, i) => v === bb[i]);
+  };
+
+  const equalFilters = (a: MovieSearchFilters, b: MovieSearchFilters) =>
+    a.deleteMode === b.deleteMode &&
+    a.tvSeriesMode === b.tvSeriesMode &&
+    a.filterForFavorites === b.filterForFavorites &&
+    a.filterForWatchAgain === b.filterForWatchAgain &&
+    sameSet(a.filterForMediaTypes, b.filterForMediaTypes) &&
+    sameSet(a.filterForGenres, b.filterForGenres);
+
+  const normalizeFilters = (f: MovieSearchFilters): MovieSearchFilters => ({
+    ...f,
+    // sort for stable comparisons and persistence
+    filterForMediaTypes: [...(f.filterForMediaTypes ?? [])].sort(),
+    filterForGenres: [...(f.filterForGenres ?? [])].sort(),
+  });
   // Restore filters & searchText from localStorage on first render
   const [searchState, setSearchState] = useState<SearchState>(() => {
     const stored = localStorage.getItem(SEARCH_STATE_KEY);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        const merged: MovieSearchFilters = { ...moviesSearchInitialFilters, ...parsed.filters };
         return {
-          filters: { ...moviesSearchInitialFilters, ...parsed.filters },
+          filters: normalizeFilters(merged),
           searchText: parsed.searchText ?? "",
         };
       } catch {
         // ignore
       }
     }
-    return { filters: moviesSearchInitialFilters, searchText: "" };
+    return { filters: normalizeFilters(moviesSearchInitialFilters), searchText: "" };
   });
 
   const { filters, searchText } = searchState;
@@ -74,11 +97,9 @@ export function useMovieSearch({
     localStorage.setItem(SEARCH_STATE_KEY, JSON.stringify(searchState));
   }, [searchState]);
 
-  // Compute if filters match initial defaults
+  // Compute if filters match initial defaults (order-insensitive)
   useEffect(() => {
-    setIsDefaultFilter(
-      JSON.stringify(filters) === JSON.stringify(moviesSearchInitialFilters)
-    );
+    setIsDefaultFilter(equalFilters(filters, moviesSearchInitialFilters));
   }, [filters]);
 
   useEffect(() => {
@@ -173,7 +194,7 @@ export function useMovieSearch({
     setSearchState(prev => ({ ...prev, searchText: text }));
 
   const setFilters = (f: MovieSearchFilters) =>
-    setSearchState(prev => ({ ...prev, filters: f }));
+    setSearchState(prev => ({ ...prev, filters: normalizeFilters(f) }));
 
   return {
     searchText,

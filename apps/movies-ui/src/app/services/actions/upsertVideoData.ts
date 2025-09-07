@@ -144,12 +144,8 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
 
     // Normalize BigInt-like fields to string for GraphQL BigInt scalar
     if (key === "filesize") {
-      if (typeof val === "bigint") {
-        (v as any)[key] = val.toString();
-      } else if (typeof val === "number") {
-        // Cast to string to avoid precision loss when large
-        (v as any)[key] = String(val);
-      }
+      // Guard: we already filtered out null/undefined/empty above
+      (v as any)[key] = String(val as any);
       continue;
     }
 

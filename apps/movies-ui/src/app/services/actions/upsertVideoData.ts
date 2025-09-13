@@ -164,12 +164,12 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
 export async function upsertVideoData(values: UpsertVideoDataFormValues) {
   const client = getClient();
   const variables = mapToVariables(values);
-  const { data, errors } = await client.mutate<UpsertResult, UpsertVariables>({
+  const { data, error } = await client.mutate<UpsertResult, UpsertVariables>({
     mutation: UPSERT_MUTATION,
     variables,
   });
-  if (errors && errors.length) {
-    throw new Error(errors.map(e => e.message).join("; "));
+  if (error) {
+    throw new Error(error.message);
   }
   return data?.upsertVideoData;
 }

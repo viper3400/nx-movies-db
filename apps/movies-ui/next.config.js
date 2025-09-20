@@ -19,10 +19,10 @@ const baseConfig = {
 const envOut = process.env.NEXT_OUTPUT;
 /** @type {import('@nx/next/plugins/with-nx').WithNxOptions} */
 const nextConfig =
-  envOut === 'standalone'
-    ? { ...baseConfig, output: 'standalone' }
-    : envOut === 'export'
-      ? { ...baseConfig, output: 'export' }
+  envOut === "standalone"
+    ? { ...baseConfig, output: "standalone" }
+    : envOut === "export"
+      ? { ...baseConfig, output: "export" }
       : baseConfig;
 
 const plugins = [

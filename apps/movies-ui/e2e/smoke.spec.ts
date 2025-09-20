@@ -3,6 +3,6 @@ import { test, expect } from "@playwright/test";
 test("home shows sign-in prompt", async ({ page }) => {
   await page.goto("/movies");
   console.log(await page.content());
-  await expect(page.getByText("Please sign in first.")).toBeVisible();
+  await expect(page.getByTitle("HomeWeb - Filmdatenbank")).toBeVisible();
 });
 

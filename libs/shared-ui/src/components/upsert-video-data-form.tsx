@@ -10,6 +10,9 @@ import {
 } from "@heroui/react";
 import { VideoData } from "@nx-movies-db/shared-types";
 
+// Re-exported value type used by consumers
+export type UpsertVideoDataFormValues = VideoData;
+
 interface UpsertVideoDataFormProps {
   values: VideoData;
   onChange: (values: VideoData) => void;

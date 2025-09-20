@@ -28,7 +28,9 @@ async function getInitialValues(id: string): Promise<VideoData | undefined> {
   }
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+// In Next.js 15, params can be a Promise in App Router.
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await getAllowedSession();
   if (!session) {
     return (
@@ -38,7 +40,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     );
   }
 
-  const { id } = params;
   // If id is 'new', render a blank form to create a new entry
   if (id === "new") {
     return (

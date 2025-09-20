@@ -81,6 +81,9 @@ jobs:
       - run: npm ci
 
       - name: Start development DB (docker-compose)
+        env:
+          MYSQL_DATABASE: videodb
+          MYSQL_ROOT_PASSWORD: password
         run: |
           docker compose -f development-db/docker-compose.yaml up -d movies-service-db
           # Wait for MySQL to be healthy
@@ -99,8 +102,6 @@ jobs:
         env:
           # Use host networking from the runner. Port 7200 is mapped by compose.
           DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
-          MYSQL_DATABASE: videodb
-          MYSQL_ROOT_PASSWORD: password
         run: |
           npx nx run movies-prisma-lib:test --skip-nx-cache
 

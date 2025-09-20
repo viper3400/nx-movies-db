@@ -82,7 +82,7 @@ jobs:
 
       - name: Start development DB (docker-compose)
         run: |
-          docker compose -f development-db/docker-compose.yaml --env-file development-db/test.config up -d movies-service-db
+          docker compose -f development-db/docker-compose.yaml up -d movies-service-db
           # Wait for MySQL to be healthy
           CID=$(docker compose -f development-db/docker-compose.yaml ps -q movies-service-db)
           echo "Waiting for DB to become healthy..."
@@ -99,6 +99,8 @@ jobs:
         env:
           # Use host networking from the runner. Port 7200 is mapped by compose.
           DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
+          MYSQL_DATABASE: videodb
+          MYSQL_ROOT_PASSWORD: password
         run: |
           npx nx run movies-prisma-lib:test --skip-nx-cache
 

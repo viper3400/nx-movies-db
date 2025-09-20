@@ -15,6 +15,7 @@ export interface UpsertVideoFormProps {
 export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues }) => {
   const defaults: UpsertVideoDataFormValues =
     initialValues ?? {
+      id: null,
       title: "",
       subtitle: "",
       language: "en",
@@ -25,6 +26,9 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
       filename: "",
       video_width: null,
       video_height: null,
+      year: null,
+      istv: null,
+      lastupdate: null,
       mediatype: 1,
       owner_id: 1
     };

@@ -148,7 +148,7 @@ jobs:
           npx nx serve movies-service --configuration=production --skip-nx-cache &
           # Wait for GraphQL endpoint
           for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:7100/graphql > /dev/null; then echo "Service up"; break; fi
+            if curl -sS http://127.0.0.1:7100/graphql > /dev/null; then echo "Service up"; break; fi
             sleep 2;
           done
 
@@ -156,6 +156,7 @@ jobs:
         env:
           NEXT_PUBLIC_GRAPHQL_URL: http://127.0.0.1:7100/graphql
           NEXT_PUBLIC_NEXTAUTH_URL: /api/auth
+          TEST_MODE: "true"
           # Stub required provider credentials
           GITHUB_ID: dummy
           GITHUB_SECRET: dummy
@@ -165,10 +166,10 @@ jobs:
           ALLOWED_USERS: "tester@example.com,Tester,1"
         run: |
           cd apps/movies-ui
-          npx next build
+          NEXT_OUTPUT=server npx next build
           npx next start -p 3000 &
           for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:3000/ > /dev/null; then echo "UI up"; break; fi
+            if curl -sS http://127.0.0.1:3000/ > /dev/null; then echo "UI up"; break; fi
             sleep 2;
           done
 

@@ -8,48 +8,16 @@ import {
   DateValue,
   Spacer,
 } from "@heroui/react";
+import { VideoData } from "@nx-movies-db/shared-types";
 
-export interface UpsertVideoDataFormValues {
-  id?: number | null;
-  md5?: string;
-  title?: string;
-  subtitle?: string;
-  language?: string;
-  diskid?: string;
-  comment?: string;
-  disklabel?: string;
-  imdbID?: string;
-  year?: number | null;
-  imgurl?: string;
-  director?: string;
-  actors?: string;
-  runtime?: number | null;
-  country?: string;
-  plot?: string;
-  rating?: string;
-  filename?: string;
-  filesize?: number | null;
-  filedate?: Date | null;
-  audio_codec?: string;
-  video_codec?: string;
-  video_width?: number | null;
-  video_height?: number | null;
-  istv?: number | null;
-  lastupdate?: Date | null;
-  mediatype?: number | null;
-  custom1?: string;
-  custom2?: string;
-  custom3?: string;
-  custom4?: string;
-  created?: Date | null;
-  owner_id?: number | null;
-}
+// Re-exported value type used by consumers
+export type UpsertVideoDataFormValues = VideoData;
 
 interface UpsertVideoDataFormProps {
-  values: UpsertVideoDataFormValues;
-  onChange: (values: UpsertVideoDataFormValues) => void;
+  values: VideoData;
+  onChange: (values: VideoData) => void;
   readOnly?: boolean;
-  readOnlyFields?: Partial<Record<keyof UpsertVideoDataFormValues, boolean>>;
+  readOnlyFields?: Partial<Record<keyof VideoData, boolean>>;
   inputVariant?: "flat" | "bordered" | "underlined" | "faded";
   className?: string;
 }
@@ -72,10 +40,10 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   const [lastupdateValue, setLastupdateValue] = useState<DateValue | null>(null);
   const [createdValue, setCreatedValue] = useState<DateValue | null>(null);
 
-  const set = (patch: Partial<UpsertVideoDataFormValues>) =>
+  const set = (patch: Partial<VideoData>) =>
     onChange({ ...values, ...patch });
 
-  const ro = (k: keyof UpsertVideoDataFormValues) => readOnly || !!readOnlyFields?.[k];
+  const ro = (k: keyof VideoData) => readOnly || !!readOnlyFields?.[k];
 
   return (
     <div className={className}>

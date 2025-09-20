@@ -8,13 +8,14 @@ import {
 } from "@nx-movies-db/shared-ui";
 import { upsertVideoData } from "../app/services/actions";
 
-export interface CreateVideoFormProps {
+export interface UpsertVideoFormProps {
   initialValues?: UpsertVideoDataFormValues;
 }
 
-export const CreateVideoForm: React.FC<CreateVideoFormProps> = ({ initialValues }) => {
+export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues }) => {
   const defaults: UpsertVideoDataFormValues =
     initialValues ?? {
+      id: null,
       title: "",
       subtitle: "",
       language: "en",
@@ -25,6 +26,9 @@ export const CreateVideoForm: React.FC<CreateVideoFormProps> = ({ initialValues 
       filename: "",
       video_width: null,
       video_height: null,
+      year: null,
+      istv: null,
+      lastupdate: null,
       mediatype: 1,
       owner_id: 1
     };
@@ -49,4 +53,4 @@ export const CreateVideoForm: React.FC<CreateVideoFormProps> = ({ initialValues 
   );
 };
 
-export default CreateVideoForm;
+export default UpsertVideoForm;

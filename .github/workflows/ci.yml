@@ -64,3 +64,47 @@ jobs:
 
       - name: Run Storybook Tests
         run: npx nx run shared-ui:test-storybook # Adjust this command based on your test setup
+
+  movies-prisma-lib-test:
+    name: movies-prisma-lib DB tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Start development DB (docker-compose)
+        env:
+          MYSQL_DATABASE: videodb
+          MYSQL_ROOT_PASSWORD: password
+        run: |
+          docker compose -f development-db/docker-compose.ci.yaml up -d movies-service-db
+          # Wait for MySQL to be healthy
+          CID=$(docker compose -f development-db/docker-compose.ci.yaml ps -q movies-service-db)
+          echo "Waiting for DB to become healthy..."
+          for i in {1..120}; do
+            STATUS=$(docker inspect -f '{{json .State.Health.Status}}' "$CID" | tr -d '"')
+            if [ "$STATUS" = "healthy" ]; then
+              echo "DB healthy"; break; fi
+            echo "Current status: $STATUS"; sleep 2;
+          done
+          if [ "$STATUS" != "healthy" ]; then
+            echo "DB did not become healthy in time"; docker logs "$CID"; exit 1; fi
+
+      - name: Run movies-prisma-lib tests (against DB)
+        env:
+          # Use host networking from the runner. Port 7200 is mapped by compose.
+          DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
+        run: |
+          npx nx run movies-prisma-lib:test --skip-nx-cache
+
+      - name: Stop development DB
+        if: always()
+        run: docker compose -f development-db/docker-compose.ci.yaml down -v

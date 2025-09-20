@@ -1,0 +1,23 @@
+services:
+  movies-service-db:
+    platform: linux/x86_64
+    image: mysql:8.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - "7200:3306"
+    # Use a named volume in CI to avoid host permission issues
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./../seed:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+volumes:
+  dbdata:
+

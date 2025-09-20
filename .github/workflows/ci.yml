@@ -85,11 +85,11 @@ jobs:
           MYSQL_DATABASE: videodb
           MYSQL_ROOT_PASSWORD: password
         run: |
-          docker compose -f development-db/docker-compose.yaml up -d movies-service-db
+          docker compose -f development-db/docker-compose.ci.yaml up -d movies-service-db
           # Wait for MySQL to be healthy
-          CID=$(docker compose -f development-db/docker-compose.yaml ps -q movies-service-db)
+          CID=$(docker compose -f development-db/docker-compose.ci.yaml ps -q movies-service-db)
           echo "Waiting for DB to become healthy..."
-          for i in {1..60}; do
+          for i in {1..120}; do
             STATUS=$(docker inspect -f '{{json .State.Health.Status}}' "$CID" | tr -d '"')
             if [ "$STATUS" = "healthy" ]; then
               echo "DB healthy"; break; fi
@@ -107,4 +107,4 @@ jobs:
 
       - name: Stop development DB
         if: always()
-        run: docker compose -f development-db/docker-compose.yaml down -v
+        run: docker compose -f development-db/docker-compose.ci.yaml down -v

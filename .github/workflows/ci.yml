@@ -108,3 +108,82 @@ jobs:
       - name: Stop development DB
         if: always()
         run: docker compose -f development-db/docker-compose.ci.yaml down -v
+
+  e2e-playwright:
+    name: E2E Playwright (UI + DB + Service)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Start MySQL (docker-compose)
+        env:
+          MYSQL_DATABASE: videodb
+          MYSQL_ROOT_PASSWORD: password
+        run: |
+          docker compose -f development-db/docker-compose.ci.yaml up -d movies-service-db
+          CID=$(docker compose -f development-db/docker-compose.ci.yaml ps -q movies-service-db)
+          echo "Waiting for DB to become healthy..."
+          for i in {1..120}; do
+            STATUS=$(docker inspect -f '{{json .State.Health.Status}}' "$CID" | tr -d '"')
+            if [ "$STATUS" = "healthy" ]; then echo "DB healthy"; break; fi
+            echo "Current status: $STATUS"; sleep 2;
+          done
+          if [ "$STATUS" != "healthy" ]; then echo "DB not healthy"; docker logs "$CID"; exit 1; fi
+
+      - name: Build and start movies-service (GraphQL)
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
+          JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456
+          PORT: 7100
+        run: |
+          npx nx serve movies-service --configuration=production --skip-nx-cache &
+          # Wait for GraphQL endpoint
+          for i in {1..60}; do
+            if curl -sS http://127.0.0.1:7100/graphql > /dev/null; then echo "Service up"; break; fi
+            sleep 2;
+          done
+
+      - name: Build and start movies-ui (Next.js)
+        env:
+          NEXT_PUBLIC_GRAPHQL_URL: http://127.0.0.1:7100/graphql
+          NEXT_PUBLIC_NEXTAUTH_URL: /api/auth
+          TEST_MODE: "true"
+          # Stub required provider credentials
+          GITHUB_ID: dummy
+          GITHUB_SECRET: dummy
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          # Optional: allowed users list format "email,name,id;..."
+          ALLOWED_USERS: "tester@example.com,Tester,1"
+        run: |
+          cd apps/movies-ui
+          NEXT_OUTPUT=server npx next build
+          npx next start -p 3000 &
+          for i in {1..60}; do
+            if curl -sS http://127.0.0.1:3000/ > /dev/null; then echo "UI up"; break; fi
+            sleep 2;
+          done
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        env:
+          E2E_BASE_URL: http://127.0.0.1:3000
+        run: npx playwright test -c apps/movies-ui/playwright.config.ts
+
+      - name: Teardown
+        if: always()
+        run: |
+          pkill -f "node dist/apps/movies-service/main.js" || true
+          pkill -f "next start" || true
+          docker compose -f development-db/docker-compose.ci.yaml down -v

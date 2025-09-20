@@ -60,6 +60,7 @@
     "@nx/vite": "21.5.3",
     "@nx/web": "21.5.3",
     "@nx/workspace": "21.5.3",
+    "@playwright/test": "^1.55.0",
     "@storybook/addon-docs": "^9.0.14",
     "@storybook/nextjs-vite": "^9.0.14",
     "@storybook/test-runner": "^0.23.0",

@@ -1,0 +1,31 @@
+{
+  "name": "stocks-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/stocks-backend/src",
+  "projectType": "library",
+  "tags": [
+    "type:server",
+    "scope:stocks"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/stocks-backend",
+        "main": "libs/stocks-backend/src/index.ts",
+        "tsConfig": "libs/stocks-backend/tsconfig.lib.json",
+        "assets": ["libs/stocks-backend/*.md"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/stocks-backend/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
+

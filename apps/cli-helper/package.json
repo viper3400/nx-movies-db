@@ -1,0 +1,10 @@
+{
+  "name": "@nx-movies-db/cli-helper",
+  "version": "0.0.0",
+  "private": false,
+  "type": "commonjs",
+  "bin": {
+    "cli-helper": "./main.js"
+  }
+}
+

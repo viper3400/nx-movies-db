@@ -13,7 +13,7 @@
         "platform": "node",
         "outputPath": "dist/apps/cli-helper",
         "format": ["cjs"],
-        "bundle": false,
+        "bundle": true,
         "main": "apps/cli-helper/src/main.ts",
         "tsConfig": "apps/cli-helper/tsconfig.app.json",
         "assets": [],
@@ -22,6 +22,9 @@
           "sourcemap": true,
           "outExtension": {
             ".js": ".js"
+          },
+          "banner": {
+            "js": "#!/usr/bin/env node"
           }
         }
       },
@@ -33,6 +36,9 @@
             "sourcemap": false,
             "outExtension": {
               ".js": ".js"
+            },
+            "banner": {
+              "js": "#!/usr/bin/env node"
             }
           }
         }

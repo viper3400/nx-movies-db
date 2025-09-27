@@ -1,29 +1,25 @@
 import { Command } from "commander";
 import { TradesCsvFileReader } from "@nx-movies-db/stocks-backend";
 import { TradesCsvImporter } from "@nx-movies-db/stocks-lib";
+
 function run(argv: string[]): void {
   const program = new Command();
 
   program
     .name("cli-helper")
     .description("Utility helpers for the Nx Movies workspace")
-    .argument("[message...]", "Message for the helper to print")
-    .option("-u, --uppercase", "Print the message in uppercase")
-    .option("-p, --process", "Process CSV file")
-    .action(async (messageParts: string[], options: { uppercase?: boolean, process?: boolean }) => {
-      const message = messageParts.length > 0
-        ? messageParts.join(" ")
-        : "Nx Movies CLI helper ready to assist! Pass a message to share something.";
+    .argument("<filepath>", "Path to Kraken trades CSV file")
+    .option("-p, --pair <pair>", "Filter by trading pair (e.g. ETH/EUR)")
+    .action(async (filepath: string, options: { pair?: string }) => {
+      const fileContent = await TradesCsvFileReader.readCsv(filepath);
+      const csvContent = TradesCsvImporter.parse(fileContent);
 
-      const output = options.uppercase ? message.toUpperCase() : message;
-      console.log(output);
-
-      if (options.process) {
-        const fileContent = await TradesCsvFileReader.readCsv(message);
-        const csvContent = TradesCsvImporter.parse(fileContent)
-        console.log(csvContent.length);
+      if (options.pair) {
+        const match = csvContent.filter((c: any) => c.pair === options.pair);
+        console.log(match.length ?? `No entries found for pair ${options.pair}`);
+      } else {
+        console.log(csvContent);
       }
-
     });
 
   program.enablePositionalOptions();

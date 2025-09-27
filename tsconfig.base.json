@@ -23,8 +23,8 @@
       ],
       "@nx-movies-db/shared-types": ["libs/shared-types/src/index.ts"],
       "@nx-movies-db/shared-ui": ["libs/shared-ui/src/index.ts"],
+      "@nx-movies-db/stocks-backend": ["libs/stocks-backend/src/index.ts"],
       "@nx-movies-db/stocks-lib": ["libs/stocks-lib/src/index.ts"],
-      "@nx-movies-db/stocks-backend": ["libs/stocks-backend/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

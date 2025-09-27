@@ -1,4 +1,4 @@
-export type TradesCsvImportModel = {
+export interface TradesCsvImportModel {
   txid: string,
   txorderid: string,
   pair: string,

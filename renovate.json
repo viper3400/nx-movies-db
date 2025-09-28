@@ -33,9 +33,7 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["mysql"],
       "allowedVersions": "<9",
-      "matchManagers": ["docker-compose"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
+      "matchManagers": ["docker-compose"]
     }
   ]
 }

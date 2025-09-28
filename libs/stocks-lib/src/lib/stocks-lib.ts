@@ -1,4 +1,4 @@
 export function stocksLib(): string {
-  return 'stocks-lib';
+  return "stocks-lib";
 }
 

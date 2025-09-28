@@ -1,4 +1,4 @@
-import type { NormalizedTrade } from './normalize';
+import type { NormalizedTrade } from "./normalize";
 
 export interface BasicReportRange {
   start?: string; // ISO

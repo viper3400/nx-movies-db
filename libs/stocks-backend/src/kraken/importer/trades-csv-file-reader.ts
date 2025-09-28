@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
-import { resolve } from 'path';
+import { promises as fs } from "fs";
+import { resolve } from "path";
 
 /**
  * Helper to read a CSV file from disk.
@@ -10,7 +10,7 @@ export class TradesCsvFileReader {
    */
   static async readCsv(filePath: string): Promise<string> {
     const abs = resolve(filePath);
-    return fs.readFile(abs, 'utf8');
+    return fs.readFile(abs, "utf8");
   }
 }
 

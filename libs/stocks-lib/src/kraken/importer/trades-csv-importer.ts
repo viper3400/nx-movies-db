@@ -1,4 +1,4 @@
-import type { TradesCsvImportModel } from './types/trades-csv-import-model';
+import type { TradesCsvImportModel } from "./types/trades-csv-import-model";
 
 /**
  * Lightweight CSV importer for Kraken trades export.
@@ -15,14 +15,14 @@ export class TradesCsvImporter {
     if (rows.length === 0) return [];
 
     // Find first non-empty header row
-    const headerRow = rows.find((r) => r.length > 0 && r.some((c) => c.trim() !== ''));
+    const headerRow = rows.find((r) => r.length > 0 && r.some((c) => c.trim() !== ""));
     if (!headerRow) return [];
 
     const header = headerRow.map((h) => h.trim());
 
     // Determine the index of the header row, and slice subsequent data rows
     const headerIndex = rows.indexOf(headerRow);
-    const dataRows = rows.slice(headerIndex + 1).filter((r) => r.length && r.some((c) => c !== ''));
+    const dataRows = rows.slice(headerIndex + 1).filter((r) => r.length && r.some((c) => c !== ""));
 
     const list: TradesCsvImportModel[] = [];
     for (const row of dataRows) {
@@ -30,7 +30,7 @@ export class TradesCsvImporter {
       for (let i = 0; i < header.length; i++) {
         const key = header[i];
         if (!key) continue;
-        obj[key] = row[i] ?? '';
+        obj[key] = row[i] ?? "";
       }
       list.push(obj as TradesCsvImportModel);
     }
@@ -44,17 +44,17 @@ export class TradesCsvImporter {
  */
 function parseCsv(input: string): string[][] {
   // Normalize newlines and strip BOM
-  let s = input.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const s = input.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const rows: string[][] = [];
   let i = 0;
   const len = s.length;
-  let field = '';
+  let field = "";
   let row: string[] = [];
   let inQuotes = false;
 
   const pushField = () => {
     row.push(field);
-    field = '';
+    field = "";
   };
   const pushRow = () => {
     // Trim trailing empty cells if the entire row is empty
@@ -65,10 +65,10 @@ function parseCsv(input: string): string[][] {
   while (i < len) {
     const ch = s[i];
     if (inQuotes) {
-      if (ch === '"') {
+      if (ch === "\"") {
         // Escaped quote ""
-        if (i + 1 < len && s[i + 1] === '"') {
-          field += '"';
+        if (i + 1 < len && s[i + 1] === "\"") {
+          field += "\"";
           i += 2;
           continue;
         }
@@ -79,13 +79,13 @@ function parseCsv(input: string): string[][] {
       field += ch;
       i++;
     } else {
-      if (ch === '"') {
+      if (ch === "\"") {
         inQuotes = true;
         i++;
-      } else if (ch === ',') {
+      } else if (ch === ",") {
         pushField();
         i++;
-      } else if (ch === '\n') {
+      } else if (ch === "\n") {
         pushField();
         pushRow();
         i++;

@@ -1,1 +1,1 @@
-export * from './trades-csv-import-model';
+export * from "./trades-csv-import-model";

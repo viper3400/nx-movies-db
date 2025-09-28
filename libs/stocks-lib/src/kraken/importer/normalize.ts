@@ -1,15 +1,15 @@
-import type { TradesCsvImportModel } from './types/trades-csv-import-model';
+import type { TradesCsvImportModel } from "./types/trades-csv-import-model";
 
 function toNumber(value: string | number | undefined | null): number | null {
   if (value === null || value === undefined) return null;
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
   const s = String(value).trim();
   if (!s) return null;
-  const n = parseFloat(s.replace(/[,\s]/g, ''));
+  const n = parseFloat(s.replace(/[,\s]/g, ""));
   return Number.isFinite(n) ? n : null;
 }
 
-export type Side = 'buy' | 'sell';
+export type Side = "buy" | "sell";
 
 export interface NormalizedTrade {
   txid: string;
@@ -37,7 +37,7 @@ export function normalizeTrades(rows: TradesCsvImportModel[]): NormalizeResult {
   const errors: string[] = [];
   const trades: NormalizedTrade[] = [];
 
-  const required = ['time', 'pair', 'type', 'cost', 'fee', 'vol'] as const;
+  const required = ["time", "pair", "type", "cost", "fee", "vol"] as const;
 
   for (let idx = 0; idx < rows.length; idx++) {
     const r = rows[idx];
@@ -48,7 +48,7 @@ export function normalizeTrades(rows: TradesCsvImportModel[]): NormalizeResult {
 
     // Required fields present
     for (const key of required) {
-      if (!(key in r) || String((r as any)[key]).trim() === '') {
+      if (!(key in r) || String((r as any)[key]).trim() === "") {
         errors.push(`Row ${idx}: missing required field '${key}'`);
       }
     }
@@ -59,14 +59,14 @@ export function normalizeTrades(rows: TradesCsvImportModel[]): NormalizeResult {
       continue;
     }
 
-    const pair = (r.pair || '').trim();
+    const pair = (r.pair || "").trim();
     if (!pair) {
       errors.push(`Row ${idx}: empty pair`);
       continue;
     }
 
-    const sideStr = (r.type || '').toLowerCase().trim();
-    if (sideStr !== 'buy' && sideStr !== 'sell') {
+    const sideStr = (r.type || "").toLowerCase().trim();
+    if (sideStr !== "buy" && sideStr !== "sell") {
       errors.push(`Row ${idx}: invalid type '${r.type}'`);
       continue;
     }

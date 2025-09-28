@@ -1,2 +1,2 @@
-export * from './kraken/importer/trades-csv-file-reader';
+export * from "./kraken/importer/trades-csv-file-reader";
 

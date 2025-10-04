@@ -156,6 +156,8 @@ jobs:
         env:
           NEXT_PUBLIC_GRAPHQL_URL: http://127.0.0.1:7100/graphql
           NEXT_PUBLIC_NEXTAUTH_URL: /api/auth
+          NEXT_PUBLIC_TEST_MODE: "true"
+          NEXT_PUBLIC_ALLOWED_USERS: "tester@example.com,Tester,1"
           TEST_MODE: "true"
           # Stub required provider credentials
           GITHUB_ID: dummy

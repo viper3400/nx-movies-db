@@ -64,10 +64,13 @@ export const SearchForm: React.FC<SearchFormProps> = ({
             clearSearchResult();
             setSearchText("");
           }}
+          data-test="MovieSearchField"
         />
         <div className="flex place-content-center space-x-2">
           <div className="place-content-center ">
-            <SurpriseButton onPress={handleRandomSearchRequest} />
+            <SurpriseButton
+              onPress={handleRandomSearchRequest}
+              data-test="SurpriseButton" />
           </div>
           <div className="place-content-center ">
             <FilterDrawer
@@ -76,6 +79,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
               isDefaultFilter={isDefaultFilter}
               mediaTypes={mediaTypes}
               genres={genres}
+              data-test="FilterDrawer"
             />
           </div>
         </div>

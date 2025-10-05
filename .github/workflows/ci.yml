@@ -55,8 +55,8 @@ jobs:
         env:
           CI: true # Set CI environment variable if needed
 
-      - name: Install playwright
-        run:  npx playwright install
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
 
       - name: Wait for Storybook to be ready
         run: |
@@ -176,7 +176,7 @@ jobs:
           done
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
         env:

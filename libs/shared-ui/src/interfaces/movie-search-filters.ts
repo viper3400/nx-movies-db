@@ -7,4 +7,5 @@ export interface MovieSearchFilters {
   filterForWatchAgain: boolean;
   filterForMediaTypes: string[];
   filterForGenres: string[];
+  randomExcludeDeleted: boolean;
 }

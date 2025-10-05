@@ -18,11 +18,11 @@ export const Default: Story = {
     filters: {
       filterForFavorites: true,
       filterForWatchAgain: false,
-      filterForRandomMovies: false,
       filterForMediaTypes: [],
       filterForGenres: [],
       tvSeriesMode: "INCLUDE_TVSERIES",
       deleteMode: "EXCLUDE_DELETED",
+      randomExcludeDeleted: true,
     } as MovieSearchFilters,
     isDefaultFilter: false,
     langResources: {

@@ -13,7 +13,7 @@ export default function NavbarComponent() {
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
-      <NavbarBrand>
+      <NavbarBrand data-test="NavbarBrand">
         <SceneLogo />
         <Spacer x={4} />
         <p className="font-bold text-inherit">Filmdatenbank</p>

@@ -25,6 +25,7 @@ const defaultFilters: MovieSearchFilters = {
   filterForWatchAgain: false,
   filterForMediaTypes: [],
   filterForGenres: [],
+  randomExcludeDeleted: true,
 };
 
 const nonDefaultFilters: MovieSearchFilters = {
@@ -34,6 +35,7 @@ const nonDefaultFilters: MovieSearchFilters = {
   filterForWatchAgain: false,
   filterForMediaTypes: ["1", "5"],
   filterForGenres: ["1", "3"],
+  randomExcludeDeleted: false,
 };
 
 const meta: Meta<typeof FilterDrawer> = {

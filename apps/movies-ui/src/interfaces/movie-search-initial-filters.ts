@@ -7,4 +7,5 @@ export const moviesSearchInitialFilters: MovieSearchFilters = {
   filterForWatchAgain: false,
   filterForMediaTypes: [],
   filterForGenres: [],
+  randomExcludeDeleted: true,
 };

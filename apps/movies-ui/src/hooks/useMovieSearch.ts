@@ -1,7 +1,7 @@
 import { useState, useEffect, FormEvent, useRef } from "react";
 import { getMovies } from "../app/services/actions";
 import { Movie, moviesSearchInitialFilters } from "../interfaces";
-import { MovieSearchFilters } from "@nx-movies-db/shared-ui";
+import { DeleteMode, MovieSearchFilters } from "@nx-movies-db/shared-ui";
 import { PressEvent } from "@heroui/react";
 
 interface UseMovieSearchProps {
@@ -42,7 +42,8 @@ export function useMovieSearch({
     a.filterForFavorites === b.filterForFavorites &&
     a.filterForWatchAgain === b.filterForWatchAgain &&
     sameSet(a.filterForMediaTypes, b.filterForMediaTypes) &&
-    sameSet(a.filterForGenres, b.filterForGenres);
+    sameSet(a.filterForGenres, b.filterForGenres) &&
+    a.randomExcludeDeleted === b.randomExcludeDeleted;
 
   const normalizeFilters = (f: MovieSearchFilters): MovieSearchFilters => ({
     ...f,
@@ -157,9 +158,14 @@ export function useMovieSearch({
     try {
       const query = customSearchText ?? searchText;
 
+      const deleteModeForRequest: DeleteMode =
+        randomSearchRef.current && filters.randomExcludeDeleted
+          ? "EXCLUDE_DELETED" // user opted to keep deleted titles out of random picks
+          : filters.deleteMode;
+
       const data = await getMovies(
         query,
-        filters.deleteMode,
+        deleteModeForRequest,
         filters.tvSeriesMode,
         filters.filterForFavorites,
         filters.filterForWatchAgain,

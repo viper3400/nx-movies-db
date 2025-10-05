@@ -14,6 +14,7 @@
     "moviesFilterLabel": "Filter Settings",
     "favoriteMoviesFilterLabel": "Favorite Movies",
     "watchagainMoviesFilterLabel": "Watch Again",
+    "randomExcludeDeletedLabel": "Random search excludes deleted",
     "randomMoviesFilterLabel": "Random",
     "mediaTypeFilterLabel": "Filter Settings for Media Type",
     "genreFilterLabel": "Filter Settings for Genre",

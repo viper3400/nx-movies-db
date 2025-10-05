@@ -62,6 +62,7 @@ export function FilterDrawer(
   const updateWatchAgain = createLocalUpdater("filterForWatchAgain");
   const updateMediaTypes = createLocalUpdater("filterForMediaTypes");
   const updateGenres = createLocalUpdater("filterForGenres");
+  const updateRandomExcludeDeleted = createLocalUpdater("randomExcludeDeleted");
   const updateTvSeriesMode = (value: string) =>
     setLocal(prev => ({
       ...prev,
@@ -199,6 +200,14 @@ export function FilterDrawer(
                     </RadioGroup>
                   </AccordionItem>
                 </Accordion>
+                <div className="flex w-full flex-col gap-4">
+                  <Switch
+                    isSelected={local.randomExcludeDeleted}
+                    onValueChange={updateRandomExcludeDeleted}
+                  >
+                    {t("search.randomExcludeDeletedLabel")}
+                  </Switch>
+                </div>
               </DrawerBody>
               <DrawerFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

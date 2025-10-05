@@ -2,8 +2,8 @@ import { test } from "@serenity-js/playwright-test";
 import { Ensure, includes } from "@serenity-js/assertions";
 import { By, Navigate, Page, PageElement, Text, isVisible } from "@serenity-js/web";
 
-const MoviesNavigationTitle = PageElement.located(By.css("p.font-bold.text-inherit")).describedAs("movies navigation title");
-const MoviesSearchField = PageElement.located(By.css("input[data-type='text']")).describedAs("movie search input");
+const MoviesNavigationTitle = PageElement.located(By.css("[data-test='NavbarBrand']")).describedAs("movies navigation title");
+const MoviesSearchField = PageElement.located(By.css("[data-test='MovieSearchField']")).describedAs("movie search input");
 
 test("actor can inspect the movies landing page", async ({ actorCalled }) => {
   const actor = actorCalled("Serena");

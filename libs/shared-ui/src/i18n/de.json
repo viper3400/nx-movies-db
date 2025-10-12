@@ -4,6 +4,7 @@
     "result_count": "Ergebnisse",
     "placeholder": "Titel, Untertitel oder Regal eingeben",
     "deletedMoviesFilterLabel": "Filtereinstellung für gelöschte Filme",
+    "deletedMoviesFilterTooltip": "Die Zufallssuche ignoriert diesen Filter",
     "deletedMoviesFilterExcludeDeleted": "Exklusive Gelöschte",
     "deletedMoviesFilterIncludeDeleted": "Inklusive Gelöschte",
     "deletedMoviesFilterOnlyDeleted": "Nur Gelöschte",

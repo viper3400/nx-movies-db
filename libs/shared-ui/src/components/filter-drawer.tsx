@@ -14,6 +14,7 @@ import {
   AccordionItem,
   Checkbox,
   CheckboxGroup,
+  Tooltip,
 } from "@heroui/react";
 import { Tune } from "../icons";
 import { useState } from "react";
@@ -177,7 +178,11 @@ export function FilterDrawer(
                   <AccordionItem
                     key="4"
                     aria-label="deleted-movies-filter"
-                    title={t("search.deletedMoviesFilterLabel")}
+                    title={
+                      <Tooltip content={t("search.deletedMoviesFilterTooltip")}>
+                        <span>{t("search.deletedMoviesFilterLabel")}</span>
+                      </Tooltip>
+                    }
                     subtitle={
                       `${t(
                         local.deleteMode === "EXCLUDE_DELETED"
@@ -198,16 +203,17 @@ export function FilterDrawer(
                       <Radio value="INCLUDE_DELETED">{t("search.deletedMoviesFilterIncludeDeleted")}</Radio>
                       <Radio value="ONLY_DELETED">{t("search.deletedMoviesFilterOnlyDeleted")}</Radio>
                     </RadioGroup>
+                    <div className="py-6">
+                      <Switch
+                        isSelected={local.randomExcludeDeleted}
+                        onValueChange={updateRandomExcludeDeleted}
+                        isDisabled
+                      >
+                        {t("search.randomExcludeDeletedLabel")}
+                      </Switch>
+                    </div>
                   </AccordionItem>
                 </Accordion>
-                <div className="flex w-full flex-col gap-4">
-                  <Switch
-                    isSelected={local.randomExcludeDeleted}
-                    onValueChange={updateRandomExcludeDeleted}
-                  >
-                    {t("search.randomExcludeDeletedLabel")}
-                  </Switch>
-                </div>
               </DrawerBody>
               <DrawerFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

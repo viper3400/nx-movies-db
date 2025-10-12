@@ -25,8 +25,42 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   const { loadSeenDatesForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
 
 
-  const totalMoviesCount = useRef(0);
+  const [totalMoviesCount, setTotalMoviesCount] = useState(0);
   const isInitialLoading = useRef(true);
+  const inFlightRequestId = useRef(0);
+
+  const fetchSeenMoviesAsync = async (page: number, range: DateRange) => {
+    const reqId = ++inFlightRequestId.current;
+    setLoading(true);
+    const queryResult = await getSeenVideos(
+      "VG_Default",
+      (range.startDate ? range.startDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2010-01-01T00:00:00Z"),
+      (range.endDate ? range.endDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2099-01-01T00:00:00Z"),
+      10,
+      page * 10
+    ) as SeenVideosQueryResult;
+    // Ignore late responses
+    if (reqId !== inFlightRequestId.current) {
+      setLoading(false);
+      return;
+    }
+    setTotalMoviesCount(queryResult?.seenVideos.requestMeta.totalCount ?? 0);
+
+    let combinedLength = 0;
+    setSeenMovies((prev) => {
+      const combined = prev ? [...prev, ...queryResult.seenVideos.SeenEntries] : queryResult.seenVideos.SeenEntries;
+      combinedLength = combined.length;
+      return combined;
+    });
+
+    setCurrentPage(page);
+    const total = queryResult.seenVideos.requestMeta.totalCount;
+    const more = combinedLength < total;
+    setNextPage(more ? page + 1 : undefined);
+
+    setLoading(false);
+  };
+
 
   useEffect(() => {
     const fetchInitialMovies = async () => {
@@ -37,7 +71,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
       isInitialLoading.current = false;
       fetchInitialMovies();
     }
-  });
+  }, []);
 
 
   interface SeenVideosQueryResult {
@@ -49,36 +83,19 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
     };
   }
 
-  const fetchSeenMoviesAsync = async (page: number, range: DateRange) => {
-    setLoading(true);
-    const queryResult = await getSeenVideos(
-      "VG_Default",
-      (range.startDate ? range.startDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2010-01-01T00:00:00Z"),
-      (range.endDate ? range.endDate.toDate("UTC").toISOString().slice(0, 10) + "T00:00:00Z" : "2099-01-01T00:00:00Z"),
-      10,
-      page * 10
-    ) as SeenVideosQueryResult;
-    totalMoviesCount.current = queryResult?.seenVideos.requestMeta.totalCount;
-    setSeenMovies((prev) => prev ? [...prev, ...queryResult.seenVideos.SeenEntries] : queryResult.seenVideos.SeenEntries);
-
-    setCurrentPage(page);
-    if ((page + 1) * 10 < queryResult.seenVideos.requestMeta.totalCount) {
-      setNextPage((prev) => prev ? prev + 1 : 1);
-    } else {
-      setNextPage(page);
-    }
-    setLoading(false);
-  };
 
   const onDateRangeChanged = async (dateRange: DateRange): Promise<void> => {
     setSeenMovies(undefined);
-    totalMoviesCount.current = 0;
+    setTotalMoviesCount(0);
+    setCurrentPage(0);
+    setNextPage(undefined);
     setDateRange(dateRange);
     await fetchSeenMoviesAsync(0, dateRange);
 
   };
+  const hasMore = Array.isArray(seenMovies) ? seenMovies.length < totalMoviesCount : false;
   async function handleNextPageTrigger(): Promise<void> {
-    if (!loading && nextPage !== undefined && currentPage !== undefined && nextPage > currentPage) {
+    if (!loading && hasMore && nextPage !== undefined && nextPage > currentPage) {
       await fetchSeenMoviesAsync(nextPage, dateRange);
     }
   }
@@ -116,7 +133,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
         <ResultsStatusIndicator
           isLoading={loading}
           hasNoResults={Array.isArray(seenMovies) && seenMovies.length === 0}
-          hasNoMoreResults={Array.isArray(seenMovies) && seenMovies.length > 0 && seenMovies.length === totalMoviesCount.current}
+          hasNoMoreResults={Array.isArray(seenMovies) && seenMovies.length > 0 && !hasMore}
         />
       </div>
       <PageEndObserver onIntersect={handleNextPageTrigger} />

@@ -4,6 +4,7 @@
     "result_count": "result count",
     "placeholder": "Enter movie title, subtitle or shelf",
     "deletedMoviesFilterLabel": "Filter Settings for Deleted Movies",
+    "deletedMoviesFilterTooltip": "Surprise search will always ignore this filer",
     "deletedMoviesFilterExcludeDeleted": "Exclude Deleted",
     "deletedMoviesFilterIncludeDeleted": "Include Deleted",
     "deletedMoviesFilterOnlyDeleted": "Only Deleted",

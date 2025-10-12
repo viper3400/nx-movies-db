@@ -150,6 +150,7 @@ export const MovieCard = ({
                     src={imageUrl}
                     width={120}
                     className="rounded"
+                    unoptimized
                   />
                 </a>
               </div> <ScrollShadow className="h-[280px]">

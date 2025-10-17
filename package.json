@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^4.0.0",
-    "@apollo/experimental-nextjs-app-support": "^0.13.0",
+    "@apollo/experimental-nextjs-app-support": "^0.14.0",
     "@graphql-yoga/plugin-jwt": "^3.4.3",
     "@heroui/react": "2.8.5",
     "@internationalized/date": "3.10.0",

@@ -12,8 +12,8 @@ jest.mock("axios", () => ({
 
 jest.mock("fs/promises", () => ({
   __esModule: true,
-  writeFile: jest.fn(async () => { }),
-  mkdir: jest.fn(async () => { }),
+  writeFile: jest.fn(() => Promise.resolve()),
+  mkdir: jest.fn(() => Promise.resolve()),
 }));
 
 const axiosGet = axios.get as unknown as jest.MockedFunction<(url: string, config?: any) => Promise<any>>;

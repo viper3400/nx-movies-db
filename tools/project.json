@@ -15,6 +15,12 @@
           }
         ]
       }
+    },
+    "generate-docs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ./tools/docs/generate-video-docs.mjs"
+      }
     }
   }
 }

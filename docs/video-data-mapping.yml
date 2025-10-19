@@ -1,0 +1,30 @@
+useCases:
+  - name: Search Result
+    path: root
+    gqlQuery: GetMovies
+    components:
+      - MoviesComponent (movies.tsx)
+      - SearchForm (shared-ui)
+      - MovieCardDeck (shared-ui)
+      - MovieCard (shared-ui)
+    description:
+      - MovieCardDeck takes result set from SearchForm
+      - paging in place
+      - useMovieSearch hook (external)
+      - hook handles states (for example filter states)
+      - getMovies function calls const getMovieByTitle
+      - getMovieByTitle calls gqlQuery "GetMovies" --> videos (video-list.ts)
+
+  - name: Detail
+    path: details
+    gqlQuery: GetVideoDetail
+    components:
+      - MovieCard (shared-ui)
+
+  - name: Edit
+    path: edit
+    gqlQuery: GetVideoEdit
+
+  - name: Seen Movies
+    path: seen
+    gqlQuery: GetSeenMovies

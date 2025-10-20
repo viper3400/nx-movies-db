@@ -3,6 +3,7 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
 import { getClient } from "../../../lib/apollocient";
 import type { UpsertVideoDataFormValues } from "@nx-movies-db/shared-ui";
+import { storeImageFromUrl } from "@nx-movies-db/movies-graphql-lib";
 
 type UpsertResult = {
   upsertVideoData: {
@@ -168,8 +169,12 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
     mutation: UPSERT_MUTATION,
     variables,
   });
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data?.upsertVideoData;
+/* TODO: Do we really want to do this here? We have to respect existing images, override?
+if (variables.imgurl && process.env.COVER_IMAGE_PATH)
+  await storeImageFromUrl(variables.imgurl, process.env.COVER_IMAGE_PATH, data?.upsertVideoData.id + ".jpg");
+if (error) {
+  throw new Error(error.message);
+}
+/*
+return data?.upsertVideoData;
 }

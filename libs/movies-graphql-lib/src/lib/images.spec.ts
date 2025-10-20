@@ -72,56 +72,26 @@ describe("images.ts (Jest)", () => {
   });
 
   describe("storeImageFromUrl", () => {
-    test("writes the downloaded image to uploads/posters and returns storedUrl + meta", async () => {
-      // Freeze time for deterministic filename
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date(1700000000000)); // 2023-11-14T22:13:20.000Z
-
+    test("writes the downloaded image with a given filename and returns storedUrl + meta", async () => {
       axiosGet.mockResolvedValueOnce(fakeAxiosResponse("image/png", [1, 2, 3, 4, 5]));
 
       const uploadDir = path.resolve("uploads/posters");
+      const filename = "my-image.png";
       const out = await storeImageFromUrl(
         "https://example.com/img.png",
-        uploadDir
+        uploadDir,
+        filename
       );
 
-      const expectedFilename = `poster-${Date.now()}.png`;
-      const expectedAbs = path.join(uploadDir, expectedFilename);
+      const expectedAbs = path.join(uploadDir, filename);
 
       expect(mkdirMock).toHaveBeenCalledWith(uploadDir, { recursive: true });
       expect(writeFileMock).toHaveBeenCalledWith(expectedAbs, expect.any(Buffer));
 
       expect(out).toEqual({
-        storedUrl: `/uploads/posters/${expectedFilename}`,
+        storedUrl: `/uploads/posters/${filename}`,
         contentType: "image/png",
         size: 5,
-      });
-    });
-
-    test("respects a custom uploadDir and explicit extension override", async () => {
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date(1700000000000));
-
-      axiosGet.mockResolvedValueOnce(fakeAxiosResponse("image/jpeg", [9, 8, 7]));
-
-      const customDir = path.resolve("/tmp/my-uploads");
-      const out = await storeImageFromUrl(
-        "https://example.com/cover.jpg",
-        customDir,
-        "webp"
-      );
-
-      const expectedFilename = `poster-${Date.now()}.webp`;
-      const expectedAbs = path.join(customDir, expectedFilename);
-
-      expect(mkdirMock).toHaveBeenCalledWith(customDir, { recursive: true });
-      expect(writeFileMock).toHaveBeenCalledWith(expectedAbs, expect.any(Buffer));
-
-      // Note: storedUrl is currently hard-coded to /uploads/posters regardless of uploadDir
-      expect(out).toEqual({
-        storedUrl: `/uploads/posters/${expectedFilename}`,
-        contentType: "image/jpeg",
-        size: 3,
       });
     });
   });

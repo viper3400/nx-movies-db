@@ -35,13 +35,11 @@ export async function importImageFromUrl(url: string): Promise<ImportedImage> {
   return { data, contentType, size: data.length };
 }
 
-export async function storeImageFromUrl(url: string, uploadDir: string, extension?: string) {
+export async function storeImageFromUrl(url: string, uploadDir: string, filename: string) {
   const img = await importImageFromUrl(url);
 
   await mkdir(uploadDir, { recursive: true });
 
-  const ext = extension ?? img.contentType.split("/")[1] ?? "bin";
-  const filename = `poster-${Date.now()}.${ext}`;
   const absPath = path.join(uploadDir, filename);
 
   await writeFile(absPath, img.data);

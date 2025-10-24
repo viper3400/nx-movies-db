@@ -168,6 +168,10 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
     mutation: UPSERT_MUTATION,
     variables,
   });
+  /* TODO: Do we really want to do this here? We have to respect existing images, override?
+  if (variables.imgurl && process.env.COVER_IMAGE_PATH)
+    await storeImageFromUrl(variables.imgurl, process.env.COVER_IMAGE_PATH, data?.upsertVideoData.id + ".jpg");
+  */
   if (error) {
     throw new Error(error.message);
   }

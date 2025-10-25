@@ -9,7 +9,7 @@ const httpLink = createHttpLink({
 
 // http://jwtbuilder.jamiekurtz.com/ --> Testtokens
 const token =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3Mjk3Nzg4ODcsImV4cCI6MTc2MTMxNDg5NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsInJvbGUiOiJhcGkifQ.JnHCNrnTdrZ8jVWQE1N--fs4APVGGHCL0XJKfWINYWo";
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3NjEzODE1NzQsImV4cCI6MTc5MjkxNzU3NCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.AotLz3yCkc7j6QkeZ0LyXhvjbadf5wCPRsuR6Np6hzY";
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   //const token = localStorage.getItem('token');

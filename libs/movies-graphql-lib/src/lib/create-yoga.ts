@@ -6,7 +6,7 @@ export const yoga = createYoga({
   schema,
   plugins: [
     useJWT({
-      singingKeyProviders: [createInlineSigningKeyProvider(process.env.JWT_SECRET as string)],
+      signingKeyProviders: [createInlineSigningKeyProvider(process.env.JWT_SECRET as string)],
       tokenVerification: {
         issuer: ["Online JWT Builder"],
         algorithms: ["HS256"]
@@ -16,5 +16,6 @@ export const yoga = createYoga({
         invalidToken: true,
       }
     })
-  ] });
+  ]
+});
 

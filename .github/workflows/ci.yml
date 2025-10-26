@@ -166,6 +166,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: dummy
           # Optional: allowed users list format "email,name,id;..."
           ALLOWED_USERS: "tester@example.com,Tester,1"
+          NEXT_PUBLIC_GRAPHQL_PROXY_URL: http://localhost:3000/movies/api/graphql-proxy
           JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456
         run: |
           cd apps/movies-ui

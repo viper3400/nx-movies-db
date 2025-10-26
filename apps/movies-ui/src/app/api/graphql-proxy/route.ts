@@ -6,7 +6,7 @@ import { getAllowedSession } from "../../services/actions/getAllowedSession";
 const GRAPHQL_URL = process.env.GRAPHQL_URL!; // Yoga server endpoint
 
 export async function POST(req: Request) {
-  console.log("Graphql Proxy called")
+  console.log("Graphql Proxy called");
   const session = await getAllowedSession();
   if (!session?.eMail) {
     return new Response(

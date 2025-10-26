@@ -13,6 +13,12 @@ It’s structured for a modern full-stack web application using:
 
 Nx plugins manage most of the build, serve, and test logic.
 
+##  Context
+
+This repository contains a tool for managing private movie collections. It uses Prisma as the ORM to interact with a MySQL database. A Yoga GraphQL server provides the API consumed by a Next.js application. All database access occurs exclusively through GraphQL.
+
+User authentication in the Next.js app is handled via NextAuth, while the GraphQL API uses JWT bearer tokens for authentication.
+
 ---
 
 ## ⚙️ Nx Configuration Summary

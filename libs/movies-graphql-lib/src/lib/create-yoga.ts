@@ -8,7 +8,7 @@ export const yoga = createYoga({
     useJWT({
       signingKeyProviders: [createInlineSigningKeyProvider(process.env.JWT_SECRET as string)],
       tokenVerification: {
-        issuer: ["Online JWT Builder"],
+        issuer: ["movie-database"],
         algorithms: ["HS256"]
       },
       reject: {

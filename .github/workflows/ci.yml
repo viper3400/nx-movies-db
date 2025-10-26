@@ -166,6 +166,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: dummy
           # Optional: allowed users list format "email,name,id;..."
           ALLOWED_USERS: "tester@example.com,Tester,1"
+          JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456
         run: |
           cd apps/movies-ui
           NEXT_OUTPUT=server npx next build

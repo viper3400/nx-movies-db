@@ -44,6 +44,7 @@ GITHUB_SECRET=dummy \
 GOOGLE_CLIENT_ID=dummy \
 GOOGLE_CLIENT_SECRET=dummy \
 ALLOWED_USERS="tester@example.com,Tester,1" \
+JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456 \
 NEXT_OUTPUT=server \
 npx next build
 npx next start -p 3000

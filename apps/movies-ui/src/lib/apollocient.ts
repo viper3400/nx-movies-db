@@ -1,5 +1,5 @@
 import { InMemoryCache, ApolloClient, createHttpLink } from "@apollo/client";
-import { registerApolloClient } from "@apollo/experimental-nextjs-app-support";
+import { registerApolloClient } from "@apollo/client-integration-nextjs";
 import { headers } from "next/headers";
 
 // Point the client to your Next.js server-side proxy. This route should:

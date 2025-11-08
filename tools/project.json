@@ -16,6 +16,20 @@
         ]
       }
     },
+    "build-all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "commands": [
+          {
+            "command": "nx run movies-service:build"
+          },
+          {
+            "command": "nx run movies-ui:build"
+          }
+        ]
+      }
+    },
     "generate-docs": {
       "executor": "nx:run-commands",
       "options": {

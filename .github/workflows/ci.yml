@@ -39,7 +39,7 @@ jobs:
       - run: npx nx prisma-generate movies-prisma-lib --skip-nx-cache
 
       # Now run lint and build in parallel
-      - run: npx nx run-many -t lint build --skip-nx-cache --parallel
+      - run: npx nx run-many --all --parallel --skip-nx-cache --targets=lint,build
 
       # Now run shared-types tests
       - run: npx nx run shared-types:test --skip-nx-cache

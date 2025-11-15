@@ -16,7 +16,7 @@
     "@prisma/client": "^6.0.0",
     "@react-aria/i18n": "3.12.13",
     "@stackframe/stack": "^2.8.35",
-    "@storybook/addon-styling-webpack": "^2.0.0",
+    "@storybook/addon-styling-webpack": "^3.0.0",
     "@tailwindcss/postcss": "^4.1.11",
     "axios": "^1.6.0",
     "commander": "^14.0.0",

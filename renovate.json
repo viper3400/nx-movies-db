@@ -35,17 +35,25 @@
         "^@storybook/",
         "^@chromatic-com/storybook$"
       ],
-      "matchDepTypes": ["devDependencies"],
       "separateMajorMinor": true,
       "automerge": false,
-      "labels": ["deps", "storybook"]
+      "labels": [
+        "deps",
+        "storybook"
+      ]
     },
     {
       "description": "Pin MySQL Docker images to 8.x and block v9 upgrades",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["mysql"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "mysql"
+      ],
       "allowedVersions": "<9",
-      "matchManagers": ["docker-compose"]
+      "matchManagers": [
+        "docker-compose"
+      ]
     }
   ]
 }

@@ -33,7 +33,8 @@
       "matchPackagePatterns": [
         "^storybook$",
         "^@storybook/",
-        "^@chromatic-com/storybook$"
+        "^@chromatic-com/storybook$",
+        "eslint-plugin-storybook"
       ],
       "separateMajorMinor": true,
       "automerge": false,

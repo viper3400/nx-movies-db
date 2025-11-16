@@ -40,9 +40,7 @@
   "overrides": {
     "@react-aria/i18n": "3.12.13",
     "@internationalized/date": "3.10.0",
-    "lucide-react": "^0.553.0",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2"
+    "lucide-react": "^0.553.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

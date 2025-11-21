@@ -1,4 +1,4 @@
-FROM node:22 AS builder
+FROM node:24 AS builder
 
 # Set the working directory
 WORKDIR /staging
@@ -22,7 +22,7 @@ RUN npx nx build movies-service
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t movies-service`.
-FROM node:22
+FROM node:24
 
 #ENV HOST=0.0.0.0
 #ENV PORT=7100

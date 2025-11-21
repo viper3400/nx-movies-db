@@ -1,5 +1,5 @@
 # 1. Stage: Clone und Build
-FROM node:22
+FROM node:24
 
 # Setze das Arbeitsverzeichnis
 WORKDIR /staging

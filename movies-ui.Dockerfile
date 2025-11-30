@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
-
+	
 FROM node:24-alpine AS base
 
 # Install dependencies only when needed
@@ -9,11 +9,11 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY ./apps/movies-ui/.next/standalone/package*.json ./
+COPY ./package*.json ./
 RUN npm i
 COPY ./apps/movies-ui/.next/standalone/apps/movies-ui ./
 COPY ./apps/movies-ui/.next/static ./.next/static
-COPY ./apps/movies-ui/public ./.next/public
+COPY ./apps/movies-ui/public ./public
 
 # Production image, copy all the files and run next
 FROM base AS runner

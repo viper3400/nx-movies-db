@@ -1,52 +1,31 @@
 services:
   movies-service:
-    build:
-      context: "../"
-      dockerfile: "apps/movies-service/Dockerfile"
+    image: jaxx/movies-service:2025-11-21.1
     ports:
       - "7100:7100"
+    restart: always
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
-    # depends_on:
-    #   movies-service-db:
-    #     condition: service_healthy
   movies-ui:
-    build:
-      context: "../"
-      dockerfile: "apps/movies-ui/Dockerfile"
+    image: jaxx/movies-ui:2025-11-30.1
     ports:
       - "3000:3000"
+    volumes:
+      - /home/jan/videodb-images/production/coverpics:/media/coverimages
+    restart: always
     environment:
-      - NEXT_PUBLIC_GRAPHQL_URL=${NEXT_PUBLIC_GRAPHQL_URL}
+      - GRAPHQL_URL=${GRAPHQL_URL}
+      - ALLOWED_USERS=${ALLOWED_USERS}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GITHUB_ID=${GITHUB_ID}
+      - GITHUB_SECRET=${GITHUB_SECRET}
+      - APP_BASE_PATH=${APP_BASE_PATH}
+      - GRAPHQL_PROXY_URL=${GRAPHQL_PROXY_URL}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - movies-service
 
-  # movies-service-db:
-  #   platform: linux/x86_64
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-  #     - MYSQL_DATABASE=${MYSQL_DATABASE}
-  #   image: mysql:latest
-  #   ports:
-  #     - "7200:3306"
-  #   volumes:
-  #    - ./db:/var/lib/mysql
-  #    - ./../seed:/docker-entrypoint-initdb.d/  # Mount backup SQL file
-  #   user: mysql
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
-  #     interval: 10s   # Check every 10 seconds
-  #     timeout: 5s
-  #     retries: 5      # Retry up to 5 times before considering the service unhealthy
-  #     start_period: 30s  # Allow up to 30s for MySQL to initialize
-
-  # phpmyadmin:
-  #   depends_on:
-  #     movies-service-db:
-  #       condition: service_healthy
-  #   image: phpmyadmin/phpmyadmin
-  #   ports:
-  #     - "7300:80"
-  #   volumes:
-  #     - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php

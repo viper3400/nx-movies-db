@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 // 2) mint a short-lived API JWT, and
 // 3) forward to the Yoga GraphQL server with Authorization: Bearer <token>.
 // Optionally allow override via env in case you deploy the proxy elsewhere.
-const graphqlProxyUrl = process.env.NEXT_PUBLIC_GRAPHQL_PROXY_URL ?? "/api/graphql-proxy";
+const graphqlProxyUrl = process.env.GRAPHQL_PROXY_URL ?? "/api/graphql-proxy";
 
 const httpLink = createHttpLink({
   uri: graphqlProxyUrl,
@@ -31,6 +31,7 @@ const httpLink = createHttpLink({
 });
 
 export const { getClient } = registerApolloClient(() => {
+  console.log("proxy:", graphqlProxyUrl);
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: httpLink,

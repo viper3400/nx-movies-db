@@ -8,11 +8,12 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const nextAuthUrl = process.env.NEXTAUTH_URL; // runtime env on server
   return (
     <html lang="en">
       {/* let the page occupy the whole viewport */}
       <body className="min-h-screen">
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} nextAuthUrl={nextAuthUrl}>
           {/* ONE wrapper – full width always */}
           <div className="w-screen min-h-screen overflow-x-hidden">
             <NavbarComponent />

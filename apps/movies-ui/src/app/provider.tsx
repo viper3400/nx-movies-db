@@ -16,6 +16,7 @@ import { parseUserString } from "../lib/allowed-user-parser";
 export interface ProvidersProps {
   children: React.ReactNode;
   themeProps?: ThemeProviderProps;
+  nextAuthUrl?: string | null;
 }
 
 const testModeEnabled = process.env.NEXT_PUBLIC_TEST_MODE === "true";
@@ -41,7 +42,7 @@ if (testModeEnabled) {
   };
 }
 
-export function Providers({ children, themeProps }: ProvidersProps) {
+export function Providers({ children, themeProps, nextAuthUrl }: ProvidersProps) {
   const router = useRouter();
   const [isMounted, setIsMounted] = React.useState(false);
 
@@ -50,7 +51,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   }, []);
 
   return (
-    <SessionProvider basePath={process.env.NEXT_PUBLIC_NEXTAUTH_URL} session={stubSession ?? undefined}>
+    <SessionProvider basePath={nextAuthUrl ?? undefined} session={stubSession ?? undefined}>
       <I18nextProvider i18n={i18n}>
         <HeroUIProvider navigate={router.push}>
           <ToastProvider placement="top-center" />

@@ -157,8 +157,8 @@ jobs:
 
       - name: Build and start movies-ui (Next.js)
         env:
-          NEXT_PUBLIC_GRAPHQL_URL: http://127.0.0.1:7100/graphql
-          NEXT_PUBLIC_NEXTAUTH_URL: /api/auth
+          GRAPHQL_URL: http://127.0.0.1:7100/graphql
+          NEXTAUTH_URL: /api/auth
           NEXT_PUBLIC_TEST_MODE: "true"
           NEXT_PUBLIC_ALLOWED_USERS: "tester@example.com,Tester,1"
           TEST_MODE: "true"
@@ -169,7 +169,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: dummy
           # Optional: allowed users list format "email,name,id;..."
           ALLOWED_USERS: "tester@example.com,Tester,1"
-          NEXT_PUBLIC_GRAPHQL_PROXY_URL: http://localhost:3000/movies/api/graphql-proxy
+          GRAPHQL_PROXY_URL: http://localhost:3000/movies/api/graphql-proxy
           JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456
         run: |
           cd apps/movies-ui

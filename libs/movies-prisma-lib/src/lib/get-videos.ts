@@ -1,9 +1,7 @@
 // videoQueries.ts
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@nx-movies-db/movies-prisma-lib";
 import { Video, VideoQueryArgs } from "../types";
 import { buildWhereClause } from "../helpers";
-
-const prisma = new PrismaClient();
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const { queryPlot, queryUserSettings, randomOrder, take, skip } = args;

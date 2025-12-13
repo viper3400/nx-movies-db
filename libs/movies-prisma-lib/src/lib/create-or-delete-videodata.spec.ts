@@ -1,9 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@nx-movies-db/movies-prisma-lib";
 import { upsertVideoData } from "./create-or-update-videodata";
 import { deleteVideoData } from "./delete-videodata";
-
-const prisma = new PrismaClient();
-
 describe("createOrDeleteVideoData integration tests", () => {
   let testVideoId: number;
 

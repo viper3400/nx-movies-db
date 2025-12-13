@@ -1,7 +1,5 @@
 // videoQueries.ts
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@nx-movies-db/movies-prisma-lib";
 
 export type VideoSeenDateArgs = {
   movieId: number;

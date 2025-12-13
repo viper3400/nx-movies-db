@@ -1,7 +1,5 @@
-import { PrismaClient, videodb_videodata } from "@prisma/client";
-
-
-const prisma = new PrismaClient();
+import { videodb_videodata } from "@prisma/client";
+import { prisma } from "@nx-movies-db/movies-prisma-lib";
 
 export type VideoDataInput = Partial<Omit<videodb_videodata, "id">> & { id?: number };
 

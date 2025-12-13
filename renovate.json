@@ -1,60 +1,44 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "packageRules": [
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "matchDepTypes": [
-        "devDependencies"
-      ],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
     },
     {
       "groupName": "g: graphql-apollo",
-      "matchPackagePatterns": [
-        "^@apollo/",
-        "^graphql$",
-        "^graphql-",
-        "^@graphql-",
-        "^@pothos/",
-        "^graphql-yoga$",
-        "^graphql-scalars$"
+      "matchPackageNames": [
+        "/^@apollo//",
+        "/^graphql$/",
+        "/^graphql-/",
+        "/^@graphql-/",
+        "/^@pothos//",
+        "/^graphql-yoga$/",
+        "/^graphql-scalars$/"
       ]
     },
     {
       "groupName": "g: storybook",
-      "matchPackagePatterns": [
-        "^storybook$",
-        "^@storybook/",
-        "^@chromatic-com/storybook$",
-        "eslint-plugin-storybook"
-      ],
       "separateMajorMinor": true,
       "automerge": false,
-      "labels": [
-        "deps",
-        "storybook"
+      "labels": ["deps", "storybook"],
+      "matchPackageNames": [
+        "/^storybook$/",
+        "/^@storybook//",
+        "/^@chromatic-com/storybook$/",
+        "/eslint-plugin-storybook/"
       ]
     },
     {
       "description": "Pin MySQL Docker images to 8.x and block v9 upgrades",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "mysql"
-      ],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mysql"],
       "allowedVersions": "<9",
-      "matchManagers": [
-        "docker-compose"
-      ]
+      "matchManagers": ["docker-compose"]
     }
   ]
 }

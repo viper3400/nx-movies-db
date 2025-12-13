@@ -1,10 +1,26 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchDepTypes": ["devDependencies"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackagePatterns": [
+        "^jaxx\\/.*$"
+      ],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchDepTypes": [
+        "devDependencies"
+      ],
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
@@ -25,7 +41,10 @@
       "groupName": "g: storybook",
       "separateMajorMinor": true,
       "automerge": false,
-      "labels": ["deps", "storybook"],
+      "labels": [
+        "deps",
+        "storybook"
+      ],
       "matchPackageNames": [
         "/^storybook$/",
         "/^@storybook//",
@@ -35,10 +54,16 @@
     },
     {
       "description": "Pin MySQL Docker images to 8.x and block v9 upgrades",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["mysql"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "mysql"
+      ],
       "allowedVersions": "<9",
-      "matchManagers": ["docker-compose"]
+      "matchManagers": [
+        "docker-compose"
+      ]
     }
   ]
 }

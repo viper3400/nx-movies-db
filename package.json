@@ -21,7 +21,7 @@
     "commander": "^14.0.0",
     "cors": "^2.8.5",
     "express": "~5.1.0",
-    "framer-motion": "^12.23.6",
+    "motion": "^12.23.6",
     "graphql": "^16.9.0",
     "graphql-scalars": "^1.24.2",
     "graphql-yoga": "^5.10.3",

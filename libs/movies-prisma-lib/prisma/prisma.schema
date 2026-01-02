@@ -9,6 +9,8 @@ datasource db {
 
 generator pothos {
   provider = "prisma-pothos-types"
+  output       = "../../movies-graphql-lib/src/lib/graphql/pothos-prisma-types.ts"
+  clientOutput  = "../../../../movies-prisma-lib/src/generated" // relative to the generated file
 }
 
 model homewebbridge_inventory {

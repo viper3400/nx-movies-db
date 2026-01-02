@@ -1,7 +1,8 @@
 import SchemaBuilder from "@pothos/core";
 import PrismaPlugin from "@pothos/plugin-prisma";
 import SimpleObjectsPlugin from "@pothos/plugin-simple-objects";
-import type PrismaTypes from "@pothos/plugin-prisma/generated";
+import type PrismaTypes from "./pothos-prisma-types";
+import { getDatamodel } from "./pothos-prisma-types";
 import { prisma } from "@nx-movies-db/movies-prisma-lib";
 import { DateTimeResolver, BigIntResolver } from "graphql-scalars";
 import { GraphQLScalarType } from "graphql";
@@ -18,6 +19,7 @@ export const builder = new SchemaBuilder<{
   plugins: [PrismaPlugin, SimpleObjectsPlugin],
   prisma: {
     client: prisma,
+    dmmf: getDatamodel()
   },
 });
 builder.addScalarType(

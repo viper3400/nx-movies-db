@@ -1,7 +1,19 @@
 "use client";
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@heroui/navbar";
-import { Avatar, Button, Divider, Link, Spacer, User } from "@heroui/react";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+  Avatar,
+  Button,
+  Divider,
+  Link,
+  Spacer,
+  User
+} from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
 import { SceneLogo } from "../icons/icons";
 import { useState } from "react";

@@ -147,7 +147,7 @@ jobs:
           DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
           DATABASE_HOST: 127.0.0.1
           DATABASE_USER: root
-          DATABASE_PASSWORD: abh3kJOl3sI2hGnaH7dj
+          DATABASE_PASSWORD: password
           DATABASE_PORT: 7200
           DATABASE_NAME: videodb
           JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456

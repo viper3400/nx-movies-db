@@ -1,4 +1,4 @@
-import { prisma } from "@nx-movies-db/movies-prisma-lib";
+import { prisma } from "../prismaclient";
 
 export const getMediaTypes = async () => {
   const mediaTypes = await prisma.videodb_mediatypes.findMany({

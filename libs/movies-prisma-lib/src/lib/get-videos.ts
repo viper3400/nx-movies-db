@@ -1,5 +1,5 @@
 // videoQueries.ts
-import { prisma } from "@nx-movies-db/movies-prisma-lib";
+import { prisma } from "../prismaclient";
 import { Video, VideoQueryArgs } from "../types";
 import { buildWhereClause } from "../helpers";
 

@@ -1,4 +1,4 @@
-import { prisma } from "@nx-movies-db/movies-prisma-lib";
+import { prisma } from "../prismaclient";
 import { upsertVideoData } from "./create-or-update-videodata";
 import { deleteVideoData } from "./delete-videodata";
 describe("createOrDeleteVideoData integration tests", () => {

@@ -1,4 +1,4 @@
-import { prisma } from "@nx-movies-db/movies-prisma-lib";
+import { prisma } from "../prismaclient";
 
 type VideoData = Awaited<ReturnType<typeof prisma.videodb_videodata.create>>;
 type VideoDataCreateArgs = Parameters<typeof prisma.videodb_videodata.create>[0];

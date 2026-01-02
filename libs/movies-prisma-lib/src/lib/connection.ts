@@ -1,4 +1,4 @@
-import { prisma } from "@nx-movies-db/movies-prisma-lib";
+import { prisma } from "../prismaclient";
 
 async function main() {
   // ... you will write your Prisma Client queries here

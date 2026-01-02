@@ -1,4 +1,4 @@
-import { prisma } from "@nx-movies-db/movies-prisma-lib";
+import { prisma } from "../prismaclient";
 import { createOrUpdateUserFlag } from "./create-or-update-user-flags";
 
 describe("createOrUpdateUserFlag integration tests", () => {

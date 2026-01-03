@@ -46,7 +46,8 @@ const mariadbProbe = async () => {
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
-    connectTimeout: 5000
+    connectTimeout: 5000,
+    allowPublicKeyRetrieval: true
   });
   try {
     await connection.query("SELECT 1 as ping");

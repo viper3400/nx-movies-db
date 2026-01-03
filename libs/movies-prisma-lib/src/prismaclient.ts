@@ -7,6 +7,7 @@ const connectionConfig = {
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   port: parseInt(process.env.DATABASE_PORT || "3306", 10),
+  allowPublicKeyRetrieval: true
 };
 
 if (!connectionConfig.host) {

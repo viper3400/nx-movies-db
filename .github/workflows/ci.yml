@@ -105,6 +105,10 @@ jobs:
           done
           if [ "$STATUS" != "healthy" ]; then
             echo "DB did not become healthy in time"; docker logs "$CID"; exit 1; fi
+          echo "Dumping initial DB state for debugging..."
+          docker exec "$CID" mysql -uroot -ppassword -e "SELECT COUNT(*) AS usersettings_rows FROM videodb.homewebbridge_usermoviesettings;"
+          docker exec "$CID" mysql -uroot -ppassword -e "SELECT COUNT(*) AS inventory_rows FROM videodb.homewebbridge_inventory;"
+          docker exec "$CID" mysql -uroot -ppassword -e "SHOW TABLES FROM videodb;"
 
       - name: Run movies-prisma-lib tests (against DB)
         env:
@@ -115,6 +119,7 @@ jobs:
           DATABASE_PASSWORD: password
           DATABASE_PORT: 7200
           DATABASE_NAME: videodb
+          DEBUG: prisma:client
         run: |
           npx nx run movies-prisma-lib:test --skip-nx-cache
 

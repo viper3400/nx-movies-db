@@ -1,8 +1,8 @@
 // libs/movies-prisma-lib/jest.setup.ts
 import * as dotenv from "dotenv";
 import { beforeAll, afterAll } from "@jest/globals";
-import net from "node:net";
-import mariadb from "mariadb";
+import * as net from "node:net";
+import * as mariadb from "mariadb";
 import { prisma } from "./src/prismaclient";
 
 dotenv.config({

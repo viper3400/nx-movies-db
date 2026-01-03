@@ -110,7 +110,7 @@ jobs:
         env:
           # Use host networking from the runner. Port 7200 is mapped by compose.
           DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
-          DATABASE_HOST: movies-service-db
+          DATABASE_HOST: 127.0.0.1
           DATABASE_USER: root
           DATABASE_PASSWORD: password
           DATABASE_PORT: 7200

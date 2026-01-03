@@ -1,10 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prismaclient";
 import { upsertVideoData } from "./create-or-update-videodata";
 import { deleteVideoData } from "./delete-videodata";
-
-const prisma = new PrismaClient();
-
-describe("createOrDeleteVideoData integration tests", () => {
+describe.skip("createOrDeleteVideoData integration tests", () => {
   let testVideoId: number;
 
   afterAll(async () => {

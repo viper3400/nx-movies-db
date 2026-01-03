@@ -1,10 +1,9 @@
 services:
   movies-service-db:
-    platform: linux/x86_64
     image: mysql:8.4
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-videodb}
     ports:
       - "7200:3306"
     # Use a named volume in CI to avoid host permission issues
@@ -20,4 +19,3 @@ services:
 
 volumes:
   dbdata:
-

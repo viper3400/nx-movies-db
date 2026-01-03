@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "prisma-generate": "prisma generate --schema prisma/prisma.schema",
     "prisma-format": "prisma format --schema prisma/prisma.schema"

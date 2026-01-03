@@ -2,7 +2,6 @@ import { VideoDbVideoData } from "./videodata";
 import { builder } from "../builder";
 import { upsertVideoData } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoDataInput } from "@nx-movies-db/movies-prisma-lib";
-import type { Prisma } from "@prisma/client";
 
 builder.mutationField("upsertVideoData", (t) =>
   t.prismaField({
@@ -48,7 +47,7 @@ builder.mutationField("upsertVideoData", (t) =>
       _root,
       args,
       _ctx
-    ): Promise<Prisma.videodb_videodataGetPayload<object>> => {
+    ): Promise<Awaited<ReturnType<typeof upsertVideoData>>> => {
       // Parse ISO-8601 date strings into Date objects
       /*       const filedate = args.filedate ? new Date(Date.parse(args.filedate)) : undefined;
       const lastupdate = args.lastupdate ? new Date(Date.parse(args.lastupdate)) : undefined;

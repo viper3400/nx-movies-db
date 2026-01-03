@@ -3,7 +3,7 @@ export default {
   displayName: 'movies-prisma-lib',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
-  setupFiles: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },

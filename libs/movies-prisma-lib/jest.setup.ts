@@ -1,5 +1,6 @@
 // libs/movies-prisma-lib/jest.setup.ts
 import * as dotenv from "dotenv";
+import { beforeAll, afterAll } from "@jest/globals";
 import { prisma } from "./src/prismaclient";
 
 dotenv.config({

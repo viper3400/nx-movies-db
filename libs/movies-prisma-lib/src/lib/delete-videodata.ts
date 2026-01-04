@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prismaclient";
 import { Video } from "../types";
-
-const prisma = new PrismaClient();
 
 /**
  * Delete a videodb_videodata record by its ID.

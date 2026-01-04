@@ -1,5 +1,5 @@
 import { createUserSeenEntry, deleteUserSeenEntry, getSeenDates } from ".";
-import prisma from "./prisma-client";
+import { prisma } from "../prismaclient";
 
 describe("create seen date", () => {
   it("should create & delete seen date for a user in a viewgroup at a given date", async () => {

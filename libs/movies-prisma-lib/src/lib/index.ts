@@ -10,6 +10,5 @@ export * from "./get-seen-list";
 export * from "./get-user-flags";
 export * from "./get-videos";
 export * from "./movies-prisma-lib";
-export * from "./pothos-client";
 export * from "./prisma-client";
 export * from "./prisma-lib";

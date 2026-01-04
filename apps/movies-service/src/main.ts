@@ -11,6 +11,14 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const app = express();
 const PORT = parseInt(accessEnv("PORT", "7100"), 10);
 
+console.log({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  pass: process.env.DATABASE_PASSWORD ? "SET" : "EMPTY",
+  port: process.env.DATABASE_PORT,
+  database: process.env.DATABASE_NAME
+});
+
 app.use(bodyParser.json());
 
 app.use(

@@ -14,11 +14,6 @@ if (!connectionConfig.host) {
   throw new Error("DATABASE_HOST is not defined – Prisma client cannot start.");
 }
 
-console.log("[PRISMA CLIENT]", {
-  ...connectionConfig,
-  password: connectionConfig.password ? "***" : undefined,
-});
-
 const adapter = new PrismaMariaDb(connectionConfig, {
   database: connectionConfig.database,
   onConnectionError: (err) => {

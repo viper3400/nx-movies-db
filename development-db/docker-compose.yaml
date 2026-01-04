@@ -22,7 +22,7 @@ services:
     depends_on:
       movies-service-db:
         condition: service_healthy
-    image: arm64v8/phpmyadmin:5.2.1-apache
+    image: arm64v8/phpmyadmin:5.2.3-apache
     ports:
       - "7300:80"
     environment:

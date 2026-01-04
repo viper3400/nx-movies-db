@@ -44,7 +44,7 @@ GITHUB_SECRET=dummy \
 GOOGLE_CLIENT_ID=dummy \
 GOOGLE_CLIENT_SECRET=dummy \
 ALLOWED_USERS="tester@example.com,Tester,1" \
-JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456 \
+JWT_SECRET=qwertyuiopasdfghjklzxcvbnm123456 \
 NEXT_PUBLIC_GRAPHQL_PROXY_URL=http://localhost:3000/movies/api/graphql-proxy \
 NEXT_OUTPUT=server \
 npx next build

@@ -1,4 +1,4 @@
-import prisma from "./prisma-client";
+import { prisma } from "../prismaclient";
 
 export const deleteUserSeenEntry = async (args: {
   movieId: number;

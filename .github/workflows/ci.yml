@@ -87,6 +87,11 @@ jobs:
         env:
           MYSQL_DATABASE: videodb
           MYSQL_ROOT_PASSWORD: password
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_USER: root
+          DATABASE_PASSWORD: password
+          DATABASE_PORT: 7200
+          DATABASE_NAME: videodb
         run: |
           docker compose -f development-db/docker-compose.ci.yaml up -d movies-service-db
           # Wait for MySQL to be healthy
@@ -100,11 +105,21 @@ jobs:
           done
           if [ "$STATUS" != "healthy" ]; then
             echo "DB did not become healthy in time"; docker logs "$CID"; exit 1; fi
+          echo "Dumping initial DB state for debugging..."
+          docker exec "$CID" mysql -uroot -ppassword -e "SELECT COUNT(*) AS usersettings_rows FROM videodb.homewebbridge_usermoviesettings;"
+          docker exec "$CID" mysql -uroot -ppassword -e "SELECT COUNT(*) AS inventory_rows FROM videodb.homewebbridge_inventory;"
+          docker exec "$CID" mysql -uroot -ppassword -e "SHOW TABLES FROM videodb;"
 
       - name: Run movies-prisma-lib tests (against DB)
         env:
           # Use host networking from the runner. Port 7200 is mapped by compose.
           DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_USER: root
+          DATABASE_PASSWORD: password
+          DATABASE_PORT: 7200
+          DATABASE_NAME: videodb
+          DEBUG: prisma:client
         run: |
           npx nx run movies-prisma-lib:test --skip-nx-cache
 
@@ -145,6 +160,11 @@ jobs:
       - name: Build and start movies-service (GraphQL)
         env:
           DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
+          DATABASE_HOST: 127.0.0.1
+          DATABASE_USER: root
+          DATABASE_PASSWORD: password
+          DATABASE_PORT: 7200
+          DATABASE_NAME: videodb
           JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456
           PORT: 7100
         run: |

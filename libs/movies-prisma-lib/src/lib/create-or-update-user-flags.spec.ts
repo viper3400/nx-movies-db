@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prismaclient";
 import { createOrUpdateUserFlag } from "./create-or-update-user-flags";
-
-const prisma = new PrismaClient();
 
 describe("createOrUpdateUserFlag integration tests", () => {
   beforeAll(async () => {

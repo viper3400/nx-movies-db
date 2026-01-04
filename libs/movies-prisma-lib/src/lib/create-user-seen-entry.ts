@@ -1,4 +1,4 @@
-import prisma from "./prisma-client";
+import { prisma } from "../prismaclient";
 
 export const createUserSeenEntry = async (args: {
   movieId: number;

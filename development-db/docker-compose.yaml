@@ -16,14 +16,18 @@ services:
       interval: 10s   # Check every 10 seconds
       timeout: 5s
       retries: 5      # Retry up to 5 times before considering the service unhealthy
-      start_period: 30s  # Allow up to 30s for MySQL to initialize
+      start_period: 50s  # Allow up to 30s for MySQL to initialize
 
   phpmyadmin:
     depends_on:
       movies-service-db:
         condition: service_healthy
-    image: phpmyadmin/phpmyadmin
+    image: arm64v8/phpmyadmin:5.2.1-apache
     ports:
       - "7300:80"
+    environment:
+      PMA_HOST: movies-service-db
+      PMA_PORT: 3306
+      PHP_OPCACHE_ENABLE: 0
     volumes:
       - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php

@@ -1,7 +1,7 @@
 import { prisma } from "../prismaclient";
 import { upsertVideoData } from "./create-or-update-videodata";
 import { deleteVideoData } from "./delete-videodata";
-describe.skip("createOrDeleteVideoData integration tests", () => {
+describe("createOrDeleteVideoData integration tests", () => {
   let testVideoId: number;
 
   afterAll(async () => {

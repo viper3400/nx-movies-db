@@ -86,6 +86,14 @@ const Example: React.FC<{
 const meta: Meta<typeof Example> = {
   component: Example,
   title: "Forms/EditableFormWrapper",
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "EditableFormWrapper manages editable vs read-only form states, tracks value changes, and provides consistent Save/Discard actions. It is designed for forms that need inline editing with optional framing and configurable action placement.",
+      },
+    },
+  },
   args: {
     initialValues: defaultValues,
     readOnly: false,

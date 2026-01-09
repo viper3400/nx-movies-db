@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Input,
   Textarea,
   DatePicker,
   DateValue,
   Spacer,
+  Select,
+  SelectItem,
 } from "@heroui/react";
+import { parseDate } from "@internationalized/date";
 import { VideoData } from "@nx-movies-db/shared-types";
+import type { Selection } from "@react-types/shared";
 
 // Re-exported value type used by consumers
 export type UpsertVideoDataFormValues = VideoData;
@@ -20,12 +24,21 @@ interface UpsertVideoDataFormProps {
   readOnlyFields?: Partial<Record<keyof VideoData, boolean>>;
   inputVariant?: "flat" | "bordered" | "underlined" | "faded";
   className?: string;
+  mediaTypeOptions?: Array<{ label: string; value: string }>;
+  ownerOptions?: Array<{ label: string; value: string }>;
+  genreOptions?: Array<{ label: string; value: string }>;
 }
 
 function dateValueToJS(dateValue: DateValue | null): Date | null {
   if (!dateValue) return null;
   const { year, month, day } = dateValue;
   return new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+}
+
+function dateToDateValue(date: Date | null | undefined): DateValue | null {
+  if (!date) return null;
+  const isoDate = date.toISOString().split("T")[0];
+  return parseDate(isoDate);
 }
 
 export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
@@ -35,10 +48,19 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   readOnlyFields,
   inputVariant = "underlined",
   className,
+  mediaTypeOptions = [],
+  ownerOptions = [],
+  genreOptions = [],
 }) => {
   const [filedateValue, setFiledateValue] = useState<DateValue | null>(null);
   const [lastupdateValue, setLastupdateValue] = useState<DateValue | null>(null);
   const [createdValue, setCreatedValue] = useState<DateValue | null>(null);
+
+  useEffect(() => {
+    setFiledateValue(dateToDateValue(values.filedate ?? null));
+    setLastupdateValue(dateToDateValue(values.lastupdate ?? null));
+    setCreatedValue(dateToDateValue(values.created ?? null));
+  }, [values.filedate, values.lastupdate, values.created]);
 
   const set = (patch: Partial<VideoData>) =>
     onChange({ ...values, ...patch });
@@ -286,15 +308,26 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
           showMonthAndYearPickers
         />
 
-        <Input
+        <Select
           label="Media Type"
-          type="number"
-          value={values.mediatype?.toString() ?? ""}
-          onChange={(e) => set({ mediatype: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("mediatype")}
+          selectedKeys={
+            values.mediatype != null ? new Set([values.mediatype.toString()]) : new Set<string>()
+          }
+          onSelectionChange={(selection: Selection) => {
+            if (selection === "all") return;
+            const key = Array.from(selection)[0];
+            set({ mediatype: key ? Number(key) : null });
+          }}
+          isDisabled={ro("mediatype")}
           variant={inputVariant}
           size="lg"
-        />
+        >
+          {mediaTypeOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </Select>
 
         <Input
           label="Custom 1"
@@ -342,15 +375,53 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
           showMonthAndYearPickers
         />
 
-        <Input
-          label="Owner ID"
-          type="number"
-          value={values.owner_id?.toString() ?? ""}
-          onChange={(e) => set({ owner_id: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("owner_id")}
+        <Select
+          label="Owner"
+          selectedKeys={
+            values.owner_id != null ? new Set([values.owner_id.toString()]) : new Set<string>()
+          }
+          onSelectionChange={(selection: Selection) => {
+            if (selection === "all") return;
+            const key = Array.from(selection)[0];
+            set({ owner_id: key ? Number(key) : null });
+          }}
+          isDisabled={ro("owner_id")}
           variant={inputVariant}
           size="lg"
-        />
+        >
+          {ownerOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </Select>
+
+        <Select
+          label="Genres"
+          selectionMode="multiple"
+          selectedKeys={
+            values.genreIds && values.genreIds.length > 0
+              ? new Set(values.genreIds.map((id) => id.toString()))
+              : new Set<string>()
+          }
+          onSelectionChange={(selection: Selection) => {
+            if (selection === "all") {
+              set({ genreIds: genreOptions.map((option) => Number(option.value)) });
+              return;
+            }
+            const keys = Array.from(selection).map((key) => Number(key));
+            set({ genreIds: keys });
+          }}
+          isDisabled={ro("genreIds")}
+          variant={inputVariant}
+          size="lg"
+        >
+          {genreOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </Select>
       </div>
       <Spacer y={4} />
     </div>

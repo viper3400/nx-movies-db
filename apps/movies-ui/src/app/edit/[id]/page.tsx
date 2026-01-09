@@ -1,28 +1,13 @@
 import { UpsertVideoForm } from "../../../components/upsert-video-form";
 import { getAllowedSession } from "../../services/actions/getAllowedSession";
 import { SignInFirstComponent } from "../../../components/sign-in-first";
-import { getMoviesById } from "../../services/actions/getMoviesById";
+import { getVideoData } from "../../services/actions";
 import type { VideoData } from "@nx-movies-db/shared-types";
 
 async function getInitialValues(id: string): Promise<VideoData | undefined> {
   try {
-    const res = await getMoviesById(id, "INCLUDE_DELETED");
-    const m = res?.videos[0];
-    if (!m) return undefined;
-    // Map what we have; remaining fields will use defaults in CreateVideoForm
-    const values: VideoData = {
-      id: Number(id),
-      title: m.title ?? "",
-      subtitle: m.subtitle ?? "",
-      diskid: m.diskid ?? "",
-      plot: m.plot ?? "",
-      year: null,
-      istv: null,
-      lastupdate: null,
-      mediatype: null,
-      owner_id: null
-    };
-    return values;
+    const video = await getVideoData(Number(id));
+    return video;
   } catch (_e) {
     return undefined;
   }

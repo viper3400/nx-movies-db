@@ -323,7 +323,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
           size="lg"
         >
           {mediaTypeOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem key={option.value} id={option.value}>
               {option.label}
             </SelectItem>
           ))}
@@ -390,7 +390,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
           size="lg"
         >
           {ownerOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem key={option.value} id={option.value}>
               {option.label}
             </SelectItem>
           ))}
@@ -417,7 +417,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
           size="lg"
         >
           {genreOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem key={option.value} id={option.value}>
               {option.label}
             </SelectItem>
           ))}

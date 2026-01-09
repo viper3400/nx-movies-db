@@ -1,7 +1,5 @@
 import { builder } from "../builder";
 
-
-
 export const VideoDbVideoData = builder.prismaObject("videodb_videodata", {
   fields: (t) => ({
     id: t.exposeInt("id"),
@@ -52,5 +50,7 @@ export const VideoDbVideoData = builder.prismaObject("videodb_videodata", {
       resolve: p => p.created,
     }),
     owner_id: t.exposeInt("owner_id"),
+    videodb_mediatypes: t.relation("videodb_mediatypes"),
+    videodb_videogenre: t.relation("videodb_videogenre"),
   }),
 });

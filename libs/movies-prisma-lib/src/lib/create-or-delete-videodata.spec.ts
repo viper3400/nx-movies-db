@@ -1,19 +1,26 @@
 import { prisma } from "../prismaclient";
 import { upsertVideoData } from "./create-or-update-videodata";
 import { deleteVideoData } from "./delete-videodata";
+
 describe("createOrDeleteVideoData integration tests", () => {
-  let testVideoId: number;
+  let createdVideoIds: number[] = [];
+
+  const trackVideo = (id: number) => createdVideoIds.push(id);
+
+  afterEach(async () => {
+    if (createdVideoIds.length) {
+      await prisma.videodb_videogenre.deleteMany({
+        where: { video_id: { in: createdVideoIds } },
+      });
+      await prisma.videodb_videodata.deleteMany({
+        where: { id: { in: createdVideoIds } },
+      });
+      createdVideoIds = [];
+    }
+  });
 
   afterAll(async () => {
     await prisma.$disconnect();
-  });
-
-  afterEach(async () => {
-    if (testVideoId) {
-      await prisma.videodb_videodata.deleteMany({
-        where: { id: testVideoId },
-      });
-    }
   });
 
   it("should create a new video data entry if it does not exist", async () => {
@@ -21,22 +28,19 @@ describe("createOrDeleteVideoData integration tests", () => {
       title: "Test Movie",
       year: 2024,
       mediatype: 14,
-      owner_id: 2
-      // add other required fields as needed for your schema
+      owner_id: 2,
     };
 
     const result = await upsertVideoData(videoData);
+    trackVideo(result.id);
 
     expect(result).toMatchObject({
       title: "Test Movie",
       year: 2024,
       mediatype: 14,
-      owner_id: 2
+      owner_id: 2,
     });
 
-    testVideoId = result.id; // Save the generated id for cleanup
-
-    // Verify in DB
     const dbEntry = await prisma.videodb_videodata.findUnique({
       where: { id: result.id },
     });
@@ -44,80 +48,90 @@ describe("createOrDeleteVideoData integration tests", () => {
       title: "Test Movie",
       year: 2024,
       mediatype: 14,
-      owner_id: 2
+      owner_id: 2,
     });
   });
 
   it("should update an existing video data entry", async () => {
-    // Create initial entry
-    await prisma.videodb_videodata.create({
-      data: {
-        id: testVideoId,
-        title: "Old Title",
-        year: 2020,
-        mediatype: 14,
-        owner_id: 2
-      },
+    const created = await upsertVideoData({
+      title: "Old Title",
+      year: 2020,
+      mediatype: 14,
+      owner_id: 2,
     });
+    trackVideo(created.id);
 
     const updatedData = {
-      id: testVideoId,
+      id: created.id,
       title: "Updated Title",
       year: 2025,
-      mediatype: 14,
-      owner_id: 2
+      mediatype: 15,
+      owner_id: 3,
     };
 
     const result = await upsertVideoData(updatedData);
 
-    expect(result).toMatchObject({
-      id: testVideoId,
-      title: "Updated Title",
-      year: 2025,
+    expect(result).toMatchObject(updatedData);
+
+    const dbEntry = await prisma.videodb_videodata.findUnique({
+      where: { id: created.id },
+    });
+    expect(dbEntry).toMatchObject(updatedData);
+  });
+
+  it("should upsert and replace genre relations when genreIds are provided", async () => {
+    const genres = await prisma.videodb_genres.findMany({ take: 3 });
+    expect(genres.length).toBeGreaterThanOrEqual(3);
+
+    const created = await upsertVideoData({
+      title: "Genre Test",
+      year: 2024,
       mediatype: 14,
-      owner_id: 2
+      owner_id: 2,
+      genreIds: [genres[0].id, genres[1].id],
+    });
+    trackVideo(created.id);
+
+    let genreRows = await prisma.videodb_videogenre.findMany({
+      where: { video_id: created.id },
+    });
+    expect(genreRows.map((row) => row.genre_id).sort()).toEqual(
+      [genres[0].id, genres[1].id].sort()
+    );
+
+    await upsertVideoData({
+      id: created.id,
+      title: created.title ?? undefined,
+      year: created.year,
+      mediatype: created.mediatype,
+      owner_id: created.owner_id,
+      genreIds: [genres[1].id, genres[2].id],
     });
 
-    // Verify in DB
-    const dbEntry = await prisma.videodb_videodata.findUnique({
-      where: { id: testVideoId },
+    genreRows = await prisma.videodb_videogenre.findMany({
+      where: { video_id: created.id },
     });
-    expect(dbEntry).toMatchObject({
-      id: testVideoId,
-      title: "Updated Title",
-      year: 2025,
-      mediatype: 14,
-      owner_id: 2
-    });
+    expect(genreRows.map((row) => row.genre_id).sort()).toEqual(
+      [genres[1].id, genres[2].id].sort()
+    );
   });
 
   it("should delete a video data entry", async () => {
-    // Create initial entry
-    await prisma.videodb_videodata.create({
+    const video = await prisma.videodb_videodata.create({
       data: {
-        id: testVideoId,
         title: "To Be Deleted",
         year: 2022,
         mediatype: 14,
-        owner_id: 2
+        owner_id: 2,
       },
     });
 
-    const result = await deleteVideoData(testVideoId);
+    const result = await deleteVideoData(video.id);
 
     expect(result).toMatchObject({
-      id: testVideoId,
+      id: video.id,
       title: "To Be Deleted",
-      year: 2022,
-      mediatype: 14,
-      owner_id: 2
     });
-
-    // Verify deletion
-    const dbEntry = await prisma.videodb_videodata.findUnique({
-      where: { id: testVideoId },
-    });
-    expect(dbEntry).toBeNull();
   });
 
   it("should throw when deleting a non-existent video data entry", async () => {

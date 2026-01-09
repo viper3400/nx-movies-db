@@ -5,4 +5,6 @@ export * from "./tv-series-mode";
 export * from "./video";
 export * from "./videodb-genres";
 export * from "./videodb-mediatypes";
+export * from "./videodb-users";
+export * from "./videodb-videogenre";
 export * from "./videos";

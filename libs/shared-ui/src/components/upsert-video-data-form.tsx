@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Input,
   Textarea,
@@ -14,7 +14,6 @@ import { parseDate } from "@internationalized/date";
 import { VideoData } from "@nx-movies-db/shared-types";
 import type { Selection } from "@react-types/shared";
 
-// Re-exported value type used by consumers
 export type UpsertVideoDataFormValues = VideoData;
 
 interface UpsertVideoDataFormProps {
@@ -37,8 +36,25 @@ function dateValueToJS(dateValue: DateValue | null): Date | null {
 
 function dateToDateValue(date: Date | null | undefined): DateValue | null {
   if (!date) return null;
-  const isoDate = date.toISOString().split("T")[0];
-  return parseDate(isoDate);
+  return parseDate(date.toISOString().split("T")[0]);
+}
+
+function useBufferedValue<T>(value: T, onCommit: (v: T) => void) {
+  const [local, setLocal] = React.useState<T>(value);
+  const lastValueRef = React.useRef(value);
+
+  React.useEffect(() => {
+    if (!Object.is(lastValueRef.current, value)) {
+      lastValueRef.current = value;
+      setLocal(value);
+    }
+  }, [value]);
+
+  return {
+    value: local,
+    setValue: setLocal,
+    commit: () => onCommit(local),
+  };
 }
 
 export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
@@ -52,374 +68,204 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   ownerOptions = [],
   genreOptions = [],
 }) => {
-  const [filedateValue, setFiledateValue] = useState<DateValue | null>(null);
-  const [lastupdateValue, setLastupdateValue] = useState<DateValue | null>(null);
-  const [createdValue, setCreatedValue] = useState<DateValue | null>(null);
-
-  useEffect(() => {
-    setFiledateValue(dateToDateValue(values.filedate ?? null));
-    setLastupdateValue(dateToDateValue(values.lastupdate ?? null));
-    setCreatedValue(dateToDateValue(values.created ?? null));
-  }, [values.filedate, values.lastupdate, values.created]);
-
   const set = (patch: Partial<VideoData>) =>
     onChange({ ...values, ...patch });
 
   const ro = (k: keyof VideoData) => readOnly || !!readOnlyFields?.[k];
 
+  const TextField = ({
+    k,
+    label,
+    type = "text",
+  }: {
+    k: keyof VideoData;
+    label: string;
+    type?: string;
+  }) => {
+    const { value, setValue, commit } = useBufferedValue(
+      (values[k] ?? "") as any,
+      (v) => set({ [k]: type === "number" && v !== "" ? Number(v) : v } as Partial<VideoData>)
+    );
+
+    return (
+      <Input
+        data-testid={`video-field-${String(k)}`}
+        label={label}
+        type={type}
+        value={value?.toString() ?? ""}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setValue(e.target.value)
+        }
+        onBlur={commit}
+        isDisabled={ro(k)}
+        variant={inputVariant}
+        size="lg"
+      />
+    );
+  };
+
+  const TextAreaField = ({
+    k,
+    label,
+    rows = 2,
+  }: {
+    k: keyof VideoData;
+    label: string;
+    rows?: number;
+  }) => {
+    const { value, setValue, commit } = useBufferedValue(
+      (values[k] ?? "") as any,
+      (v) => set({ [k]: v } as Partial<VideoData>)
+    );
+
+    return (
+      <Textarea
+        data-testid={`video-field-${String(k)}`}
+        label={label}
+        value={(value as string) ?? ""}
+        onChange={(e: React.ChangeEvent<any>) =>
+          setValue(e.target.value)
+        }
+        onBlur={commit}
+        isDisabled={ro(k)}
+        variant={inputVariant}
+        minRows={rows}
+      />
+    );
+  };
+
+  const DateField = ({ k, label }: { k: keyof VideoData; label: string }) => {
+    const memoizedValue = React.useMemo(
+      () => dateToDateValue(values[k] as Date | null),
+      [values[k]]
+    );
+    const { value, setValue, commit } = useBufferedValue<DateValue | null>(
+      memoizedValue,
+      (v) => set({ [k]: dateValueToJS(v) } as Partial<VideoData>)
+    );
+
+    return (
+      <DatePicker
+        data-testid={`video-field-${String(k)}`}
+        label={label}
+        value={value}
+        onChange={setValue}
+        onBlur={commit}
+        isDisabled={ro(k)}
+        granularity="day"
+        showMonthAndYearPickers
+        className="max-w-[284px]"
+      />
+    );
+  };
+
+  const SingleSelect = (
+    k: keyof VideoData,
+    label: string,
+    options: { label: string; value: string }[]
+  ) => (
+    <Select
+      data-testid={`video-field-${String(k)}`}
+      label={label}
+      selectedKeys={
+        values[k] != null ? new Set([String(values[k])]) : new Set<string>()
+      }
+      onSelectionChange={(selection: Selection) => {
+        if (selection === "all") return;
+        const key = Array.from(selection)[0];
+        set({ [k]: key ? Number(key) : null } as Partial<VideoData>);
+      }}
+      isDisabled={ro(k)}
+      variant={inputVariant}
+      size="lg"
+    >
+      {options.map((o) => (
+        <SelectItem key={o.value}>{o.label}</SelectItem>
+      ))}
+    </Select>
+  );
+
   return (
     <div className={className}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          label="ID"
-          type="number"
-          value={values.id?.toString() ?? ""}
-          onChange={(e) => set({ id: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("id")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="MD5"
-          value={values.md5 ?? ""}
-          onChange={(e) => set({ md5: e.target.value })}
-          isReadOnly={ro("md5")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="id" label="ID" type="number" />
+        <TextField k="md5" label="MD5" />
 
-        <Input
-          label="Title"
-          value={values.title ?? ""}
-          onChange={(e) => set({ title: e.target.value })}
-          isReadOnly={ro("title")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Subtitle"
-          value={values.subtitle ?? ""}
-          onChange={(e) => set({ subtitle: e.target.value })}
-          isReadOnly={ro("subtitle")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="title" label="Title" />
+        <TextField k="subtitle" label="Subtitle" />
 
-        <Input
-          label="Language"
-          value={values.language ?? ""}
-          onChange={(e) => set({ language: e.target.value })}
-          isReadOnly={ro("language")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Disk ID"
-          value={values.diskid ?? ""}
-          onChange={(e) => set({ diskid: e.target.value })}
-          isReadOnly={ro("diskid")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="language" label="Language" />
+        <TextField k="diskid" label="Disk ID" />
 
-        <Textarea
-          label="Comment"
-          value={values.comment ?? ""}
-          onChange={(e) => set({ comment: e.target.value })}
-          isReadOnly={ro("comment")}
-          variant={inputVariant}
-          minRows={2}
-        />
-        <Input
-          label="Disk Label"
-          value={values.disklabel ?? ""}
-          onChange={(e) => set({ disklabel: e.target.value })}
-          isReadOnly={ro("disklabel")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextAreaField k="comment" label="Comment" />
+        <TextField k="disklabel" label="Disk Label" />
 
-        <Input
-          label="IMDB ID"
-          value={values.imdbID ?? ""}
-          onChange={(e) => set({ imdbID: e.target.value })}
-          isReadOnly={ro("imdbID")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Year"
-          type="number"
-          value={values.year?.toString() ?? ""}
-          onChange={(e) => set({ year: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("year")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="imdbID" label="IMDB ID" />
+        <TextField k="year" label="Year" type="number" />
 
-        <Input
-          label="Image URL"
-          value={values.imgurl ?? ""}
-          onChange={(e) => set({ imgurl: e.target.value })}
-          isReadOnly={ro("imgurl")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Director"
-          value={values.director ?? ""}
-          onChange={(e) => set({ director: e.target.value })}
-          isReadOnly={ro("director")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="imgurl" label="Image URL" />
+        <TextField k="director" label="Director" />
 
-        <Textarea
-          label="Actors"
-          value={values.actors ?? ""}
-          onChange={(e) => set({ actors: e.target.value })}
-          isReadOnly={ro("actors")}
-          variant={inputVariant}
-          minRows={2}
-        />
-        <Input
-          label="Runtime (min)"
-          type="number"
-          value={values.runtime?.toString() ?? ""}
-          onChange={(e) => set({ runtime: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("runtime")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextAreaField k="actors" label="Actors" />
+        <TextField k="runtime" label="Runtime (min)" type="number" />
 
-        <Input
-          label="Country"
-          value={values.country ?? ""}
-          onChange={(e) => set({ country: e.target.value })}
-          isReadOnly={ro("country")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Textarea
-          label="Plot"
-          value={values.plot ?? ""}
-          onChange={(e) => set({ plot: e.target.value })}
-          isReadOnly={ro("plot")}
-          variant={inputVariant}
-          minRows={3}
-        />
+        <TextField k="country" label="Country" />
+        <TextAreaField k="plot" label="Plot" rows={3} />
 
-        <Input
-          label="Rating"
-          value={values.rating ?? ""}
-          onChange={(e) => set({ rating: e.target.value })}
-          isReadOnly={ro("rating")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Filename"
-          value={values.filename ?? ""}
-          onChange={(e) => set({ filename: e.target.value })}
-          isReadOnly={ro("filename")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="rating" label="Rating" />
+        <TextField k="filename" label="Filename" />
 
-        <Input
-          label="Filesize (bytes)"
-          type="number"
-          value={values.filesize?.toString() ?? ""}
-          onChange={(e) => set({ filesize: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("filesize")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="filesize" label="Filesize (bytes)" type="number" />
 
-        <DatePicker
-          label="File Date"
-          value={filedateValue}
-          onChange={(v) => {
-            setFiledateValue(v);
-            set({ filedate: dateValueToJS(v) });
-          }}
-          isReadOnly={ro("filedate")}
-          className="max-w-[284px]"
-          granularity="day"
-          showMonthAndYearPickers
-        />
+        <DateField k="filedate" label="File Date" />
 
-        <Input
-          label="Audio Codec"
-          value={values.audio_codec ?? ""}
-          onChange={(e) => set({ audio_codec: e.target.value })}
-          isReadOnly={ro("audio_codec")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Video Codec"
-          value={values.video_codec ?? ""}
-          onChange={(e) => set({ video_codec: e.target.value })}
-          isReadOnly={ro("video_codec")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="audio_codec" label="Audio Codec" />
+        <TextField k="video_codec" label="Video Codec" />
 
-        <Input
-          label="Video Width"
-          type="number"
-          value={values.video_width?.toString() ?? ""}
-          onChange={(e) => set({ video_width: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("video_width")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Video Height"
-          type="number"
-          value={values.video_height?.toString() ?? ""}
-          onChange={(e) => set({ video_height: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("video_height")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="video_width" label="Video Width" type="number" />
+        <TextField k="video_height" label="Video Height" type="number" />
 
-        <Input
-          label="Is TV (0/1)"
-          type="number"
-          value={values.istv?.toString() ?? ""}
-          onChange={(e) => set({ istv: e.target.value ? Number(e.target.value) : null })}
-          isReadOnly={ro("istv")}
-          variant={inputVariant}
-          size="lg"
-        />
+        <TextField k="istv" label="Is TV (0/1)" type="number" />
 
-        <DatePicker
-          label="Last Update"
-          value={lastupdateValue}
-          onChange={(v) => {
-            setLastupdateValue(v);
-            set({ lastupdate: dateValueToJS(v) });
-          }}
-          isReadOnly={ro("lastupdate")}
-          className="max-w-[284px]"
-          granularity="day"
-          showMonthAndYearPickers
-        />
+        <DateField k="lastupdate" label="Last Update" />
+
+        {SingleSelect("mediatype", "Media Type", mediaTypeOptions)}
+
+        <TextField k="custom1" label="Custom 1" />
+        <TextField k="custom2" label="Custom 2" />
+        <TextField k="custom3" label="Custom 3" />
+        <TextField k="custom4" label="Custom 4" />
+
+        <DateField k="created" label="Created" />
+
+        {SingleSelect("owner_id", "Owner", ownerOptions)}
 
         <Select
-          label="Media Type"
-          selectedKeys={
-            values.mediatype != null ? new Set([values.mediatype.toString()]) : new Set<string>()
-          }
-          onSelectionChange={(selection: Selection) => {
-            if (selection === "all") return;
-            const key = Array.from(selection)[0];
-            set({ mediatype: key ? Number(key) : null });
-          }}
-          isDisabled={ro("mediatype")}
-          variant={inputVariant}
-          size="lg"
-        >
-          {mediaTypeOptions.map((option) => (
-            <SelectItem key={option.value} id={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
-
-        <Input
-          label="Custom 1"
-          value={values.custom1 ?? ""}
-          onChange={(e) => set({ custom1: e.target.value })}
-          isReadOnly={ro("custom1")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Custom 2"
-          value={values.custom2 ?? ""}
-          onChange={(e) => set({ custom2: e.target.value })}
-          isReadOnly={ro("custom2")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Custom 3"
-          value={values.custom3 ?? ""}
-          onChange={(e) => set({ custom3: e.target.value })}
-          isReadOnly={ro("custom3")}
-          variant={inputVariant}
-          size="lg"
-        />
-        <Input
-          label="Custom 4"
-          value={values.custom4 ?? ""}
-          onChange={(e) => set({ custom4: e.target.value })}
-          isReadOnly={ro("custom4")}
-          variant={inputVariant}
-          size="lg"
-        />
-
-        <DatePicker
-          label="Created"
-          value={createdValue}
-          onChange={(v) => {
-            setCreatedValue(v);
-            set({ created: dateValueToJS(v) });
-          }}
-          isReadOnly={ro("created")}
-          className="max-w-[284px]"
-          granularity="day"
-          showMonthAndYearPickers
-        />
-
-        <Select
-          label="Owner"
-          selectedKeys={
-            values.owner_id != null ? new Set([values.owner_id.toString()]) : new Set<string>()
-          }
-          onSelectionChange={(selection: Selection) => {
-            if (selection === "all") return;
-            const key = Array.from(selection)[0];
-            set({ owner_id: key ? Number(key) : null });
-          }}
-          isDisabled={ro("owner_id")}
-          variant={inputVariant}
-          size="lg"
-        >
-          {ownerOptions.map((option) => (
-            <SelectItem key={option.value} id={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
-
-        <Select
+          data-testid="video-field-genres"
           label="Genres"
           selectionMode="multiple"
           selectedKeys={
-            values.genreIds && values.genreIds.length > 0
-              ? new Set(values.genreIds.map((id) => id.toString()))
+            values.genreIds?.length
+              ? new Set(values.genreIds.map(String))
               : new Set<string>()
           }
           onSelectionChange={(selection: Selection) => {
             if (selection === "all") {
-              set({ genreIds: genreOptions.map((option) => Number(option.value)) });
+              set({
+                genreIds: genreOptions.map((o) => Number(o.value)),
+              });
               return;
             }
-            const keys = Array.from(selection).map((key) => Number(key));
-            set({ genreIds: keys });
+            set({
+              genreIds: Array.from(selection).map((k) => Number(k)),
+            });
           }}
           isDisabled={ro("genreIds")}
           variant={inputVariant}
           size="lg"
         >
-          {genreOptions.map((option) => (
-            <SelectItem key={option.value} id={option.value}>
-              {option.label}
-            </SelectItem>
+          {genreOptions.map((o) => (
+            <SelectItem key={o.value}>{o.label}</SelectItem>
           ))}
         </Select>
       </div>

@@ -46,6 +46,7 @@ type UpsertVariables = Partial<{
   custom4: string;
   created: Date;
   owner_id: number;
+  genreIds: number[];
 }>;
 
 const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
@@ -82,7 +83,8 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
     $custom3: String,
     $custom4: String,
     $created: DateTime,
-    $owner_id: Int
+    $owner_id: Int,
+    $genreIds: [Int!]
   ) {
     upsertVideoData(
       id: $id,
@@ -117,7 +119,8 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
       custom3: $custom3,
       custom4: $custom4,
       created: $created,
-      owner_id: $owner_id
+      owner_id: $owner_id,
+      genreIds: $genreIds
     ) {
       id
       title

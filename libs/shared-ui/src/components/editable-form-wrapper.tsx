@@ -26,14 +26,6 @@ export interface EditableFormWrapperProps<T> {
   }) => React.ReactNode;
 }
 
-function isEqualDeep<T>(a: T, b: T): boolean {
-  try {
-    return JSON.stringify(a) === JSON.stringify(b);
-  } catch {
-    return a === b;
-  }
-}
-
 export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   const {
     initialValues,
@@ -52,13 +44,16 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   const [draftValues, setDraftValues] = useState<T>(initialValues);
   const [saving, setSaving] = useState(false);
 
+  const savedSnapshot = useMemo(() => JSON.stringify(savedValues), [savedValues]);
+  const draftSnapshot = useMemo(() => JSON.stringify(draftValues), [draftValues]);
+
   // Keep internal state in sync if external initialValues change
   useEffect(() => {
     setSavedValues(initialValues);
     setDraftValues(initialValues);
   }, [initialValues]);
 
-  const dirty = useMemo(() => !isEqualDeep(savedValues, draftValues), [savedValues, draftValues]);
+  const dirty = savedSnapshot !== draftSnapshot;
 
   const handleSave = async () => {
     if (saving || readOnly || !dirty) return;
@@ -77,31 +72,29 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
     onDiscard?.(savedValues);
   };
 
-  const Actions = (
-    <div className="flex gap-2 justify-end w-full">
-      <Button
-        color="default"
-        variant="flat"
-        onPress={handleDiscard}
-        isDisabled={!dirty || saving}
-      >
-        {discardLabel}
-      </Button>
-      <Button
-        color="primary"
-        onPress={handleSave}
-        isDisabled={!dirty || readOnly}
-        isLoading={saving}
-      >
-        {saveLabel}
-      </Button>
-    </div>
-  );
-
   const actionsTop =
     actionsPosition === "top" || actionsPosition === "both" ? (
       <>
-        {Actions}
+        <div className="flex gap-2 justify-end w-full">
+          <Button
+            color="default"
+            variant="flat"
+            onPress={handleDiscard}
+            isDisabled={!dirty || saving}
+            data-testid="editable-form-discard"
+          >
+            {discardLabel}
+          </Button>
+          <Button
+            color="primary"
+            onPress={handleSave}
+            isDisabled={!dirty || readOnly}
+            isLoading={saving}
+            data-testid="editable-form-save"
+          >
+            {saveLabel}
+          </Button>
+        </div>
         <Spacer y={2} />
       </>
     ) : null;
@@ -110,7 +103,26 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
     actionsPosition === "bottom" || actionsPosition === "both" ? (
       <>
         <Spacer y={2} />
-        {Actions}
+        <div className="flex gap-2 justify-end w-full">
+          <Button
+            color="default"
+            variant="flat"
+            onPress={handleDiscard}
+            isDisabled={!dirty || saving}
+            data-testid="editable-form-discard"
+          >
+            {discardLabel}
+          </Button>
+          <Button
+            color="primary"
+            onPress={handleSave}
+            isDisabled={!dirty || readOnly}
+            isLoading={saving}
+            data-testid="editable-form-save"
+          >
+            {saveLabel}
+          </Button>
+        </div>
       </>
     ) : null;
 
@@ -118,7 +130,7 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
 
   if (frame === "all") {
     return (
-      <Card shadow="sm" radius="lg" className={className}>
+      <Card shadow="sm" radius="lg" className={className} data-testid="editable-form-card">
         <CardBody>
           {actionsTop}
           {formContent}
@@ -129,10 +141,10 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   }
 
   return (
-    <div className={className}>
+    <div className={className} data-testid="editable-form-wrapper">
       {actionsTop}
       {frame === "content" ? (
-        <Card shadow="sm" radius="lg">
+        <Card shadow="sm" radius="lg" data-testid="editable-form-content-card">
           <CardBody>{formContent}</CardBody>
         </Card>
       ) : (

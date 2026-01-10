@@ -35,5 +35,5 @@ export type VideoData = {
   custom4?: string | null;
   created?: Date | null;
   owner_id: number | null;
+  genreIds?: number[] | null;
 };
-

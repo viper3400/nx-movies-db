@@ -48,6 +48,15 @@ export default [
       quotes: ["error", "double"],
       indent: ["error", 2],
       "unused-imports/no-unused-imports": "warn",
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector:
+            "JSXOpeningElement[name.name=/^(Input|Textarea)$/] JSXAttribute[name.name='onChange']",
+          message:
+            "HeroUI Input/Textarea must use onValueChange instead of onChange (composition bug).",
+        },
+      ],
     },
   },
 

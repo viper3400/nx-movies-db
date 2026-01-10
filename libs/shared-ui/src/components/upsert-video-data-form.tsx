@@ -93,9 +93,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         label={label}
         type={type}
         value={value?.toString() ?? ""}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setValue(e.target.value)
-        }
+        onValueChange={(value) => setValue(value)}
         onBlur={commit}
         isDisabled={ro(k)}
         variant={inputVariant}
@@ -123,9 +121,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         data-testid={`video-field-${String(k)}`}
         label={label}
         value={(value as string) ?? ""}
-        onChange={(e: React.ChangeEvent<any>) =>
-          setValue(e.target.value)
-        }
+        onValueChange={(value) => setValue(value)}
         onBlur={commit}
         isDisabled={ro(k)}
         variant={inputVariant}

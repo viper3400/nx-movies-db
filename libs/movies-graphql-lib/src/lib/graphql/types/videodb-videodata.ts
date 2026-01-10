@@ -1,6 +1,6 @@
 import { VideoDbVideoData } from "./videodata";
 import { builder } from "../builder";
-import { upsertVideoData } from "@nx-movies-db/movies-prisma-lib";
+import { upsertVideoData, getVideoById } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoDataInput } from "@nx-movies-db/movies-prisma-lib";
 
 builder.mutationField("upsertVideoData", (t) =>
@@ -41,6 +41,7 @@ builder.mutationField("upsertVideoData", (t) =>
       custom4: t.arg.string(),
       created: t.arg({ type: "DateTime" }),
       owner_id: t.arg.int(),
+      genreIds: t.arg.intList(),
     },
     resolve: async (
       _query,
@@ -56,9 +57,23 @@ builder.mutationField("upsertVideoData", (t) =>
 
       const input = {
         ...args,
+        genreIds: args.genreIds ?? undefined,
       } as VideoDataInput;
 
       return upsertVideoData(input);
+    },
+  })
+);
+
+builder.queryField("videoData", (t) =>
+  t.prismaField({
+    type: VideoDbVideoData,
+    nullable: true,
+    args: {
+      id: t.arg.int({ required: true }),
+    },
+    resolve: async (_query, _root, args) => {
+      return getVideoById(args.id);
     },
   })
 );

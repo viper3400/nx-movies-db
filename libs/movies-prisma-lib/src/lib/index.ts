@@ -4,6 +4,7 @@ export * from "./create-or-update-videodata";
 export * from "./create-user-seen-entry";
 export * from "./delete-user-seen-entry";
 export * from "./get-genres";
+export * from "./get-video-by-id";
 export * from "./get-media-types";
 export * from "./get-seen-dates";
 export * from "./get-seen-list";

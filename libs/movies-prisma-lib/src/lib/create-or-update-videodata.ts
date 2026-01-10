@@ -9,21 +9,35 @@ type ScalarVideoDataInput = Omit<
 
 export type VideoDataInput = ScalarVideoDataInput & {
   id?: number;
+  genreIds?: number[];
 };
 
 export async function upsertVideoData(data: VideoDataInput): Promise<VideoData> {
-  const { id, ...rest } = data;
+  const { id, genreIds, ...rest } = data;
 
-  if (id) {
-    // Update existing record by id
-    return prisma.videodb_videodata.update({
-      where: { id },
-      data: rest,
-    });
-  } else {
-    // Create new record, let DB generate id
-    return prisma.videodb_videodata.create({
-      data: rest,
-    });
-  }
+  return prisma.$transaction(async (tx) => {
+    const video = id
+      ? await tx.videodb_videodata.update({
+        where: { id },
+        data: rest,
+      })
+      : await tx.videodb_videodata.create({
+        data: rest,
+      });
+
+    if (genreIds) {
+      await tx.videodb_videogenre.deleteMany({ where: { video_id: video.id } });
+      if (genreIds.length > 0) {
+        const uniqueGenreIds = [...new Set(genreIds)];
+        await tx.videodb_videogenre.createMany({
+          data: uniqueGenreIds.map((genre_id) => ({
+            video_id: video.id,
+            genre_id,
+          })),
+        });
+      }
+    }
+
+    return video;
+  });
 }

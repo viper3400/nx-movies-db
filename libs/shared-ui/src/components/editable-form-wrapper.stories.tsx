@@ -3,7 +3,7 @@ import React from "react";
 import { useArgs } from "storybook/preview-api";
 import { Input, Textarea } from "@heroui/react";
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
-import { fn } from "storybook/test";
+import { fn, userEvent, within, expect } from "storybook/test";
 
 interface ProfileValues {
   firstName: string;
@@ -46,7 +46,7 @@ const Example: React.FC<{
             <Input
               label="First name"
               value={values.firstName}
-              onChange={(e) => onChange({ ...values, firstName: e.target.value })}
+              onValueChange={(value) => onChange({ ...values, firstName: value })}
               isReadOnly={readOnly}
               variant="underlined"
               size="lg"
@@ -54,7 +54,7 @@ const Example: React.FC<{
             <Input
               label="Last name"
               value={values.lastName}
-              onChange={(e) => onChange({ ...values, lastName: e.target.value })}
+              onValueChange={(value) => onChange({ ...values, lastName: value })}
               isReadOnly={readOnly}
               variant="underlined"
               size="lg"
@@ -63,7 +63,7 @@ const Example: React.FC<{
               type="email"
               label="Email"
               value={values.email}
-              onChange={(e) => onChange({ ...values, email: e.target.value })}
+              onValueChange={(value) => onChange({ ...values, email: value })}
               isReadOnly={readOnly}
               variant="underlined"
               size="lg"
@@ -71,7 +71,7 @@ const Example: React.FC<{
             <Textarea
               label="Bio"
               value={values.bio ?? ""}
-              onChange={(e) => onChange({ ...values, bio: e.target.value })}
+              onValueChange={(value) => onChange({ ...values, bio: value })}
               isReadOnly={readOnly}
               variant="underlined"
               minRows={3}
@@ -132,6 +132,42 @@ export const Default: Story = {
       />
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const saveButton = canvas.getByTestId("editable-form-save");
+    const discardButton = canvas.getByTestId("editable-form-discard");
+    const firstNameInput = canvas.getByLabelText("First name");
+
+    await expect(saveButton).toBeDisabled();
+    await expect(discardButton).toBeDisabled();
+
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, "Thomas");
+
+    await expect(saveButton).toBeEnabled();
+    await expect(discardButton).toBeEnabled();
+
+    await userEvent.click(saveButton);
+    await expect(saveButton).toHaveAttribute("data-loading");
+  },
+};
+
+export const DiscardFlow: Story = {
+  render: Default.render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const discardButton = canvas.getByTestId("editable-form-discard");
+    const firstNameInput = canvas.getByLabelText("First name");
+
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, "Agent");
+
+    await userEvent.click(discardButton);
+
+    await expect(firstNameInput).toHaveValue("Neo");
+  },
 };
 
 export const ActionsTop: Story = {
@@ -165,5 +201,35 @@ export const ReadOnly: Story = {
         }}
       />
     );
+  },
+};
+
+export const ReadOnlyInteractions: Story = {
+  args: { readOnly: true },
+  render: ActionsTop.render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const saveButton = canvas.getByTestId("editable-form-save");
+    const discardButton = canvas.getByTestId("editable-form-discard");
+
+    await expect(saveButton).toBeDisabled();
+    await expect(discardButton).toBeDisabled();
+  },
+};
+
+export const DirtyStateTypingRegression: Story = {
+  render: Default.render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const saveButton = canvas.getByTestId("editable-form-save");
+    const firstNameInput = canvas.getByLabelText("First name");
+
+    // Type without spaces — must still mark form dirty
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, "Thomas");
+
+    await expect(saveButton).toBeEnabled();
   },
 };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
 import { UpsertVideoDataForm, UpsertVideoDataFormValues } from "./upsert-video-data-form";
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
-import { fn } from "storybook/test";
+import { fn, within, userEvent, expect } from "storybook/test";
 
 const meta: Meta<typeof UpsertVideoDataForm> = {
   component: UpsertVideoDataForm,
@@ -53,6 +53,28 @@ export const Editable: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const titleInput = canvas.getByTestId("video-field-title");
+
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, "Buffered Title");
+
+    // value should NOT be committed while typing
+    expect(args.onChange).not.toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Buffered Title" })
+    );
+
+    // blur commits buffered value
+    await userEvent.tab();
+
+    expect(args.onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Buffered Title" })
+    );
+
+    const genresSelect = canvas.getByTestId("video-field-genres");
+    await userEvent.click(genresSelect);
+  },
 };
 
 export const ReadOnly: Story = {
@@ -70,6 +92,12 @@ export const ReadOnly: Story = {
         />
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const titleInput = canvas.getByTestId("video-field-title");
+    await expect(titleInput).toBeDisabled();
   },
 };
 
@@ -89,12 +117,30 @@ export const PartiallyReadOnly: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const imdbInput = canvas.getByTestId("video-field-imdbID");
+    const titleInput = canvas.getByTestId("video-field-title");
+
+    await expect(imdbInput).toBeDisabled();
+    await expect(titleInput).not.toBeDisabled();
+  },
 };
 
 export const WithWrapper: Story = {
   name: "With Save/Discard Wrapper",
   parameters: { frame: EDITABLE_FORM_FRAME_OPTIONS[0] },
   render: renderWithWrapper,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const titleInput = canvas.getByTestId("video-field-title");
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, "Wrapped Title");
+
+    await expect(titleInput).toHaveValue("Wrapped Title");
+  },
 };
 
 export const WithWrapperFramedAll: Story = {

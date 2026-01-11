@@ -5,6 +5,7 @@ import {
   Attribute,
   By,
   Clear,
+  Click,
   Enter,
   Key,
   Navigate,
@@ -43,22 +44,34 @@ test("actor can start a new video entry", async ({ actorCalled }) => {
 
 test("actor sees existing film data before making edits", async ({ actorCalled }) => {
   const actor = actorCalled("Edgar");
+  const originalTitle = "Demolition Man";
+  const editedTitle = `${originalTitle} (Edited)`;
 
   await actor.attemptsTo(
     Navigate.to("/movies/edit/59"),
     Wait.until(titleField, isVisible()),
-    Ensure.that(Attribute.called("value").of(titleField), equals("Demolition Man")),
+    Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle)),
     Ensure.that(Attribute.called("value").of(languageField), equals("german, english, spanish")),
     Ensure.that(Attribute.called("value").of(diskIdField), equals("R04F4D01")),
     Ensure.that(Attribute.called("value").of(yearField), equals("1993")),
     Ensure.that(saveButton, not(isEnabled())),
     Clear.theValueOf(titleField),
-    Enter.theValue("Demolition Man (Edited)").into(titleField),
+    Enter.theValue(editedTitle).into(titleField),
     Press.the(Key.Tab).in(titleField),
     Ensure.that(saveButton, isEnabled()),
+    Click.on(saveButton),
+    Wait.until(saveButton, not(isEnabled())),
+    Navigate.reloadPage(),
+    Wait.until(titleField, isVisible()),
+    Ensure.that(Attribute.called("value").of(titleField), equals(editedTitle)),
     Clear.theValueOf(titleField),
-    Enter.theValue("Demolition Man").into(titleField),
+    Enter.theValue(originalTitle).into(titleField),
     Press.the(Key.Tab).in(titleField),
-    Ensure.that(saveButton, not(isEnabled()))
+    Ensure.that(saveButton, isEnabled()),
+    Click.on(saveButton),
+    Wait.until(saveButton, not(isEnabled())),
+    Navigate.reloadPage(),
+    Wait.until(titleField, isVisible()),
+    Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle))
   );
 });

@@ -17,6 +17,7 @@ import {
 
 const editForm = PageElement.located(By.css("[data-testid='editable-form-wrapper']")).describedAs("edit video form");
 const saveButton = PageElement.located(By.css("[data-testid='editable-form-save']")).describedAs("save button");
+const discardButton = PageElement.located(By.css("[data-testid='editable-form-discard']")).describedAs("discard button");
 
 const videoField = (name: string, description: string) =>
   PageElement.located(By.css(`[data-testid='video-field-${name}']`)).describedAs(description);
@@ -73,5 +74,66 @@ test("actor sees existing film data before making edits", async ({ actorCalled }
     Navigate.reloadPage(),
     Wait.until(titleField, isVisible()),
     Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle))
+  );
+});
+
+test("actor can discard edits to restore original data", async ({ actorCalled }) => {
+  const actor = actorCalled("Edgar");
+  const originalTitle = "Demolition Man";
+  const draftTitle = `${originalTitle} Draft`;
+
+  await actor.attemptsTo(
+    Navigate.to("/movies/edit/59"),
+    Wait.until(titleField, isVisible()),
+    Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle)),
+    Clear.theValueOf(titleField),
+    Enter.theValue(draftTitle).into(titleField),
+    Press.the(Key.Tab).in(titleField),
+    Ensure.that(saveButton, isEnabled()),
+    Ensure.that(discardButton, isEnabled()),
+    Click.on(discardButton),
+    Wait.until(saveButton, not(isEnabled())),
+    Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle))
+  );
+});
+
+test("actor can edit disk info and year, persist, and revert", async ({ actorCalled }) => {
+  const actor = actorCalled("Edgar");
+  const originalDiskId = "R04F4D01";
+  const editedDiskId = "R04F4D99";
+  const originalYear = "1993";
+  const editedYear = "1994";
+
+  await actor.attemptsTo(
+    Navigate.to("/movies/edit/59"),
+    Wait.until(diskIdField, isVisible()),
+    Ensure.that(Attribute.called("value").of(diskIdField), equals(originalDiskId)),
+    Ensure.that(Attribute.called("value").of(yearField), equals(originalYear)),
+    Clear.theValueOf(diskIdField),
+    Enter.theValue(editedDiskId).into(diskIdField),
+    Press.the(Key.Tab).in(diskIdField),
+    Clear.theValueOf(yearField),
+    Enter.theValue(editedYear).into(yearField),
+    Press.the(Key.Tab).in(yearField),
+    Ensure.that(saveButton, isEnabled()),
+    Click.on(saveButton),
+    Wait.until(saveButton, not(isEnabled())),
+    Navigate.reloadPage(),
+    Wait.until(diskIdField, isVisible()),
+    Ensure.that(Attribute.called("value").of(diskIdField), equals(editedDiskId)),
+    Ensure.that(Attribute.called("value").of(yearField), equals(editedYear)),
+    Clear.theValueOf(diskIdField),
+    Enter.theValue(originalDiskId).into(diskIdField),
+    Press.the(Key.Tab).in(diskIdField),
+    Clear.theValueOf(yearField),
+    Enter.theValue(originalYear).into(yearField),
+    Press.the(Key.Tab).in(yearField),
+    Ensure.that(saveButton, isEnabled()),
+    Click.on(saveButton),
+    Wait.until(saveButton, not(isEnabled())),
+    Navigate.reloadPage(),
+    Wait.until(diskIdField, isVisible()),
+    Ensure.that(Attribute.called("value").of(diskIdField), equals(originalDiskId)),
+    Ensure.that(Attribute.called("value").of(yearField), equals(originalYear))
   );
 });

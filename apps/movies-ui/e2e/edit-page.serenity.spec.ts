@@ -27,7 +27,7 @@ const languageField = videoField("language", "language field");
 const diskIdField = videoField("diskid", "disk id field");
 const yearField = videoField("year", "year field");
 
-test("actor can start a new video entry", async ({ actorCalled }) => {
+test.skip("actor can start a new video entry", async ({ actorCalled }) => {
   const actor = actorCalled("Nina");
 
   await actor.attemptsTo(

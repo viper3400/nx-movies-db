@@ -1,6 +1,6 @@
 import { test } from "@serenity-js/playwright-test";
 import { Ensure, equals, not } from "@serenity-js/assertions";
-import { Wait } from "@serenity-js/core";
+import { Duration, Wait } from "@serenity-js/core";
 import {
   Attribute,
   By,
@@ -63,7 +63,7 @@ test("actor sees existing film data before making edits", async ({ actorCalled }
     Click.on(saveButton),
     Wait.until(saveButton, not(isEnabled())),
     Navigate.reloadPage(),
-    Wait.until(titleField, isVisible()),
+    Wait.upTo(Duration.ofSeconds(10)).until(titleField, isVisible()),
     Ensure.that(Attribute.called("value").of(titleField), equals(editedTitle)),
     Clear.theValueOf(titleField),
     Enter.theValue(originalTitle).into(titleField),

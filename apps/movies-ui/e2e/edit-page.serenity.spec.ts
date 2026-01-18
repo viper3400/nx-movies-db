@@ -27,7 +27,7 @@ const languageField = videoField("language", "language field");
 const diskIdField = videoField("diskid", "disk id field");
 const yearField = videoField("year", "year field");
 
-test.skip("actor can start a new video entry", async ({ actorCalled }) => {
+test("actor can start a new video entry", async ({ actorCalled }) => {
   const actor = actorCalled("Nina");
 
   await actor.attemptsTo(
@@ -43,7 +43,7 @@ test.skip("actor can start a new video entry", async ({ actorCalled }) => {
   );
 });
 
-test.skip("actor sees existing film data before making edits", async ({ actorCalled }) => {
+test("actor sees existing film data before making edits", async ({ actorCalled }) => {
   const actor = actorCalled("Edgar");
   const originalTitle = "Demolition Man";
   const editedTitle = `${originalTitle} (Edited)`;
@@ -77,7 +77,7 @@ test.skip("actor sees existing film data before making edits", async ({ actorCal
   );
 });
 
-test.skip("actor can discard edits to restore original data", async ({ actorCalled }) => {
+test("actor can discard edits to restore original data", async ({ actorCalled }) => {
   const actor = actorCalled("Edgar");
   const originalTitle = "Demolition Man";
   const draftTitle = `${originalTitle} Draft`;
@@ -97,7 +97,7 @@ test.skip("actor can discard edits to restore original data", async ({ actorCall
   );
 });
 
-test.skip("actor can edit disk info and year, persist, and revert", async ({ actorCalled }) => {
+test("actor can edit disk info and year, persist, and revert", async ({ actorCalled }) => {
   const actor = actorCalled("Edgar");
   const originalDiskId = "R04F4D01";
   const editedDiskId = "R04F4D99";

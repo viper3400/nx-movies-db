@@ -206,7 +206,9 @@ jobs:
       - name: Run Playwright tests
         env:
           E2E_BASE_URL: http://127.0.0.1:3000
-        run: npx playwright test -c apps/movies-ui/playwright.config.ts
+        run: |
+          cd apps/movies-ui
+          npx playwright test -c playwright.config.ts
 
       - name: Teardown
         if: always()

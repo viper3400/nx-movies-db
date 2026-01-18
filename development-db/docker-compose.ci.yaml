@@ -6,7 +6,6 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-videodb}
     ports:
       - "7200:3306"
-    # Use a named volume in CI to avoid host permission issues
     volumes:
       - ./../seed:/docker-entrypoint-initdb.d/
     healthcheck:

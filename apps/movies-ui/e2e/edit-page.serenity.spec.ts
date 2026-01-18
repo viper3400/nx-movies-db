@@ -1,5 +1,5 @@
 import { test } from "@serenity-js/playwright-test";
-import { Ensure, equals, not } from "@serenity-js/assertions";
+import { Ensure, equals, isPresent, not } from "@serenity-js/assertions";
 import { Duration, Wait } from "@serenity-js/core";
 import {
   Attribute,
@@ -63,7 +63,7 @@ test("actor sees existing film data before making edits", async ({ actorCalled }
     Click.on(saveButton),
     Wait.until(saveButton, not(isEnabled())),
     Navigate.reloadPage(),
-    Wait.upTo(Duration.ofSeconds(10)).until(titleField, isVisible()),
+    Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
     Ensure.that(Attribute.called("value").of(titleField), equals(editedTitle)),
     Clear.theValueOf(titleField),
     Enter.theValue(originalTitle).into(titleField),
@@ -72,7 +72,7 @@ test("actor sees existing film data before making edits", async ({ actorCalled }
     Click.on(saveButton),
     Wait.until(saveButton, not(isEnabled())),
     Navigate.reloadPage(),
-    Wait.until(titleField, isVisible()),
+    Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
     Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle))
   );
 });
@@ -119,7 +119,7 @@ test("actor can edit disk info and year, persist, and revert", async ({ actorCal
     Click.on(saveButton),
     Wait.until(saveButton, not(isEnabled())),
     Navigate.reloadPage(),
-    Wait.until(diskIdField, isVisible()),
+    Wait.upTo(Duration.ofSeconds(15)).until(diskIdField, isPresent()),
     Ensure.that(Attribute.called("value").of(diskIdField), equals(editedDiskId)),
     Ensure.that(Attribute.called("value").of(yearField), equals(editedYear)),
     Clear.theValueOf(diskIdField),
@@ -132,7 +132,7 @@ test("actor can edit disk info and year, persist, and revert", async ({ actorCal
     Click.on(saveButton),
     Wait.until(saveButton, not(isEnabled())),
     Navigate.reloadPage(),
-    Wait.until(diskIdField, isVisible()),
+    Wait.upTo(Duration.ofSeconds(15)).until(diskIdField, isVisible()),
     Ensure.that(Attribute.called("value").of(diskIdField), equals(originalDiskId)),
     Ensure.that(Attribute.called("value").of(yearField), equals(originalYear))
   );

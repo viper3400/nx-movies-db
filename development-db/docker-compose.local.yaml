@@ -6,7 +6,9 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-videodb}
     ports:
       - "7200:3306"
+    # Use a named volume in CI to avoid host permission issues
     volumes:
+      - dbdata:/var/lib/mysql
       - ./../seed:/docker-entrypoint-initdb.d/
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --silent"]
@@ -14,3 +16,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 60s
+
+volumes:
+  dbdata:

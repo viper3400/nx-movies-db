@@ -28,7 +28,7 @@ async function waitUntilSaved(saveButton: Locator) {
   await expect(saveButton).toBeDisabled({ timeout: 15_000 });
 }
 
-test.describe.skip("Edit page (vanilla Playwright)", () => {
+test.describe("Edit page (vanilla Playwright)", () => {
   test("user can start a new video entry", async ({ page }) => {
     await page.goto("/movies/edit/new");
 

@@ -8,7 +8,7 @@
     "@apollo/client": "^4.0.0",
     "@apollo/client-integration-nextjs": "^0.14.1",
     "@graphql-yoga/plugin-jwt": "^3.4.3",
-    "@heroui/react": "2.8.8",
+    "@heroui/react": "2.8.9",
     "@internationalized/date": "3.11.0",
     "@pothos/core": "^4.12.0",
     "@pothos/plugin-prisma": "^4.14.0",

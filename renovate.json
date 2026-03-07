@@ -3,7 +3,23 @@
   "extends": [
     "config:recommended"
   ],
+  "stabilityDays": 7,
   "packageRules": [
+    {
+      "description": "Ship security updates immediately",
+      "matchUpdateTypes": [
+        "security"
+      ],
+      "stabilityDays": 0
+    },
+    {
+      "description": "Hold minor and patch releases for 3 days",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "stabilityDays": 3
+    },
     {
       "matchDatasources": [
         "docker"

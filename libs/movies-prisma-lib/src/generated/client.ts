@@ -26,7 +26,9 @@ export * from "./enums"
  * Type-safe database client for TypeScript
  * @example
  * ```
- * const prisma = new PrismaClient()
+ * const prisma = new PrismaClient({
+ *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+ * })
  * // Fetch zero or more Homewebbridge_inventories
  * const homewebbridge_inventories = await prisma.homewebbridge_inventory.findMany()
  * ```

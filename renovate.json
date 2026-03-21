@@ -69,6 +69,23 @@
       ]
     },
     {
+      "groupName": "g: vite",
+      "description": "Group Vite ecosystem dependencies",
+      "labels": [
+        "deps",
+        "vite"
+      ],
+      "matchPackageNames": [
+        "/^vite$/",
+        "/^vitest$/"
+      ],
+      "matchPackagePatterns": [
+        "/^vite-plugin-/",
+        "/^@vitejs\\//",
+        "/^@vitest\\//"
+      ]
+    },
+    {
       "description": "Pin MySQL Docker images to 8.x and block v9 upgrades",
       "matchDatasources": [
         "docker"

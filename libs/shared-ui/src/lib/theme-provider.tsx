@@ -4,8 +4,7 @@ import * as React from "react";
 
 type ThemeMode = "light" | "dark";
 
-export interface ThemeProviderProps {
-  children: React.ReactNode;
+export interface ThemeProviderOptions {
   /**
    * DOM attribute to update with the current theme.
    * Defaults to "class" to match Tailwind conventions.
@@ -24,6 +23,10 @@ export interface ThemeProviderProps {
    * has not picked a theme manually.
    */
   enableSystem?: boolean;
+}
+
+export interface ThemeProviderProps extends ThemeProviderOptions {
+  children: React.ReactNode;
 }
 
 interface ThemeContextValue {

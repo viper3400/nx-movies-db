@@ -974,6 +974,11 @@ export type videodb_genresFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` videodb_genres.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of videodb_genres.
+   */
   distinct?: Prisma.Videodb_genresScalarFieldEnum | Prisma.Videodb_genresScalarFieldEnum[]
 }
 

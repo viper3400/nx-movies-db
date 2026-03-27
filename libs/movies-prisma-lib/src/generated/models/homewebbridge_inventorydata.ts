@@ -956,6 +956,11 @@ export type homewebbridge_inventorydataFindManyArgs<ExtArgs extends runtime.Type
    * Skip the first `n` homewebbridge_inventorydata.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of homewebbridge_inventorydata.
+   */
   distinct?: Prisma.Homewebbridge_inventorydataScalarFieldEnum | Prisma.Homewebbridge_inventorydataScalarFieldEnum[]
 }
 

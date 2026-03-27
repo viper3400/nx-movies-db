@@ -3,14 +3,10 @@
 import * as React from "react";
 import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import {
-  ThemeProvider as NextThemesProvider,
-  ThemeProviderProps,
-} from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 import { I18nextProvider } from "react-i18next";
-import i18n from "@nx-movies-db/shared-ui";
+import i18n, { ThemeProvider as SharedThemeProvider, ThemeProviderProps } from "@nx-movies-db/shared-ui";
 import { parseUserString } from "../lib/allowed-user-parser";
 
 export interface ProvidersProps {
@@ -56,7 +52,7 @@ export function Providers({ children, themeProps, nextAuthUrl }: ProvidersProps)
         <HeroUIProvider navigate={router.push}>
           <ToastProvider placement="top-center" />
           {isMounted ? (
-            <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+            <SharedThemeProvider {...themeProps}>{children}</SharedThemeProvider>
           ) : (
             <div className="h-screen w-screen bg-black"></div>
           )}

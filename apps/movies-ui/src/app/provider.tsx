@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 import { I18nextProvider } from "react-i18next";
-import i18n, { ThemeProvider as SharedThemeProvider, ThemeProviderProps } from "@nx-movies-db/shared-ui";
+import i18n, { ThemeProvider as SharedThemeProvider, ThemeProviderOptions } from "@nx-movies-db/shared-ui";
 import { parseUserString } from "../lib/allowed-user-parser";
 
 export interface ProvidersProps {
   children: React.ReactNode;
-  themeProps?: ThemeProviderProps;
+  themeProps?: ThemeProviderOptions;
   nextAuthUrl?: string | null;
 }
 

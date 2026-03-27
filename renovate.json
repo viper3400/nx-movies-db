@@ -4,6 +4,9 @@
     "config:recommended"
   ],
   "stabilityDays": 7,
+  "constraints": {
+    "npm": "11.6.2"
+  },
   "packageRules": [
     {
       "description": "Ship security updates immediately",

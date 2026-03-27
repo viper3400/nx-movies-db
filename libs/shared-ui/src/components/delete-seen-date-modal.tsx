@@ -9,7 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 interface DeleteSeenDateModalProps {
-  onDeleteConfirmed: (date: string) => void;
+  onDeleteConfirmed: (date: string) => void | Promise<void>;
   isOpen: boolean;
   onOpenChange: () => void;
   date: string;

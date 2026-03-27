@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getSeenVideos } from "../app/services/actions";
 import { SeenEntry } from "../interfaces";
 import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
@@ -8,6 +8,7 @@ import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
 import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 interface SeenMoviesComponentProperties {
@@ -100,6 +101,21 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
     }
   }
 
+  const handleMovieRemoval = useCallback((movieId: string) => {
+    let removed = false;
+    setSeenMovies((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      const next = prev.filter((entry) => entry.movieId !== movieId);
+      removed = next.length !== prev.length;
+      return removed ? next : prev;
+    });
+    if (removed) {
+      setTotalMoviesCount((prev) => Math.max(prev - 1, 0));
+    }
+  }, []);
+
   return (
     <div>
       <div>
@@ -107,31 +123,41 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
       </div>
       <div>
         {seenMovies && imageBaseUrl && (
-          seenMovies.map((entry, idx) => {
-            const detailsUrl = typeof appBasePath === "string" ? `${appBasePath}/details/${entry.movieId}` : undefined;
-            return (
-              <div key={`${idx}`}>
-                <Spacer y={4} />
-                <MovieCard
-                  movie={entry.video}
-                  showMarkAsSeenButtons={false}
-                  showDetailsButton
-                  detailsUrl={detailsUrl}
-                  imageUrl={imageBaseUrl + "/" + entry.movieId}
-                  loadSeenDatesForMovie={loadSeenDatesForMovie}
-                  loadUserFlagsForMovie={loadUserFlagsForMovie}
-                  updateFlagsForMovie={updateUserFlagsForMovie}
-                  setUserSeenDateForMovie={function (movieId: string, date: Date): Promise<void> {
-                    throw new Error("Function not implemented.");
-                  }} deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
-                  langResources={{
-                    "seenTodayLabel": "Seen Today",
-                    "chooseDateLabel": "Choose Date",
-                    "deletedEntryLabel": "Deleted Entry"
-                  }} />
-              </div>
-            );
-          })
+          <AnimatePresence mode="popLayout">
+            {seenMovies.map((entry) => {
+              const detailsUrl = typeof appBasePath === "string" ? `${appBasePath}/details/${entry.movieId}` : undefined;
+              return (
+                <motion.div
+                  key={entry.movieId}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Spacer y={4} />
+                  <MovieCard
+                    movie={entry.video}
+                    showMarkAsSeenButtons={false}
+                    showDetailsButton
+                    detailsUrl={detailsUrl}
+                    imageUrl={imageBaseUrl + "/" + entry.movieId}
+                    loadSeenDatesForMovie={loadSeenDatesForMovie}
+                    loadUserFlagsForMovie={loadUserFlagsForMovie}
+                    updateFlagsForMovie={updateUserFlagsForMovie}
+                    setUserSeenDateForMovie={function (movieId: string, date: Date): Promise<void> {
+                      throw new Error("Function not implemented.");
+                    }} deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
+                    onAllSeenDatesDeleted={handleMovieRemoval}
+                    langResources={{
+                      "seenTodayLabel": "Seen Today",
+                      "chooseDateLabel": "Choose Date",
+                      "deletedEntryLabel": "Deleted Entry"
+                    }} />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         )}
         <ResultsStatusIndicator
           isLoading={loading}

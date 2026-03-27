@@ -48,7 +48,7 @@ export const Default: Story = {
       },
     ],
     imageBaseUrl: "",
-    appBasePath: "/movies",
+    getDetailsUrl: (movie) => `/movies/details/${movie.id}`,
     loadSeenDatesForMovie: async (movieId: string) => {
       return ["2025-04-01", "2025-04-15"];
     },

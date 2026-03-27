@@ -101,5 +101,6 @@
         "unitTestRunner": "jest"
       }
     }
-  }
+  },
+  "analytics": false
 }

@@ -26,6 +26,7 @@ export interface MovieCardProps {
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
   setUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
   deleteUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
+  onAllSeenDatesDeleted?: (movieId: string) => void;
   langResources: MovieCardLangResources;
 }
 export const MovieCard = ({
@@ -39,6 +40,7 @@ export const MovieCard = ({
   updateFlagsForMovie,
   setUserSeenDateForMovie,
   deleteUserSeenDateForMovie,
+  onAllSeenDatesDeleted,
   langResources }: MovieCardProps) => {
 
   const [seenDates, setSeenDates] = useState<string[]>([]);
@@ -49,10 +51,31 @@ export const MovieCard = ({
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
   const [deleteDate, setDeleteDate] = useState("");
   const [isDeletedMovie, setIsDeletedMovie] = useState(false);
+  const [pendingRemovalNotification, setPendingRemovalNotification] = useState(false);
+
+  const handleSeenDateDeletion = async (date: string) => {
+    await deleteUserSeenDateForMovie(movie.id, new Date(date));
+    setSeenDates((prev) => {
+      const current = prev ?? [];
+      const next = current.filter((seenDate) => seenDate !== date);
+      if (next.length === 0) {
+        setPendingRemovalNotification(true);
+      }
+      return next;
+    });
+    setAdditionalDatesLoaded(false);
+  };
 
   useEffect(() => {
     setIsDeletedMovie(movie.ownerid === 999);
   }, [movie]);
+
+  useEffect(() => {
+    if (pendingRemovalNotification && seenDates.length === 0) {
+      onAllSeenDatesDeleted?.(movie.id);
+      setPendingRemovalNotification(false);
+    }
+  }, [pendingRemovalNotification, seenDates.length, movie.id, onAllSeenDatesDeleted]);
 
   useEffect(() => {
     const fetchSeenDates = async () => {
@@ -136,9 +159,8 @@ export const MovieCard = ({
                 isOpen={deleteModalIsOpen}
                 date={deleteDate}
                 onOpenChange={() => setDeleteModalIsOpen(!deleteModalIsOpen)}
-                onDeleteConfirmed={async (date) => {
-                  await deleteUserSeenDateForMovie(movie.id, new Date(date));
-                  setAdditionalDatesLoaded(false);
+                onDeleteConfirmed={(date) => {
+                  void handleSeenDateDeletion(date);
                 }} />
             </div>
             <div className="flex gap-4">

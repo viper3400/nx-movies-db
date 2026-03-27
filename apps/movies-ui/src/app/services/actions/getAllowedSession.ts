@@ -4,7 +4,8 @@ import { MoviesDbSession } from "../../../interfaces";
 export async function getAllowedSession() {
   // CI/Test mode: bypass NextAuth and return a stub session
   if (process.env.TEST_MODE === "true") {
-    const allowedUsersEnv = process.env.ALLOWED_USERS ?? "";
+    const allowedUsersEnv =
+      process.env.NEXT_PUBLIC_TEST_USERS ?? process.env.ALLOWED_USERS ?? "";
     const users = allowedUsersEnv ? parseUserString(allowedUsersEnv) : [];
     const u = users[0] ?? { email: "tester@example.com", name: "Tester", id: 1 };
     const moviesDbSession: MoviesDbSession = {

@@ -20,7 +20,7 @@ export interface ProvidersProps {
 }
 
 const testModeEnabled = process.env.NEXT_PUBLIC_TEST_MODE === "true";
-const allowedUsersEnv = process.env.NEXT_PUBLIC_ALLOWED_USERS ?? "";
+const allowedUsersEnv = process.env.NEXT_PUBLIC_TEST_USERS ?? "";
 const testUsers = allowedUsersEnv
   ? parseUserString(allowedUsersEnv).filter((user) => Boolean(user.email) && Boolean(user.name))
   : [];

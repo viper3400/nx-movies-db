@@ -34,6 +34,7 @@ JWT_SECRET=984038080dw0
 | `NEXTAUTH_URL` | The URL for the NextAuth.js authentication |
 | `NEXT_PUBLIC_NEXTAUTH_URL` | The public URL for the NextAuth.js authentication |
 | `ALLOWED_USERS` | A list of allowed users, with email addresses, names, and IDs separated by commas |
+| `NEXT_PUBLIC_TEST_USERS` | Optional test-only list mirroring `ALLOWED_USERS` so the UI can stub a session when `NEXT_PUBLIC_TEST_MODE` is true |
 | `APP_BASE_PATH` | The base path for the application |
 | `COVER_IMAGE_PATH` | The path for cover images |
 
@@ -50,6 +51,7 @@ NEXTAUTH_SECRET="secret"
 NEXTAUTH_URL=http://localhost:3000/movies/api/auth
 NEXT_PUBLIC_NEXTAUTH_URL=http://localhost:3000/movies/api/auth
 ALLOWED_USERS=jane@doe.com,Jane,3;John@example.org,3
+NEXT_PUBLIC_TEST_USERS="jane@doe.com,Jane,3"
 APP_BASE_PATH=/movies
 COVER_IMAGE_PATH=/media/coverimages
 ```

@@ -37,7 +37,7 @@ cd apps/movies-ui
 NEXT_PUBLIC_GRAPHQL_URL=http://127.0.0.1:7100/graphql \
 NEXT_PUBLIC_NEXTAUTH_URL=/api/auth \
 NEXT_PUBLIC_TEST_MODE=true \
-NEXT_PUBLIC_ALLOWED_USERS="tester@example.com,Tester,1" \
+NEXT_PUBLIC_TEST_USERS="tester@example.com,Tester,1" \
 TEST_MODE=true \
 GITHUB_ID=dummy \
 GITHUB_SECRET=dummy \
@@ -74,4 +74,4 @@ docker compose -f development-db/docker-compose.ci.yaml down -v
 ## Tips
 - If a previous run failed midway, execute the teardown commands before starting again.
 - Wrap the commands above in a helper script (inside `tools/`) if you want a single entry point.
-- Keep `NEXT_PUBLIC_TEST_MODE` and `NEXT_PUBLIC_ALLOWED_USERS` set so the UI renders the stubbed session (navbar, menu, etc.) without real OAuth providers.
+- Keep `NEXT_PUBLIC_TEST_MODE` and `NEXT_PUBLIC_TEST_USERS` set so the UI renders the stubbed session (navbar, menu, etc.) without real OAuth providers.

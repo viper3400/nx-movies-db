@@ -18,7 +18,7 @@ export interface MovieCardLangResources {
 export interface MovieCardProps {
   movie: Movie;
   imageUrl: string;
-  appBasePath?: string;
+  detailsUrl?: string;
   showDetailsButton?: boolean;
   showMarkAsSeenButtons?: boolean;
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
@@ -31,7 +31,7 @@ export interface MovieCardProps {
 export const MovieCard = ({
   movie,
   imageUrl,
-  appBasePath,
+  detailsUrl,
   showDetailsButton,
   showMarkAsSeenButtons,
   loadSeenDatesForMovie,
@@ -143,7 +143,18 @@ export const MovieCard = ({
             </div>
             <div className="flex gap-4">
               <div className="shrink-0">
-                <a href={`${appBasePath}/details/${movie.id}`} target="_blank" rel="noopener noreferrer">
+                {detailsUrl ? (
+                  <a href={detailsUrl} target="_blank" rel="noopener noreferrer">
+                    <Image
+                      alt="Movie Cover"
+                      height={180}
+                      src={imageUrl}
+                      width={120}
+                      className="rounded"
+                      unoptimized
+                    />
+                  </a>
+                ) : (
                   <Image
                     alt="Movie Cover"
                     height={180}
@@ -152,7 +163,7 @@ export const MovieCard = ({
                     className="rounded"
                     unoptimized
                   />
-                </a>
+                )}
               </div> <ScrollShadow className="h-[280px]">
                 <div className="flex-1 text-left">
                   <p className="text-justify">{movie.plot}</p>
@@ -205,8 +216,8 @@ export const MovieCard = ({
                     }} />
                 </>
               }
-              {showDetailsButton &&
-                <Button onPress={() => window.open(appBasePath + "/details/" + movie.id, "_blank")}>Details</Button>
+              {showDetailsButton && detailsUrl &&
+                <Button onPress={() => window.open(detailsUrl, "_blank")}>Details</Button>
               }
             </div>
           </div>

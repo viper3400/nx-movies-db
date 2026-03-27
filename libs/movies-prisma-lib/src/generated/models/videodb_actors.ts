@@ -867,6 +867,11 @@ export type videodb_actorsFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` videodb_actors.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of videodb_actors.
+   */
   distinct?: Prisma.Videodb_actorsScalarFieldEnum | Prisma.Videodb_actorsScalarFieldEnum[]
 }
 

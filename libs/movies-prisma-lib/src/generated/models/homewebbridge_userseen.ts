@@ -1102,6 +1102,11 @@ export type homewebbridge_userseenFindManyArgs<ExtArgs extends runtime.Types.Ext
    * Skip the first `n` homewebbridge_userseens.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of homewebbridge_userseens.
+   */
   distinct?: Prisma.Homewebbridge_userseenScalarFieldEnum | Prisma.Homewebbridge_userseenScalarFieldEnum[]
 }
 

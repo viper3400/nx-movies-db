@@ -1102,6 +1102,11 @@ export type homewebbridge_usermoviesettingsFindManyArgs<ExtArgs extends runtime.
    * Skip the first `n` homewebbridge_usermoviesettings.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of homewebbridge_usermoviesettings.
+   */
   distinct?: Prisma.Homewebbridge_usermoviesettingsScalarFieldEnum | Prisma.Homewebbridge_usermoviesettingsScalarFieldEnum[]
 }
 

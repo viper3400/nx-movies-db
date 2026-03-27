@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
-import { useTheme } from "next-themes";
+import { useTheme } from "../lib/theme-provider";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 

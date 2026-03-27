@@ -974,6 +974,11 @@ export type videodb_mediatypesFindManyArgs<ExtArgs extends runtime.Types.Extensi
    * Skip the first `n` videodb_mediatypes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of videodb_mediatypes.
+   */
   distinct?: Prisma.Videodb_mediatypesScalarFieldEnum | Prisma.Videodb_mediatypesScalarFieldEnum[]
 }
 

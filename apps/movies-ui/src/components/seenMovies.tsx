@@ -107,28 +107,31 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
       </div>
       <div>
         {seenMovies && imageBaseUrl && (
-          seenMovies.map((entry, idx) => (
-            <div key={`${idx}`}>
-              <Spacer y={4} />
-              <MovieCard
-                movie={entry.video}
-                showMarkAsSeenButtons={false}
-                showDetailsButton
-                appBasePath={appBasePath}
-                imageUrl={imageBaseUrl + "/" + entry.movieId}
-                loadSeenDatesForMovie={loadSeenDatesForMovie}
-                loadUserFlagsForMovie={loadUserFlagsForMovie}
-                updateFlagsForMovie={updateUserFlagsForMovie}
-                setUserSeenDateForMovie={function (movieId: string, date: Date): Promise<void> {
-                  throw new Error("Function not implemented.");
-                }} deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
-                langResources={{
-                  "seenTodayLabel": "Seen Today",
-                  "chooseDateLabel": "Choose Date",
-                  "deletedEntryLabel": "Deleted Entry"
-                }} />
-            </div>
-          ))
+          seenMovies.map((entry, idx) => {
+            const detailsUrl = typeof appBasePath === "string" ? `${appBasePath}/details/${entry.movieId}` : undefined;
+            return (
+              <div key={`${idx}`}>
+                <Spacer y={4} />
+                <MovieCard
+                  movie={entry.video}
+                  showMarkAsSeenButtons={false}
+                  showDetailsButton
+                  detailsUrl={detailsUrl}
+                  imageUrl={imageBaseUrl + "/" + entry.movieId}
+                  loadSeenDatesForMovie={loadSeenDatesForMovie}
+                  loadUserFlagsForMovie={loadUserFlagsForMovie}
+                  updateFlagsForMovie={updateUserFlagsForMovie}
+                  setUserSeenDateForMovie={function (movieId: string, date: Date): Promise<void> {
+                    throw new Error("Function not implemented.");
+                  }} deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
+                  langResources={{
+                    "seenTodayLabel": "Seen Today",
+                    "chooseDateLabel": "Choose Date",
+                    "deletedEntryLabel": "Deleted Entry"
+                  }} />
+              </div>
+            );
+          })
         )}
         <ResultsStatusIndicator
           isLoading={loading}

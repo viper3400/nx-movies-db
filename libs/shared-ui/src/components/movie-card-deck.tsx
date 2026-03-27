@@ -7,7 +7,7 @@ import { Movie } from "../interfaces";
 export interface MovieCardDeckProps {
   movies: Movie[];
   imageBaseUrl: string;
-  appBasePath?: string;
+  getDetailsUrl?: (movie: Movie) => string | undefined;
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
   updateFlagsForMovie: (flags: UserFlagsDTO) => Promise<void>;
@@ -19,13 +19,13 @@ export interface MovieCardDeckProps {
 export const MovieCardDeck = ({
   movies,
   imageBaseUrl,
-  appBasePath,
+  getDetailsUrl,
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
   updateFlagsForMovie,
   setUserSeenDateForMovie,
   deleteUserSeenDateForMovie,
-  movieCardLangResources }: MovieCardDeckProps & { loadSeenDatesForMovie: (movieId: string) => Promise<string[]> }) => {
+  movieCardLangResources }: MovieCardDeckProps) => {
 
   return (
     <div className="space-y-4">
@@ -37,7 +37,7 @@ export const MovieCardDeck = ({
               movie={movie}
               loadUserFlagsForMovie={loadUserFlagsForMovie}
               imageUrl={imageBaseUrl + "/" + movie.id}
-              appBasePath={appBasePath}
+              detailsUrl={getDetailsUrl?.(movie)}
               showDetailsButton
               showMarkAsSeenButtons
               loadSeenDatesForMovie={loadSeenDatesForMovie}
@@ -45,11 +45,9 @@ export const MovieCardDeck = ({
               setUserSeenDateForMovie={setUserSeenDateForMovie}
               deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
               langResources={movieCardLangResources}
-
             />
           )
         )}
     </div>
   );
 };
-

@@ -69,7 +69,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             movies={searchResult}
             loadUserFlagsForMovie={loadUserFlagsForMovie}
             imageBaseUrl={imageBaseUrl}
-            appBasePath={appBasePath}
+            getDetailsUrl={(movie) => typeof appBasePath === "string" ? `${appBasePath}/details/${movie.id}` : undefined}
             loadSeenDatesForMovie={loadSeenDatesForMovie}
             updateFlagsForMovie={updateUserFlagsForMovie}
             setUserSeenDateForMovie={setUserSeenDateForMovie}

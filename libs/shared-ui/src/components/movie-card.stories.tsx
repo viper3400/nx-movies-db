@@ -26,7 +26,7 @@ export const Default: Story = {
       rating: "5.7"
     },
     imageUrl: "https://placehold.co/120x180",
-    appBasePath: "/movies",
+    detailsUrl: "/movies/details/1",
     showDetailsButton: true,
     showMarkAsSeenButtons: true,
     loadSeenDatesForMovie: async () => ["2025-04-25", "2025-04-20"],
@@ -75,7 +75,7 @@ export const Deleted: Story = {
       rating: "5.7"
     },
     imageUrl: "https://placehold.co/120x180",
-    appBasePath: "/movies",
+    detailsUrl: "/movies/details/1",
     showDetailsButton: true,
     showMarkAsSeenButtons: true,
     loadSeenDatesForMovie: async () => ["2025-04-25", "2025-04-20"],
@@ -124,7 +124,7 @@ export const TextOverflow: Story = {
       rating: "5.7"
     },
     imageUrl: "https://placehold.co/120x180",
-    appBasePath: "/movies",
+    detailsUrl: "/movies/details/1",
     showDetailsButton: true,
     showMarkAsSeenButtons: true,
     loadSeenDatesForMovie: async () => ["2025-04-25", "2025-04-20"],

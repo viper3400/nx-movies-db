@@ -2711,6 +2711,11 @@ export type videodb_videodataFindManyArgs<ExtArgs extends runtime.Types.Extensio
    * Skip the first `n` videodb_videodata.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of videodb_videodata.
+   */
   distinct?: Prisma.Videodb_videodataScalarFieldEnum | Prisma.Videodb_videodataScalarFieldEnum[]
 }
 

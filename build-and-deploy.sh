@@ -62,10 +62,12 @@ if [ -n "$RUN_UI" ] || [ -n "$RUN_ALL" ]; then
     npx nx run movies-ui:build
 fi
 
-if [ -n "$RUN_TAG" ] || [ -n "$RUN_ALL" ]; then
+if [ -n "$RUN_TAG" ] && [ -n "$RUN_SERVICE" ] || [ -n "$RUN_ALL" ]; then
     # Build and tag the movies-service Docker image
     run_sudo docker build -t jaxx/movies-service:$DOCKER_IMAGE_TAG . -f movies-service.Dockerfile
+fi
 
+if [ -n "$RUN_TAG" ] && [ -n "$RUN_UI" ] || [ -n "$RUN_ALL" ]; then
     # Build and tag the movies-ui Docker image
     run_sudo docker build -t jaxx/movies-ui:$DOCKER_IMAGE_TAG . -f movies-ui.Dockerfile
 fi

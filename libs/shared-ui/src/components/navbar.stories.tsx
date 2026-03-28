@@ -14,7 +14,6 @@ export const Default: Story = {
     isValidSession: true,
     userEmail: "hans@gmail.com",
     userName: "Hans Dampf",
-    userImage: "https://i.pravatar.cc/150?u=a04258a2462d826712d",
-    appVersion: "1.2.3",
+    userImage: "https://i.pravatar.cc/150?u=a04258a2462d826712d"
   },
 };

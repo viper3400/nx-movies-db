@@ -17,14 +17,9 @@ import { SceneLogo } from "../icons/icons";
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 
-type NavbarProps = {
-  appVersion?: string;
-};
-
-export default function NavbarComponent({ appVersion }: NavbarProps) {
+export default function NavbarComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
-  const displayVersion = appVersion?.trim();
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
@@ -101,16 +96,6 @@ export default function NavbarComponent({ appVersion }: NavbarProps) {
             )}
           </>
         }
-        {displayVersion && (
-          <>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem className="w-full pointer-events-none">
-              <p className="w-full text-center text-tiny uppercase tracking-wide text-default-500">
-                Version {displayVersion}
-              </p>
-            </NavbarMenuItem>
-          </>
-        )}
       </NavbarMenu>
     </Navbar >
   );

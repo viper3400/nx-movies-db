@@ -8,3 +8,4 @@ export * from "./videodb-mediatypes";
 export * from "./videodb-users";
 export * from "./videodb-videogenre";
 export * from "./videos";
+export * from "./system-info";

@@ -102,5 +102,12 @@
       }
     }
   },
-  "analytics": false
+  "analytics": false,
+  "release": {
+    "projects": [
+      "source",
+      "movies-prisma-lib",
+      "shared-ui"
+    ]
+  }
 }

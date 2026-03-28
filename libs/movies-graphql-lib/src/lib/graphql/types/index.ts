@@ -7,3 +7,4 @@ export * from "./seen-list";
 export * from "./user-flags";
 export * from "./video-list";
 export * from "./videodb-videodata";
+export * from "./system-info";

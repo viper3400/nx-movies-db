@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, useMemo } from "react";
 import { Chip } from "@heroui/react";
 import clsx from "clsx";

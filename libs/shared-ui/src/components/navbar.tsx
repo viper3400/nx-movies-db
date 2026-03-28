@@ -25,6 +25,7 @@ export interface NavbarComponentProperties {
   handleSignOut: () => void;
   handleGoogleLogout: () => void;
   handleGithubLogout: () => void;
+  appVersion?: string;
 }
 export const NavbarComponent = ({
   isValidSession,
@@ -33,9 +34,11 @@ export const NavbarComponent = ({
   userEmail,
   handleSignOut,
   handleGoogleLogout,
-  handleGithubLogout
+  handleGithubLogout,
+  appVersion
 }: NavbarComponentProperties) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const displayVersion = appVersion?.trim();
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
@@ -115,6 +118,16 @@ export const NavbarComponent = ({
             )}
           </>
         }
+        {displayVersion && (
+          <>
+            <Divider orientation="horizontal" />
+            <NavbarMenuItem className="w-full pointer-events-none">
+              <p className="w-full text-center text-tiny uppercase tracking-wide text-default-500">
+                Version {displayVersion}
+              </p>
+            </NavbarMenuItem>
+          </>
+        )}
       </NavbarMenu>
     </Navbar >
   );

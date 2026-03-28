@@ -11,7 +11,7 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY ./dist/apps/movies-service/package*.json ./
 RUN npm ci
-COPY ./node_modules/.prisma ./node_modules/.prisma
+#COPY ./node_modules/.prisma ./node_modules/.prisma
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -38,6 +38,7 @@ ENV PORT=7100
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
-CMD ["node", "main.js"]
+CMD ["sh", "-c", "export $(grep -v '^#' .env.local | xargs) && node main.js"]
+# CMD ["node", "main.js"]
 # CMD ["sh", "-c", "set -a && source .env.local && set +a && node main.js"]
 # CMD ["sh", "-c", "export $(grep -v '^#' .env | xargs) && node main.js"]

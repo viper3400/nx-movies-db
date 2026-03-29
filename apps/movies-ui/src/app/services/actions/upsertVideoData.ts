@@ -12,7 +12,7 @@ type UpsertResult = {
   };
 };
 
-type UpsertVariables = Partial<{
+type OptionalUpsertFields = Partial<{
   id: number;
   md5: string;
   title: string;
@@ -49,6 +49,13 @@ type UpsertVariables = Partial<{
   genreIds: number[];
 }>;
 
+type UpsertVariables = OptionalUpsertFields & {
+  year: number;
+  istv: number;
+  mediatype: number;
+  owner_id: number;
+};
+
 const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
   mutation UpsertVideoData(
     $id: Int,
@@ -60,7 +67,7 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
     $comment: String,
     $disklabel: String,
     $imdbID: String,
-    $year: Int,
+    $year: Int!,
     $imgurl: String,
     $director: String,
     $actors: String,
@@ -75,15 +82,15 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
     $video_codec: String,
     $video_width: Int,
     $video_height: Int,
-    $istv: Int,
+    $istv: Int!,
     $lastupdate: DateTime,
-    $mediatype: Int,
+    $mediatype: Int!,
     $custom1: String,
     $custom2: String,
     $custom3: String,
     $custom4: String,
     $created: DateTime,
-    $owner_id: Int,
+    $owner_id: Int!,
     $genreIds: [Int!]
   ) {
     upsertVideoData(
@@ -130,7 +137,7 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
 `;
 
 function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
-  const v: UpsertVariables = {};
+  const v: OptionalUpsertFields = {};
   const entries = Object.entries(values) as Array<[
     keyof UpsertVideoDataFormValues,
     UpsertVideoDataFormValues[keyof UpsertVideoDataFormValues]
@@ -158,10 +165,24 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
   // Ensure required foreign key references are valid
   if (v.mediatype === undefined) {
     // Fallback to a known valid media type id
-    (v as any).mediatype = 1;
+    v.mediatype = 1;
   }
 
-  return v;
+  const requiredMessages: Record<keyof Pick<UpsertVariables, "year" | "istv" | "mediatype" | "owner_id">, string> = {
+    year: "Bitte das Erscheinungsjahr angeben.",
+    istv: "Bitte angeben, ob es sich um einen TV-Inhalt handelt (0 oder 1).",
+    mediatype: "Bitte einen Medientyp auswählen.",
+    owner_id: "Bitte einen Besitzer auswählen.",
+  };
+
+  (["year", "istv", "mediatype", "owner_id"] as const).forEach((key) => {
+    const value = (v as UpsertVariables)[key];
+    if (value === undefined || value === null) {
+      throw new Error(requiredMessages[key]);
+    }
+  });
+
+  return v as UpsertVariables;
 }
 
 export async function upsertVideoData(values: UpsertVideoDataFormValues) {

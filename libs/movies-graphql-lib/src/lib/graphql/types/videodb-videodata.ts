@@ -1,7 +1,13 @@
 import { VideoDbVideoData } from "./videodata";
 import { builder } from "../builder";
-import { upsertVideoData, getVideoById } from "@nx-movies-db/movies-prisma-lib";
+import {
+  upsertVideoData,
+  getVideoById,
+  VideoDataValidationError,
+  Prisma,
+} from "@nx-movies-db/movies-prisma-lib";
 import type { VideoDataInput } from "@nx-movies-db/movies-prisma-lib";
+import { GraphQLError } from "graphql";
 
 builder.mutationField("upsertVideoData", (t) =>
   t.prismaField({
@@ -17,7 +23,7 @@ builder.mutationField("upsertVideoData", (t) =>
       comment: t.arg.string(),
       disklabel: t.arg.string(),
       imdbID: t.arg.string(),
-      year: t.arg.int(),
+      year: t.arg.int({ required: true }),
       imgurl: t.arg.string(),
       director: t.arg.string(),
       actors: t.arg.string(),
@@ -32,15 +38,15 @@ builder.mutationField("upsertVideoData", (t) =>
       video_codec: t.arg.string(),
       video_width: t.arg.int(),
       video_height: t.arg.int(),
-      istv: t.arg.int(),
+      istv: t.arg.int({ required: true }),
       lastupdate: t.arg({ type: "DateTime" }),
-      mediatype: t.arg.int(),
+      mediatype: t.arg.int({ required: true }),
       custom1: t.arg.string(),
       custom2: t.arg.string(),
       custom3: t.arg.string(),
       custom4: t.arg.string(),
       created: t.arg({ type: "DateTime" }),
-      owner_id: t.arg.int(),
+      owner_id: t.arg.int({ required: true }),
       genreIds: t.arg.intList(),
     },
     resolve: async (
@@ -60,7 +66,31 @@ builder.mutationField("upsertVideoData", (t) =>
         genreIds: args.genreIds ?? undefined,
       } as VideoDataInput;
 
-      return upsertVideoData(input);
+      try {
+        return await upsertVideoData(input);
+      } catch (err) {
+        if (err instanceof VideoDataValidationError) {
+          throw new GraphQLError("Invalid video data input", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              issues: err.issues.map(({ path, message }) => ({
+                path,
+                message,
+              })),
+            },
+          });
+        }
+        if (err instanceof Prisma.PrismaClientKnownRequestError) {
+          throw new GraphQLError("Unable to persist video data", {
+            extensions: {
+              code: "PRISMA_ERROR",
+              prismaCode: err.code,
+              target: err.meta?.target,
+            },
+          });
+        }
+        throw err;
+      }
     },
   })
 );

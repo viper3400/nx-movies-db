@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   EditableFormWrapper,
   UpsertVideoDataForm,
@@ -9,7 +9,7 @@ import {
 import { upsertVideoData } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Chip, addToast } from "@heroui/react";
+import { Chip, Skeleton, addToast } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 export interface UpsertVideoFormProps {
@@ -17,8 +17,15 @@ export interface UpsertVideoFormProps {
 }
 
 export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues }) => {
-  const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
-  const { availableOwners } = useAvailableOwners();
+  const {
+    availableMediaTypes,
+    availableGenres,
+    loadingMediaTypes,
+    loadingGenres,
+    mediaTypesError,
+    genresError,
+  } = useAvailableMediaAndGenres();
+  const { availableOwners, loadingOwners, ownersError } = useAvailableOwners();
   const router = useRouter();
   const defaults: UpsertVideoDataFormValues =
     initialValues ?? {
@@ -40,6 +47,24 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
       owner_id: 1,
       genreIds: [],
     };
+
+  useEffect(() => {
+    const lookupError = mediaTypesError ?? genresError ?? ownersError;
+    if (!lookupError) return;
+    addToast({
+      title: "Lookup fehlgeschlagen",
+      description: lookupError.message,
+      severity: "danger",
+    });
+  }, [mediaTypesError, genresError, ownersError]);
+
+  const readOnlyFields = {
+    mediatype: loadingMediaTypes,
+    owner_id: loadingOwners,
+    genreIds: loadingGenres,
+  } as const;
+
+  const showLookupSkeletons = loadingMediaTypes || loadingGenres || loadingOwners;
 
   return (
     <EditableFormWrapper<UpsertVideoDataFormValues>
@@ -84,10 +109,19 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
             </Chip>
           </div>
 
+          {showLookupSkeletons && (
+            <div className="grid gap-2 sm:grid-cols-2" aria-live="polite">
+              {loadingMediaTypes && <Skeleton className="h-12 w-full rounded-large" />}
+              {loadingGenres && <Skeleton className="h-12 w-full rounded-large" />}
+              {loadingOwners && <Skeleton className="h-12 w-full rounded-large sm:col-span-2" />}
+            </div>
+          )}
+
           <UpsertVideoDataForm
             values={values}
             onChange={onChange}
             readOnly={readOnly}
+            readOnlyFields={readOnlyFields}
             inputVariant="faded"
             mediaTypeOptions={availableMediaTypes}
             genreOptions={availableGenres}

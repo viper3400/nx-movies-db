@@ -140,4 +140,55 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await expect(page.locator(selectors.diskId)).toHaveValue(originalDiskId);
     await expect(page.locator(selectors.year)).toHaveValue(originalYear);
   });
+
+  test("user can create, update, and discard a manual entry", async ({ page }) => {
+    const uniqueToken = Date.now();
+    const createdTitle = `Playwright Created ${uniqueToken}`;
+    const updatedLanguage = "english";
+    const temporaryLanguage = "german";
+
+    await page.goto("/movies/edit/new");
+
+    const titleField = page.locator(selectors.title);
+    const languageField = page.locator(selectors.language);
+    const saveButton = page.locator(selectors.save);
+    const discardButton = page.locator(selectors.discard);
+
+    await titleField.waitFor({ state: "visible" });
+    await titleField.fill(createdTitle);
+    await titleField.press("Tab");
+
+    await expect(saveButton).toBeEnabled();
+
+    await Promise.all([
+      page.waitForURL(/\/edit\/\d+$/),
+      saveButton.click(),
+    ]);
+    await waitUntilSaved(saveButton);
+    await expect(titleField).toHaveValue(createdTitle);
+
+    // Capture the new id just to ensure we landed on a persisted entity
+    const createdPath = new URL(page.url()).pathname;
+    expect(createdPath).toMatch(/\/edit\/\d+$/);
+
+    // Update language and ensure persistence
+    await languageField.fill(updatedLanguage);
+    await languageField.press("Tab");
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+    await waitUntilSaved(saveButton);
+
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(languageField).toHaveValue(updatedLanguage);
+
+    // Now draft a change and discard it
+    await languageField.fill(temporaryLanguage);
+    await languageField.press("Tab");
+    await expect(saveButton).toBeEnabled();
+    await expect(discardButton).toBeEnabled();
+
+    await discardButton.click();
+    await expect(languageField).toHaveValue(updatedLanguage);
+    await expect(saveButton).toBeDisabled();
+  });
 });

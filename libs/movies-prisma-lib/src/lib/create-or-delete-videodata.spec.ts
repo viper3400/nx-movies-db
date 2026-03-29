@@ -29,6 +29,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       year: 2024,
       mediatype: 14,
       owner_id: 2,
+      istv: 0,
     };
 
     const result = await upsertVideoData(videoData);
@@ -58,6 +59,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       year: 2020,
       mediatype: 14,
       owner_id: 2,
+      istv: 0,
     });
     trackVideo(created.id);
 
@@ -67,6 +69,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       year: 2025,
       mediatype: 15,
       owner_id: 3,
+      istv: 1,
     };
 
     const result = await upsertVideoData(updatedData);
@@ -88,6 +91,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       year: 2024,
       mediatype: 14,
       owner_id: 2,
+      istv: 0,
       genreIds: [genres[0].id, genres[1].id],
     });
     trackVideo(created.id);
@@ -105,6 +109,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       year: created.year,
       mediatype: created.mediatype,
       owner_id: created.owner_id,
+      istv: created.istv,
       genreIds: [genres[1].id, genres[2].id],
     });
 

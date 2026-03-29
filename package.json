@@ -35,7 +35,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-i18next": "^16.0.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^4.3.4"
   },
   "overrides": {
     "@react-aria/i18n": "3.12.16",

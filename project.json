@@ -1,8 +1,0 @@
-{
-  "name": "source",
-  "$schema": "./node_modules/nx/schemas/project-schema.json",
-  "root": ".",
-  "projectType": "application",
-  "targets": {},
-  "tags": []
-}

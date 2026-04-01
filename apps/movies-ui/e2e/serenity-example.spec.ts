@@ -9,7 +9,7 @@ test("actor can inspect the movies landing page", async ({ actorCalled }) => {
   const actor = actorCalled("Serena");
 
   await actor.attemptsTo(
-    Navigate.to("/movies"),
+    Navigate.to("/"),
     Ensure.that(Page.current().title(), includes("Filmdatenbank")),
     Ensure.that(Text.of(MoviesNavigationTitle), includes("Filmdatenbank")),
     Ensure.that(MoviesSearchField, isVisible())

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   EditableFormWrapper,
   UpsertVideoDataForm,
@@ -27,26 +27,29 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
   } = useAvailableMediaAndGenres();
   const { availableOwners, loadingOwners, ownersError } = useAvailableOwners();
   const router = useRouter();
-  const defaults: UpsertVideoDataFormValues =
-    initialValues ?? {
-      id: null,
-      title: "",
-      subtitle: "",
-      language: "en",
-      country: "",
-      rating: "",
-      runtime: null,
-      imdbID: "",
-      filename: "",
-      video_width: null,
-      video_height: null,
-      year: new Date().getFullYear(),
-      istv: 0,
-      lastupdate: null,
-      mediatype: 1,
-      owner_id: 1,
-      genreIds: [],
-    };
+  const defaults: UpsertVideoDataFormValues = useMemo(
+    () =>
+      initialValues ?? {
+        id: null,
+        title: "",
+        subtitle: "",
+        language: "en",
+        country: "",
+        rating: "",
+        runtime: null,
+        imdbID: "",
+        filename: "",
+        video_width: null,
+        video_height: null,
+        year: new Date().getFullYear(),
+        istv: 0,
+        lastupdate: null,
+        mediatype: 1,
+        owner_id: 1,
+        genreIds: [],
+      },
+    [initialValues]
+  );
 
   useEffect(() => {
     const lookupError = mediaTypesError ?? genresError ?? ownersError;

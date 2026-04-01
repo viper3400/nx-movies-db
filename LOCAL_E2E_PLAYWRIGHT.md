@@ -13,7 +13,7 @@ npx playwright install
 ```
 
 ## Test Run Steps
-Execute the following commands from the repository root. Keep each long-running process in its own terminal.
+Execute the following commands from the repository root. Before starting, ensure you have copied `.env.example` to `.env` and filled in any secrets; Nx targets will read from that single file. Keep each long-running process in its own terminal.
 
 ### 1. Start the MySQL database
 ```bash
@@ -34,8 +34,9 @@ Once it reports ready, confirm `curl http://127.0.0.1:7100/graphql` succeeds.
 ### 3. Launch the Next.js UI
 ```bash
 cd apps/movies-ui
-NEXT_PUBLIC_GRAPHQL_URL=http://127.0.0.1:7100/graphql \
-NEXT_PUBLIC_NEXTAUTH_URL=/api/auth \
+GRAPHQL_URL=http://127.0.0.1:7100/graphql \
+GRAPHQL_PROXY_URL=http://localhost:3000/movies/api/graphql-proxy \
+NEXTAUTH_URL=http://localhost:3000/movies/api/auth \
 NEXT_PUBLIC_TEST_MODE=true \
 NEXT_PUBLIC_TEST_USERS="tester@example.com,Tester,1" \
 TEST_MODE=true \
@@ -45,7 +46,6 @@ GOOGLE_CLIENT_ID=dummy \
 GOOGLE_CLIENT_SECRET=dummy \
 ALLOWED_USERS="tester@example.com,Tester,1" \
 JWT_SECRET=qwertyuiopasdfghjklzxcvbnm123456 \
-NEXT_PUBLIC_GRAPHQL_PROXY_URL=http://localhost:3000/movies/api/graphql-proxy \
 NEXT_OUTPUT=server \
 npx next build
 npx next start -p 3000

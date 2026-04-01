@@ -37,6 +37,8 @@ jobs:
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       # Run prisma generate first
       - run: npx nx prisma-generate movies-prisma-lib --skip-nx-cache
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
 
       # Now run lint and build in parallel
       - run: npx nx run-many --all --parallel --skip-nx-cache --targets=lint

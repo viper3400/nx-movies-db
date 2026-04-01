@@ -15,7 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
-
+      GITHUB_ID: dummy
+      GITHUB_SECRET: dummy
+      GOOGLE_CLIENT_ID: dummy
+      GOOGLE_CLIENT_SECRET: dummy
     steps:
       - uses: actions/checkout@v6
         with:

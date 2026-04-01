@@ -10,7 +10,7 @@ const selectors = {
 };
 
 async function openEditPage(page: Page, id: string) {
-  await page.goto(`/movies/edit/${id}`);
+  await page.goto(`/edit/${id}`);
   const titleField = page.locator(selectors.title);
   await titleField.waitFor({ state: "visible" });
 
@@ -30,7 +30,7 @@ async function waitUntilSaved(saveButton: Locator) {
 
 test.describe("Edit page (vanilla Playwright)", () => {
   test("user can start a new video entry", async ({ page }) => {
-    await page.goto("/movies/edit/new");
+    await page.goto("/edit/new");
 
     const titleField = page.locator(selectors.title);
     const languageField = page.locator(selectors.language);
@@ -108,7 +108,7 @@ test.describe("Edit page (vanilla Playwright)", () => {
     const editedYear = "1994";
     const id = 59;
 
-    await page.goto(`/movies/edit/${id}`);
+    await page.goto(`/edit/${id}`);
     const titleField = page.locator(selectors.title);
     await titleField.waitFor({ state: "visible" });
 
@@ -147,7 +147,7 @@ test.describe("Edit page (vanilla Playwright)", () => {
     const updatedLanguage = "english";
     const temporaryLanguage = "german";
 
-    await page.goto("/movies/edit/new");
+    await page.goto("/edit/new");
 
     const titleField = page.locator(selectors.title);
     const languageField = page.locator(selectors.language);

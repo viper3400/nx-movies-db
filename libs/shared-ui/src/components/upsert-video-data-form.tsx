@@ -39,24 +39,6 @@ function dateToDateValue(date: Date | null | undefined): DateValue | null {
   return parseDate(date.toISOString().split("T")[0]);
 }
 
-function useBufferedValue<T>(value: T, onCommit: (v: T) => void) {
-  const [local, setLocal] = React.useState<T>(value);
-  const lastValueRef = React.useRef(value);
-
-  React.useEffect(() => {
-    if (!Object.is(lastValueRef.current, value)) {
-      lastValueRef.current = value;
-      setLocal(value);
-    }
-  }, [value]);
-
-  return {
-    value: local,
-    setValue: setLocal,
-    commit: () => onCommit(local),
-  };
-}
-
 export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   values,
   onChange,
@@ -81,26 +63,31 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     k: keyof VideoData;
     label: string;
     type?: string;
-  }) => {
-    const { value, setValue, commit } = useBufferedValue(
-      (values[k] ?? "") as any,
-      (v) => set({ [k]: type === "number" && v !== "" ? Number(v) : v } as Partial<VideoData>)
-    );
-
-    return (
-      <Input
-        data-testid={`video-field-${String(k)}`}
-        label={label}
-        type={type}
-        value={value?.toString() ?? ""}
-        onValueChange={(value) => setValue(value)}
-        onBlur={commit}
-        isDisabled={ro(k)}
-        variant={inputVariant}
-        size="lg"
-      />
-    );
-  };
+  }) => (
+    <Input
+      data-testid={`video-field-${String(k)}`}
+      label={label}
+      type={type}
+      value={
+        values[k] === null || values[k] === undefined
+          ? ""
+          : values[k]?.toString() ?? ""
+      }
+      onValueChange={(value) =>
+        set({
+          [k]:
+            type === "number"
+              ? value === "" || value == null
+                ? null
+                : Number(value)
+              : value,
+        } as Partial<VideoData>)
+      }
+      isDisabled={ro(k)}
+      variant={inputVariant}
+      size="lg"
+    />
+  );
 
   const TextAreaField = ({
     k,
@@ -110,43 +97,38 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     k: keyof VideoData;
     label: string;
     rows?: number;
-  }) => {
-    const { value, setValue, commit } = useBufferedValue(
-      (values[k] ?? "") as any,
-      (v) => set({ [k]: v } as Partial<VideoData>)
-    );
-
-    return (
-      <Textarea
-        data-testid={`video-field-${String(k)}`}
-        label={label}
-        value={(value as string) ?? ""}
-        onValueChange={(value) => setValue(value)}
-        onBlur={commit}
-        isDisabled={ro(k)}
-        variant={inputVariant}
-        minRows={rows}
-      />
-    );
-  };
+  }) => (
+    <Textarea
+      data-testid={`video-field-${String(k)}`}
+      label={label}
+      value={(values[k] as string) ?? ""}
+      onValueChange={(value) =>
+        set({
+          [k]: value,
+        } as Partial<VideoData>)
+      }
+      isDisabled={ro(k)}
+      variant={inputVariant}
+      minRows={rows}
+    />
+  );
 
   const DateField = ({ k, label }: { k: keyof VideoData; label: string }) => {
     const memoizedValue = React.useMemo(
       () => dateToDateValue(values[k] as Date | null),
       [values[k]]
     );
-    const { value, setValue, commit } = useBufferedValue<DateValue | null>(
-      memoizedValue,
-      (v) => set({ [k]: dateValueToJS(v) } as Partial<VideoData>)
-    );
 
     return (
       <DatePicker
         data-testid={`video-field-${String(k)}`}
         label={label}
-        value={value}
-        onChange={setValue}
-        onBlur={commit}
+        value={memoizedValue}
+        onChange={(date) =>
+          set({
+            [k]: dateValueToJS(date),
+          } as Partial<VideoData>)
+        }
         isDisabled={ro(k)}
         granularity="day"
         showMonthAndYearPickers

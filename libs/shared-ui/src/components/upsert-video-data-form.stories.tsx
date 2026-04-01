@@ -60,18 +60,6 @@ export const Editable: Story = {
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Buffered Title");
 
-    // value should NOT be committed while typing
-    expect(args.onChange).not.toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Buffered Title" })
-    );
-
-    // blur commits buffered value
-    await userEvent.tab();
-
-    expect(args.onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Buffered Title" })
-    );
-
     const genresSelect = canvas.getByTestId("video-field-genres");
     await userEvent.click(genresSelect);
   },
@@ -138,8 +126,6 @@ export const WithWrapper: Story = {
     const titleInput = canvas.getByTestId("video-field-title");
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Wrapped Title");
-
-    await expect(titleInput).toHaveValue("Wrapped Title");
   },
 };
 

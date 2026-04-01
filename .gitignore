@@ -46,6 +46,8 @@ Thumbs.db
 out
 
 *.local
+.env
+.env.local
 
 staging/db
 staging/*.config

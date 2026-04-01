@@ -31,7 +31,7 @@ test.describe.skip("Edit page test using Serenity.js", () => {
     const actor = actorCalled("Nina");
 
     await actor.attemptsTo(
-      Navigate.to("/movies/edit/new"),
+      Navigate.to("/edit/new"),
       Wait.until(titleField, isVisible()),
       Ensure.that(Attribute.called("value").of(titleField), equals("")),
       Ensure.that(Attribute.called("value").of(languageField), equals("en")),
@@ -49,7 +49,7 @@ test.describe.skip("Edit page test using Serenity.js", () => {
     const editedTitle = `${originalTitle} (Edited)`;
 
     await actor.attemptsTo(
-      Navigate.to("/movies/edit/59"),
+      Navigate.to("/edit/59"),
       Wait.until(titleField, isVisible()),
       Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle)),
       Ensure.that(Attribute.called("value").of(languageField), equals("german, english, spanish")),
@@ -83,7 +83,7 @@ test.describe.skip("Edit page test using Serenity.js", () => {
     const draftTitle = `${originalTitle} Draft`;
 
     await actor.attemptsTo(
-      Navigate.to("/movies/edit/59"),
+      Navigate.to("/edit/59"),
       Wait.until(titleField, isVisible()),
       Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle)),
       Clear.theValueOf(titleField),
@@ -105,7 +105,7 @@ test.describe.skip("Edit page test using Serenity.js", () => {
     const editedYear = "1994";
 
     await actor.attemptsTo(
-      Navigate.to("/movies/edit/59"),
+      Navigate.to("/edit/59"),
       Wait.until(diskIdField, isVisible()),
       Ensure.that(Attribute.called("value").of(diskIdField), equals(originalDiskId)),
       Ensure.that(Attribute.called("value").of(yearField), equals(originalYear)),

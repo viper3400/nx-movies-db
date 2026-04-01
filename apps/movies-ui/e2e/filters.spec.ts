@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Filter UI", () => {
   test("renders all filter controls with expected options", async ({ page }) => {
-    await page.goto("/movies");
+    await page.goto("/");
 
     const filterButton = page.getByRole("button", { name: /filter/i });
     await expect(filterButton).toBeVisible();

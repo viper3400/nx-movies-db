@@ -60,15 +60,8 @@ export const Editable: Story = {
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Buffered Title");
 
-    // value should NOT be committed while typing
-    expect(args.onChange).not.toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Buffered Title" })
-    );
-
-    // blur commits buffered value
-    await userEvent.tab();
-
-    expect(args.onChange).toHaveBeenCalledWith(
+    // value is committed immediately as the form edits draft values
+    expect(args.onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ title: "Buffered Title" })
     );
 

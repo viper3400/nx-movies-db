@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("basic search for luca, toggle seen today, toggle flag, toggle fav", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3000/movies");
+  await page.goto("/");
   await expect(page.getByRole("navigation").locator("div").filter({ hasText: "Filmdatenbank" })).toBeVisible();
   await expect(page.locator(".inline-flex.w-full.items-center").first()).toBeVisible();
   await expect(page.getByRole("button").nth(2)).toBeVisible();

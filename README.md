@@ -4,56 +4,48 @@
 
 ## App Settings
 
-Following settings must be provided via .env file.
+All services now read from the workspace root `.env` (create it with `cp .env.example .env` and keep secrets out of git). For a complete matrix of variables, see [`CONFIG_README.md`](CONFIG_README.md).
 
 ### movies-service
 
-|Setting       |Description                 |Base Project       |
-|--------------|----------------------------|-------------------|
-|DATABASE_URL  |PrismaORM connection string |movies-prisma-lib  |
-|JWT_SECRET    |Secret to decode JWT token  |movies-graphql-lib |
-
-
-**Example**
-``` 
-DATABASE_URL=mysql://root:password@localhost:7200/videodb
-JWT_SECRET=984038080dw0
-```
+| Setting | Description |
+| --- | --- |
+| `DATABASE_URL` | Prisma ORM connection string (also split into the discrete `DATABASE_*` values). |
+| `JWT_SECRET` | Shared symmetric key for Yoga + UI proxy tokens. |
+| `HOST` / `PORT` | Movies-service bind address (defaults `0.0.0.0:7100`). |
 
 ### movies-ui
 
 | Setting | Description |
 | --- | --- |
-| `GRAPHQL_URL` | The URL for the GraphQL API |
-| `NEXT_PUBLIC_GRAPHQL_URL` | The public URL for the GraphQL API |
-| `GITHUB_SECRET` | The secret for the GitHub authentication |
-| `GITHUB_ID` | The ID for the GitHub authentication |
-| `GOOGLE_CLIENT_ID` | The client ID for the Google authentication |
-| `GOOGLE_CLIENT_SECRET` | The client secret for the Google authentication |
-| `NEXTAUTH_SECRET` | The secret for NextAuth.js |
-| `NEXTAUTH_URL` | The URL for the NextAuth.js authentication |
-| `NEXT_PUBLIC_NEXTAUTH_URL` | The public URL for the NextAuth.js authentication |
-| `ALLOWED_USERS` | A list of allowed users, with email addresses, names, and IDs separated by commas |
-| `NEXT_PUBLIC_TEST_USERS` | Optional test-only list mirroring `ALLOWED_USERS` so the UI can stub a session when `NEXT_PUBLIC_TEST_MODE` is true |
-| `APP_BASE_PATH` | The base path for the application |
-| `COVER_IMAGE_PATH` | The path for cover images |
+| `GRAPHQL_URL` | Internal Yoga endpoint the proxy forwards to. |
+| `GRAPHQL_PROXY_URL` | Optional override for the `/api/graphql-proxy` route the Apollo client uses. |
+| `GITHUB_ID` / `GITHUB_SECRET` | GitHub OAuth credentials. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth credentials. |
+| `NEXTAUTH_SECRET` / `NEXTAUTH_URL` | Required by NextAuth for JWT/session signing and callback URL resolution. |
+| `JWT_SECRET` | Must match the backend value so the UI can mint API tokens. |
+| `ALLOWED_USERS` | Semicolon-delimited list (`email,name,id`) controlling access. |
+| `NEXT_PUBLIC_TEST_MODE`, `NEXT_PUBLIC_TEST_USERS` | Enable stub sessions for local runs. |
+| `APP_BASE_PATH` | Next.js `basePath` value (e.g., `/movies`). |
+| `COVER_IMAGE_PATH` | Filesystem folder containing poster images. |
 
 **Example**
 
 ```
-GRAPHQL_URL="http://localhost:7100/graphql"
-NEXT_PUBLIC_GRAPHQL_URL="http://localhost:7100/graphql"
-GITHUB_SECRET="secret"
-GITHUB_ID="id"
-GOOGLE_CLIENT_ID="id"
-GOOGLE_CLIENT_SECRET="secret"
-NEXTAUTH_SECRET="secret"
-NEXTAUTH_URL=http://localhost:3000/movies/api/auth
-NEXT_PUBLIC_NEXTAUTH_URL=http://localhost:3000/movies/api/auth
-ALLOWED_USERS=jane@doe.com,Jane,3;John@example.org,3
-NEXT_PUBLIC_TEST_USERS="jane@doe.com,Jane,3"
+GRAPHQL_URL=http://127.0.0.1:7100/graphql
+GRAPHQL_PROXY_URL=http://127.0.0.1:3000/api/graphql-proxy
+GITHUB_ID=github-client-id
+GITHUB_SECRET=github-client-secret
+GOOGLE_CLIENT_ID=google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=google-client-secret
+NEXTAUTH_SECRET=dev-nextauth-secret
+NEXTAUTH_URL=http://127.0.0.1:3000/api/auth
+JWT_SECRET=dev-jwt-secret
+ALLOWED_USERS=jane@doe.com,Jane,3;john@example.org,John,4
+NEXT_PUBLIC_TEST_MODE=true
+NEXT_PUBLIC_TEST_USERS="tester@example.com,Tester,1"
 APP_BASE_PATH=/movies
-COVER_IMAGE_PATH=/media/coverimages
+COVER_IMAGE_PATH=./development-db/coverpics
 ```
 # Setting Up the Development Database
 

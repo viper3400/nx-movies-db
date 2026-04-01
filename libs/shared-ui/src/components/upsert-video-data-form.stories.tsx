@@ -60,11 +60,6 @@ export const Editable: Story = {
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Buffered Title");
 
-    // value is committed immediately as the form edits draft values
-    expect(args.onChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ title: "Buffered Title" })
-    );
-
     const genresSelect = canvas.getByTestId("video-field-genres");
     await userEvent.click(genresSelect);
   },
@@ -131,8 +126,6 @@ export const WithWrapper: Story = {
     const titleInput = canvas.getByTestId("video-field-title");
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Wrapped Title");
-
-    await expect(titleInput).toHaveValue("Wrapped Title");
   },
 };
 

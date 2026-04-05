@@ -128,6 +128,23 @@ export const WithWrapper: Story = {
     await userEvent.type(titleInput, "Wrapped Title");
   },
 };
+export const FocusRetention: Story = {
+  name: "Focus Retention While Typing",
+  render: Editable.render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const titleInput = canvas.getByTestId("video-field-title");
+    await userEvent.clear(titleInput);
+    await userEvent.click(titleInput);
+    await expect(titleInput).toHaveFocus();
+
+    await userEvent.keyboard("A");
+    await expect(titleInput).toHaveValue("A");
+
+    await expect(titleInput).toHaveFocus();
+  },
+};
 
 export const WithWrapperFramedAll: Story = {
   name: "With Wrapper (frame=all)",

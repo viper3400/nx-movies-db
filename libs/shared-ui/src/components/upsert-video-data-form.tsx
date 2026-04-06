@@ -55,7 +55,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
 
   const ro = (k: keyof VideoData) => readOnly || !!readOnlyFields?.[k];
 
-  const TextField = ({
+  const renderTextField = ({
     k,
     label,
     type = "text",
@@ -89,7 +89,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     />
   );
 
-  const TextAreaField = ({
+  const renderTextAreaField = ({
     k,
     label,
     rows = 2,
@@ -113,31 +113,24 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     />
   );
 
-  const DateField = ({ k, label }: { k: keyof VideoData; label: string }) => {
-    const memoizedValue = React.useMemo(
-      () => dateToDateValue(values[k] as Date | null),
-      [values[k]]
-    );
+  const renderDateField = ({ k, label }: { k: keyof VideoData; label: string }) => (
+    <DatePicker
+      data-testid={`video-field-${String(k)}`}
+      label={label}
+      value={dateToDateValue(values[k] as Date | null | undefined)}
+      onChange={(date) =>
+        set({
+          [k]: dateValueToJS(date),
+        } as Partial<VideoData>)
+      }
+      isDisabled={ro(k)}
+      granularity="day"
+      showMonthAndYearPickers
+      className="max-w-[284px]"
+    />
+  );
 
-    return (
-      <DatePicker
-        data-testid={`video-field-${String(k)}`}
-        label={label}
-        value={memoizedValue}
-        onChange={(date) =>
-          set({
-            [k]: dateValueToJS(date),
-          } as Partial<VideoData>)
-        }
-        isDisabled={ro(k)}
-        granularity="day"
-        showMonthAndYearPickers
-        className="max-w-[284px]"
-      />
-    );
-  };
-
-  const SingleSelect = (
+  const renderSingleSelect = (
     k: keyof VideoData,
     label: string,
     options: { label: string; value: string }[]
@@ -166,57 +159,57 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   return (
     <div className={className}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TextField k="id" label="ID" type="number" />
-        <TextField k="md5" label="MD5" />
+        {renderTextField({ k: "id", label: "ID", type: "number" })}
+        {renderTextField({ k: "md5", label: "MD5" })}
 
-        <TextField k="title" label="Title" />
-        <TextField k="subtitle" label="Subtitle" />
+        {renderTextField({ k: "title", label: "Title" })}
+        {renderTextField({ k: "subtitle", label: "Subtitle" })}
 
-        <TextField k="language" label="Language" />
-        <TextField k="diskid" label="Disk ID" />
+        {renderTextField({ k: "language", label: "Language" })}
+        {renderTextField({ k: "diskid", label: "Disk ID" })}
 
-        <TextAreaField k="comment" label="Comment" />
-        <TextField k="disklabel" label="Disk Label" />
+        {renderTextAreaField({ k: "comment", label: "Comment" })}
+        {renderTextField({ k: "disklabel", label: "Disk Label" })}
 
-        <TextField k="imdbID" label="IMDB ID" />
-        <TextField k="year" label="Year" type="number" />
+        {renderTextField({ k: "imdbID", label: "IMDB ID" })}
+        {renderTextField({ k: "year", label: "Year", type: "number" })}
 
-        <TextField k="imgurl" label="Image URL" />
-        <TextField k="director" label="Director" />
+        {renderTextField({ k: "imgurl", label: "Image URL" })}
+        {renderTextField({ k: "director", label: "Director" })}
 
-        <TextAreaField k="actors" label="Actors" />
-        <TextField k="runtime" label="Runtime (min)" type="number" />
+        {renderTextAreaField({ k: "actors", label: "Actors" })}
+        {renderTextField({ k: "runtime", label: "Runtime (min)", type: "number" })}
 
-        <TextField k="country" label="Country" />
-        <TextAreaField k="plot" label="Plot" rows={3} />
+        {renderTextField({ k: "country", label: "Country" })}
+        {renderTextAreaField({ k: "plot", label: "Plot", rows: 3 })}
 
-        <TextField k="rating" label="Rating" />
-        <TextField k="filename" label="Filename" />
+        {renderTextField({ k: "rating", label: "Rating" })}
+        {renderTextField({ k: "filename", label: "Filename" })}
 
-        <TextField k="filesize" label="Filesize (bytes)" type="number" />
+        {renderTextField({ k: "filesize", label: "Filesize (bytes)", type: "number" })}
 
-        <DateField k="filedate" label="File Date" />
+        {renderDateField({ k: "filedate", label: "File Date" })}
 
-        <TextField k="audio_codec" label="Audio Codec" />
-        <TextField k="video_codec" label="Video Codec" />
+        {renderTextField({ k: "audio_codec", label: "Audio Codec" })}
+        {renderTextField({ k: "video_codec", label: "Video Codec" })}
 
-        <TextField k="video_width" label="Video Width" type="number" />
-        <TextField k="video_height" label="Video Height" type="number" />
+        {renderTextField({ k: "video_width", label: "Video Width", type: "number" })}
+        {renderTextField({ k: "video_height", label: "Video Height", type: "number" })}
 
-        <TextField k="istv" label="Is TV (0/1)" type="number" />
+        {renderTextField({ k: "istv", label: "Is TV (0/1)", type: "number" })}
 
-        <DateField k="lastupdate" label="Last Update" />
+        {renderDateField({ k: "lastupdate", label: "Last Update" })}
 
-        {SingleSelect("mediatype", "Media Type", mediaTypeOptions)}
+        {renderSingleSelect("mediatype", "Media Type", mediaTypeOptions)}
 
-        <TextField k="custom1" label="Custom 1" />
-        <TextField k="custom2" label="Custom 2" />
-        <TextField k="custom3" label="Custom 3" />
-        <TextField k="custom4" label="Custom 4" />
+        {renderTextField({ k: "custom1", label: "Custom 1" })}
+        {renderTextField({ k: "custom2", label: "Custom 2" })}
+        {renderTextField({ k: "custom3", label: "Custom 3" })}
+        {renderTextField({ k: "custom4", label: "Custom 4" })}
 
-        <DateField k="created" label="Created" />
+        {renderDateField({ k: "created", label: "Created" })}
 
-        {SingleSelect("owner_id", "Owner", ownerOptions)}
+        {renderSingleSelect("owner_id", "Owner", ownerOptions)}
 
         <Select
           data-testid="video-field-genres"

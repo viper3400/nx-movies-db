@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Button, Spacer, Card, CardBody } from "@heroui/react";
+import isEqual from "react-fast-compare";
 
 export const EDITABLE_FORM_FRAME_OPTIONS = ["content", "all", "none"] as const;
 export type EditableFormFrame = typeof EDITABLE_FORM_FRAME_OPTIONS[number];
@@ -44,16 +45,13 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   const [draftValues, setDraftValues] = useState<T>(initialValues);
   const [saving, setSaving] = useState(false);
 
-  const savedSnapshot = useMemo(() => JSON.stringify(savedValues), [savedValues]);
-  const draftSnapshot = useMemo(() => JSON.stringify(draftValues), [draftValues]);
-
   // Keep internal state in sync if external initialValues change
   useEffect(() => {
     setSavedValues(initialValues);
     setDraftValues(initialValues);
   }, [initialValues]);
 
-  const dirty = savedSnapshot !== draftSnapshot;
+  const dirty = useMemo(() => !isEqual(savedValues, draftValues), [savedValues, draftValues]);
 
   const handleSave = async () => {
     if (saving || readOnly || !dirty) return;

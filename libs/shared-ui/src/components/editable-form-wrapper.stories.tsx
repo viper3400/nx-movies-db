@@ -119,7 +119,7 @@ type Story = StoryObj<typeof Example>;
 
 export const Default: Story = {
   render: (args) => {
-    const [, updateArgs] = useArgs();
+    //const [, updateArgs] = useArgs();
     return (
       <Example
         {...args}
@@ -139,6 +139,7 @@ export const Default: Story = {
     const discardButton = canvas.getByTestId("editable-form-discard");
     const firstNameInput = canvas.getByLabelText("First name");
 
+    await expect(firstNameInput).toHaveValue("Neo");
     await expect(saveButton).toBeDisabled();
     await expect(discardButton).toBeDisabled();
 

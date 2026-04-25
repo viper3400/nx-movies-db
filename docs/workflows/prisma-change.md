@@ -44,7 +44,7 @@ The legacy MySQL schema uses many `videodb_*` and `video` names. Do not rename b
 - `DATABASE_PASSWORD`
 - `DATABASE_NAME`
 
-See `LOCAL_E2E_PLAYWRIGHT.md` for the Docker Compose startup flow used by local e2e tests.
+See `docs/workflows/e2e.md` for the Docker Compose startup flow used by local e2e tests.
 
 ## Useful Commands
 

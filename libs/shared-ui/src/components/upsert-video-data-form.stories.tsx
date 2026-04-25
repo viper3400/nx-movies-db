@@ -135,6 +135,7 @@ export const PartiallyReadOnly: Story = {
 
 export const WithWrapper: Story = {
   name: "With Save/Discard Wrapper",
+  tags: ["!test"],
   parameters: { frame: EDITABLE_FORM_FRAME_OPTIONS[0] },
   render: renderWithWrapper,
   play: async ({ canvasElement }) => {

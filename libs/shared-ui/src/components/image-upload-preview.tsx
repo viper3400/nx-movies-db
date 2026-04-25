@@ -78,7 +78,7 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
                   label={`${label} URL`}
                   placeholder={placeholderUrl}
                   value={url}
-                  onChange={(e) => setUrl(e.target.value)}
+                  onValueChange={setUrl}
                   variant="underlined"
                   size="lg"
                   className="flex-1"

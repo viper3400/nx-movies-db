@@ -97,7 +97,9 @@ Notes:
 - `README.md`: top-level setup and configuration summary.
 - `CONFIG_README.md`: environment variable matrix.
 - `LOCAL_E2E_PLAYWRIGHT.md`: full local DB + service + UI + Playwright flow.
-- `docs/ai-context.md`: AI-oriented context snapshot. Treat it as useful but verify it against `package.json`, `nx.json`, and `npx nx show project <name> --json` because it may drift.
+- `docs/workflows/ui-change.md`: focused workflow for UI, shared component, and Storybook changes.
+- `docs/workflows/graphql-change.md`: focused workflow for API contract and GraphQL service changes.
+- `docs/workflows/prisma-change.md`: focused workflow for Prisma schema and DB-backed changes.
 - `docs/image-handling.md`: cover/poster image behavior.
 
 ## Working Style

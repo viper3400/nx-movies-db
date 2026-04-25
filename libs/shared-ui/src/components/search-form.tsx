@@ -55,8 +55,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
           type="text"
           size="lg"
           value={searchText}
-          onChange={(e) => {
-            const value = e.target.value;
+          onValueChange={(value) => {
             setSearchText(value);
             if (invalidSearch) validateSearch(value);
           }}

@@ -2,7 +2,21 @@
   "name": "@nx-movies-db/source",
   "version": "1.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "nx": "nx",
+    "lint": "nx run-many --all --parallel --targets=lint",
+    "build": "nx run-many --all --parallel --targets=build",
+    "test": "nx run-many --all --parallel --targets=test --exclude=movies-prisma-lib,movies-service-e2e",
+    "test:db": "nx run movies-prisma-lib:test",
+    "test:ui": "nx run movies-ui:test",
+    "test:e2e": "playwright test -c apps/movies-ui/playwright.config.ts",
+    "storybook": "nx run shared-ui:storybook",
+    "test:storybook": "nx run shared-ui:test-storybook",
+    "prisma:generate": "nx run movies-prisma-lib:prisma-generate",
+    "prisma:format": "nx run movies-prisma-lib:prisma-format",
+    "dev:service": "nx serve movies-service",
+    "dev:ui": "nx dev movies-ui"
+  },
   "private": true,
   "dependencies": {
     "@apollo/client": "^4.0.0",

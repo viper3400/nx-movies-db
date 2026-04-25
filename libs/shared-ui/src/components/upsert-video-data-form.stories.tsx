@@ -178,6 +178,9 @@ function renderWithWrapper(args: any, { parameters }: any) {
             readOnly={readOnly}
             readOnlyFields={args.readOnlyFields}
             inputVariant={args.inputVariant}
+            mediaTypeOptions={args.mediaTypeOptions}
+            ownerOptions={args.ownerOptions}
+            genreOptions={args.genreOptions}
           />
         )}
       </EditableFormWrapper>

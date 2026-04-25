@@ -1,6 +1,7 @@
 {
   "name": "workspace",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "tags": ["type:tooling", "scope:tools"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",

@@ -2,6 +2,8 @@
 
 These steps mirror the GitHub Actions workflow so that the end-to-end Playwright suite can be exercised on macOS.
 
+For the shorter day-to-day workflow, see [`docs/workflows/e2e.md`](docs/workflows/e2e.md).
+
 ## Prerequisites
 - Node.js 22 with npm (managed by nvm, fnm, or a system install)
 - Docker engine (Rancher Desktop works fine) with Compose v2

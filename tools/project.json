@@ -12,7 +12,7 @@
             "command": "nx run movies-service:serve"
           },
           {
-            "command": "nx run movies-ui:dev --port=$UI_PORT"
+            "command": "nx run movies-ui:dev"
           }
         ]
       }

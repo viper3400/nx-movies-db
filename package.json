@@ -14,6 +14,11 @@
     "test:storybook": "nx run shared-ui:test-storybook",
     "prisma:generate": "nx run movies-prisma-lib:prisma-generate",
     "prisma:format": "nx run movies-prisma-lib:prisma-format",
+    "db:start": "MYSQL_DATABASE=videodb MYSQL_ROOT_PASSWORD=password podman compose -f development-db/docker-compose.ci.yaml up -d movies-service-db",
+    "db:stop": "podman compose -f development-db/docker-compose.ci.yaml down -v",
+    "db:ps": "podman compose -f development-db/docker-compose.ci.yaml ps",
+    "dev:all": "nx run workspace:dev",
+    "build:all": "nx run workspace:build-all",
     "dev:service": "nx serve movies-service",
     "dev:ui": "nx dev movies-ui"
   },

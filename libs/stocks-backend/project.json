@@ -5,6 +5,7 @@
   "projectType": "library",
   "tags": [
     "type:server",
+    "platform:node",
     "scope:stocks"
   ],
   "targets": {
@@ -28,4 +29,3 @@
     }
   }
 }
-

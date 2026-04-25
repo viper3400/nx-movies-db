@@ -38,8 +38,59 @@ export default [
           allow: [],
           depConstraints: [
             {
-              sourceTag: "*",
-              onlyDependOnLibsWithTags: ["*"],
+              sourceTag: "scope:movies",
+              onlyDependOnLibsWithTags: ["scope:movies", "scope:shared"],
+            },
+            {
+              sourceTag: "scope:stocks",
+              onlyDependOnLibsWithTags: ["scope:stocks", "scope:shared"],
+            },
+            {
+              sourceTag: "scope:tools",
+              onlyDependOnLibsWithTags: ["scope:movies", "scope:stocks", "scope:shared", "scope:tools"],
+            },
+            {
+              sourceTag: "scope:shared",
+              onlyDependOnLibsWithTags: ["scope:shared"],
+            },
+            {
+              sourceTag: "type:app",
+              onlyDependOnLibsWithTags: [
+                "type:api",
+                "type:data-access",
+                "type:server",
+                "type:shared",
+                "type:types",
+                "type:ui",
+              ],
+            },
+            {
+              sourceTag: "type:e2e",
+              onlyDependOnLibsWithTags: ["type:app", "type:api", "type:data-access", "type:shared", "type:types"],
+            },
+            {
+              sourceTag: "type:api",
+              onlyDependOnLibsWithTags: ["type:data-access", "type:shared", "type:types"],
+            },
+            {
+              sourceTag: "type:data-access",
+              onlyDependOnLibsWithTags: ["type:shared", "type:types"],
+            },
+            {
+              sourceTag: "type:server",
+              onlyDependOnLibsWithTags: ["type:shared", "type:types"],
+            },
+            {
+              sourceTag: "type:ui",
+              onlyDependOnLibsWithTags: ["type:shared", "type:types", "type:ui"],
+            },
+            {
+              sourceTag: "type:shared",
+              onlyDependOnLibsWithTags: ["type:shared", "type:types"],
+            },
+            {
+              sourceTag: "type:types",
+              onlyDependOnLibsWithTags: ["type:types"],
             },
           ],
         },

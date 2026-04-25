@@ -18,6 +18,7 @@
     "db:stop": "podman compose -f development-db/docker-compose.ci.yaml down -v",
     "db:ps": "podman compose -f development-db/docker-compose.ci.yaml ps",
     "dev:all": "nx run workspace:dev",
+    "dev:e2e": "nx run workspace:dev-e2e",
     "build:all": "nx run workspace:build-all",
     "dev:service": "nx serve movies-service",
     "dev:ui": "nx dev movies-ui"

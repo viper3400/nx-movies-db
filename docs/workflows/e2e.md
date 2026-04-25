@@ -31,10 +31,10 @@ Check DB container state:
 npm run db:ps
 ```
 
-Start the service and UI together:
+Start the service and UI together in e2e mode:
 
 ```bash
-npm run dev:all
+npm run dev:e2e
 ```
 
 Run UI e2e tests after the DB, service, and UI are ready:
@@ -56,11 +56,11 @@ The helper scripts use the same local defaults as the CI-oriented e2e guide:
 - `MYSQL_DATABASE=videodb`
 - `MYSQL_ROOT_PASSWORD=password`
 - DB compose file: `development-db/docker-compose.ci.yaml`
+- `npm run dev:e2e` starts the service and UI with `TEST_MODE=true`, `NEXT_PUBLIC_TEST_MODE=true`, the stub user `tester@example.com,Tester,1`, and the same local JWT/GraphQL defaults used by CI.
+- Local Playwright defaults to `E2E_BASE_URL=http://localhost:3000`. CI overrides this explicitly.
 
 The app runtime still depends on `.env` / `.env.local`. Check `.env.example` and `CONFIG_README.md` when a service fails due to missing configuration.
 
-## When To Use The Longer Guide
+## Workflow Scope
 
-Use `LOCAL_E2E_PLAYWRIGHT.md` when you need the full manual flow, production-style Next.js build/start commands, or detailed teardown/debugging steps.
-
-Use this short workflow when you need the normal agent/developer loop: DB up, app stack up, run Playwright, tear down DB.
+Use this workflow for the normal agent/developer loop: DB up, app stack up, run Playwright, tear down DB.

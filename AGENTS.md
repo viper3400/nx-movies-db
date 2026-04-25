@@ -31,6 +31,19 @@ movies-ui -> /api/graphql-proxy -> movies-service -> movies-graphql-lib -> movie
 - Keep secrets out of commits.
 - Do not broad-refactor naming drift between `video` and `movie` unless the task explicitly asks for that migration. The legacy MySQL schema still uses many `videodb_*` names.
 
+## Nx Tags And Boundaries
+
+Projects are tagged by `scope:*`, `type:*`, and sometimes `platform:*`. ESLint enforces these tags through `@nx/enforce-module-boundaries`.
+
+- `scope:movies` may depend on `scope:movies` and `scope:shared`.
+- `scope:stocks` may depend on `scope:stocks` and `scope:shared`.
+- `scope:shared` may only depend on `scope:shared`.
+- `type:app` is the outer layer and may depend on API, data-access, server, UI, shared, and type libraries.
+- `type:api` may depend on data-access, shared, and type libraries.
+- `type:data-access` should stay below API/UI and may depend only on shared and type libraries.
+- `type:ui` may depend on UI, shared, and type libraries.
+- `type:types` should remain dependency-light and may only depend on type libraries.
+
 ## Common Commands
 
 Use root scripts where possible:

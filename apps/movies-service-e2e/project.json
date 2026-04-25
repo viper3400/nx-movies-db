@@ -2,6 +2,7 @@
   "name": "movies-service-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "tags": ["type:e2e", "scope:movies"],
   "implicitDependencies": ["movies-service"],
   "targets": {
     "e2e": {

@@ -1,0 +1,96 @@
+# Agent Guide
+
+This file is the first stop for AI agents working in this repository. Prefer these notes over inferred conventions when they conflict with generated or stale docs.
+
+## Repository Shape
+
+`nx-movies-db` is an Nx TypeScript monorepo for a private movie collection app.
+
+- `apps/movies-ui`: Next.js UI. It uses NextAuth, server actions, Apollo, HeroUI, and components from `shared-ui`.
+- `apps/movies-service`: Express/Yoga GraphQL service.
+- `libs/movies-graphql-lib`: GraphQL schema, Pothos objects/types, Yoga setup, and API behavior.
+- `libs/movies-prisma-lib`: Prisma schema, generated client, and database access functions.
+- `libs/shared-ui`: reusable React UI components and Storybook stories.
+- `libs/shared-types`: cross-project TypeScript types.
+- `libs/stocks-lib` and `libs/stocks-backend`: stock/importer code; do not mix this with movie app changes unless the task asks for it.
+
+Primary request flow:
+
+```text
+movies-ui -> /api/graphql-proxy -> movies-service -> movies-graphql-lib -> movies-prisma-lib -> MySQL
+```
+
+## Hard Boundaries
+
+- Do not hand-edit generated Prisma/Pothos output:
+  - `libs/movies-prisma-lib/src/generated/**`
+  - `libs/movies-graphql-lib/src/lib/graphql/pothos-prisma-types.ts`
+- Regenerate Prisma/Pothos files with `npm run prisma:generate` after changing `libs/movies-prisma-lib/prisma/prisma.schema`.
+- All movie database access should go through `movies-prisma-lib` and the GraphQL API boundary. UI code should not talk directly to Prisma or MySQL.
+- Runtime configuration is rooted at `.env` / `.env.local`; `.env.example` is the committed template.
+- Keep secrets out of commits.
+- Do not broad-refactor naming drift between `video` and `movie` unless the task explicitly asks for that migration. The legacy MySQL schema still uses many `videodb_*` names.
+
+## Common Commands
+
+Use root scripts where possible:
+
+```bash
+npm run lint
+npm run build
+npm run test
+npm run test:ui
+npm run test:db
+npm run test:e2e
+npm run storybook
+npm run test:storybook
+npm run prisma:generate
+npm run prisma:format
+npm run dev:service
+npm run dev:ui
+```
+
+Notes:
+
+- `npm run test` intentionally excludes DB-backed Prisma tests and service e2e tests.
+- `npm run test:db` requires the local MySQL test database. See `LOCAL_E2E_PLAYWRIGHT.md` for the DB startup flow.
+- `npm run test:e2e` expects the database, GraphQL service, and UI to already be running.
+- For focused work, prefer direct Nx commands such as `npx nx run shared-ui:test` or `npx nx run movies-graphql-lib:test`.
+
+## UI Conventions
+
+- Shared/reusable components belong in `libs/shared-ui`; app-specific wiring belongs in `apps/movies-ui`.
+- Storybook stories live next to shared UI components and are useful verification targets for visual changes.
+- HeroUI `Input` and `Textarea` must use `onValueChange` instead of `onChange`; the ESLint config warns about this because of a composition issue.
+- Keep app routes under `apps/movies-ui/src/app`.
+- Use existing icons/components before adding new visual primitives.
+
+## Backend And Data Conventions
+
+- GraphQL schema work lives in `libs/movies-graphql-lib/src/lib/graphql`.
+- Prisma access functions live in `libs/movies-prisma-lib/src/lib`.
+- The Prisma schema is `libs/movies-prisma-lib/prisma/prisma.schema`.
+- The development database is seeded from `seed/videodb.sql` through Docker Compose files under `development-db`.
+- DB-backed tests usually need:
+  - `DATABASE_URL`
+  - `DATABASE_HOST`
+  - `DATABASE_PORT`
+  - `DATABASE_USER`
+  - `DATABASE_PASSWORD`
+  - `DATABASE_NAME`
+
+## Documentation
+
+- `README.md`: top-level setup and configuration summary.
+- `CONFIG_README.md`: environment variable matrix.
+- `LOCAL_E2E_PLAYWRIGHT.md`: full local DB + service + UI + Playwright flow.
+- `docs/ai-context.md`: AI-oriented context snapshot. Treat it as useful but verify it against `package.json`, `nx.json`, and `npx nx show project <name> --json` because it may drift.
+- `docs/image-handling.md`: cover/poster image behavior.
+
+## Working Style
+
+- Use `rg` / `rg --files` for search.
+- Prefer existing Nx targets and local patterns over new tooling.
+- Keep changes scoped to the project involved in the task.
+- If generated files change, mention the command that produced them.
+- If a command requires a running DB, say so instead of treating the failure as a code failure.

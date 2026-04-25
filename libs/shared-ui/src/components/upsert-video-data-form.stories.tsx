@@ -4,6 +4,20 @@ import { UpsertVideoDataForm, UpsertVideoDataFormValues } from "./upsert-video-d
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
 import { fn, within, userEvent, expect } from "storybook/test";
 
+const mediaTypeOptions = [
+  { label: "Movie", value: "1" },
+  { label: "TV", value: "2" },
+];
+
+const ownerOptions = [
+  { label: "Default owner", value: "1" },
+];
+
+const genreOptions = [
+  { label: "Action", value: "1" },
+  { label: "Sci-Fi", value: "2" },
+];
+
 const meta: Meta<typeof UpsertVideoDataForm> = {
   component: UpsertVideoDataForm,
   title: "Forms/UpsertVideoDataForm",
@@ -25,6 +39,9 @@ const meta: Meta<typeof UpsertVideoDataForm> = {
       video_height: 1080,
       mediatype: 1,
     } as UpsertVideoDataFormValues,
+    mediaTypeOptions,
+    ownerOptions,
+    genreOptions,
     onChange: fn(),
   },
   argTypes: {

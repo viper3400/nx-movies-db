@@ -59,6 +59,11 @@ npm run storybook
 npm run test:storybook
 npm run prisma:generate
 npm run prisma:format
+npm run db:start
+npm run db:ps
+npm run db:stop
+npm run dev:all
+npm run build:all
 npm run dev:service
 npm run dev:ui
 ```
@@ -66,7 +71,7 @@ npm run dev:ui
 Notes:
 
 - `npm run test` intentionally excludes DB-backed Prisma tests and service e2e tests.
-- `npm run test:db` requires the local MySQL test database. See `LOCAL_E2E_PLAYWRIGHT.md` for the DB startup flow.
+- `npm run test:db` requires the local MySQL test database. See `docs/workflows/e2e.md` for the DB startup flow.
 - `npm run test:e2e` expects the database, GraphQL service, and UI to already be running.
 - For focused work, prefer direct Nx commands such as `npx nx run shared-ui:test` or `npx nx run movies-graphql-lib:test`.
 
@@ -96,10 +101,10 @@ Notes:
 
 - `README.md`: top-level setup and configuration summary.
 - `CONFIG_README.md`: environment variable matrix.
-- `LOCAL_E2E_PLAYWRIGHT.md`: full local DB + service + UI + Playwright flow.
 - `docs/workflows/ui-change.md`: focused workflow for UI, shared component, and Storybook changes.
 - `docs/workflows/graphql-change.md`: focused workflow for API contract and GraphQL service changes.
 - `docs/workflows/prisma-change.md`: focused workflow for Prisma schema and DB-backed changes.
+- `docs/workflows/e2e.md`: focused workflow for local DB/service/UI/e2e runs.
 - `docs/image-handling.md`: cover/poster image behavior.
 
 ## Working Style

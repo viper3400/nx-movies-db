@@ -47,4 +47,4 @@ If the change affects real DB behavior, run DB-backed tests with the local MySQL
 npm run test:db
 ```
 
-For end-to-end UI/API coverage, use `LOCAL_E2E_PLAYWRIGHT.md`.
+For end-to-end UI/API coverage, use `docs/workflows/e2e.md`.

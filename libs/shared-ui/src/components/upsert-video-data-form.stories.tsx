@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useArgs } from "storybook/preview-api";
+import { useEffect, useState, type ComponentProps } from "react";
 import { UpsertVideoDataForm, UpsertVideoDataFormValues } from "./upsert-video-data-form";
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
 import { fn, within, userEvent, expect } from "storybook/test";
@@ -55,21 +55,7 @@ export default meta;
 type Story = StoryObj<typeof UpsertVideoDataForm>;
 
 export const Editable: Story = {
-  render: (args) => {
-    const [, updateArgs] = useArgs();
-    return (
-      <div className="p-6 max-w-5xl">
-        <UpsertVideoDataForm
-          {...args}
-          onChange={(v) => {
-            updateArgs({ values: v });
-            args.onChange?.(v);
-            console.log("UpsertVideoDataForm changed", v);
-          }}
-        />
-      </div>
-    );
-  },
+  render: (args) => <EditableFormStory {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const titleInput = canvas.getByTestId("video-field-title");
@@ -84,20 +70,7 @@ export const Editable: Story = {
 
 export const ReadOnly: Story = {
   args: { readOnly: true },
-  render: (args) => {
-    const [, updateArgs] = useArgs();
-    return (
-      <div className="p-6 max-w-5xl">
-        <UpsertVideoDataForm
-          {...args}
-          onChange={(v) => {
-            updateArgs({ values: v });
-            args.onChange?.(v);
-          }}
-        />
-      </div>
-    );
-  },
+  render: (args) => <EditableFormStory {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -108,20 +81,7 @@ export const ReadOnly: Story = {
 
 export const PartiallyReadOnly: Story = {
   args: { readOnly: false, readOnlyFields: { id: true, imdbID: true, filename: true } },
-  render: (args) => {
-    const [, updateArgs] = useArgs();
-    return (
-      <div className="p-6 max-w-5xl">
-        <UpsertVideoDataForm
-          {...args}
-          onChange={(v) => {
-            updateArgs({ values: v });
-            args.onChange?.(v);
-          }}
-        />
-      </div>
-    );
-  },
+  render: (args) => <EditableFormStory {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -135,7 +95,6 @@ export const PartiallyReadOnly: Story = {
 
 export const WithWrapper: Story = {
   name: "With Save/Discard Wrapper",
-  tags: ["!test"],
   parameters: { frame: EDITABLE_FORM_FRAME_OPTIONS[0] },
   render: renderWithWrapper,
   play: async ({ canvasElement }) => {
@@ -160,15 +119,44 @@ export const WithWrapperNoFrame: Story = {
 };
 
 function renderWithWrapper(args: any, { parameters }: any) {
-  const [, updateArgs] = useArgs();
   const frame = (parameters as any)?.frame ?? EDITABLE_FORM_FRAME_OPTIONS[0];
+  return <WrapperFormStory args={args} frame={frame} />;
+}
+
+function EditableFormStory(args: ComponentProps<typeof UpsertVideoDataForm>) {
+  const [values, setValues] = useState(args.values);
+
+  useEffect(() => {
+    setValues(args.values);
+  }, [args.values]);
+
+  return (
+    <div className="p-6 max-w-5xl">
+      <UpsertVideoDataForm
+        {...args}
+        values={values}
+        onChange={(v) => {
+          setValues(v);
+          args.onChange?.(v);
+        }}
+      />
+    </div>
+  );
+}
+
+function WrapperFormStory({
+  args,
+  frame,
+}: {
+  args: ComponentProps<typeof UpsertVideoDataForm>;
+  frame: (typeof EDITABLE_FORM_FRAME_OPTIONS)[number];
+}) {
   return (
     <div className="p-6 max-w-5xl">
       <EditableFormWrapper
         initialValues={args.values}
         frame={frame}
         onSave={async (v) => {
-          updateArgs({ values: v });
           args.onChange?.(v);
         }}
       >

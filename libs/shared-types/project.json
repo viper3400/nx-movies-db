@@ -4,7 +4,7 @@
   "sourceRoot": "libs/shared-types/src",
   "projectType": "library",
   "tags": [
-    "type:shared",
+    "type:types",
     "scope:shared"
   ],
   "targets": {

@@ -17,6 +17,8 @@ Do not hand-edit:
 - `libs/movies-prisma-lib/src/generated/**`
 - `libs/movies-graphql-lib/src/lib/graphql/pothos-prisma-types.ts`
 
+If your editor or search lands in `libs/movies-prisma-lib/src/generated`, treat it as read-only reference material. Make changes in the Prisma schema or in wrapper functions under `libs/movies-prisma-lib/src/lib`.
+
 After schema changes, run:
 
 ```bash

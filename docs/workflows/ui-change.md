@@ -36,10 +36,17 @@ npm run storybook
 npm run test:storybook
 ```
 
-For full UI e2e coverage, start the DB, GraphQL service, and UI first. Then run:
+For full UI e2e coverage, start the DB and then start the GraphQL service and UI in test mode:
+
+```bash
+npm run db:start
+npm run dev:e2e
+```
+
+Then run:
 
 ```bash
 npm run test:e2e
 ```
 
-See `LOCAL_E2E_PLAYWRIGHT.md` for the complete local e2e startup flow.
+See `docs/workflows/e2e.md` for the complete local e2e startup flow.

@@ -32,9 +32,17 @@ Prefer `shared-ui` only when the component is reusable outside one app route. Ke
 npm run lint
 npm run test:ui
 npx nx run shared-ui:test
+npx tsc --noEmit -p libs/shared-ui/tsconfig.storybook.json
 npm run storybook
 npm run test:storybook
 ```
+
+## Typecheck Coverage
+
+- Run the TypeScript config that includes every touched file, not only the default Nx typecheck target.
+- `npx nx run shared-ui:typecheck` uses `libs/shared-ui/tsconfig.lib.json` and does not include `*.stories.tsx`.
+- After changing `libs/shared-ui/src/components/*.stories.tsx`, run `npx tsc --noEmit -p libs/shared-ui/tsconfig.storybook.json`.
+- If that Storybook typecheck fails because of unrelated existing story errors, report the unrelated file and confirm whether the changed story file is clean.
 
 For full UI e2e coverage, start the DB and then start the GraphQL service and UI in test mode:
 

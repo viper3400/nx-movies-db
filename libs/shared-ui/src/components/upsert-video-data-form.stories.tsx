@@ -38,6 +38,8 @@ const meta: Meta<typeof UpsertVideoDataForm> = {
       video_width: 1920,
       video_height: 1080,
       mediatype: 1,
+      owner_id: 1,
+      genreIds: [1],
     } as UpsertVideoDataFormValues,
     mediaTypeOptions,
     ownerOptions,
@@ -53,18 +55,27 @@ const meta: Meta<typeof UpsertVideoDataForm> = {
 export default meta;
 
 type Story = StoryObj<typeof UpsertVideoDataForm>;
+type UpsertVideoDataFormArgs = ComponentProps<typeof UpsertVideoDataForm>;
+type UpsertVideoDataFormRender = NonNullable<Story["render"]>;
 
 export const Editable: Story = {
   render: (args) => <EditableFormStory {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const titleInput = canvas.getByTestId("video-field-title");
+    const mediaTypeSelect = canvas.getByTestId("video-field-mediatype");
+    const genresSelect = canvas.getByTestId("video-field-genres");
+
+    await expect(titleInput).toHaveAccessibleName("Title");
+    await expect(titleInput).toHaveValue("The Matrix");
+    await expect(mediaTypeSelect).toHaveTextContent("Movie");
+    await expect(genresSelect).toHaveTextContent("Action");
 
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Buffered Title");
 
-    const genresSelect = canvas.getByTestId("video-field-genres");
-    await userEvent.click(genresSelect);
+    await expect(titleInput).toHaveValue("Buffered Title");
+    await expect(args.onChange).toHaveBeenCalled();
   },
 };
 
@@ -75,6 +86,7 @@ export const ReadOnly: Story = {
     const canvas = within(canvasElement);
 
     const titleInput = canvas.getByTestId("video-field-title");
+    await expect(titleInput).toHaveAccessibleName("Title");
     await expect(titleInput).toBeDisabled();
   },
 };
@@ -88,6 +100,8 @@ export const PartiallyReadOnly: Story = {
     const imdbInput = canvas.getByTestId("video-field-imdbID");
     const titleInput = canvas.getByTestId("video-field-title");
 
+    await expect(imdbInput).toHaveAccessibleName("IMDB ID");
+    await expect(titleInput).toHaveAccessibleName("Title");
     await expect(imdbInput).toBeDisabled();
     await expect(titleInput).not.toBeDisabled();
   },
@@ -100,9 +114,26 @@ export const WithWrapper: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const saveButton = canvas.getByTestId("editable-form-save");
+    const discardButton = canvas.getByTestId("editable-form-discard");
     const titleInput = canvas.getByTestId("video-field-title");
+
+    await expect(titleInput).toHaveAccessibleName("Title");
+    await expect(saveButton).toBeDisabled();
+    await expect(discardButton).toBeDisabled();
+
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Wrapped Title");
+
+    await expect(titleInput).toHaveValue("Wrapped Title");
+    await expect(saveButton).toBeEnabled();
+    await expect(discardButton).toBeEnabled();
+
+    await userEvent.click(discardButton);
+
+    await expect(titleInput).toHaveValue("The Matrix");
+    await expect(saveButton).toBeDisabled();
+    await expect(discardButton).toBeDisabled();
   },
 };
 
@@ -118,12 +149,14 @@ export const WithWrapperNoFrame: Story = {
   render: renderWithWrapper,
 };
 
-function renderWithWrapper(args: any, { parameters }: any) {
-  const frame = (parameters as any)?.frame ?? EDITABLE_FORM_FRAME_OPTIONS[0];
+function renderWithWrapper(
+  ...[args, { parameters }]: Parameters<UpsertVideoDataFormRender>
+): ReturnType<UpsertVideoDataFormRender> {
+  const frame = parameters.frame ?? EDITABLE_FORM_FRAME_OPTIONS[0];
   return <WrapperFormStory args={args} frame={frame} />;
 }
 
-function EditableFormStory(args: ComponentProps<typeof UpsertVideoDataForm>) {
+function EditableFormStory(args: UpsertVideoDataFormArgs) {
   const [values, setValues] = useState(args.values);
 
   useEffect(() => {
@@ -148,7 +181,7 @@ function WrapperFormStory({
   args,
   frame,
 }: {
-  args: ComponentProps<typeof UpsertVideoDataForm>;
+  args: UpsertVideoDataFormArgs;
   frame: (typeof EDITABLE_FORM_FRAME_OPTIONS)[number];
 }) {
   return (

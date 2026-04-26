@@ -23,6 +23,7 @@ Acceptance criteria:
 Verification:
 - Run <specific commands>.
 - Do not run <expensive commands> unless needed.
+- Run the TypeScript config that includes every touched file; do not rely only on a default Nx typecheck if the changed file is excluded from it.
 ```
 
 ## Example
@@ -45,6 +46,7 @@ Acceptance criteria:
 Verification:
 - Run npm run lint.
 - Run focused UI/GraphQL tests if available.
+- If shared-ui stories changed, run npx tsc --noEmit -p libs/shared-ui/tsconfig.storybook.json.
 ```
 
 ## Tips
@@ -78,6 +80,7 @@ Constraints:
 Verification:
 - Re-run the failing command/check locally if feasible.
 - Run the smallest related test/lint target that proves the fix.
+- Run the TypeScript config that includes every touched file. For `libs/shared-ui/src/components/*.stories.tsx`, run `npx tsc --noEmit -p libs/shared-ui/tsconfig.storybook.json`.
 - If Docker, DB-backed tests, Playwright, or network access are required, say so before assuming the failure is fixed.
 
 Result:

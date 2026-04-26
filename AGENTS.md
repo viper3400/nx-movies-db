@@ -101,6 +101,7 @@ Notes:
 
 - `README.md`: top-level setup and configuration summary.
 - `CONFIG_README.md`: environment variable matrix.
+- `docs/agent-prompt-template.md`: suggested prompt template for working with agents on this repo.
 - `docs/workflows/ui-change.md`: focused workflow for UI, shared component, and Storybook changes.
 - `docs/workflows/graphql-change.md`: focused workflow for API contract and GraphQL service changes.
 - `docs/workflows/prisma-change.md`: focused workflow for Prisma schema and DB-backed changes.

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MovieCardDeck } from "./movie-card-deck";
+import { expect, waitFor, within } from "storybook/test";
 
 const meta: Meta<typeof MovieCardDeck> = {
   component: MovieCardDeck,
@@ -70,5 +71,13 @@ export const Default: Story = {
       deletedEntryLabel: "Deleted Entry",
     },
   },
-  tags: ["!test"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.findByText("Inception")).resolves.toBeVisible();
+    await expect(canvas.findByText("The Dark Knight")).resolves.toBeVisible();
+    await expect(canvas.findByText("Interstellar")).resolves.toBeVisible();
+    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(6));
+    await waitFor(() => expect(canvas.queryAllByTestId("seen-today-button")).toHaveLength(3));
+  },
 };

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { MovieCard } from "./movie-card";
-import { expect, within } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 
 const meta: Meta<typeof MovieCard> = {
   component: MovieCard,
@@ -50,12 +50,12 @@ export const Default: Story = {
       deletedEntryLabel: "Deleted Entry",
     },
   },
-  tags: ["!test"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(canvas.queryAllByTestId("seen-today-button")).toBeTruthy();
-    expect(canvas.queryAllByTestId("seen-on-date-button")).toBeTruthy();
-    expect(canvas.queryAllByTestId("deleted-chip")).toHaveLength(0);
+    await expect(canvas.findByTestId("seen-today-button")).resolves.toBeVisible();
+    await expect(canvas.findByRole("button", { name: "Choose Date" })).resolves.toBeVisible();
+    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(2));
+    await expect(canvas.queryByTestId("deleted-chip")).not.toBeInTheDocument();
   }
 };
 
@@ -99,12 +99,11 @@ export const Deleted: Story = {
       deletedEntryLabel: "Deleted Entry",
     },
   },
-  tags: ["!test"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(canvas.queryAllByTestId("seen-today-button")).toHaveLength(0);
-    expect(canvas.queryAllByTestId("seen-on-date-button")).toHaveLength(0);
-    expect(canvas.queryAllByTestId("deleted-chip")).toBeTruthy();
+    await expect(canvas.findByTestId("deleted-chip")).resolves.toBeVisible();
+    await expect(canvas.queryByTestId("seen-today-button")).not.toBeInTheDocument();
+    await expect(canvas.queryByRole("button", { name: "Choose Date" })).not.toBeInTheDocument();
   }
 };
 
@@ -148,11 +147,11 @@ export const TextOverflow: Story = {
       deletedEntryLabel: "Deleted Entry",
     },
   },
-  tags: ["!test"],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(canvas.queryAllByTestId("seen-today-button")).toBeTruthy();
-    expect(canvas.queryAllByTestId("seen-on-date-button")).toBeTruthy();
-    expect(canvas.queryAllByTestId("deleted-chip")).toHaveLength(0);
+    await expect(canvas.findByTestId("seen-today-button")).resolves.toBeVisible();
+    await expect(canvas.findByRole("button", { name: "Choose Date" })).resolves.toBeVisible();
+    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(2));
+    await expect(canvas.queryByTestId("deleted-chip")).not.toBeInTheDocument();
   }
 };

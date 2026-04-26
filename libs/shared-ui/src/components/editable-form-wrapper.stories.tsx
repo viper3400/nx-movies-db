@@ -44,6 +44,7 @@ const Example: React.FC<{
         {({ values, onChange, readOnly }) => (
           <div className="grid grid-cols-1 gap-4">
             <Input
+              data-testid="profile-field-first-name"
               label="First name"
               value={values.firstName}
               onValueChange={(value) => onChange({ ...values, firstName: value })}
@@ -52,6 +53,7 @@ const Example: React.FC<{
               size="lg"
             />
             <Input
+              data-testid="profile-field-last-name"
               label="Last name"
               value={values.lastName}
               onValueChange={(value) => onChange({ ...values, lastName: value })}
@@ -60,6 +62,7 @@ const Example: React.FC<{
               size="lg"
             />
             <Input
+              data-testid="profile-field-email"
               type="email"
               label="Email"
               value={values.email}
@@ -69,6 +72,7 @@ const Example: React.FC<{
               size="lg"
             />
             <Textarea
+              data-testid="profile-field-bio"
               label="Bio"
               value={values.bio ?? ""}
               onValueChange={(value) => onChange({ ...values, bio: value })}
@@ -119,7 +123,7 @@ type Story = StoryObj<typeof Example>;
 
 export const Default: Story = {
   render: (args) => {
-    //const [, updateArgs] = useArgs();
+    const [, updateArgs] = useArgs();
     return (
       <Example
         {...args}
@@ -137,8 +141,9 @@ export const Default: Story = {
 
     const saveButton = canvas.getByTestId("editable-form-save");
     const discardButton = canvas.getByTestId("editable-form-discard");
-    const firstNameInput = canvas.getByLabelText("First name");
+    const firstNameInput = canvas.getByTestId("profile-field-first-name");
 
+    await expect(firstNameInput).toHaveAccessibleName("First name");
     await expect(firstNameInput).toHaveValue("Neo");
     await expect(saveButton).toBeDisabled();
     await expect(discardButton).toBeDisabled();
@@ -160,8 +165,9 @@ export const DiscardFlow: Story = {
     const canvas = within(canvasElement);
 
     const discardButton = canvas.getByTestId("editable-form-discard");
-    const firstNameInput = canvas.getByLabelText("First name");
+    const firstNameInput = canvas.getByTestId("profile-field-first-name");
 
+    await expect(firstNameInput).toHaveAccessibleName("First name");
     await userEvent.clear(firstNameInput);
     await userEvent.type(firstNameInput, "Agent");
 
@@ -225,9 +231,10 @@ export const DirtyStateTypingRegression: Story = {
     const canvas = within(canvasElement);
 
     const saveButton = canvas.getByTestId("editable-form-save");
-    const firstNameInput = canvas.getByLabelText("First name");
+    const firstNameInput = canvas.getByTestId("profile-field-first-name");
 
     // Type without spaces — must still mark form dirty
+    await expect(firstNameInput).toHaveAccessibleName("First name");
     await userEvent.clear(firstNameInput);
     await userEvent.type(firstNameInput, "Thomas");
 

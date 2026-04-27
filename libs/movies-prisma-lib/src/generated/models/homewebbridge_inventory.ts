@@ -196,7 +196,7 @@ export type Homewebbridge_inventoryGroupByOutputType = {
   _max: Homewebbridge_inventoryMaxAggregateOutputType | null
 }
 
-type GetHomewebbridge_inventoryGroupByPayload<T extends homewebbridge_inventoryGroupByArgs> = Prisma.PrismaPromise<
+export type GetHomewebbridge_inventoryGroupByPayload<T extends homewebbridge_inventoryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<Homewebbridge_inventoryGroupByOutputType, T['by']> &
       {

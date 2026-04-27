@@ -210,7 +210,7 @@ export type Videodb_usersGroupByOutputType = {
   _max: Videodb_usersMaxAggregateOutputType | null
 }
 
-type GetVideodb_usersGroupByPayload<T extends videodb_usersGroupByArgs> = Prisma.PrismaPromise<
+export type GetVideodb_usersGroupByPayload<T extends videodb_usersGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<Videodb_usersGroupByOutputType, T['by']> &
       {

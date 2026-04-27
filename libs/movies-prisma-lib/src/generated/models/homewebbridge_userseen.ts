@@ -196,7 +196,7 @@ export type Homewebbridge_userseenGroupByOutputType = {
   _max: Homewebbridge_userseenMaxAggregateOutputType | null
 }
 
-type GetHomewebbridge_userseenGroupByPayload<T extends homewebbridge_userseenGroupByArgs> = Prisma.PrismaPromise<
+export type GetHomewebbridge_userseenGroupByPayload<T extends homewebbridge_userseenGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<Homewebbridge_userseenGroupByOutputType, T['by']> &
       {

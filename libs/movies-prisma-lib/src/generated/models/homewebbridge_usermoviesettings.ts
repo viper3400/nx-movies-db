@@ -196,7 +196,7 @@ export type Homewebbridge_usermoviesettingsGroupByOutputType = {
   _max: Homewebbridge_usermoviesettingsMaxAggregateOutputType | null
 }
 
-type GetHomewebbridge_usermoviesettingsGroupByPayload<T extends homewebbridge_usermoviesettingsGroupByArgs> = Prisma.PrismaPromise<
+export type GetHomewebbridge_usermoviesettingsGroupByPayload<T extends homewebbridge_usermoviesettingsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<Homewebbridge_usermoviesettingsGroupByOutputType, T['by']> &
       {

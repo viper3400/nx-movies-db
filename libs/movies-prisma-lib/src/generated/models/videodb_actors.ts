@@ -151,7 +151,7 @@ export type Videodb_actorsGroupByOutputType = {
   _max: Videodb_actorsMaxAggregateOutputType | null
 }
 
-type GetVideodb_actorsGroupByPayload<T extends videodb_actorsGroupByArgs> = Prisma.PrismaPromise<
+export type GetVideodb_actorsGroupByPayload<T extends videodb_actorsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<Videodb_actorsGroupByOutputType, T['by']> &
       {

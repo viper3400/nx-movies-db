@@ -26,6 +26,6 @@ services:
       - APP_BASE_PATH=${APP_BASE_PATH}
       - GRAPHQL_PROXY_URL=${GRAPHQL_PROXY_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - COVER_IMAGE_PATH=/media/coverimages
     depends_on:
       - movies-service
-

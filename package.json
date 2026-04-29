@@ -127,7 +127,7 @@
     "jsdom": "~29.0.0",
     "jsonc-eslint-parser": "^3.0.0",
     "nx": "22.6.5",
-    "postcss": "8.5.10",
+    "postcss": "8.5.12",
     "prettier": "^3.0.0",
     "storybook": "^10.0.0",
     "tailwindcss": "^4.1.11",

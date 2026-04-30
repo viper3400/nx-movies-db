@@ -62,6 +62,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
   }, [mediaTypesError, genresError, ownersError]);
 
   const readOnlyFields = {
+    id: true,
     mediatype: loadingMediaTypes,
     owner_id: loadingOwners,
     genreIds: loadingGenres,

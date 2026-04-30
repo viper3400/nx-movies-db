@@ -3,6 +3,7 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
 import { getClient } from "../../../lib/apollocient";
 import type { UpsertVideoDataFormValues } from "@nx-movies-db/shared-ui";
+import { isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
 
 type UpsertResult = {
   upsertVideoData: {
@@ -188,16 +189,55 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
 export async function upsertVideoData(values: UpsertVideoDataFormValues) {
   const client = getClient();
   const variables = mapToVariables(values);
+
   const { data, error } = await client.mutate<UpsertResult, UpsertVariables>({
     mutation: UPSERT_MUTATION,
     variables,
   });
-  /* TODO: Do we really want to do this here? We have to respect existing images, override?
-  if (variables.imgurl && process.env.COVER_IMAGE_PATH)
-    await storeImageFromUrl(variables.imgurl, process.env.COVER_IMAGE_PATH, data?.upsertVideoData.id + ".jpg");
-  */
+
   if (error) {
     throw new Error(error.message);
   }
-  return data?.upsertVideoData;
+
+  const savedVideo = data?.upsertVideoData;
+  if (!savedVideo?.id || !isRemoteHttpUrl(variables.imgurl)) {
+    return savedVideo;
+  }
+
+  const coverImagePath = process.env.COVER_IMAGE_PATH;
+  if (!coverImagePath) {
+    console.error("Skipping cover image localization: COVER_IMAGE_PATH is not configured", {
+      movieId: savedVideo.id,
+      imgurl: variables.imgurl,
+    });
+    return savedVideo;
+  }
+
+  try {
+    const localizedImgurl = await storeCoverImageFromUrl(variables.imgurl, coverImagePath, savedVideo.id);
+    const localizedVariables: UpsertVariables = {
+      ...variables,
+      id: savedVideo.id,
+      imgurl: localizedImgurl,
+      custom3: variables.imgurl,
+    };
+
+    const localizedResult = await client.mutate<UpsertResult, UpsertVariables>({
+      mutation: UPSERT_MUTATION,
+      variables: localizedVariables,
+    });
+
+    if (localizedResult.error) {
+      throw new Error(localizedResult.error.message);
+    }
+
+    return localizedResult.data?.upsertVideoData ?? savedVideo;
+  } catch (error) {
+    console.error("Cover image localization failed after metadata save", {
+      movieId: savedVideo.id,
+      imgurl: variables.imgurl,
+      error: error instanceof Error ? error.message : error,
+    });
+    return savedVideo;
+  }
 }

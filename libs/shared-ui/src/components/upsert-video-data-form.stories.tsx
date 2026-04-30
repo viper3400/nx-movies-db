@@ -37,6 +37,7 @@ const meta: Meta<typeof UpsertVideoDataForm> = {
       filename: "matrix.mkv",
       video_width: 1920,
       video_height: 1080,
+      istv: 0,
       mediatype: 1,
       owner_id: 1,
       genreIds: [1],
@@ -63,6 +64,8 @@ export const Editable: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const titleInput = canvas.getByTestId("video-field-title");
+    const tvSeriesField = canvas.getByTestId("video-field-istv");
+    const tvSeriesCheckbox = within(tvSeriesField).getByRole("checkbox", { name: "TV series" });
     const mediaTypeSelect = canvas.getByTestId("video-field-mediatype");
     const genresSelect = canvas.getByTestId("video-field-genres");
 
@@ -73,6 +76,7 @@ export const Editable: Story = {
 
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "Buffered Title");
+    await userEvent.click(tvSeriesCheckbox);
 
     await expect(titleInput).toHaveValue("Buffered Title");
     await expect(args.onChange).toHaveBeenCalled();

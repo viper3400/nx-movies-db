@@ -18,7 +18,7 @@ All runtime configuration now lives in the workspace root `.env` (copy `.env.exa
 | `APP_BASE_PATH` | movies-ui | Sets Next.js `basePath` and is exposed via a server action for components needing it. | `apps/movies-ui/next.config.js:10` · `apps/movies-ui/src/app/services/actions/getAppBasePath.ts:3` |
 | `GRAPHQL_URL` | movies-ui | Yoga endpoint the `/api/graphql-proxy` route forwards to. | `apps/movies-ui/src/app/api/graphql-proxy/route.ts:6` |
 | `GRAPHQL_PROXY_URL` | movies-ui | Optional override for Apollo’s HTTP link, defaulting to `/api/graphql-proxy`. | `apps/movies-ui/src/lib/apollocient.ts:10` |
-| `COVER_IMAGE_PATH` | movies-ui | Filesystem location for poster assets served via `/api/cover-image/[id]`. | `apps/movies-ui/src/app/api/cover-image/[id]/route.ts:7` · `apps/movies-ui/src/app/services/actions/upsertVideoData.ts:196` |
+| `COVER_IMAGE_PATH` | movies-ui | Filesystem location for cover image assets served via `/api/cover-image/[id]`. Poster images are a separate filesystem-only concept and currently have no database/GraphQL configuration in this repo. | `apps/movies-ui/src/app/api/cover-image/[id]/route.ts:7` · `apps/movies-ui/src/app/services/actions/upsertVideoData.ts:196` |
 | `NEXT_OUTPUT` | movies-ui | Chooses between `standalone`, `server`, or `export` outputs when building the UI. | `apps/movies-ui/next.config.js:15` |
 | `E2E_BASE_URL` | movies-ui | Default base URL for Playwright UI tests. | `apps/movies-ui/playwright.config.ts:9` |
 | `CI`, `NODE_ENV` | workspace-wide | `CI` increases Playwright retries; together they decide whether Prisma tests load `.env` or `.env.local`. | `apps/movies-ui/playwright.config.ts:7` · `libs/movies-prisma-lib/jest.setup.ts:9` |

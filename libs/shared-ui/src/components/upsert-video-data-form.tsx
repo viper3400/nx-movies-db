@@ -2,6 +2,7 @@
 
 import React from "react";
 import {
+  Checkbox,
   Input,
   Textarea,
   DatePicker,
@@ -130,6 +131,22 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     />
   );
 
+  const renderCheckboxField = ({ k, label }: { k: keyof VideoData; label: string }) => (
+    <Checkbox
+      data-testid={`video-field-${String(k)}`}
+      isSelected={values[k] === 1}
+      onValueChange={(selected) =>
+        set({
+          [k]: selected ? 1 : 0,
+        } as Partial<VideoData>)
+      }
+      isDisabled={ro(k)}
+      className="min-h-14 items-center"
+    >
+      {label}
+    </Checkbox>
+  );
+
   const renderSingleSelect = (
     k: keyof VideoData,
     label: string,
@@ -196,7 +213,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderTextField({ k: "video_width", label: "Video Width", type: "number" })}
         {renderTextField({ k: "video_height", label: "Video Height", type: "number" })}
 
-        {renderTextField({ k: "istv", label: "Is TV (0/1)", type: "number" })}
+        {renderCheckboxField({ k: "istv", label: "TV series" })}
 
         {renderDateField({ k: "lastupdate", label: "Last Update" })}
 

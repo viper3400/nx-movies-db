@@ -82,6 +82,11 @@ Notes:
 - HeroUI `Input` and `Textarea` must use `onValueChange` instead of `onChange`; the ESLint config warns about this because of a composition issue.
 - Keep app routes under `apps/movies-ui/src/app`.
 - Use existing icons/components before adding new visual primitives.
+- In Storybook play functions and UI tests, use stable `data-testid` anchors as the base query for component-specific fields and controls. When asserting accessible role/name, first query the nearest `data-testid` container, then scope semantic queries with `within(...)`, for example:
+  ```ts
+  const field = canvas.getByTestId("video-field-istv");
+  const checkbox = within(field).getByRole("checkbox", { name: "TV series" });
+  ```
 - When changing files that are excluded from a project's default typecheck target, run the TypeScript config that includes the touched files before claiming type safety. For `libs/shared-ui/src/components/*.stories.tsx`, run `npx tsc --noEmit -p libs/shared-ui/tsconfig.storybook.json`; if unrelated existing errors remain, state that clearly and confirm whether the touched file is clean.
 
 ## Backend And Data Conventions

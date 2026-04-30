@@ -27,7 +27,7 @@ All services now read from the workspace root `.env` (create it with `cp .env.ex
 | `ALLOWED_USERS` | Semicolon-delimited list (`email,name,id`) controlling access. |
 | `NEXT_PUBLIC_TEST_MODE`, `NEXT_PUBLIC_TEST_USERS` | Enable stub sessions for local runs. |
 | `APP_BASE_PATH` | Next.js `basePath` value (e.g., `/movies`). |
-| `COVER_IMAGE_PATH` | Filesystem folder containing poster images. |
+| `COVER_IMAGE_PATH` | Filesystem folder containing cover images served by `/api/cover-image/[id]`. Poster images are separate filesystem-only assets and currently have no dedicated runtime setting. |
 
 **Example**
 

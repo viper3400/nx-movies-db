@@ -5,8 +5,8 @@ import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-for
 import { fn, within, userEvent, expect } from "storybook/test";
 
 const mediaTypeOptions = [
-  { label: "Movie", value: "1" },
-  { label: "TV", value: "2" },
+  { label: "DVD", value: "1" },
+  { label: "Netflix", value: "2" },
 ];
 
 const ownerOptions = [
@@ -30,6 +30,7 @@ const meta: Meta<typeof UpsertVideoDataForm> = {
       subtitle: "Welcome to the real world",
       year: 1999,
       language: "en",
+      diskid: "R01F3D01",
       country: "USA",
       rating: "R",
       runtime: 136,
@@ -71,7 +72,7 @@ export const Editable: Story = {
 
     await expect(titleInput).toHaveAccessibleName("Title");
     await expect(titleInput).toHaveValue("The Matrix");
-    await expect(mediaTypeSelect).toHaveTextContent("Movie");
+    await expect(mediaTypeSelect).toHaveTextContent("DVD");
     await expect(genresSelect).toHaveTextContent("Action");
 
     await userEvent.clear(titleInput);
@@ -108,6 +109,48 @@ export const PartiallyReadOnly: Story = {
     await expect(titleInput).toHaveAccessibleName("Title");
     await expect(imdbInput).toBeDisabled();
     await expect(titleInput).not.toBeDisabled();
+  },
+};
+
+export const WithDiskIdSuggestion: Story = {
+  args: {
+    values: {
+      ...meta.args?.values,
+      diskid: "R01F3",
+      mediatype: 1,
+    } as UpsertVideoDataFormValues,
+    diskIdSuggestion: "R01F3D04",
+  },
+  render: (args) => <EditableFormStory {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const diskIdInput = canvas.getByTestId("video-field-diskid");
+    const suggestion = canvas.getByTestId("video-field-diskid-suggestion");
+
+    await expect(diskIdInput).toHaveAccessibleName("Disk ID");
+    await expect(suggestion).toHaveTextContent("R01F3D04");
+
+    await userEvent.click(suggestion);
+
+    await expect(diskIdInput).toHaveValue("R01F3D04");
+  },
+};
+
+export const PhysicalMediaRequiresDiskId: Story = {
+  args: {
+    values: {
+      ...meta.args?.values,
+      diskid: "",
+      mediatype: 1,
+    } as UpsertVideoDataFormValues,
+  },
+  render: (args) => <EditableFormStory {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const diskIdInput = canvas.getByTestId("video-field-diskid");
+
+    await expect(diskIdInput).toHaveAccessibleName("Disk ID");
+    await expect(diskIdInput).toBeInvalid();
   },
 };
 
@@ -207,6 +250,8 @@ function WrapperFormStory({
             mediaTypeOptions={args.mediaTypeOptions}
             ownerOptions={args.ownerOptions}
             genreOptions={args.genreOptions}
+            diskIdSuggestion={args.diskIdSuggestion}
+            isDiskIdSuggestionLoading={args.isDiskIdSuggestionLoading}
           />
         )}
       </EditableFormWrapper>

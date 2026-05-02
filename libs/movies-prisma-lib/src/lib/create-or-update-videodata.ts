@@ -1,6 +1,11 @@
 import type { Prisma } from "../generated/client";
 import { prisma } from "../prismaclient";
 import { z } from "zod";
+import {
+  isPhysicalMediaTypeName,
+  isValidDiskId,
+  normalizeDiskId,
+} from "@nx-movies-db/shared-types";
 
 type VideoData = Awaited<ReturnType<typeof prisma.videodb_videodata.create>>;
 type ScalarVideoDataInput = Omit<
@@ -42,16 +47,69 @@ export class VideoDataValidationError extends Error {
   }
 }
 
+function diskIdIssue(message: string): z.ZodIssue {
+  return {
+    code: "custom",
+    path: ["diskid"],
+    message,
+  };
+}
+
 export function parseVideoDataInput(data: VideoDataInput): VideoDataInput {
   const parsed = videoDataInputSchema.safeParse(data);
   if (!parsed.success) {
     throw new VideoDataValidationError(parsed.error.issues);
   }
-  return parsed.data;
+  return {
+    ...parsed.data,
+    diskid: normalizeDiskId(parsed.data.diskid) ?? undefined,
+  };
+}
+
+export async function validateDiskIdForPersistence(data: VideoDataInput): Promise<VideoDataInput> {
+  const normalizedDiskId = normalizeDiskId(data.diskid);
+  const issues: z.ZodIssue[] = [];
+
+  const mediaType = await prisma.videodb_mediatypes.findUnique({
+    where: { id: data.mediatype },
+    select: { name: true },
+  });
+  const requiresDiskId = isPhysicalMediaTypeName(mediaType?.name);
+
+  if (normalizedDiskId && !isValidDiskId(normalizedDiskId)) {
+    issues.push(diskIdIssue("Disk ID must match RxxFyDzz, for example R01F3D04."));
+  }
+
+  if (requiresDiskId && !normalizedDiskId) {
+    issues.push(diskIdIssue("Disk ID is required for physical media types."));
+  }
+
+  if (normalizedDiskId && isValidDiskId(normalizedDiskId)) {
+    const existing = await prisma.videodb_videodata.findFirst({
+      where: {
+        diskid: normalizedDiskId,
+        ...(data.id ? { id: { not: data.id } } : {}),
+      },
+      select: { id: true },
+    });
+
+    if (existing) {
+      issues.push(diskIdIssue("Disk ID is already used by another movie."));
+    }
+  }
+
+  if (issues.length > 0) {
+    throw new VideoDataValidationError(issues);
+  }
+
+  return {
+    ...data,
+    diskid: normalizedDiskId ?? undefined,
+  };
 }
 
 export async function upsertVideoData(data: VideoDataInput): Promise<VideoData> {
-  const parsed = parseVideoDataInput(data);
+  const parsed = await validateDiskIdForPersistence(parseVideoDataInput(data));
   const { id, genreIds, ...rest } = parsed;
   const normalizedGenreIds = genreIds ? [...new Set(genreIds)] : undefined;
 

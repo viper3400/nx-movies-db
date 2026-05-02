@@ -60,7 +60,8 @@ jobs:
       - run: npx nx run shared-ui:test --skip-nx-cache
 
       - name: Start Storybook
-        run: npx nx run shared-ui:storybook -p 6006 & # Start Storybook in the background
+        run: |
+          npx nx run shared-ui:storybook --port 6006 --host 127.0.0.1 > storybook.log 2>&1 &
         env:
           CI: true # Set CI environment variable if needed
 
@@ -69,10 +70,19 @@ jobs:
 
       - name: Wait for Storybook to be ready
         run: |
-          sleep 10
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:6006 > /dev/null; then
+              echo "Storybook is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Storybook did not start in time"
+          cat storybook.log
+          exit 1
 
       - name: Run Storybook Tests
-        run: npx nx run shared-ui:test-storybook # Adjust this command based on your test setup
+        run: npx nx run shared-ui:test-storybook --url http://127.0.0.1:6006
 
   movies-prisma-lib-test:
     name: movies-prisma-lib DB tests

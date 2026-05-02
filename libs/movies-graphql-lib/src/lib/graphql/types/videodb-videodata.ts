@@ -3,6 +3,7 @@ import { builder } from "../builder";
 import {
   upsertVideoData,
   getVideoById,
+  getNextDiskIdSuggestion,
   VideoDataValidationError,
   Prisma,
 } from "@nx-movies-db/movies-prisma-lib";
@@ -104,6 +105,19 @@ builder.queryField("videoData", (t) =>
     },
     resolve: async (_query, _root, args) => {
       return getVideoById(args.id);
+    },
+  })
+);
+
+builder.queryField("nextDiskIdSuggestion", (t) =>
+  t.string({
+    nullable: true,
+    args: {
+      prefix: t.arg.string({ required: true }),
+      currentVideoId: t.arg.int(),
+    },
+    resolve: async (_root, args) => {
+      return getNextDiskIdSuggestion(args.prefix, args.currentVideoId ?? undefined);
     },
   })
 );

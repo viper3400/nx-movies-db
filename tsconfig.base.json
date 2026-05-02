@@ -5,6 +5,8 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,

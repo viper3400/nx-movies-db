@@ -6,6 +6,7 @@ export * from "./delete-user-seen-entry";
 export * from "./get-genres";
 export * from "./get-video-by-id";
 export * from "./get-media-types";
+export * from "./get-next-disk-id-suggestion";
 export * from "./get-seen-dates";
 export * from "./get-seen-list";
 export * from "./get-user-flags";

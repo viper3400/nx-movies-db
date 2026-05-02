@@ -68,6 +68,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       title: "Updated Title",
       year: 2025,
       mediatype: 15,
+      diskid: "R99F9D98",
       owner_id: 3,
       istv: 1,
     };

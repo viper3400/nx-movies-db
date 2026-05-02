@@ -13,7 +13,7 @@
         "platform": "node",
         "outputPath": "dist/apps/movies-service",
         "format": ["cjs"],
-        "bundle": false,
+        "bundle": true,
         "main": "apps/movies-service/src/main.ts",
         "tsConfig": "apps/movies-service/tsconfig.app.json",
         "assets": ["apps/movies-service/src/assets"],

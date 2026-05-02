@@ -86,7 +86,9 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
           });
 
           if (creatingNewRecord && result?.id) {
-            router.replace(`/edit/${result.id}`);
+            const editPath = `/edit/${result.id}`;
+            router.replace(editPath);
+            window.location.assign(editPath);
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unbekannter Fehler beim Speichern";

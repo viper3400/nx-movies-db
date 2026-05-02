@@ -9,3 +9,4 @@ export * from "./setUserSeenDate";
 export * from "./getSeenVideos";
 export * from "./deleteUserSeenDate";
 export * from "./upsertVideoData";
+export * from "./getNextDiskIdSuggestion";

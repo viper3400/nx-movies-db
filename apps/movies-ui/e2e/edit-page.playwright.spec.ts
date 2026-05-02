@@ -4,6 +4,7 @@ const selectors = {
   title: "[data-testid='video-field-title']",
   language: "[data-testid='video-field-language']",
   diskId: "[data-testid='video-field-diskid']",
+  diskIdSuggestion: "[data-testid='video-field-diskid-suggestion']",
   year: "[data-testid='video-field-year']",
   save: "[data-testid='editable-form-save']",
   discard: "[data-testid='editable-form-discard']",
@@ -150,6 +151,8 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await page.goto("/edit/new");
 
     const titleField = page.locator(selectors.title);
+    const diskIdField = page.locator(selectors.diskId);
+    const diskIdSuggestion = page.locator(selectors.diskIdSuggestion);
     const languageField = page.locator(selectors.language);
     const saveButton = page.locator(selectors.save);
     const discardButton = page.locator(selectors.discard);
@@ -157,6 +160,10 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await titleField.waitFor({ state: "visible" });
     await titleField.fill(createdTitle);
     await titleField.press("Tab");
+    await diskIdField.fill("R99F99");
+    await diskIdSuggestion.waitFor({ state: "visible" });
+    await diskIdSuggestion.click();
+    await expect(diskIdField).toHaveValue(/^R99F99D\d{2}$/);
 
     await expect(saveButton).toBeEnabled();
 

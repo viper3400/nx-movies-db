@@ -3,6 +3,7 @@
 import React from "react";
 import {
   Checkbox,
+  Button,
   Input,
   Textarea,
   DatePicker,
@@ -12,7 +13,12 @@ import {
   SelectItem,
 } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
-import { VideoData } from "@nx-movies-db/shared-types";
+import {
+  isPhysicalMediaTypeName,
+  isValidDiskId,
+  normalizeDiskId,
+  VideoData,
+} from "@nx-movies-db/shared-types";
 import type { Selection } from "@react-types/shared";
 
 export type UpsertVideoDataFormValues = VideoData;
@@ -27,6 +33,8 @@ interface UpsertVideoDataFormProps {
   mediaTypeOptions?: Array<{ label: string; value: string }>;
   ownerOptions?: Array<{ label: string; value: string }>;
   genreOptions?: Array<{ label: string; value: string }>;
+  diskIdSuggestion?: string | null;
+  isDiskIdSuggestionLoading?: boolean;
 }
 
 function dateValueToJS(dateValue: DateValue | null): Date | null {
@@ -50,11 +58,21 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   mediaTypeOptions = [],
   ownerOptions = [],
   genreOptions = [],
+  diskIdSuggestion,
+  isDiskIdSuggestionLoading = false,
 }) => {
   const set = (patch: Partial<VideoData>) =>
     onChange({ ...values, ...patch });
 
   const ro = (k: keyof VideoData) => readOnly || !!readOnlyFields?.[k];
+  const selectedMediaTypeName = mediaTypeOptions.find((o) => o.value === String(values.mediatype))?.label;
+  const diskIdRequired = isPhysicalMediaTypeName(selectedMediaTypeName);
+  const normalizedDiskId = normalizeDiskId(values.diskid);
+  const diskIdInvalidFormat = !!normalizedDiskId && !isValidDiskId(normalizedDiskId);
+  const diskIdMissing = diskIdRequired && !normalizedDiskId;
+  const diskIdInvalid = diskIdInvalidFormat || diskIdMissing;
+  const diskIdSuggestionToShow =
+    diskIdSuggestion && diskIdSuggestion !== normalizedDiskId ? diskIdSuggestion : null;
 
   const renderTextField = ({
     k,
@@ -87,6 +105,43 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
       isDisabled={ro(k)}
       variant={inputVariant}
       size="lg"
+    />
+  );
+
+  const renderDiskIdField = () => (
+    <Input
+      data-testid="video-field-diskid"
+      label="Disk ID"
+      value={values.diskid ?? ""}
+      onValueChange={(value) => set({ diskid: value })}
+      isDisabled={ro("diskid")}
+      variant={inputVariant}
+      size="lg"
+      isInvalid={diskIdInvalid}
+      errorMessage={
+        diskIdMissing
+          ? "Disk ID is required for physical media."
+          : diskIdInvalidFormat
+            ? "Use RxxFyDzz, for example R01F3D04."
+            : undefined
+      }
+      description={
+        !diskIdInvalid && !diskIdSuggestionToShow && isDiskIdSuggestionLoading
+          ? "Checking next free Disk ID..."
+          : undefined
+      }
+      endContent={
+        diskIdSuggestionToShow && !ro("diskid") ? (
+          <Button
+            data-testid="video-field-diskid-suggestion"
+            size="sm"
+            variant="flat"
+            onPress={() => set({ diskid: diskIdSuggestionToShow })}
+          >
+            {diskIdSuggestionToShow}
+          </Button>
+        ) : null
+      }
     />
   );
 
@@ -183,7 +238,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderTextField({ k: "subtitle", label: "Subtitle" })}
 
         {renderTextField({ k: "language", label: "Language" })}
-        {renderTextField({ k: "diskid", label: "Disk ID" })}
+        {renderDiskIdField()}
 
         {renderTextAreaField({ k: "comment", label: "Comment" })}
         {renderTextField({ k: "disklabel", label: "Disk Label" })}

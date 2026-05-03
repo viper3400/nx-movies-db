@@ -302,36 +302,36 @@ export function TmdbImport() {
                     <dd className="flex flex-wrap gap-1">
                       {selectedGenreMatches.length
                         ? selectedGenreMatches.map((match) => (
-                            <button
-                              key={match.tmdbGenre}
-                              type="button"
-                              onClick={() => {
-                                if (!match.localGenreId) {
-                                  setGenrePickerTmdbGenre(match.tmdbGenre);
-                                }
-                              }}
-                              className={!match.localGenreId ? "cursor-pointer" : "cursor-default"}
-                              disabled={!!match.localGenreId || loadingGenres}
+                          <button
+                            key={match.tmdbGenre}
+                            type="button"
+                            onClick={() => {
+                              if (!match.localGenreId) {
+                                setGenrePickerTmdbGenre(match.tmdbGenre);
+                              }
+                            }}
+                            className={!match.localGenreId ? "cursor-pointer" : "cursor-default"}
+                            disabled={!!match.localGenreId || loadingGenres}
+                          >
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              color={
+                                match.mappedByManualOverride
+                                  ? "success"
+                                  : !match.localGenreId
+                                    ? "danger"
+                                    : match.mappedByAlias
+                                      ? "warning"
+                                      : "default"
+                              }
                             >
-                              <Chip
-                                size="sm"
-                                variant="flat"
-                                color={
-                                  match.mappedByManualOverride
-                                    ? "success"
-                                    : !match.localGenreId
-                                      ? "danger"
-                                      : match.mappedByAlias
-                                        ? "warning"
-                                        : "default"
-                                }
-                              >
-                                {match.localGenre && match.localGenre !== match.tmdbGenre
-                                  ? `${match.tmdbGenre} -> ${match.localGenre}`
-                                  : match.tmdbGenre}
-                              </Chip>
-                            </button>
-                          ))
+                              {match.localGenre && match.localGenre !== match.tmdbGenre
+                                ? `${match.tmdbGenre} -> ${match.localGenre}`
+                                : match.tmdbGenre}
+                            </Chip>
+                          </button>
+                        ))
                         : "n/a"}
                     </dd>
                   </dl>

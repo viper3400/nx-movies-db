@@ -1,5 +1,5 @@
 import axios from "axios";
-import { mkdir, rename, writeFile } from "fs/promises";
+import { mkdir, rename, unlink, writeFile } from "fs/promises";
 import path from "path";
 
 export function isRemoteHttpUrl(value: string | null | undefined): value is string {
@@ -35,4 +35,14 @@ export async function storeCoverImageFromUrl(url: string, coverImagePath: string
   await rename(tempPath, finalPath);
 
   return `./${filename}`;
+}
+
+export async function deleteStoredCoverImage(coverImagePath: string, movieId: number): Promise<void> {
+  try {
+    await unlink(path.join(coverImagePath, `${movieId}.jpg`));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+  }
 }

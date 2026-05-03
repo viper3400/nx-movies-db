@@ -42,6 +42,11 @@ export async function GET(_req: NextRequest, ctx: RouteContext<"/api/cover-image
 
   return new Response(readableStream, {
     status: 200,
-    headers: { "Content-Type": "image/jpeg" },
+    headers: {
+      "Content-Type": "image/jpeg",
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    },
   });
 }

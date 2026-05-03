@@ -1,14 +1,9 @@
-import { Input, PressEvent } from "@heroui/react";
+import { PressEvent } from "@heroui/react";
 import React from "react";
 import { CheckboxValue, FilterDrawer, MovieSearchFilters } from "..";
+import { MovieSearchInput, MovieSearchInputLangResources } from "./movie-search-input";
 import { SurpriseButton } from "./surprise-button";
 
-
-interface SearchFormLangResources {
-  placeholderLabel: string;
-  searchLabel: string;
-  resultCountLabel: string;
-}
 
 interface SearchFormProps {
   searchText: string;
@@ -22,7 +17,7 @@ interface SearchFormProps {
   isDefaultFilter: boolean;
   handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   handleRandomSearchRequest: (event: PressEvent) => void;
-  langResources: SearchFormLangResources;
+  langResources: MovieSearchInputLangResources;
   mediaTypes: CheckboxValue[];
   genres: CheckboxValue[];
 }
@@ -46,30 +41,25 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   return (
     <form onSubmit={handleSearchSubmit}>
       <div className="flex w-full flex-wrap md:flex-nowrap pb-4 gap-4 pr-4">
-        <Input
-          isClearable
-          errorMessage="Search must have at least 3 characters"
-          isInvalid={invalidSearch}
-          label={`${langResources.searchLabel} (${langResources.resultCountLabel}: ${totalMoviesCount})`}
-          placeholder={langResources.placeholderLabel}
-          type="text"
-          size="lg"
-          value={searchText}
-          onValueChange={(value) => {
+        <MovieSearchInput
+          searchText={searchText}
+          onSearchTextChange={(value) => {
             setSearchText(value);
             if (invalidSearch) validateSearch(value);
           }}
-          onClear={() => {
+          invalidSearch={invalidSearch}
+          onClearSearch={() => {
             clearSearchResult();
             setSearchText("");
           }}
-          data-test="MovieSearchField"
+          totalMoviesCount={totalMoviesCount}
+          langResources={langResources}
         />
         <div className="flex place-content-center space-x-2">
           <div className="place-content-center ">
             <SurpriseButton
               onPress={handleRandomSearchRequest}
-              data-test="SurpriseButton" />
+              dataTestId="SurpriseButton" />
           </div>
           <div className="place-content-center ">
             <FilterDrawer
@@ -78,7 +68,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
               isDefaultFilter={isDefaultFilter}
               mediaTypes={mediaTypes}
               genres={genres}
-              data-test="FilterDrawer"
+              dataTestId="FilterDrawer"
             />
           </div>
         </div>

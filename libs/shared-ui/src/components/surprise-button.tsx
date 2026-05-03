@@ -4,11 +4,12 @@ import { t } from "i18next";
 
 interface SurpriseButtonProperties {
   onPress?: (e: PressEvent) => void;
+  dataTestId?: string;
 }
-export const SurpriseButton = ({ onPress }: SurpriseButtonProperties) => {
+export const SurpriseButton = ({ onPress, dataTestId }: SurpriseButtonProperties) => {
   return (
     <Tooltip content={t("search.randomMoviesFilterLabel")}>
-      <Button onPress={onPress} isIconOnly variant="ghost" size="lg">
+      <Button data-testid={dataTestId} onPress={onPress} isIconOnly variant="ghost" size="lg">
         <Surprise />
       </Button>
     </Tooltip>

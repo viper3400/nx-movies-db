@@ -10,3 +10,5 @@ export * from "./getSeenVideos";
 export * from "./deleteUserSeenDate";
 export * from "./upsertVideoData";
 export * from "./getNextDiskIdSuggestion";
+export * from "./tmdbMetadata";
+export * from "./tmdbMetadataMapper";

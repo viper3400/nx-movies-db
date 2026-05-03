@@ -3,7 +3,7 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
 import { getClient } from "../../../lib/apollocient";
 import type { UpsertVideoDataFormValues } from "@nx-movies-db/shared-ui";
-import { isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
+import { deleteStoredCoverImage, isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
 
 type UpsertResult = {
   upsertVideoData: {
@@ -233,6 +233,15 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
 
     return localizedResult.data?.upsertVideoData ?? savedVideo;
   } catch (error) {
+    try {
+      await deleteStoredCoverImage(coverImagePath, savedVideo.id);
+    } catch (deleteError) {
+      console.error("Failed to remove stale local cover image after localization failure", {
+        movieId: savedVideo.id,
+        error: deleteError instanceof Error ? deleteError.message : deleteError,
+      });
+    }
+
     console.error("Cover image localization failed after metadata save", {
       movieId: savedVideo.id,
       imgurl: variables.imgurl,

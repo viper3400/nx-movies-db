@@ -7,13 +7,15 @@ export interface MovieSearchInputLangResources {
   resultCountLabel: string;
 }
 
-interface MovieSearchInputProps {
+export interface MovieSearchInputProps {
   searchText: string;
   onSearchTextChange: (text: string) => void;
   invalidSearch: boolean;
   onClearSearch: () => void;
   totalMoviesCount: number;
   langResources: MovieSearchInputLangResources;
+  dataTestId?: string;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 export const MovieSearchInput: React.FC<MovieSearchInputProps> = ({
@@ -23,6 +25,8 @@ export const MovieSearchInput: React.FC<MovieSearchInputProps> = ({
   onClearSearch,
   totalMoviesCount,
   langResources,
+  dataTestId,
+  onKeyDown,
 }) => {
   return (
     <Input
@@ -36,7 +40,8 @@ export const MovieSearchInput: React.FC<MovieSearchInputProps> = ({
       value={searchText}
       onValueChange={onSearchTextChange}
       onClear={onClearSearch}
-      data-test="MovieSearchField"
+      onKeyDown={onKeyDown}
+      data-testid={dataTestId ?? "MovieSearchField"}
     />
   );
 };

@@ -5,11 +5,14 @@ import {
   Button,
   Card,
   CardBody,
-  Input,
   Switch,
   addToast,
 } from "@heroui/react";
-import { TmdbImportPreviewPanel, TmdbSearchResultsList } from "@nx-movies-db/shared-ui";
+import {
+  MovieSearchInput,
+  TmdbImportPreviewPanel,
+  TmdbSearchResultsList,
+} from "@nx-movies-db/shared-ui";
 import { useRouter } from "next/navigation";
 import {
   getTmdbGenreMatches,
@@ -139,13 +142,18 @@ export function TmdbImport() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row">
-        <Input
-          data-testid="tmdb-search-query"
-          label={mediaKind === "tv" ? "TMDB TV title" : "TMDB movie title"}
-          value={query}
-          onValueChange={setQuery}
-          variant="faded"
-          size="lg"
+        <MovieSearchInput
+          dataTestId="tmdb-search-query"
+          searchText={query}
+          onSearchTextChange={setQuery}
+          invalidSearch={false}
+          onClearSearch={() => setQuery("")}
+          totalMoviesCount={results.length}
+          langResources={{
+            placeholderLabel: mediaKind === "tv" ? "Search TMDB TV title..." : "Search TMDB movie title...",
+            searchLabel: mediaKind === "tv" ? "TMDB TV title" : "TMDB movie title",
+            resultCountLabel: "Results",
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               void handleSearch();

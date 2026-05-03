@@ -27,8 +27,7 @@ interface FilterDrawerProperties {
   isDefaultFilter: boolean;
   mediaTypes: CheckboxValue[];
   genres: CheckboxValue[];
-
-
+  dataTestId?: string;
 }
 export function FilterDrawer(
   {
@@ -37,6 +36,7 @@ export function FilterDrawer(
     isDefaultFilter,
     mediaTypes,
     genres,
+    dataTestId,
   }: FilterDrawerProperties) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -80,6 +80,7 @@ export function FilterDrawer(
     <>
 
       <Button
+        data-testid={dataTestId}
         size="lg"
         variant="ghost"
         onPress={handleOpen}

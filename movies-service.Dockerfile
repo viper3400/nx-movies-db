@@ -38,7 +38,4 @@ ENV PORT=7100
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
-CMD ["sh", "-c", "export $(grep -v '^#' .env.local | xargs) && node main.js"]
-# CMD ["node", "main.js"]
-# CMD ["sh", "-c", "set -a && source .env.local && set +a && node main.js"]
-# CMD ["sh", "-c", "export $(grep -v '^#' .env | xargs) && node main.js"]
+CMD ["node", "main.js"]

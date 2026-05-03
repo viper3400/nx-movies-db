@@ -157,8 +157,8 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
     mediaKind === "tv"
       ? (movie.created_by ?? []).map((creator) => creator.name).filter((name): name is string => !!name)
       : (credits?.crew ?? [])
-          .filter((member) => member.job === "Director" && member.name)
-          .map((member) => member.name as string);
+        .filter((member) => member.job === "Director" && member.name)
+        .map((member) => member.name as string);
 
   const cast = [...(credits?.cast ?? [])]
     .filter((member) => member.name)

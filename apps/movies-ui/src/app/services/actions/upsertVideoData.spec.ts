@@ -1,5 +1,5 @@
 import { getClient } from "../../../lib/apollocient";
-import { isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
+import { deleteStoredCoverImage, isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
 import { upsertVideoData } from "./upsertVideoData";
 
 jest.mock("../../../lib/apollocient", () => ({
@@ -7,11 +7,13 @@ jest.mock("../../../lib/apollocient", () => ({
 }));
 
 jest.mock("./coverImageLocalization", () => ({
+  deleteStoredCoverImage: jest.fn(),
   isRemoteHttpUrl: jest.fn(),
   storeCoverImageFromUrl: jest.fn(),
 }));
 
 const getClientMock = getClient as jest.MockedFunction<typeof getClient>;
+const deleteStoredCoverImageMock = deleteStoredCoverImage as jest.MockedFunction<typeof deleteStoredCoverImage>;
 const isRemoteHttpUrlMock = isRemoteHttpUrl as jest.MockedFunction<typeof isRemoteHttpUrl>;
 const storeCoverImageFromUrlMock = storeCoverImageFromUrl as jest.MockedFunction<typeof storeCoverImageFromUrl>;
 
@@ -34,6 +36,7 @@ describe("upsertVideoData cover localization", () => {
   beforeEach(() => {
     mutate = jest.fn();
     getClientMock.mockReturnValue({ mutate } as any);
+    deleteStoredCoverImageMock.mockResolvedValue(undefined);
     isRemoteHttpUrlMock.mockReturnValue(true);
     storeCoverImageFromUrlMock.mockResolvedValue("./530.jpg");
     process.env.COVER_IMAGE_PATH = "/covers";
@@ -128,6 +131,7 @@ describe("upsertVideoData cover localization", () => {
 
     expect(result).toEqual({ id: 530, title: "Remote Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
+    expect(deleteStoredCoverImageMock).toHaveBeenCalledWith("/covers", 530);
     expect(consoleError).toHaveBeenCalledWith(
       "Cover image localization failed after metadata save",
       expect.objectContaining({

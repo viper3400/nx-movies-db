@@ -5,15 +5,14 @@ import {
   Button,
   Card,
   CardBody,
-  Chip,
-  Image,
-  Input,
-  Select,
-  SelectItem,
-  Spinner,
   Switch,
   addToast,
 } from "@heroui/react";
+import {
+  MovieSearchInput,
+  TmdbImportPreviewPanel,
+  TmdbSearchResultsList,
+} from "@nx-movies-db/shared-ui";
 import { useRouter } from "next/navigation";
 import {
   getTmdbGenreMatches,
@@ -27,10 +26,6 @@ import {
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAppBasePath } from "../hooks/useAppBasePath";
 import type { Selection } from "@react-types/shared";
-
-function getReleaseYear(releaseDate: string | null): string {
-  return releaseDate ? releaseDate.slice(0, 4) : "n/a";
-}
 
 function isTmdbDetailsError(value: TmdbMovieDetails | { error?: string }): value is { error?: string } {
   return "error" in value;
@@ -147,13 +142,18 @@ export function TmdbImport() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row">
-        <Input
-          data-testid="tmdb-search-query"
-          label={mediaKind === "tv" ? "TMDB TV title" : "TMDB movie title"}
-          value={query}
-          onValueChange={setQuery}
-          variant="faded"
-          size="lg"
+        <MovieSearchInput
+          dataTestId="tmdb-search-query"
+          searchText={query}
+          onSearchTextChange={setQuery}
+          invalidSearch={false}
+          onClearSearch={() => setQuery("")}
+          totalMoviesCount={results.length}
+          langResources={{
+            placeholderLabel: mediaKind === "tv" ? "Search TMDB TV title..." : "Search TMDB movie title...",
+            searchLabel: mediaKind === "tv" ? "TMDB TV title" : "TMDB movie title",
+            resultCountLabel: "Results",
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               void handleSearch();
@@ -195,180 +195,30 @@ export function TmdbImport() {
       )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)]">
-        <div className="space-y-3">
-          {searching && (
-            <div className="flex min-h-32 items-center justify-center">
-              <Spinner label="Searching TMDB..." />
-            </div>
-          )}
+        <TmdbSearchResultsList
+          results={results}
+          isLoading={searching}
+          hasSearched={hasSearched}
+          onSelect={(movie) => void handleSelect(movie)}
+        />
 
-          {!searching && results.map((movie) => (
-            <Card key={movie.id} shadow="sm" radius="sm">
-              <CardBody>
-                <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3">
-                  {movie.posterUrl ? (
-                    <Image
-                      src={movie.posterUrl}
-                      alt=""
-                      width={72}
-                      height={108}
-                      radius="sm"
-                      className="h-[108px] w-[72px] object-cover"
-                    />
-                  ) : (
-                    <div className="h-[108px] w-[72px] rounded-small bg-default-100" />
-                  )}
-                  <div className="min-w-0 space-y-2">
-                    <div className="flex flex-wrap items-start gap-2">
-                      <h2 className="text-base font-semibold leading-6">{movie.title}</h2>
-                      <Chip size="sm" variant="flat" color={movie.mediaKind === "tv" ? "secondary" : "default"}>
-                        {movie.mediaKind === "tv" ? "TV" : "Movie"}
-                      </Chip>
-                      <Chip size="sm" variant="flat">{getReleaseYear(movie.releaseDate)}</Chip>
-                    </div>
-                    {movie.originalTitle && movie.originalTitle !== movie.title && (
-                      <p className="text-sm text-default-500">{movie.originalTitle}</p>
-                    )}
-                    <p className="line-clamp-3 text-sm text-default-600">{movie.overview}</p>
-                    <Button
-                      data-testid={`tmdb-result-${movie.id}`}
-                      size="sm"
-                      variant="flat"
-                      color="primary"
-                      onPress={() => void handleSelect(movie)}
-                    >
-                      Select
-                    </Button>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-
-          {!searching && hasSearched && results.length === 0 && (
-            <p className="text-sm text-default-500">No TMDB results.</p>
-          )}
-        </div>
-
-        <div className="lg:sticky lg:top-20 lg:self-start">
-          <Card shadow="sm" radius="sm">
-            <CardBody className="space-y-3">
-              {loadingDetails && (
-                <div className="flex min-h-32 items-center justify-center">
-                  <Spinner label="Loading details..." />
-                </div>
-              )}
-
-              {!loadingDetails && !selectedMovie && (
-                <p className="text-sm text-default-500">Select a movie to preview imported fields.</p>
-              )}
-
-              {!loadingDetails && selectedMovie && selectedDraft && (
-                <>
-                  <div className="flex gap-3">
-                    {selectedMovie.posterUrl ? (
-                      <Image
-                        src={selectedMovie.posterUrl}
-                        alt=""
-                        width={92}
-                        height={138}
-                        radius="sm"
-                        className="h-[138px] w-[92px] object-cover"
-                      />
-                    ) : (
-                      <div className="h-[138px] w-[92px] shrink-0 rounded-small bg-default-100" />
-                    )}
-                    <div className="min-w-0">
-                      <h2 className="text-lg font-semibold leading-6">{selectedDraft.title}</h2>
-                      <p className="text-sm text-default-500">
-                        {selectedMovie.mediaKind === "tv" ? "TV series" : "Movie"} · {selectedDraft.year}
-                      </p>
-                      {selectedMovie.imdbId && (
-                        <p className="text-sm text-default-500">{selectedMovie.imdbId}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <dl className="grid grid-cols-[92px_minmax(0,1fr)] gap-x-3 gap-y-2 text-sm">
-                    <dt className="text-default-500">Runtime</dt>
-                    <dd>{selectedDraft.runtime ?? "n/a"}</dd>
-                    <dt className="text-default-500">Rating</dt>
-                    <dd>{selectedDraft.rating || "n/a"}</dd>
-                    <dt className="text-default-500">Country</dt>
-                    <dd>{selectedDraft.country || "n/a"}</dd>
-                    <dt className="text-default-500">Director</dt>
-                    <dd className="whitespace-pre-line">{selectedDraft.director || "n/a"}</dd>
-                    <dt className="text-default-500">Genres</dt>
-                    <dd className="flex flex-wrap gap-1">
-                      {selectedGenreMatches.length
-                        ? selectedGenreMatches.map((match) => (
-                          <button
-                            key={match.tmdbGenre}
-                            type="button"
-                            onClick={() => {
-                              if (!match.localGenreId) {
-                                setGenrePickerTmdbGenre(match.tmdbGenre);
-                              }
-                            }}
-                            className={!match.localGenreId ? "cursor-pointer" : "cursor-default"}
-                            disabled={!!match.localGenreId || loadingGenres}
-                          >
-                            <Chip
-                              size="sm"
-                              variant="flat"
-                              color={
-                                match.mappedByManualOverride
-                                  ? "success"
-                                  : !match.localGenreId
-                                    ? "danger"
-                                    : match.mappedByAlias
-                                      ? "warning"
-                                      : "default"
-                              }
-                            >
-                              {match.localGenre && match.localGenre !== match.tmdbGenre
-                                ? `${match.tmdbGenre} -> ${match.localGenre}`
-                                : match.tmdbGenre}
-                            </Chip>
-                          </button>
-                        ))
-                        : "n/a"}
-                    </dd>
-                  </dl>
-
-                  {genrePickerTmdbGenre && (
-                    <Select
-                      data-testid="tmdb-manual-genre-select"
-                      label={`Map ${genrePickerTmdbGenre}`}
-                      selectedKeys={new Set<string>()}
-                      onSelectionChange={handleManualGenreSelection}
-                      isDisabled={loadingGenres}
-                      variant="faded"
-                      size="sm"
-                    >
-                      {availableGenres.map((genre) => (
-                        <SelectItem key={genre.value}>{genre.label}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-
-                  {genresError && (
-                    <p className="text-sm text-warning-600">{genresError.message}</p>
-                  )}
-
-                  <Button
-                    data-testid="tmdb-use-metadata"
-                    color="primary"
-                    onPress={handleUseMetadata}
-                    isDisabled={loadingGenres}
-                  >
-                    Use metadata
-                  </Button>
-                </>
-              )}
-            </CardBody>
-          </Card>
-        </div>
+        <TmdbImportPreviewPanel
+          isLoading={loadingDetails}
+          selectedMoviePreview={selectedMovie ? {
+            mediaKind: selectedMovie.mediaKind,
+            posterUrl: selectedMovie.posterUrl,
+            imdbId: selectedMovie.imdbId,
+          } : null}
+          draft={selectedDraft}
+          genreMatches={selectedGenreMatches}
+          availableGenres={availableGenres}
+          loadingGenres={loadingGenres}
+          genresErrorMessage={genresError?.message}
+          genrePickerTmdbGenre={genrePickerTmdbGenre}
+          onUnmappedGenrePress={setGenrePickerTmdbGenre}
+          onManualGenreSelection={handleManualGenreSelection}
+          onUseMetadata={handleUseMetadata}
+        />
       </div>
     </div>
   );

@@ -43,7 +43,7 @@ jobs:
 
       - name: Extract movies-ui metadata
         id: ui_meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.UI_IMAGE }}
           tags: |
@@ -60,7 +60,7 @@ jobs:
 
       - name: Extract movies-service metadata
         id: service_meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.SERVICE_IMAGE }}
           tags: |

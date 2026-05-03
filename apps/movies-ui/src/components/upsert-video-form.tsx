@@ -9,15 +9,18 @@ import {
 import { getNextDiskIdSuggestion, upsertVideoData } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Chip, Skeleton, addToast } from "@heroui/react";
+import { Card, CardBody, Chip, Skeleton, addToast } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
+import type { VideoData } from "@nx-movies-db/shared-types";
+import { TMDB_IMPORT_DRAFT_STORAGE_KEY } from "../app/services/actions/tmdbMetadataMapper";
 
 export interface UpsertVideoFormProps {
   initialValues?: UpsertVideoDataFormValues;
+  consumeTmdbImportDraft?: boolean;
 }
 
-export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues }) => {
+export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues, consumeTmdbImportDraft = false }) => {
   const {
     availableMediaTypes,
     availableGenres,
@@ -28,9 +31,31 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
   } = useAvailableMediaAndGenres();
   const { availableOwners, loadingOwners, ownersError } = useAvailableOwners();
   const router = useRouter();
+  const [importedInitialValues, setImportedInitialValues] = useState<VideoData | undefined>();
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialValues || !consumeTmdbImportDraft) return;
+
+    const storedDraft = sessionStorage.getItem(TMDB_IMPORT_DRAFT_STORAGE_KEY);
+    if (!storedDraft) return;
+
+    try {
+      setImportedInitialValues(JSON.parse(storedDraft) as VideoData);
+      sessionStorage.removeItem(TMDB_IMPORT_DRAFT_STORAGE_KEY);
+    } catch (error) {
+      sessionStorage.removeItem(TMDB_IMPORT_DRAFT_STORAGE_KEY);
+      addToast({
+        title: "TMDB-Import fehlgeschlagen",
+        description: error instanceof Error ? error.message : "Importdaten konnten nicht gelesen werden.",
+        severity: "danger",
+      });
+    }
+  }, [consumeTmdbImportDraft, initialValues]);
+
   const defaults: UpsertVideoDataFormValues = useMemo(
     () =>
-      initialValues ?? {
+      initialValues ?? importedInitialValues ?? {
         id: null,
         title: "",
         subtitle: "",
@@ -49,7 +74,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
         owner_id: 1,
         genreIds: [],
       },
-    [initialValues]
+    [importedInitialValues, initialValues]
   );
 
   useEffect(() => {
@@ -78,6 +103,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
       onSave={async (values) => {
         const creatingNewRecord = !values.id;
         try {
+          setSaveError(null);
           const result = await upsertVideoData(values);
           addToast({
             title: "Video gespeichert",
@@ -88,10 +114,10 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
           if (creatingNewRecord && result?.id) {
             const editPath = `/edit/${result.id}`;
             router.replace(editPath);
-            window.location.assign(editPath);
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unbekannter Fehler beim Speichern";
+          setSaveError(message);
           addToast({
             title: "Konnte nicht speichern",
             description: message,
@@ -108,6 +134,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues 
           readOnly={readOnly}
           dirty={dirty}
           saving={saving}
+          saveError={saveError}
           readOnlyFields={readOnlyFields}
           showLookupSkeletons={showLookupSkeletons}
           loadingMediaTypes={loadingMediaTypes}
@@ -128,6 +155,7 @@ function UpsertVideoFormContent({
   readOnly,
   dirty,
   saving,
+  saveError,
   readOnlyFields,
   showLookupSkeletons,
   loadingMediaTypes,
@@ -142,6 +170,7 @@ function UpsertVideoFormContent({
   readOnly: boolean;
   dirty: boolean;
   saving: boolean;
+  saveError: string | null;
   readOnlyFields: Partial<Record<keyof UpsertVideoDataFormValues, boolean>>;
   showLookupSkeletons: boolean;
   loadingMediaTypes: boolean;
@@ -214,6 +243,15 @@ function UpsertVideoFormContent({
           {loadingGenres && <Skeleton className="h-12 w-full rounded-large" />}
           {loadingOwners && <Skeleton className="h-12 w-full rounded-large sm:col-span-2" />}
         </div>
+      )}
+
+      {saveError && (
+        <Card shadow="sm" radius="sm" className="border border-danger-200 bg-danger-50">
+          <CardBody className="text-sm text-danger-700">
+            <p className="font-medium">Konnte nicht speichern</p>
+            <p>{saveError}</p>
+          </CardBody>
+        </Card>
       )}
 
       <UpsertVideoDataForm

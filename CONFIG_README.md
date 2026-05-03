@@ -19,6 +19,9 @@ All runtime configuration now lives in the workspace root `.env` (copy `.env.exa
 | `GRAPHQL_URL` | movies-ui | Yoga endpoint the `/api/graphql-proxy` route forwards to. | `apps/movies-ui/src/app/api/graphql-proxy/route.ts:6` |
 | `GRAPHQL_PROXY_URL` | movies-ui | Optional override for Apollo’s HTTP link, defaulting to `/api/graphql-proxy`. | `apps/movies-ui/src/lib/apollocient.ts:10` |
 | `COVER_IMAGE_PATH` | movies-ui | Filesystem location for cover image assets served via `/api/cover-image/[id]`. Poster images are a separate filesystem-only concept and currently have no database/GraphQL configuration in this repo. | `apps/movies-ui/src/app/api/cover-image/[id]/route.ts:7` · `apps/movies-ui/src/app/services/actions/upsertVideoData.ts:196` |
+| `TMDB_READ_ACCESS_TOKEN` | movies-ui | Private TMDB API read access token used as a bearer token by the server-side import workflow. Never expose it as a `NEXT_PUBLIC_*` variable. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts:47` |
+| `TMDB_LANGUAGE` | movies-ui | Optional TMDB search/detail language, for example `de-DE` or `en-US`; defaults to TMDB-compatible English when unset. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts:55` |
+| `TMDB_IMAGE_SIZE` | movies-ui | Optional TMDB image size used when building imported cover URLs; defaults to `w500`. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts:56` |
 | `NEXT_OUTPUT` | movies-ui | Chooses between `standalone`, `server`, or `export` outputs when building the UI. | `apps/movies-ui/next.config.js:15` |
 | `E2E_BASE_URL` | movies-ui | Default base URL for Playwright UI tests. | `apps/movies-ui/playwright.config.ts:9` |
 | `CI`, `NODE_ENV` | workspace-wide | `CI` increases Playwright retries; together they decide whether Prisma tests load `.env` or `.env.local`. | `apps/movies-ui/playwright.config.ts:7` · `libs/movies-prisma-lib/jest.setup.ts:9` |

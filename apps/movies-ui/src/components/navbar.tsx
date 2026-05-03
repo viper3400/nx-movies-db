@@ -66,6 +66,14 @@ export default function NavbarComponent() {
             <Divider orientation="horizontal" />
             <NavbarMenuItem>
               <Link
+                href="/edit/import"
+                onPress={() => {
+                  setIsMenuOpen(false);
+                }}>TMDB Import</Link>
+            </NavbarMenuItem>
+            <Divider orientation="horizontal" />
+            <NavbarMenuItem>
+              <Link
                 href=""
                 onPress={() => {
                   signOut();

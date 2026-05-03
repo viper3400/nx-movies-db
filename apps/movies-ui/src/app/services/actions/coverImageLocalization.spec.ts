@@ -1,7 +1,7 @@
 import axios from "axios";
-import { mkdir, rename, writeFile } from "fs/promises";
+import { mkdir, rename, unlink, writeFile } from "fs/promises";
 import path from "path";
-import { isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
+import { deleteStoredCoverImage, isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
 
 jest.mock("axios", () => ({
   __esModule: true,
@@ -12,12 +12,14 @@ jest.mock("fs/promises", () => ({
   __esModule: true,
   mkdir: jest.fn(() => Promise.resolve()),
   rename: jest.fn(() => Promise.resolve()),
+  unlink: jest.fn(() => Promise.resolve()),
   writeFile: jest.fn(() => Promise.resolve()),
 }));
 
 const axiosGet = axios.get as jest.MockedFunction<(url: string, config?: unknown) => Promise<any>>;
 const mkdirMock = mkdir as jest.MockedFunction<typeof mkdir>;
 const renameMock = rename as jest.MockedFunction<typeof rename>;
+const unlinkMock = unlink as jest.MockedFunction<typeof unlink>;
 const writeFileMock = writeFile as jest.MockedFunction<typeof writeFile>;
 
 function fakeAxiosResponse(contentType: string, bytes: number[] = [1, 2, 3]) {
@@ -83,6 +85,20 @@ describe("cover image localization", () => {
 
       expect(writeFileMock).not.toHaveBeenCalled();
       expect(renameMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("deleteStoredCoverImage", () => {
+    it("removes the movie jpg filename", async () => {
+      await deleteStoredCoverImage("/covers", 530);
+
+      expect(unlinkMock).toHaveBeenCalledWith(path.join("/covers", "530.jpg"));
+    });
+
+    it("ignores missing local cover files", async () => {
+      unlinkMock.mockRejectedValueOnce(Object.assign(new Error("missing"), { code: "ENOENT" }));
+
+      await expect(deleteStoredCoverImage("/covers", 530)).resolves.toBeUndefined();
     });
   });
 });

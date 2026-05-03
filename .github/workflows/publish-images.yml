@@ -1,0 +1,76 @@
+name: Publish Docker Images
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build applications
+        run: npx nx run-many --projects=movies-ui,movies-service --targets=build --skip-nx-cache
+
+      - name: Prepare image names
+        run: |
+          REPOSITORY_LC="${GITHUB_REPOSITORY,,}"
+          echo "UI_IMAGE=ghcr.io/${REPOSITORY_LC}-movies-ui" >> "$GITHUB_ENV"
+          echo "SERVICE_IMAGE=ghcr.io/${REPOSITORY_LC}-movies-service" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract movies-ui metadata
+        id: ui_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.UI_IMAGE }}
+          tags: |
+            type=ref,event=tag
+
+      - name: Build and push movies-ui
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: movies-ui.Dockerfile
+          push: true
+          tags: ${{ steps.ui_meta.outputs.tags }}
+          labels: ${{ steps.ui_meta.outputs.labels }}
+
+      - name: Extract movies-service metadata
+        id: service_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.SERVICE_IMAGE }}
+          tags: |
+            type=ref,event=tag
+
+      - name: Build and push movies-service
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: movies-service.Dockerfile
+          push: true
+          tags: ${{ steps.service_meta.outputs.tags }}
+          labels: ${{ steps.service_meta.outputs.labels }}

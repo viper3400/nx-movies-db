@@ -28,6 +28,9 @@ All services now read from the workspace root `.env` (create it with `cp .env.ex
 | `NEXT_PUBLIC_TEST_MODE`, `NEXT_PUBLIC_TEST_USERS` | Enable stub sessions for local runs. |
 | `APP_BASE_PATH` | Next.js `basePath` value (e.g., `/movies`). |
 | `COVER_IMAGE_PATH` | Filesystem folder containing cover images served by `/api/cover-image/[id]`. Poster images are separate filesystem-only assets and currently have no dedicated runtime setting. |
+| `TMDB_READ_ACCESS_TOKEN` | Private TMDB API read access token for the server-side metadata import workflow. |
+| `TMDB_LANGUAGE` | Optional TMDB metadata language, for example `de-DE` or `en-US`. |
+| `TMDB_IMAGE_SIZE` | Optional TMDB cover image size, defaulting to `w500`. |
 
 **Example**
 
@@ -46,6 +49,9 @@ NEXT_PUBLIC_TEST_MODE=true
 NEXT_PUBLIC_TEST_USERS="tester@example.com,Tester,1"
 APP_BASE_PATH=/movies
 COVER_IMAGE_PATH=./development-db/coverpics
+TMDB_READ_ACCESS_TOKEN=tmdb-v3-read-access-token
+TMDB_LANGUAGE=de-DE
+TMDB_IMAGE_SIZE=w500
 ```
 # Setting Up the Development Database
 

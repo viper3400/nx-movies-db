@@ -24,6 +24,12 @@ jobs:
       - run: npm ci
 
       - name: Build applications
+        env:
+          DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
+          GITHUB_ID: dummy
+          GITHUB_SECRET: dummy
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
         run: npx nx run-many --projects=movies-ui,movies-service --targets=build --skip-nx-cache
 
       - name: Prepare image names

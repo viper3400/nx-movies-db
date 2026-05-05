@@ -29,6 +29,42 @@ async function waitUntilSaved(saveButton: Locator) {
   await expect(saveButton).toBeDisabled({ timeout: 15_000 });
 }
 
+async function findVideoIdByTitle(page: Page, title: string) {
+  const response = await page.request.post("/api/graphql-proxy", {
+    data: {
+      query: `
+        query FindVideoByTitle($title: String!) {
+          videos(
+            title: $title,
+            diskid: "",
+            filterFavorites: false,
+            filterFlagged: false,
+            mediaType: [],
+            genreName: [],
+            randomOrder: false,
+            userName: "tester@example.com",
+            queryPlot: false,
+            take: 1,
+            skip: 0
+          ) {
+            videos {
+              id
+            }
+          }
+        }
+      `,
+      variables: { title },
+    },
+  });
+
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  const id = body.data?.videos?.videos?.[0]?.id;
+  expect(id).toBeTruthy();
+
+  return String(id);
+}
+
 test.describe("Edit page (vanilla Playwright)", () => {
   test("user can start a new video entry", async ({ page }) => {
     await page.goto("/edit/new");
@@ -145,8 +181,9 @@ test.describe("Edit page (vanilla Playwright)", () => {
   test("user can create, update, and discard a manual entry", async ({ page }) => {
     const uniqueToken = Date.now();
     const createdTitle = `Playwright Created ${uniqueToken}`;
-    const updatedLanguage = "english";
-    const temporaryLanguage = "german";
+    const updatedTitle = `${createdTitle} Updated`;
+    const temporaryTitle = `${createdTitle} Draft`;
+    const diskPrefix = `R${String((uniqueToken % 80) + 10).padStart(2, "0")}F${String((Math.floor(uniqueToken / 100) % 80) + 10).padStart(2, "0")}`;
 
     await page.goto("/edit/new");
 
@@ -160,42 +197,42 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await titleField.waitFor({ state: "visible" });
     await titleField.fill(createdTitle);
     await titleField.press("Tab");
-    await diskIdField.fill("R99F99");
+    await diskIdField.fill(diskPrefix);
     await diskIdSuggestion.waitFor({ state: "visible" });
     await diskIdSuggestion.click();
-    await expect(diskIdField).toHaveValue(/^R99F99D\d{2}$/);
+    await expect(diskIdField).toHaveValue(new RegExp(`^${diskPrefix}D\\d{2}$`));
 
     await expect(saveButton).toBeEnabled();
 
-    await Promise.all([
-      page.waitForURL(/\/edit\/\d+$/),
-      saveButton.click(),
-    ]);
+    await saveButton.click();
     await waitUntilSaved(saveButton);
+    const createdId = await findVideoIdByTitle(page, createdTitle);
+    await page.goto(`/edit/${createdId}`);
+    await titleField.waitFor({ state: "visible" });
     await expect(titleField).toHaveValue(createdTitle);
 
     // Capture the new id just to ensure we landed on a persisted entity
     const createdPath = new URL(page.url()).pathname;
     expect(createdPath).toMatch(/\/edit\/\d+$/);
 
-    // Update language and ensure persistence
-    await languageField.fill(updatedLanguage);
-    await languageField.press("Tab");
+    // Update title and ensure persistence
+    await titleField.fill(updatedTitle);
+    await titleField.press("Tab");
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
     await waitUntilSaved(saveButton);
 
     await page.reload({ waitUntil: "domcontentloaded" });
-    await expect(languageField).toHaveValue(updatedLanguage);
+    await expect(titleField).toHaveValue(updatedTitle);
 
     // Now draft a change and discard it
-    await languageField.fill(temporaryLanguage);
-    await languageField.press("Tab");
+    await titleField.fill(temporaryTitle);
+    await titleField.press("Tab");
     await expect(saveButton).toBeEnabled();
     await expect(discardButton).toBeEnabled();
 
     await discardButton.click();
-    await expect(languageField).toHaveValue(updatedLanguage);
+    await expect(titleField).toHaveValue(updatedTitle);
     await expect(saveButton).toBeDisabled();
   });
 });

@@ -4,6 +4,7 @@ import type { SerenityFixtures, SerenityWorkerFixtures } from "@serenity-js/play
 export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({
   testDir: "./e2e",
   timeout: 60_000,
+  workers: 1,
   retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: process.env.E2E_BASE_URL || "http://localhost:3000",

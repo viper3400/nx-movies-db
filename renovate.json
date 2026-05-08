@@ -72,6 +72,14 @@
       ]
     },
     {
+      "groupName": "g: prisma",
+      "automerge": false,
+      "matchPackageNames": [
+        "/^@prisma//",
+        "/^prisma$/"
+      ]
+    },
+    {
       "groupName": "g: vite",
       "description": "Group Vite ecosystem dependencies",
       "labels": [

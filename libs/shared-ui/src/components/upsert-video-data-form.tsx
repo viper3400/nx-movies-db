@@ -249,11 +249,12 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderTextField({ k: "imgurl", label: "Image URL" })}
         {renderTextField({ k: "director", label: "Director" })}
 
-        {renderTextAreaField({ k: "actors", label: "Actors" })}
-        {renderTextField({ k: "runtime", label: "Runtime (min)", type: "number" })}
-
-        {renderTextField({ k: "country", label: "Country" })}
+        {renderTextAreaField({ k: "actors", label: "Actors", rows: 3 })}
         {renderTextAreaField({ k: "plot", label: "Plot", rows: 3 })}
+
+        {renderTextField({ k: "runtime", label: "Runtime (min)", type: "number" })}
+        {renderTextField({ k: "country", label: "Country" })}
+
 
         {renderTextField({ k: "rating", label: "Rating" })}
         {renderTextField({ k: "filename", label: "Filename" })}
@@ -269,17 +270,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderTextField({ k: "video_height", label: "Video Height", type: "number" })}
 
         {renderCheckboxField({ k: "istv", label: "TV series" })}
-
-        {renderDateField({ k: "lastupdate", label: "Last Update" })}
-
         {renderSingleSelect("mediatype", "Media Type", mediaTypeOptions)}
-
-        {renderTextField({ k: "custom1", label: "Custom 1" })}
-        {renderTextField({ k: "custom2", label: "Custom 2" })}
-        {renderTextField({ k: "custom3", label: "Custom 3" })}
-        {renderTextField({ k: "custom4", label: "Custom 4" })}
-
-        {renderDateField({ k: "created", label: "Created" })}
 
         {renderSingleSelect("owner_id", "Owner", ownerOptions)}
 
@@ -311,6 +302,15 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
             <SelectItem key={o.value}>{o.label}</SelectItem>
           ))}
         </Select>
+
+        {renderTextField({ k: "custom1", label: "Custom 1" })}
+        {renderTextField({ k: "custom2", label: "Custom 2" })}
+        {renderTextField({ k: "custom3", label: "Custom 3" })}
+        {renderTextField({ k: "custom4", label: "Custom 4" })}
+
+        {renderDateField({ k: "created", label: "Created" })}
+        {renderDateField({ k: "lastupdate", label: "Last Update" })}
+
       </div>
       <Spacer y={4} />
     </div>

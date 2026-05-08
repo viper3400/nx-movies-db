@@ -18,9 +18,14 @@ import { TMDB_IMPORT_DRAFT_STORAGE_KEY } from "../app/services/actions/tmdbMetad
 export interface UpsertVideoFormProps {
   initialValues?: UpsertVideoDataFormValues;
   consumeTmdbImportDraft?: boolean;
+  defaultOwnerId?: number;
 }
 
-export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues, consumeTmdbImportDraft = false }) => {
+export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
+  initialValues,
+  consumeTmdbImportDraft = false,
+  defaultOwnerId = 1,
+}) => {
   const {
     availableMediaTypes,
     availableGenres,
@@ -41,7 +46,10 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues,
     if (!storedDraft) return;
 
     try {
-      setImportedInitialValues(JSON.parse(storedDraft) as VideoData);
+      setImportedInitialValues({
+        ...(JSON.parse(storedDraft) as VideoData),
+        owner_id: defaultOwnerId,
+      });
       sessionStorage.removeItem(TMDB_IMPORT_DRAFT_STORAGE_KEY);
     } catch (error) {
       sessionStorage.removeItem(TMDB_IMPORT_DRAFT_STORAGE_KEY);
@@ -51,7 +59,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues,
         severity: "danger",
       });
     }
-  }, [consumeTmdbImportDraft, initialValues]);
+  }, [consumeTmdbImportDraft, defaultOwnerId, initialValues]);
 
   const defaults: UpsertVideoDataFormValues = useMemo(
     () =>
@@ -71,10 +79,10 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({ initialValues,
         istv: 0,
         lastupdate: null,
         mediatype: 1,
-        owner_id: 1,
+        owner_id: defaultOwnerId,
         genreIds: [],
       },
-    [importedInitialValues, initialValues]
+    [defaultOwnerId, importedInitialValues, initialValues]
   );
 
   useEffect(() => {

@@ -28,7 +28,11 @@ export type TmdbMovieDetails = {
   genres: string[];
   productionCountries: string[];
   directors: string[];
-  cast: string[];
+  cast: Array<{
+    id: number;
+    name: string;
+    character: string;
+  }>;
   language: string;
 };
 
@@ -58,6 +62,10 @@ function getYear(releaseDate: string | null): number {
 
   const year = Number(releaseDate.slice(0, 4));
   return Number.isInteger(year) && year > 0 ? year : new Date().getFullYear();
+}
+
+function formatTmdbActorLine(actor: TmdbMovieDetails["cast"][number]): string {
+  return `${actor.name}::${actor.character}::tmdb:${actor.id}`;
 }
 
 export function getTmdbGenreMatches(
@@ -115,11 +123,11 @@ export function mapTmdbMovieToVideoData(
     country: movie.productionCountries.join(", "),
     rating: movie.voteAverage == null ? "" : String(movie.voteAverage),
     runtime: movie.runtime,
-    imdbID: movie.imdbId ?? "",
+    imdbID: `tmdb:${movie.mediaKind}:${movie.id}`,
     year: getYear(movie.releaseDate),
     imgurl: movie.posterUrl ?? "",
     director: movie.directors.join("\n"),
-    actors: movie.cast.join("\n"),
+    actors: movie.cast.map(formatTmdbActorLine).join("\n"),
     plot: movie.overview,
     istv: movie.mediaKind === "tv" ? 1 : 0,
     lastupdate: null,

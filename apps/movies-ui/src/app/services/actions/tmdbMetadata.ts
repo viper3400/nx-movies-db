@@ -37,7 +37,7 @@ type TmdbMovieDetailsResponse = {
   };
   credits?: {
     crew?: Array<{ job?: string; name?: string }>;
-    cast?: Array<{ name?: string; order?: number }>;
+    cast?: Array<{ id?: number; name?: string; character?: string; order?: number }>;
   };
 };
 
@@ -161,10 +161,16 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
         .map((member) => member.name as string);
 
   const cast = [...(credits?.cast ?? [])]
-    .filter((member) => member.name)
+    .filter((member): member is { id: number; name: string; character?: string; order?: number } =>
+      typeof member.id === "number" && !!member.name
+    )
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 15)
-    .map((member) => member.name as string);
+    .map((member) => ({
+      id: member.id,
+      name: member.name,
+      character: member.character ?? "",
+    }));
 
   return {
     id: movie.id,

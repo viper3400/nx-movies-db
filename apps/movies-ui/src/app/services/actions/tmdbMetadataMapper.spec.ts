@@ -93,7 +93,7 @@ describe("mapTmdbMovieToVideoData", () => {
         year: 1999,
         runtime: 136,
         rating: "8.2",
-        imdbID: "tt0133093",
+        imdbID: "tmdb:movie:603",
         imgurl: "https://image.tmdb.org/t/p/w500/poster.jpg",
         country: "United States of America, Australia",
         director: "Lana Wachowski\nLilly Wachowski",
@@ -130,7 +130,7 @@ describe("mapTmdbMovieToVideoData", () => {
     expect(result.runtime).toBeNull();
     expect(result.rating).toBe("");
     expect(result.imgurl).toBe("");
-    expect(result.imdbID).toBe("");
+    expect(result.imdbID).toBe("tmdb:movie:603");
     expect(result.genreIds).toEqual([]);
     expect(result.mediatype).toBe(1);
     expect(result.owner_id).toBe(1);
@@ -146,5 +146,6 @@ describe("mapTmdbMovieToVideoData", () => {
 
     expect(result.istv).toBe(1);
     expect(result.title).toBe("Game of Thrones");
+    expect(result.imdbID).toBe("tmdb:tv:603");
   });
 });

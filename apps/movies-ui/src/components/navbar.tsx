@@ -74,6 +74,14 @@ export default function NavbarComponent() {
             <Divider orientation="horizontal" />
             <NavbarMenuItem>
               <Link
+                href="/info"
+                onPress={() => {
+                  setIsMenuOpen(false);
+                }}>Info</Link>
+            </NavbarMenuItem>
+            <Divider orientation="horizontal" />
+            <NavbarMenuItem>
+              <Link
                 href=""
                 onPress={() => {
                   signOut();

@@ -115,7 +115,7 @@ export function mapTmdbMovieToVideoData(
     country: movie.productionCountries.join(", "),
     rating: movie.voteAverage == null ? "" : String(movie.voteAverage),
     runtime: movie.runtime,
-    imdbID: movie.imdbId ?? "",
+    imdbID: `tmdb:${movie.mediaKind}:${movie.id}`,
     year: getYear(movie.releaseDate),
     imgurl: movie.posterUrl ?? "",
     director: movie.directors.join("\n"),

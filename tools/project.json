@@ -26,7 +26,7 @@
             "command": "PORT=7100 DATABASE_URL=mysql://root:password@127.0.0.1:7200/videodb DATABASE_HOST=127.0.0.1 DATABASE_USER=root DATABASE_PASSWORD=password DATABASE_PORT=7200 DATABASE_NAME=videodb JWT_SECRET=qwertyuiopasdfghjklzxcvbnm123456 nx run movies-service:serve"
           },
           {
-            "command": "cd apps/movies-ui && PORT=${UI_PORT:-3000} GRAPHQL_URL=http://127.0.0.1:7100/graphql NEXTAUTH_URL=/api/auth NEXT_PUBLIC_TEST_MODE=true NEXT_PUBLIC_TEST_USERS=\"tester@example.com,Tester,1\" TEST_MODE=true GITHUB_ID=dummy GITHUB_SECRET=dummy GOOGLE_CLIENT_ID=dummy GOOGLE_CLIENT_SECRET=dummy ALLOWED_USERS=\"tester@example.com,Tester,1\" GRAPHQL_PROXY_URL=http://localhost:${UI_PORT:-3000}/api/graphql-proxy JWT_SECRET=qwertyuiopasdfghjklzxcvbnm123456 next dev"
+            "command": "cd apps/movies-ui && PORT=${UI_PORT:-3000} GRAPHQL_URL=http://127.0.0.1:7100/graphql NEXTAUTH_URL=/api/auth NEXT_PUBLIC_TEST_MODE=true NEXT_PUBLIC_TEST_USERS=\"tester@example.com,Tester,2\" TEST_MODE=true GITHUB_ID=dummy GITHUB_SECRET=dummy GOOGLE_CLIENT_ID=dummy GOOGLE_CLIENT_SECRET=dummy ALLOWED_USERS=\"tester@example.com,Tester,2\" GRAPHQL_PROXY_URL=http://localhost:${UI_PORT:-3000}/api/graphql-proxy JWT_SECRET=qwertyuiopasdfghjklzxcvbnm123456 next dev"
           }
         ]
       }

@@ -56,7 +56,7 @@ The helper scripts use the same local defaults as the CI-oriented e2e guide:
 - `MYSQL_DATABASE=videodb`
 - `MYSQL_ROOT_PASSWORD=password`
 - DB compose file: `development-db/docker-compose.ci.yaml`
-- `npm run dev:e2e` starts the service and UI with `TEST_MODE=true`, `NEXT_PUBLIC_TEST_MODE=true`, the stub user `tester@example.com,Tester,1`, and the same local JWT/GraphQL defaults used by CI.
+- `npm run dev:e2e` starts the service and UI with `TEST_MODE=true`, `NEXT_PUBLIC_TEST_MODE=true`, the stub user `tester@example.com,Tester,2`, and the same local JWT/GraphQL defaults used by CI.
 - Local Playwright defaults to `E2E_BASE_URL=http://localhost:3000`. CI overrides this explicitly.
 
 The app runtime still depends on `.env` / `.env.local`. Check `.env.example` and `CONFIG_README.md` when a service fails due to missing configuration.

@@ -29,7 +29,7 @@ async function waitUntilSaved(saveButton: Locator) {
   await expect(saveButton).toBeDisabled({ timeout: 15_000 });
 }
 
-async function findVideoIdByTitle(page: Page, title: string) {
+async function findVideoByTitle(page: Page, title: string) {
   const response = await page.request.post("/api/graphql-proxy", {
     data: {
       query: `
@@ -49,6 +49,7 @@ async function findVideoIdByTitle(page: Page, title: string) {
           ) {
             videos {
               id
+              ownerid
             }
           }
         }
@@ -59,10 +60,10 @@ async function findVideoIdByTitle(page: Page, title: string) {
 
   expect(response.ok()).toBeTruthy();
   const body = await response.json();
-  const id = body.data?.videos?.videos?.[0]?.id;
-  expect(id).toBeTruthy();
+  const video = body.data?.videos?.videos?.[0];
+  expect(video?.id).toBeTruthy();
 
-  return String(id);
+  return { id: String(video.id), ownerId: video.ownerid };
 }
 
 test.describe("Edit page (vanilla Playwright)", () => {
@@ -206,7 +207,9 @@ test.describe("Edit page (vanilla Playwright)", () => {
 
     await saveButton.click();
     await waitUntilSaved(saveButton);
-    const createdId = await findVideoIdByTitle(page, createdTitle);
+    const createdVideo = await findVideoByTitle(page, createdTitle);
+    expect(createdVideo.ownerId).toBe(2);
+    const createdId = createdVideo.id;
     await page.goto(`/edit/${createdId}`);
     await titleField.waitFor({ state: "visible" });
     await expect(titleField).toHaveValue(createdTitle);

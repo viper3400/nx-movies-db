@@ -4,7 +4,21 @@ export default {
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
-    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/next/babel'] }],
+    '^.+\\.[tj]sx?$': [
+      'babel-jest',
+      {
+        presets: [
+          [
+            '@nx/next/babel',
+            {
+              'preset-react': {
+                runtime: 'automatic',
+              },
+            },
+          ],
+        ],
+      },
+    ],
   },
   testPathIgnorePatterns: ['<rootDir>/e2e/'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],

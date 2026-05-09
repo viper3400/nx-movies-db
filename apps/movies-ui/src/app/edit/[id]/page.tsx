@@ -36,7 +36,10 @@ export default async function Page({
   if (id === "new") {
     return (
       <div className="p-4 max-w-6xl mx-auto">
-        <UpsertVideoForm consumeTmdbImportDraft={resolvedSearchParams.import === "tmdb"} />
+        <UpsertVideoForm
+          consumeTmdbImportDraft={resolvedSearchParams.import === "tmdb"}
+          defaultOwnerId={session.ownerId}
+        />
       </div>
     );
   }

@@ -80,3 +80,5 @@ jobs:
           push: true
           tags: ${{ steps.service_meta.outputs.tags }}
           labels: ${{ steps.service_meta.outputs.labels }}
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}

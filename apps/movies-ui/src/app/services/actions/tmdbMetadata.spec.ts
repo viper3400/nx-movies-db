@@ -123,8 +123,8 @@ describe("tmdbMetadata actions", () => {
             { job: "Director", name: "Director" },
           ],
           cast: [
-            { name: "Second", order: 1 },
-            { name: "First", order: 0 },
+            { id: 2, name: "Second", character: "Second Role", order: 1 },
+            { id: 1, name: "First", character: "First Role", order: 0 },
           ],
         }),
       })
@@ -155,7 +155,10 @@ describe("tmdbMetadata actions", () => {
       genres: ["Action"],
       productionCountries: ["United States of America"],
       directors: ["Director"],
-      cast: ["First", "Second"],
+      cast: [
+        { id: 1, name: "First", character: "First Role" },
+        { id: 2, name: "Second", character: "Second Role" },
+      ],
       language: "de-DE",
     });
   });
@@ -212,8 +215,8 @@ describe("tmdbMetadata actions", () => {
         ok: true,
         json: async () => ({
           cast: [
-            { name: "Second", order: 1 },
-            { name: "First", order: 0 },
+            { id: 2, name: "Second", character: "Second Role", order: 1 },
+            { id: 1, name: "First", character: "First Role", order: 0 },
           ],
         }),
       })
@@ -244,7 +247,10 @@ describe("tmdbMetadata actions", () => {
       genres: ["Drama"],
       productionCountries: ["United States of America"],
       directors: ["David Benioff", "D. B. Weiss"],
-      cast: ["First", "Second"],
+      cast: [
+        { id: 1, name: "First", character: "First Role" },
+        { id: 2, name: "Second", character: "Second Role" },
+      ],
       language: "de-DE",
     });
   });

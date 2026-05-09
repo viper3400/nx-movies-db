@@ -17,6 +17,8 @@ RUN npm ci
 FROM base AS runner
 WORKDIR /app
 
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1

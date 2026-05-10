@@ -40,6 +40,34 @@ jest.mock("@heroui/react", () => ({
       {description}
     </div>
   ),
+  Button: ({
+    children,
+    onPress,
+    as: As,
+    href,
+  }: {
+    children: React.ReactNode;
+    onPress?: () => void;
+    as?: React.ElementType;
+    href?: string;
+  }) => {
+    if (As) {
+      return (
+        <As
+          href={href}
+          role="button"
+          onClick={() => onPress?.()}
+        >
+          {children}
+        </As>
+      );
+    }
+    return (
+      <button type="button" onClick={() => onPress?.()}>
+        {children}
+      </button>
+    );
+  },
 }));
 
 jest.mock("./theme-switch", () => ({
@@ -78,7 +106,7 @@ describe("NavbarComponent", () => {
     render(<NavbarComponent menuLinks={menuLinks} />);
 
     expect(screen.queryByRole("link", { name: "Filmsuche" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "HomeWeb Logout" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "HomeWeb Logout" })).not.toBeInTheDocument();
   });
 
   it("renders provider-specific logout actions based on the user email", () => {

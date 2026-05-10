@@ -66,10 +66,10 @@ export default function NavbarComponent() {
             <Divider orientation="horizontal" />
             <NavbarMenuItem>
               <Link
-                href="/edit/import"
+                href="/edit/new"
                 onPress={() => {
                   setIsMenuOpen(false);
-                }}>TMDB Import</Link>
+                }}>Film hinzufügen</Link>
             </NavbarMenuItem>
             <Divider orientation="horizontal" />
             <NavbarMenuItem>

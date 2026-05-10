@@ -6,10 +6,9 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { VideoData } from "@nx-movies-db/shared-types";
 import { UpsertVideoForm } from "./upsert-video-form";
-import { upsertVideoData } from "../app/services/actions";
+import { searchTmdbMovies, upsertVideoData } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { TMDB_IMPORT_DRAFT_STORAGE_KEY } from "../app/services/actions/tmdbMetadataMapper";
 
 type UpsertVideoDataFormProps = {
   values: VideoData;
@@ -94,6 +93,26 @@ jest.mock("@heroui/react", () => ({
   Chip: ({ children, ...props }: { children: React.ReactNode }) => <span {...props}>{children}</span>,
   Skeleton: (props: Record<string, unknown>) => <div data-testid="mock-skeleton" {...props} />,
   Spacer: (props: Record<string, unknown>) => <div data-testid="mock-spacer" {...props} />,
+  Switch: ({
+    children,
+    isSelected,
+    onValueChange,
+    ...props
+  }: {
+    children: React.ReactNode;
+    isSelected?: boolean;
+    onValueChange?: (selected: boolean) => void;
+  }) => (
+    <label>
+      <input
+        type="checkbox"
+        checked={!!isSelected}
+        onChange={(event) => onValueChange?.(event.target.checked)}
+        {...props}
+      />
+      {children}
+    </label>
+  ),
   addToast: jest.fn(),
 }));
 
@@ -101,12 +120,116 @@ jest.mock("@nx-movies-db/shared-ui", () => {
   const actual = jest.requireActual("../../../../libs/shared-ui/src/components/editable-form-wrapper");
   return {
     EditableFormWrapper: actual.EditableFormWrapper,
+    TmdbMetadataSearchPanel: ({
+      query,
+      results,
+      queryTestId = "tmdb-search-query",
+      submitTestId = "tmdb-search-submit",
+      onQueryChange,
+      onSearch,
+      onSelect,
+    }: {
+      query: string;
+      results: Array<{ id: number; title: string }>;
+      queryTestId?: string;
+      submitTestId?: string;
+      onQueryChange: (query: string) => void;
+      onSearch: () => void;
+      onSelect?: (result: any) => void;
+    }) => (
+      <div data-testid="mock-tmdb-search-panel">
+        <input
+          data-testid={queryTestId}
+          value={query}
+          onChange={(event) => onQueryChange(event.target.value)}
+        />
+        <button data-testid={submitTestId} type="button" onClick={onSearch}>
+          Search
+        </button>
+        {results.map((result) => (
+          <button
+            key={result.id}
+            data-testid={`mock-tmdb-result-${result.id}`}
+            type="button"
+            onClick={() => onSelect?.(result)}
+          >
+            {result.title}
+          </button>
+        ))}
+      </div>
+    ),
+    TmdbMetadataMergePanel: ({
+      candidates,
+      genreMatches = [],
+      availableGenres = [],
+      genrePickerTmdbGenre,
+      onCandidateSelectionChange,
+      onUnmappedGenrePress,
+      onManualGenreSelection,
+      onApplySelected,
+      onNoMatch,
+    }: {
+      candidates: Array<{ field: string; label: string; selected: boolean }>;
+      genreMatches?: Array<{ tmdbGenre: string; localGenre?: string }>;
+      availableGenres?: Array<{ label: string; value: string }>;
+      genrePickerTmdbGenre?: string | null;
+      onCandidateSelectionChange: (field: string, selected: boolean) => void;
+      onUnmappedGenrePress?: (tmdbGenre: string) => void;
+      onManualGenreSelection?: (selection: Set<string>) => void;
+      onApplySelected: () => void;
+      onNoMatch: () => void;
+    }) => (
+      <div data-testid="mock-tmdb-merge-panel">
+        {candidates.map((candidate) => (
+          <label key={candidate.field}>
+            {candidate.label}
+            <input
+              data-testid={`mock-tmdb-merge-select-${candidate.field}`}
+              type="checkbox"
+              checked={candidate.selected}
+              onChange={(event) => onCandidateSelectionChange(candidate.field, event.target.checked)}
+            />
+          </label>
+        ))}
+        {genreMatches.map((match) => (
+          <button
+            key={match.tmdbGenre}
+            data-testid={`mock-tmdb-merge-genre-${match.tmdbGenre}`}
+            type="button"
+            onClick={() => onUnmappedGenrePress?.(match.tmdbGenre)}
+          >
+            {match.localGenre ? `${match.tmdbGenre} -> ${match.localGenre}` : match.tmdbGenre}
+          </button>
+        ))}
+        {genrePickerTmdbGenre && (
+          <select
+            data-testid="mock-tmdb-merge-manual-genre-select"
+            onChange={(event) => onManualGenreSelection?.(new Set([event.target.value]))}
+          >
+            <option value="">Select</option>
+            {availableGenres.map((genre) => (
+              <option key={genre.value} value={genre.value}>
+                {genre.label}
+              </option>
+            ))}
+          </select>
+        )}
+        <button data-testid="mock-tmdb-merge-apply" type="button" onClick={onApplySelected}>
+          Apply selected
+        </button>
+        <button data-testid="mock-tmdb-merge-no-match" type="button" onClick={onNoMatch}>
+          No TMDB match
+        </button>
+      </div>
+    ),
     UpsertVideoDataForm: (props: UpsertVideoDataFormProps) => mockUpsertVideoDataForm(props),
   };
 });
 
 jest.mock("../app/services/actions", () => ({
-  getNextDiskIdSuggestion: jest.fn(),
+  ...jest.requireActual("../app/services/actions/tmdbMetadataMapper"),
+  getNextDiskIdSuggestion: jest.fn(() => Promise.resolve({ nextDiskIdSuggestion: null })),
+  searchTmdbMovies: jest.fn(),
   upsertVideoData: jest.fn(),
 }));
 
@@ -118,6 +241,10 @@ jest.mock("../hooks/useAvailableOwners", () => ({
   useAvailableOwners: jest.fn(() => mockOwnersState),
 }));
 
+jest.mock("../hooks/useAppBasePath", () => ({
+  useAppBasePath: () => ({ appBasePath: "" }),
+}));
+
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
     replace: mockReplace,
@@ -125,6 +252,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 const mockUpsertVideoData = jest.mocked(upsertVideoData);
+const mockSearchTmdbMovies = jest.mocked(searchTmdbMovies);
 const mockUseAvailableMediaAndGenres = jest.mocked(useAvailableMediaAndGenres);
 const mockUseAvailableOwners = jest.mocked(useAvailableOwners);
 
@@ -190,6 +318,8 @@ describe("UpsertVideoForm", () => {
       ownersError: null,
     };
     mockUpsertVideoData.mockResolvedValue({ id: 99, title: "Saved" } as VideoData);
+    mockSearchTmdbMovies.mockResolvedValue([]);
+    global.fetch = jest.fn();
   });
 
   it("uses the provided default owner id when saving a new blank entry", async () => {
@@ -205,31 +335,6 @@ describe("UpsertVideoForm", () => {
         })
       );
     });
-  });
-
-  it("overrides TMDB import draft owner id with the provided default owner id", async () => {
-    sessionStorage.setItem(
-      TMDB_IMPORT_DRAFT_STORAGE_KEY,
-      JSON.stringify({ ...baseVideoData, title: "Imported", owner_id: 1 })
-    );
-
-    render(<UpsertVideoForm consumeTmdbImportDraft defaultOwnerId={7} />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId("mock-field-title")).toHaveValue("Imported");
-    });
-
-    changeTitleAndSave("Imported Changed");
-
-    await waitFor(() => {
-      expect(mockUpsertVideoData).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: "Imported Changed",
-          owner_id: 7,
-        })
-      );
-    });
-    expect(sessionStorage.getItem(TMDB_IMPORT_DRAFT_STORAGE_KEY)).toBeNull();
   });
 
   it("preserves owner id from existing initial values", async () => {
@@ -284,5 +389,363 @@ describe("UpsertVideoForm", () => {
     rerender(<UpsertVideoForm defaultOwnerId={7} />);
 
     expect(screen.getByTestId("mock-field-owner_id")).toBeDisabled();
+  });
+
+  it("shows TMDB search by default for new entries and collapsed refresh for existing entries", () => {
+    const { rerender } = render(<UpsertVideoForm defaultOwnerId={7} />);
+
+    expect(screen.queryByTestId("tmdb-refresh-toggle")).not.toBeInTheDocument();
+    expect(screen.getByTestId("tmdb-refresh-panel")).toBeInTheDocument();
+
+    rerender(<UpsertVideoForm defaultOwnerId={7} initialValues={{ ...baseVideoData, id: 530 }} />);
+
+    expect(screen.getByTestId("tmdb-refresh-toggle")).toBeInTheDocument();
+    expect(screen.queryByTestId("tmdb-refresh-panel")).not.toBeInTheDocument();
+  });
+
+  it("applies selected TMDB fields to a new draft before saving", async () => {
+    mockSearchTmdbMovies.mockResolvedValue([
+      {
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A hacker story.",
+        releaseDate: "1999-03-31",
+        posterUrl: null,
+      },
+    ]);
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A computer hacker learns about the true nature of reality.",
+        releaseDate: "1999-03-31",
+        runtime: 136,
+        voteAverage: 8.2,
+        posterUrl: null,
+        imdbId: "tt0133093",
+        genres: [],
+        productionCountries: ["United States of America"],
+        directors: ["Lana Wachowski"],
+        cast: [],
+        language: "de-DE",
+      }),
+    } as Response);
+
+    render(<UpsertVideoForm defaultOwnerId={7} />);
+
+    fireEvent.change(screen.getByTestId("tmdb-refresh-query"), {
+      target: { value: "Matrix" },
+    });
+    fireEvent.click(screen.getByTestId("tmdb-refresh-search-submit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-result-603")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-select-title")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-merge-apply"));
+    fireEvent.click(screen.getByTestId("editable-form-save"));
+
+    await waitFor(() => {
+      expect(mockUpsertVideoData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: null,
+          title: "Matrix",
+          language: "de",
+          plot: "A computer hacker learns about the true nature of reality.",
+          imdbID: "tmdb:movie:603",
+          owner_id: 7,
+        })
+      );
+    });
+  });
+
+  it("applies selected TMDB fields to the draft before saving", async () => {
+    mockSearchTmdbMovies.mockResolvedValue([
+      {
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A hacker story.",
+        releaseDate: "1999-03-31",
+        posterUrl: null,
+      },
+    ]);
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A computer hacker learns about the true nature of reality.",
+        releaseDate: "1999-03-31",
+        runtime: 136,
+        voteAverage: 8.2,
+        posterUrl: null,
+        imdbId: "tt0133093",
+        genres: ["Action"],
+        productionCountries: ["United States of America"],
+        directors: ["Lana Wachowski"],
+        cast: [],
+        language: "de-DE",
+      }),
+    } as Response);
+
+    render(
+      <UpsertVideoForm
+        defaultOwnerId={7}
+        initialValues={{
+          ...baseVideoData,
+          id: 530,
+          title: "Local Title",
+          language: "",
+          plot: "",
+          imdbID: "",
+          diskid: "R01F1D01",
+          owner_id: 7,
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("tmdb-refresh-toggle"));
+    fireEvent.change(screen.getByTestId("tmdb-refresh-query"), {
+      target: { value: "Matrix" },
+    });
+    fireEvent.click(screen.getByTestId("tmdb-refresh-search-submit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-result-603")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-select-plot")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-merge-apply"));
+    fireEvent.click(screen.getByTestId("editable-form-save"));
+
+    await waitFor(() => {
+      expect(mockUpsertVideoData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 530,
+          title: "Local Title",
+          language: "de",
+          plot: "A computer hacker learns about the true nature of reality.",
+          imdbID: "tmdb:movie:603",
+          diskid: "R01F1D01",
+          owner_id: 7,
+        })
+      );
+    });
+  });
+
+  it("keeps the draft unchanged when the TMDB result is dismissed as no match", async () => {
+    mockSearchTmdbMovies.mockResolvedValue([
+      {
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A hacker story.",
+        releaseDate: "1999-03-31",
+        posterUrl: null,
+      },
+    ]);
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A computer hacker learns about the true nature of reality.",
+        releaseDate: "1999-03-31",
+        runtime: 136,
+        voteAverage: 8.2,
+        posterUrl: null,
+        imdbId: "tt0133093",
+        genres: [],
+        productionCountries: [],
+        directors: [],
+        cast: [],
+        language: "de-DE",
+      }),
+    } as Response);
+
+    render(
+      <UpsertVideoForm
+        defaultOwnerId={7}
+        initialValues={{ ...baseVideoData, id: 530, language: "", plot: "", imdbID: "" }}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("tmdb-refresh-toggle"));
+    fireEvent.click(screen.getByTestId("tmdb-refresh-search-submit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-result-603")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-panel")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-merge-no-match"));
+    fireEvent.change(screen.getByTestId("mock-field-title"), {
+      target: { value: "Manual Only" },
+    });
+    fireEvent.click(screen.getByTestId("editable-form-save"));
+
+    await waitFor(() => {
+      expect(mockUpsertVideoData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Manual Only",
+          language: "",
+          plot: "",
+          imdbID: "",
+        })
+      );
+    });
+  });
+
+  it("allows TMDB refresh genres to be manually mapped before applying metadata", async () => {
+    mockMediaAndGenresState = {
+      ...mockMediaAndGenresState,
+      availableGenres: [{ label: "Undefined", value: "26" }],
+    };
+    mockUseAvailableMediaAndGenres.mockImplementation(() => mockMediaAndGenresState);
+    mockSearchTmdbMovies.mockResolvedValue([
+      {
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A hacker story.",
+        releaseDate: "1999-03-31",
+        posterUrl: null,
+      },
+    ]);
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "",
+        releaseDate: "1999-03-31",
+        runtime: null,
+        voteAverage: null,
+        posterUrl: null,
+        imdbId: null,
+        genres: ["Unknown"],
+        productionCountries: [],
+        directors: [],
+        cast: [],
+        language: "en-US",
+      }),
+    } as Response);
+
+    render(
+      <UpsertVideoForm
+        defaultOwnerId={7}
+        initialValues={{ ...baseVideoData, id: 530, genreIds: [] }}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("tmdb-refresh-toggle"));
+    fireEvent.click(screen.getByTestId("tmdb-refresh-search-submit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-result-603")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-genre-Unknown")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-merge-genre-Unknown"));
+    fireEvent.change(screen.getByTestId("mock-tmdb-merge-manual-genre-select"), {
+      target: { value: "26" },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-select-genreIds")).toBeChecked();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-merge-apply"));
+    fireEvent.click(screen.getByTestId("editable-form-save"));
+
+    await waitFor(() => {
+      expect(mockUpsertVideoData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          genreIds: [26],
+        })
+      );
+    });
+  });
+
+  it("loads an existing stored TMDB reference directly while keeping search available", async () => {
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A computer hacker learns about the true nature of reality.",
+        releaseDate: "1999-03-31",
+        runtime: 136,
+        voteAverage: 8.2,
+        posterUrl: null,
+        imdbId: "tt0133093",
+        genres: [],
+        productionCountries: [],
+        directors: [],
+        cast: [],
+        language: "de-DE",
+      }),
+    } as Response);
+
+    render(
+      <UpsertVideoForm
+        defaultOwnerId={7}
+        initialValues={{
+          ...baseVideoData,
+          id: 530,
+          imdbID: "tmdb:movie:603",
+          language: "",
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("tmdb-refresh-toggle"));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith("/api/tmdb/movie/603", {
+        cache: "no-store",
+      });
+      expect(screen.getByTestId("mock-tmdb-merge-panel")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("tmdb-refresh-query")).toBeInTheDocument();
+    expect(screen.getByTestId("tmdb-refresh-search-submit")).toBeInTheDocument();
   });
 });

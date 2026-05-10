@@ -3,6 +3,7 @@ export * from "./filter-drawer";
 export * from "./movie-card-deck";
 export * from "./movie-card";
 export * from "./movie-search-input";
+export * from "./navbar";
 export * from "./results-status-indicator";
 export * from "./search-form";
 export * from "./seen-chips";

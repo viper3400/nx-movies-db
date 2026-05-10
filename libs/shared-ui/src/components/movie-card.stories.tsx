@@ -56,6 +56,19 @@ export const Default: Story = {
     await expect(canvas.findByRole("button", { name: "Choose Date" })).resolves.toBeVisible();
     await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(2));
     await expect(canvas.queryByTestId("deleted-chip")).not.toBeInTheDocument();
+    await expect(canvas.queryByTestId("edit-movie-button")).not.toBeInTheDocument();
+  }
+};
+
+export const DetailView: Story = {
+  args: {
+    ...Default.args,
+    editUrl: "/edit/1",
+    showDetailsButton: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.findByTestId("edit-movie-button")).resolves.toBeVisible();
   }
 };
 

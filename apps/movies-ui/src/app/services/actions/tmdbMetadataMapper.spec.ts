@@ -1,4 +1,11 @@
-import { getTmdbGenreMatches, mapTmdbMovieToVideoData, type TmdbMovieDetails } from "./tmdbMetadataMapper";
+import {
+  applyTmdbMetadataMergeCandidates,
+  getTmdbGenreMatches,
+  getTmdbMetadataMergeCandidates,
+  mapTmdbMovieToVideoData,
+  type TmdbMovieDetails,
+} from "./tmdbMetadataMapper";
+import type { VideoData } from "@nx-movies-db/shared-types";
 
 const movie: TmdbMovieDetails = {
   id: 603,
@@ -19,6 +26,43 @@ const movie: TmdbMovieDetails = {
     { id: 2975, name: "Laurence Fishburne", character: "Morpheus" },
   ],
   language: "de-DE",
+};
+
+const existingVideo: VideoData = {
+  id: 530,
+  md5: "abc",
+  title: "Local Title",
+  subtitle: "",
+  language: "",
+  diskid: "R01F1D01",
+  comment: "Local note",
+  disklabel: "Shelf",
+  imdbID: "",
+  year: 0,
+  imgurl: "",
+  director: "Local Director",
+  actors: "",
+  runtime: null,
+  country: "",
+  plot: "",
+  rating: "",
+  filename: "movie.mkv",
+  filesize: 123,
+  filedate: null,
+  audio_codec: "aac",
+  video_codec: "h264",
+  video_width: 1920,
+  video_height: 1080,
+  istv: 0,
+  lastupdate: null,
+  mediatype: 2,
+  custom1: "custom",
+  custom2: "",
+  custom3: "",
+  custom4: "",
+  created: null,
+  owner_id: 7,
+  genreIds: [],
 };
 
 describe("mapTmdbMovieToVideoData", () => {
@@ -150,5 +194,119 @@ describe("mapTmdbMovieToVideoData", () => {
     expect(result.istv).toBe(1);
     expect(result.title).toBe("Game of Thrones");
     expect(result.imdbID).toBe("tmdb:tv:603");
+  });
+});
+
+describe("TMDB metadata merge candidates", () => {
+  it("preselects empty local fields and flags non-empty differences as conflicts", () => {
+    const tmdbDraft = mapTmdbMovieToVideoData(movie, [
+      { label: "Action", value: "1" },
+      { label: "Sci-Fi", value: "15" },
+    ]);
+
+    const candidates = getTmdbMetadataMergeCandidates(existingVideo, tmdbDraft);
+
+    expect(candidates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: "language",
+          tmdbValue: "de",
+          selected: true,
+          conflict: false,
+          reason: "empty-local",
+        }),
+        expect.objectContaining({
+          field: "director",
+          currentValue: "Local Director",
+          selected: false,
+          conflict: true,
+          reason: "different-local",
+        }),
+        expect.objectContaining({
+          field: "imdbID",
+          tmdbValue: "tmdb:movie:603",
+          selected: true,
+          conflict: false,
+        }),
+        expect.objectContaining({
+          field: "year",
+          currentValue: 0,
+          tmdbValue: 1999,
+          selected: true,
+          conflict: false,
+        }),
+      ])
+    );
+    expect(candidates.map((candidate) => candidate.field)).not.toEqual(
+      expect.arrayContaining(["diskid", "owner_id", "mediatype", "filename", "md5"])
+    );
+  });
+
+  it("does not preselect a non-empty legacy external reference", () => {
+    const tmdbDraft = mapTmdbMovieToVideoData(movie, []);
+    const candidates = getTmdbMetadataMergeCandidates(
+      { ...existingVideo, imdbID: "ofdb:123" },
+      tmdbDraft
+    );
+
+    expect(candidates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: "imdbID",
+          currentValue: "ofdb:123",
+          tmdbValue: "tmdb:movie:603",
+          selected: false,
+          conflict: true,
+          reason: "different-local",
+        }),
+      ])
+    );
+  });
+
+  it("flags an existing different TMDB reference without selecting it", () => {
+    const tmdbDraft = mapTmdbMovieToVideoData(movie, []);
+    const candidates = getTmdbMetadataMergeCandidates(
+      { ...existingVideo, imdbID: "tmdb:movie:999" },
+      tmdbDraft
+    );
+
+    expect(candidates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: "imdbID",
+          selected: false,
+          conflict: true,
+          reason: "different-tmdb-reference",
+        }),
+      ])
+    );
+  });
+
+  it("applies only selected candidates to the existing video data", () => {
+    const result = applyTmdbMetadataMergeCandidates(existingVideo, [
+      {
+        field: "title",
+        label: "Title",
+        currentValue: "Local Title",
+        tmdbValue: "TMDB Title",
+        selected: false,
+        conflict: true,
+        reason: "different-local",
+      },
+      {
+        field: "plot",
+        label: "Plot",
+        currentValue: "",
+        tmdbValue: "Imported plot",
+        selected: true,
+        conflict: false,
+        reason: "empty-local",
+      },
+    ]);
+
+    expect(result.title).toBe("Local Title");
+    expect(result.plot).toBe("Imported plot");
+    expect(result.diskid).toBe("R01F1D01");
+    expect(result.owner_id).toBe(7);
   });
 });

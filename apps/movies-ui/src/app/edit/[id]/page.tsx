@@ -16,13 +16,10 @@ async function getInitialValues(id: string): Promise<VideoData | undefined> {
 // In Next.js 15, params can be a Promise in App Router.
 export default async function Page({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ import?: string }>;
 }) {
   const { id } = await params;
-  const resolvedSearchParams = searchParams ? await searchParams : {};
   const session = await getAllowedSession();
   if (!session) {
     return (
@@ -37,7 +34,6 @@ export default async function Page({
     return (
       <div className="p-4 max-w-6xl mx-auto">
         <UpsertVideoForm
-          consumeTmdbImportDraft={resolvedSearchParams.import === "tmdb"}
           defaultOwnerId={session.ownerId}
         />
       </div>

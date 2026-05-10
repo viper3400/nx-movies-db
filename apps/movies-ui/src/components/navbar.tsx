@@ -1,118 +1,39 @@
 "use client";
 
 import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
-  Divider,
-  Link,
-  Spacer,
-  User
-} from "@heroui/react";
-import { ThemeSwitch } from "./theme-switch";
-import { SceneLogo } from "../icons/icons";
-import { useState } from "react";
+  NavbarComponent as SharedNavbarComponent,
+  type NavbarMenuLink,
+} from "@nx-movies-db/shared-ui";
 import { signOut, useSession } from "next-auth/react";
 
+const menuLinks: NavbarMenuLink[] = [
+  { href: "/", label: "Filmsuche" },
+  { href: "/seen", label: "Gesehene Filme" },
+  { href: "/edit/new", label: "Film hinzufügen" },
+  { href: "/info", label: "Info" },
+];
+
 export default function NavbarComponent() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const userEmail = session?.user?.email ?? undefined;
 
   return (
-    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
-      <NavbarBrand data-testid="NavbarBrand">
-        <SceneLogo />
-        <Spacer x={4} />
-        <p className="font-bold text-inherit">Filmdatenbank</p>
-      </NavbarBrand>
-
-      <NavbarContent justify="end">
-        <ThemeSwitch />
-        <NavbarMenuToggle />
-      </NavbarContent>
-
-      <NavbarMenu className="place-items-center space-y-4">
-        <NavbarMenuItem>
-          {
-            session?.user?.image && session.user.name &&
-            <User
-              avatarProps={{ src: session?.user?.image }}
-              name={session?.user?.name}
-              description={session.user.email} />
-          }
-        </NavbarMenuItem>
-        {
-          session &&
-          <>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href="/"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}>Filmsuche</Link>
-            </NavbarMenuItem>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href="/seen"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}>Gesehene Filme</Link>
-            </NavbarMenuItem>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href="/edit/new"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}>Film hinzufügen</Link>
-            </NavbarMenuItem>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href="/info"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}>Info</Link>
-            </NavbarMenuItem>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href=""
-                onPress={() => {
-                  signOut();
-                  setIsMenuOpen(false);
-                }}>HomeWeb Logout</Link>
-            </NavbarMenuItem>
-            {session?.user?.email?.match(/@(gmail\.com|.*\.google\.com)$/) && (
-              <>
-                <Divider orientation="horizontal" />
-                <NavbarMenuItem>
-                  <Link
-                    href=""
-                    isExternal
-                    onPress={() => { signOut(); window.open("https://accounts.google.com/Logout"); }}>Google Logout</Link>
-                </NavbarMenuItem>
-              </>
-            )}
-            {session?.user?.email?.includes("@github.com") && (
-              <>
-                <Divider orientation="horizontal" />
-                <NavbarMenuItem>
-                  <Link
-                    href=""
-                    isExternal
-                    onPress={() => { signOut(); window.open("https://github.com/logout",); }}>Github Logout</Link>
-                </NavbarMenuItem>
-              </>
-            )}
-          </>
-        }
-      </NavbarMenu>
-    </Navbar >
+    <SharedNavbarComponent
+      menuLinks={menuLinks}
+      userEmail={userEmail}
+      userImage={session?.user?.image ?? undefined}
+      userName={session?.user?.name ?? undefined}
+      handleSignOut={() => {
+        void signOut();
+      }}
+      handleGoogleLogout={() => {
+        void signOut();
+        window.open("https://accounts.google.com/Logout");
+      }}
+      handleGithubLogout={() => {
+        void signOut();
+        window.open("https://github.com/logout");
+      }}
+    />
   );
 }

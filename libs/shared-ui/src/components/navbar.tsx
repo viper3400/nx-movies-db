@@ -7,27 +7,35 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-  Avatar,
-  Button,
   Divider,
   Link,
   Spacer,
-  User
+  User,
+  Button
 } from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
-import { SceneLogo } from "../icons/icons";
-import { useState } from "react";
+import { SceneLogo, GithubIcon } from "../icons/icons";
+import { Fragment, useState } from "react";
+
+export interface NavbarMenuLink {
+  href: string;
+  label: string;
+}
+
 export interface NavbarComponentProperties {
-  isValidSession: boolean;
+  brandLabel?: string;
+  menuLinks: NavbarMenuLink[];
   userName?: string;
   userImage?: string;
   userEmail?: string;
-  handleSignOut: () => void;
-  handleGoogleLogout: () => void;
-  handleGithubLogout: () => void;
+  handleSignOut?: () => void;
+  handleGoogleLogout?: () => void;
+  handleGithubLogout?: () => void;
 }
+
 export const NavbarComponent = ({
-  isValidSession,
+  brandLabel = "Filmdatenbank",
+  menuLinks,
   userName,
   userImage,
   userEmail,
@@ -39,24 +47,21 @@ export const NavbarComponent = ({
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
-      <NavbarBrand>
+      <NavbarBrand data-testid="NavbarBrand">
         <SceneLogo />
         <Spacer x={4} />
-        <p className="font-bold text-inherit">Filmdatenbank</p>
+        <p className="font-bold text-inherit">{brandLabel}</p>
       </NavbarBrand>
 
       <NavbarContent justify="end">
-        <Button isIconOnly variant="light">
-          <Avatar src={userImage} />
-        </Button>
         <ThemeSwitch />
-        <NavbarMenuToggle />
+        <NavbarMenuToggle aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"} />
       </NavbarContent>
 
       <NavbarMenu className="place-items-center space-y-4">
         <NavbarMenuItem>
           {
-            isValidSession &&
+            userEmail &&
             <User
               avatarProps={{ src: userImage }}
               name={userName}
@@ -64,52 +69,78 @@ export const NavbarComponent = ({
           }
         </NavbarMenuItem>
         {
-          isValidSession &&
+          userEmail &&
           <>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href="/"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}>Filmsuche</Link>
-            </NavbarMenuItem>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href="/seen"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}>Gesehene Filme</Link>
-            </NavbarMenuItem>
-            <Divider orientation="horizontal" />
-            <NavbarMenuItem>
-              <Link
-                href=""
-                onPress={() => {
-                  handleSignOut();
-                  setIsMenuOpen(false);
-                }}>HomeWeb Logout</Link>
-            </NavbarMenuItem>
-            {userEmail?.match(/@(gmail\.com|.*\.google\.com)$/) && (
+            {menuLinks.map((menuLink) => (
+              <Fragment key={menuLink.href}>
+                <Divider orientation="horizontal" />
+                <NavbarMenuItem className="w-full md:w-auto">
+                  <Button
+                    as={Link}
+                    href={menuLink.href}
+                    variant="flat"
+                    className="w-full md:w-48 justify-center"
+                    color="primary"
+                    onPress={() => {
+                      setIsMenuOpen(false);
+                    }}>
+                    {menuLink.label}
+                  </Button>
+                </NavbarMenuItem>
+              </Fragment>
+            ))}
+            {handleSignOut && (
               <>
                 <Divider orientation="horizontal" />
-                <NavbarMenuItem>
-                  <Link
-                    href=""
-                    isExternal
-                    onPress={() => { handleGoogleLogout(); }}>Google Logout</Link>
+                <NavbarMenuItem className="w-full md:w-auto">
+                  <Button
+                    variant="flat"
+                    className="w-full md:w-48 justify-center"
+                    color="danger"
+                    type="button"
+                    onPress={() => {
+                      handleSignOut();
+                      setIsMenuOpen(false);
+                    }}>
+                    HomeWeb Logout
+                  </Button>
                 </NavbarMenuItem>
               </>
             )}
-            {userEmail?.includes("@github.com") && (
+            {handleGoogleLogout && userEmail.match(/@(gmail\.com|.*\.google\.com)$/) && (
               <>
                 <Divider orientation="horizontal" />
-                <NavbarMenuItem>
-                  <Link
-                    href=""
-                    isExternal
-                    onPress={() => { handleGithubLogout(); }}>Github Logout</Link>
+                <NavbarMenuItem className="w-full md:w-auto">
+                  <Button
+                    variant="flat"
+                    className="w-full md:w-48 justify-center"
+                    color="warning"
+                    type="button"
+                    onPress={() => {
+                      handleGoogleLogout();
+                      setIsMenuOpen(false);
+                    }}>
+                    Google Logout
+                  </Button>
+                </NavbarMenuItem>
+              </>
+            )}
+            {handleGithubLogout && userEmail.includes("@github.com") && (
+              <>
+                <Divider orientation="horizontal" />
+                <NavbarMenuItem className="w-full md:w-auto">
+                  <Button
+                    variant="flat"
+                    className="w-full md:w-48 justify-center gap-2"
+                    color="secondary"
+                    type="button"
+                    startContent={<GithubIcon size={18} />}
+                    onPress={() => {
+                      handleGithubLogout();
+                      setIsMenuOpen(false);
+                    }}>
+                    Github Logout
+                  </Button>
                 </NavbarMenuItem>
               </>
             )}

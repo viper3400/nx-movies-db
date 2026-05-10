@@ -6,32 +6,18 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import NavbarComponent from "./navbar";
 import { useSession } from "next-auth/react";
+import { NavbarComponent as SharedNavbarComponent } from "@nx-movies-db/shared-ui";
 
-jest.mock("@heroui/react", () => ({
-  Navbar: ({ children }: { children: React.ReactNode }) => <nav>{children}</nav>,
-  NavbarBrand: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarMenuItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarMenuToggle: () => <button type="button">Menu</button>,
-  Divider: () => <hr />,
-  Link: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
-  Spacer: () => <span />,
-  User: () => <div />,
-}));
-
-jest.mock("./theme-switch", () => ({
-  ThemeSwitch: () => <button type="button">Theme</button>,
-}));
-
-jest.mock("../icons/icons", () => ({
-  SceneLogo: () => <span />,
+jest.mock("@nx-movies-db/shared-ui", () => ({
+  NavbarComponent: jest.fn(({ menuLinks }) => (
+    <nav>
+      {menuLinks.map((menuLink: { href: string; label: string }) => (
+        <a href={menuLink.href} key={menuLink.href}>
+          {menuLink.label}
+        </a>
+      ))}
+    </nav>
+  )),
 }));
 
 jest.mock("next-auth/react", () => ({
@@ -40,8 +26,13 @@ jest.mock("next-auth/react", () => ({
 }));
 
 const mockUseSession = jest.mocked(useSession);
+const mockSharedNavbarComponent = jest.mocked(SharedNavbarComponent);
 
 describe("NavbarComponent", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("links the add/import menu item to the unified new-entry route", () => {
     mockUseSession.mockReturnValue({
       data: {
@@ -58,5 +49,16 @@ describe("NavbarComponent", () => {
 
     expect(screen.getByRole("link", { name: "Film hinzufügen" })).toHaveAttribute("href", "/edit/new");
     expect(screen.queryByRole("link", { name: "TMDB Import" })).not.toBeInTheDocument();
+    expect(mockSharedNavbarComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        menuLinks: expect.arrayContaining([
+          { href: "/edit/new", label: "Film hinzufügen" },
+          { href: "/info", label: "Info" },
+        ]),
+        userEmail: "user@example.com",
+        userName: "User",
+      }),
+      undefined,
+    );
   });
 });

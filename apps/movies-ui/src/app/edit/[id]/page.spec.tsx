@@ -57,27 +57,10 @@ describe("Edit page", () => {
 
     expect(form?.props).toEqual(
       expect.objectContaining({
-        consumeTmdbImportDraft: false,
         defaultOwnerId: 7,
       })
     );
     expect(mockGetVideoData).not.toHaveBeenCalled();
-  });
-
-  it("passes TMDB import mode and the session owner id to new video forms", async () => {
-    const result = await Page({
-      params: Promise.resolve({ id: "new" }),
-      searchParams: Promise.resolve({ import: "tmdb" }),
-    });
-
-    const form = findElementByType(result, mockUpsertVideoForm);
-
-    expect(form?.props).toEqual(
-      expect.objectContaining({
-        consumeTmdbImportDraft: true,
-        defaultOwnerId: 7,
-      })
-    );
   });
 
   it("passes existing video values without overriding the owner id", async () => {

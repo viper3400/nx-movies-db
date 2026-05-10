@@ -1,7 +1,5 @@
 import type { VideoData } from "@nx-movies-db/shared-types";
 
-export const TMDB_IMPORT_DRAFT_STORAGE_KEY = "nx-movies-db.tmdb-import-draft";
-
 export type TmdbMediaKind = "movie" | "tv";
 
 export type TmdbSearchMovieResult = {
@@ -47,6 +45,49 @@ export type TmdbGenreMatch = {
   localGenreId?: number;
   mappedByAlias: boolean;
   mappedByManualOverride: boolean;
+};
+
+export type TmdbMetadataMergeField =
+  | "title"
+  | "subtitle"
+  | "language"
+  | "country"
+  | "rating"
+  | "runtime"
+  | "imdbID"
+  | "year"
+  | "imgurl"
+  | "director"
+  | "actors"
+  | "plot"
+  | "istv"
+  | "genreIds";
+
+export type TmdbMetadataMergeCandidate = {
+  field: TmdbMetadataMergeField;
+  label: string;
+  currentValue: VideoData[TmdbMetadataMergeField];
+  tmdbValue: VideoData[TmdbMetadataMergeField];
+  selected: boolean;
+  conflict: boolean;
+  reason: "empty-local" | "different-local" | "different-tmdb-reference";
+};
+
+const mergeFieldLabels: Record<TmdbMetadataMergeField, string> = {
+  title: "Title",
+  subtitle: "Subtitle",
+  language: "Language",
+  country: "Country",
+  rating: "Rating",
+  runtime: "Runtime",
+  imdbID: "External reference",
+  year: "Year",
+  imgurl: "Image URL",
+  director: "Director",
+  actors: "Actors",
+  plot: "Plot",
+  istv: "TV series",
+  genreIds: "Genres",
 };
 
 const genreAliases: Record<string, string> = {
@@ -151,4 +192,93 @@ export function mapTmdbMovieToVideoData(
     custom4: "",
     created: null,
   };
+}
+
+function isEmptyVideoValue(field: TmdbMetadataMergeField, value: VideoData[TmdbMetadataMergeField]): boolean {
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string") return value.trim() === "";
+  if (Array.isArray(value)) return value.length === 0;
+  if (field === "year") return value === 0;
+  return false;
+}
+
+function normalizeComparableValue(value: VideoData[TmdbMetadataMergeField]) {
+  if (typeof value === "string") return value.trim();
+  if (Array.isArray(value)) return [...value].sort((a, b) => a - b);
+  return value;
+}
+
+function valuesEqual(
+  currentValue: VideoData[TmdbMetadataMergeField],
+  tmdbValue: VideoData[TmdbMetadataMergeField]
+): boolean {
+  return JSON.stringify(normalizeComparableValue(currentValue)) === JSON.stringify(normalizeComparableValue(tmdbValue));
+}
+
+export function getTmdbMetadataMergeCandidates(
+  existing: VideoData,
+  tmdbDraft: VideoData
+): TmdbMetadataMergeCandidate[] {
+  const fields: TmdbMetadataMergeField[] = [
+    "title",
+    "subtitle",
+    "language",
+    "country",
+    "rating",
+    "runtime",
+    "imdbID",
+    "year",
+    "imgurl",
+    "director",
+    "actors",
+    "plot",
+    "istv",
+    "genreIds",
+  ];
+
+  return fields.flatMap((field) => {
+    const currentValue = existing[field];
+    const tmdbValue = tmdbDraft[field];
+
+    if (isEmptyVideoValue(field, tmdbValue) || valuesEqual(currentValue, tmdbValue)) {
+      return [];
+    }
+
+    const localIsEmpty = isEmptyVideoValue(field, currentValue);
+    const differentTmdbReference =
+      field === "imdbID" &&
+      typeof currentValue === "string" &&
+      currentValue.startsWith("tmdb:") &&
+      currentValue !== tmdbValue;
+
+    const selected = field === "imdbID" ? localIsEmpty : localIsEmpty;
+    const conflict = !localIsEmpty;
+
+    return [{
+      field,
+      label: mergeFieldLabels[field],
+      currentValue,
+      tmdbValue,
+      selected,
+      conflict,
+      reason: localIsEmpty
+        ? "empty-local"
+        : differentTmdbReference
+          ? "different-tmdb-reference"
+          : "different-local",
+    }];
+  });
+}
+
+export function applyTmdbMetadataMergeCandidates(
+  existing: VideoData,
+  candidates: TmdbMetadataMergeCandidate[]
+): VideoData {
+  return candidates.reduce<VideoData>((merged, candidate) => {
+    if (!candidate.selected) return merged;
+    return {
+      ...merged,
+      [candidate.field]: candidate.tmdbValue,
+    };
+  }, existing);
 }

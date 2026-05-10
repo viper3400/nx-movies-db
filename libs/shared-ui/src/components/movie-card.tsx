@@ -19,6 +19,7 @@ export interface MovieCardProps {
   movie: Movie;
   imageUrl: string;
   detailsUrl?: string;
+  editUrl?: string;
   showDetailsButton?: boolean;
   showMarkAsSeenButtons?: boolean;
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
@@ -33,6 +34,7 @@ export const MovieCard = ({
   movie,
   imageUrl,
   detailsUrl,
+  editUrl,
   showDetailsButton,
   showMarkAsSeenButtons,
   loadSeenDatesForMovie,
@@ -240,6 +242,16 @@ export const MovieCard = ({
               }
               {showDetailsButton && detailsUrl &&
                 <Button onPress={() => window.open(detailsUrl, "_blank")}>Details</Button>
+              }
+              {editUrl &&
+                <Button
+                  data-testid="edit-movie-button"
+                  onPress={() => {
+                    window.location.href = editUrl;
+                  }}
+                >
+                  Edit
+                </Button>
               }
             </div>
           </div>

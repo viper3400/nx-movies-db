@@ -18,7 +18,7 @@ interface MovieComponentProperties {
 
 export const MovieComponent = ({ session }: MovieComponentProperties) => {
   const { availableMediaTypes, availableGenres } = useAvailableMediaAndGenres();
-  const { appBasePath, imageBaseUrl } = useAppBasePath();
+  const { appBasePath, imageBaseUrl, posterImageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(session.userName);
   const { loadSeenDatesForMovie, setUserSeenDateForMovie, deleteUserSeenDateForMovie } = useSeenDates(session.userName);
   const {
@@ -69,6 +69,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
             movies={searchResult}
             loadUserFlagsForMovie={loadUserFlagsForMovie}
             imageBaseUrl={imageBaseUrl}
+            posterImageBaseUrl={posterImageBaseUrl}
             getDetailsUrl={(movie) => typeof appBasePath === "string" ? `${appBasePath}/details/${movie.id}` : undefined}
             loadSeenDatesForMovie={loadSeenDatesForMovie}
             updateFlagsForMovie={updateUserFlagsForMovie}

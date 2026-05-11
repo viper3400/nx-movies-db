@@ -168,3 +168,10 @@ export const TextOverflow: Story = {
     await expect(canvas.queryByTestId("deleted-chip")).not.toBeInTheDocument();
   }
 };
+
+export const PosterBackground: Story = {
+  args: {
+    ...Default.args,
+    bodyBackgroundImageUrl: "https://image.tmdb.org/t/p/w780/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+  },
+};

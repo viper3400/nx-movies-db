@@ -7,6 +7,7 @@ import { Movie } from "../interfaces";
 export interface MovieCardDeckProps {
   movies: Movie[];
   imageBaseUrl: string;
+  posterImageBaseUrl?: string;
   getDetailsUrl?: (movie: Movie) => string | undefined;
   loadSeenDatesForMovie: (movieId: string) => Promise<string[]>;
   loadUserFlagsForMovie: (movieId: string) => Promise<UserFlagsDTO>;
@@ -19,6 +20,7 @@ export interface MovieCardDeckProps {
 export const MovieCardDeck = ({
   movies,
   imageBaseUrl,
+  posterImageBaseUrl,
   getDetailsUrl,
   loadSeenDatesForMovie,
   loadUserFlagsForMovie,
@@ -35,6 +37,7 @@ export const MovieCardDeck = ({
             <MovieCard
               key={movie.id}
               movie={movie}
+              bodyBackgroundImageUrl={posterImageBaseUrl ? `${posterImageBaseUrl}/${movie.id}` : undefined}
               loadUserFlagsForMovie={loadUserFlagsForMovie}
               imageUrl={imageBaseUrl + "/" + movie.id}
               detailsUrl={getDetailsUrl?.(movie)}

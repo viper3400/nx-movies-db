@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { VideoData } from "@nx-movies-db/shared-types";
-import { UpsertVideoForm } from "./upsert-video-form";
+import { normalizeVideoDataForForm, UpsertVideoForm } from "./upsert-video-form";
 import { searchTmdbMovies, upsertVideoData } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
@@ -91,6 +91,20 @@ jest.mock("@heroui/react", () => ({
   Card: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   CardBody: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   Chip: ({ children, ...props }: { children: React.ReactNode }) => <span {...props}>{children}</span>,
+  Tooltip: ({
+    children,
+    content,
+    isDisabled,
+  }: {
+    children: React.ReactNode;
+    content?: React.ReactNode;
+    isDisabled?: boolean;
+  }) => (
+    <div>
+      {children}
+      {!isDisabled && content ? <div data-testid="mock-tooltip-content">{content}</div> : null}
+    </div>
+  ),
   Skeleton: (props: Record<string, unknown>) => <div data-testid="mock-skeleton" {...props} />,
   Spacer: (props: Record<string, unknown>) => <div data-testid="mock-spacer" {...props} />,
   Switch: ({
@@ -160,26 +174,47 @@ jest.mock("@nx-movies-db/shared-ui", () => {
     ),
     TmdbMetadataMergePanel: ({
       candidates,
+      backdropCandidates = [],
+      selectedBackdropUrl,
       genreMatches = [],
       availableGenres = [],
       genrePickerTmdbGenre,
       onCandidateSelectionChange,
+      onBackdropSelectionChange,
       onUnmappedGenrePress,
       onManualGenreSelection,
       onApplySelected,
       onNoMatch,
     }: {
       candidates: Array<{ field: string; label: string; selected: boolean }>;
+      backdropCandidates?: Array<{ url: string }>;
+      selectedBackdropUrl?: string | null;
       genreMatches?: Array<{ tmdbGenre: string; localGenre?: string }>;
       availableGenres?: Array<{ label: string; value: string }>;
       genrePickerTmdbGenre?: string | null;
       onCandidateSelectionChange: (field: string, selected: boolean) => void;
+      onBackdropSelectionChange?: (url: string) => void;
       onUnmappedGenrePress?: (tmdbGenre: string) => void;
       onManualGenreSelection?: (selection: Set<string>) => void;
       onApplySelected: () => void;
       onNoMatch: () => void;
     }) => (
       <div data-testid="mock-tmdb-merge-panel">
+        {backdropCandidates.length > 1 && (
+          <div data-testid="mock-tmdb-backdrop-picker">
+            {backdropCandidates.map((candidate, index) => (
+              <button
+                key={candidate.url}
+                data-testid={`mock-tmdb-backdrop-option-${index}`}
+                data-selected={candidate.url === selectedBackdropUrl}
+                type="button"
+                onClick={() => onBackdropSelectionChange?.(candidate.url)}
+              >
+                {candidate.url}
+              </button>
+            ))}
+          </div>
+        )}
         {candidates.map((candidate) => (
           <label key={candidate.field}>
             {candidate.label}
@@ -352,6 +387,17 @@ describe("UpsertVideoForm", () => {
     });
   });
 
+  it("shows changed field labels in the dirty indicator tooltip", () => {
+    render(<UpsertVideoForm defaultOwnerId={7} initialValues={{ ...baseVideoData, title: "Original" }} />);
+
+    fireEvent.change(screen.getByTestId("mock-field-title"), {
+      target: { value: "Changed" },
+    });
+
+    expect(screen.getByText("Änderungen vorhanden")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-tooltip-content")).toHaveTextContent("Changed: Title");
+  });
+
   it("marks backend-managed fields readonly while keeping user-editable fields enabled", () => {
     render(<UpsertVideoForm defaultOwnerId={7} />);
 
@@ -391,6 +437,61 @@ describe("UpsertVideoForm", () => {
     expect(screen.getByTestId("mock-field-owner_id")).toBeDisabled();
   });
 
+  it("normalizes sparse existing values without marking the form dirty on mount", () => {
+    const sparseVideo = normalizeVideoDataForForm({
+      ...baseVideoData,
+      id: 2131,
+      title: "The Kings of Summer",
+      subtitle: null,
+      language: null,
+      comment: null,
+      disklabel: null,
+      imdbID: "ofdb:234964",
+      year: 2013,
+      imgurl: "./coverpics/2131.jpg",
+      director: null,
+      actors: "Actor One::::ofdb:0\r\nActor Two::::ofdb:0",
+      runtime: 95,
+      country: null,
+      plot: null,
+      rating: null,
+      filename: "\"V:\\\\Filme\\\\Kings of Summer\\\\Kings of Summer.mkv\"",
+      filesize: null,
+      filedate: null,
+      audio_codec: null,
+      video_codec: null,
+      video_width: null,
+      video_height: null,
+      istv: 0,
+      lastupdate: new Date("2021-10-09T15:30:39.000Z"),
+      mediatype: 16,
+      custom1: null,
+      custom2: "4006680071077",
+      custom3: "http://img.ofdb.de/film/234/234964.jpg",
+      custom4: null,
+      created: new Date("2014-11-22T09:34:09.000Z"),
+      owner_id: 3,
+      genreIds: [4],
+    }, 7);
+
+    render(<UpsertVideoForm defaultOwnerId={7} initialValues={sparseVideo} />);
+
+    expect(screen.getByTestId("editable-form-save")).toBeDisabled();
+    expect(screen.getByTestId("editable-form-discard")).toBeDisabled();
+    expect(screen.getByText("Alle Änderungen gespeichert")).toBeInTheDocument();
+
+    const lastCall =
+      mockUpsertVideoDataForm.mock.calls[mockUpsertVideoDataForm.mock.calls.length - 1]?.[0];
+    expect(lastCall.values.language).toBe("");
+    expect(lastCall.values.subtitle).toBe("");
+    expect(lastCall.values.custom4).toBe("");
+    expect(lastCall.values.actors).toBe("Actor One::::ofdb:0\nActor Two::::ofdb:0");
+    expect(lastCall.values.owner_id).toBe(3);
+    expect(lastCall.values.genreIds).toEqual([4]);
+    expect(lastCall.values.created?.toISOString()).toBe("2014-11-22T00:00:00.000Z");
+    expect(lastCall.values.lastupdate?.toISOString()).toBe("2021-10-09T00:00:00.000Z");
+  });
+
   it("shows TMDB search by default for new entries and collapsed refresh for existing entries", () => {
     const { rerender } = render(<UpsertVideoForm defaultOwnerId={7} />);
 
@@ -427,6 +528,8 @@ describe("UpsertVideoForm", () => {
         runtime: 136,
         voteAverage: 8.2,
         posterUrl: null,
+        backdropUrl: null,
+        backdropCandidates: [],
         imdbId: "tt0133093",
         genres: [],
         productionCountries: ["United States of America"],
@@ -454,6 +557,9 @@ describe("UpsertVideoForm", () => {
     });
 
     fireEvent.click(screen.getByTestId("mock-tmdb-merge-apply"));
+    await waitFor(() => {
+      expect(screen.getByTestId("editable-form-save")).toBeEnabled();
+    });
     fireEvent.click(screen.getByTestId("editable-form-save"));
 
     await waitFor(() => {
@@ -494,6 +600,8 @@ describe("UpsertVideoForm", () => {
         runtime: 136,
         voteAverage: 8.2,
         posterUrl: null,
+        backdropUrl: null,
+        backdropCandidates: [],
         imdbId: "tt0133093",
         genres: ["Action"],
         productionCountries: ["United States of America"],
@@ -577,6 +685,8 @@ describe("UpsertVideoForm", () => {
         runtime: 136,
         voteAverage: 8.2,
         posterUrl: null,
+        backdropUrl: null,
+        backdropCandidates: [],
         imdbId: "tt0133093",
         genres: [],
         productionCountries: [],
@@ -603,7 +713,7 @@ describe("UpsertVideoForm", () => {
     fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("mock-tmdb-merge-panel")).toBeInTheDocument();
+      expect(screen.getByTestId("mock-tmdb-merge-select-title")).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByTestId("mock-tmdb-merge-no-match"));
@@ -653,6 +763,8 @@ describe("UpsertVideoForm", () => {
         runtime: null,
         voteAverage: null,
         posterUrl: null,
+        backdropUrl: null,
+        backdropCandidates: [],
         imdbId: null,
         genres: ["Unknown"],
         productionCountries: [],
@@ -716,6 +828,8 @@ describe("UpsertVideoForm", () => {
         runtime: 136,
         voteAverage: 8.2,
         posterUrl: null,
+        backdropUrl: null,
+        backdropCandidates: [],
         imdbId: "tt0133093",
         genres: [],
         productionCountries: [],
@@ -745,7 +859,164 @@ describe("UpsertVideoForm", () => {
       });
       expect(screen.getByTestId("mock-tmdb-merge-panel")).toBeInTheDocument();
     });
-    expect(screen.getByTestId("tmdb-refresh-query")).toBeInTheDocument();
-    expect(screen.getByTestId("tmdb-refresh-search-submit")).toBeInTheDocument();
+    expect(screen.getByTestId("tmdb-review-back-to-search")).toBeInTheDocument();
+    expect(screen.queryByTestId("tmdb-refresh-query")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("tmdb-refresh-search-submit")).not.toBeInTheDocument();
+  });
+
+  it("does not show a background picker when TMDB returns only one backdrop", async () => {
+    mockSearchTmdbMovies.mockResolvedValue([
+      {
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A hacker story.",
+        releaseDate: "1999-03-31",
+        posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
+      },
+    ]);
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A computer hacker learns about the true nature of reality.",
+        releaseDate: "1999-03-31",
+        runtime: 136,
+        voteAverage: 8.2,
+        posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
+        backdropUrl: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+        backdropCandidates: [
+          {
+            filePath: "/backdrop.jpg",
+            url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+            width: 1280,
+            height: 720,
+            voteAverage: 5.6,
+            voteCount: 40,
+            iso639_1: "en",
+            isPrimary: true,
+          },
+        ],
+        imdbId: "tt0133093",
+        genres: [],
+        productionCountries: [],
+        directors: [],
+        cast: [],
+        language: "de-DE",
+      }),
+    } as Response);
+
+    render(<UpsertVideoForm defaultOwnerId={7} />);
+
+    fireEvent.change(screen.getByTestId("tmdb-refresh-query"), {
+      target: { value: "Matrix" },
+    });
+    fireEvent.click(screen.getByTestId("tmdb-refresh-search-submit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-result-603")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-panel")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("mock-tmdb-backdrop-picker")).not.toBeInTheDocument();
+  });
+
+  it("lets the user choose an alternate TMDB background before applying metadata", async () => {
+    mockSearchTmdbMovies.mockResolvedValue([
+      {
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A hacker story.",
+        releaseDate: "1999-03-31",
+        posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
+      },
+    ]);
+    jest.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: 603,
+        mediaKind: "movie",
+        title: "Matrix",
+        originalTitle: "The Matrix",
+        overview: "A computer hacker learns about the true nature of reality.",
+        releaseDate: "1999-03-31",
+        runtime: 136,
+        voteAverage: 8.2,
+        posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
+        backdropUrl: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+        backdropCandidates: [
+          {
+            filePath: "/backdrop.jpg",
+            url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+            width: 1280,
+            height: 720,
+            voteAverage: 5.6,
+            voteCount: 40,
+            iso639_1: "en",
+            isPrimary: true,
+          },
+          {
+            filePath: "/backdrop-alt.jpg",
+            url: "https://image.tmdb.org/t/p/w342/backdrop-alt.jpg",
+            width: 1280,
+            height: 720,
+            voteAverage: 5.4,
+            voteCount: 20,
+            iso639_1: "en",
+            isPrimary: false,
+          },
+        ],
+        imdbId: "tt0133093",
+        genres: [],
+        productionCountries: [],
+        directors: [],
+        cast: [],
+        language: "de-DE",
+      }),
+    } as Response);
+
+    render(<UpsertVideoForm defaultOwnerId={7} />);
+
+    fireEvent.change(screen.getByTestId("tmdb-refresh-query"), {
+      target: { value: "Matrix" },
+    });
+    fireEvent.click(screen.getByTestId("tmdb-refresh-search-submit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-result-603")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-result-603"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-tmdb-merge-select-title")).toBeInTheDocument();
+      expect(screen.getByTestId("mock-tmdb-backdrop-picker")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("mock-tmdb-backdrop-option-1"));
+    fireEvent.click(screen.getByTestId("mock-tmdb-merge-apply"));
+    await waitFor(() => {
+      expect(screen.getByTestId("editable-form-save")).toBeEnabled();
+    });
+    fireEvent.click(screen.getByTestId("editable-form-save"));
+
+    await waitFor(() => {
+      expect(mockUpsertVideoData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          custom4: "https://image.tmdb.org/t/p/w342/backdrop-alt.jpg",
+        })
+      );
+    });
   });
 });

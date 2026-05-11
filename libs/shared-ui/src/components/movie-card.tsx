@@ -18,6 +18,7 @@ export interface MovieCardLangResources {
 export interface MovieCardProps {
   movie: Movie;
   imageUrl: string;
+  bodyBackgroundImageUrl?: string;
   detailsUrl?: string;
   editUrl?: string;
   showDetailsButton?: boolean;
@@ -33,6 +34,7 @@ export interface MovieCardProps {
 export const MovieCard = ({
   movie,
   imageUrl,
+  bodyBackgroundImageUrl,
   detailsUrl,
   editUrl,
   showDetailsButton,
@@ -103,13 +105,27 @@ export const MovieCard = ({
   }, [movie.id, additionalDataLoaded, loadSeenDatesForMovie, loadUserFlagsForMovie]);
 
   return (
-    <div key={movie.id}>
-      <Card>
-        <CardHeader className="flex flex-col md:flex-row items-start gap-1 px-4 py-2">
+    <div key={movie.id} data-testid={`movie-card-${movie.id}`}>
+      <Card className="relative overflow-hidden border border-black/32 shadow-[0_10px_36px_rgba(0,0,0,0.14)] dark:border-white/22 dark:shadow-[0_12px_40px_rgba(0,0,0,0.42)]">
+        {bodyBackgroundImageUrl && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-cover bg-right-top bg-no-repeat opacity-40 dark:opacity-30"
+            style={{ backgroundImage: `url("${bodyBackgroundImageUrl}")` }}
+          />
+        )}
+        <CardHeader className="relative z-10 flex flex-col items-start gap-1 bg-content1/30 px-4 py-2 md:flex-row">
           <div className="flex-1 min-w-0">
-            <div className="text-left font-semibold text-lg pr-2">{movie.title}</div>
+            <div
+              data-testid="movie-card-title"
+              className="pr-2 text-left text-lg font-semibold [text-shadow:0_1px_2px_rgba(255,255,255,0.68),0_0_24px_rgba(255,255,255,0.32)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_26px_rgba(0,0,0,0.62)]"
+            >
+              {movie.title}
+            </div>
             {movie.subtitle && (
-              <div className="text-left text-sm">{movie.subtitle}</div>
+              <div className="text-left text-sm [text-shadow:0_1px_2px_rgba(255,255,255,0.58),0_0_18px_rgba(255,255,255,0.24)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.82),0_0_20px_rgba(0,0,0,0.56)]">
+                {movie.subtitle}
+              </div>
             )}
           </div>
           <div className="flex gap-2 flex-wrap mt-2 shrink-0">
@@ -140,8 +156,8 @@ export const MovieCard = ({
         </CardHeader>
         <Divider />
         <div>
-          <CardBody>
-            <div className="flex flex-col md:flex-row items-start ">
+          <CardBody className="relative overflow-hidden">
+            <div className="relative z-10 flex flex-col md:flex-row items-start ">
               {isDeletedMovie &&
                 <div className="mr-4 mb-4">
                   <Chip
@@ -165,7 +181,7 @@ export const MovieCard = ({
                   void handleSeenDateDeletion(date);
                 }} />
             </div>
-            <div className="flex gap-4">
+            <div className="relative z-10 flex gap-4">
               <div className="shrink-0">
                 {detailsUrl ? (
                   <a href={detailsUrl} target="_blank" rel="noopener noreferrer">
@@ -174,7 +190,7 @@ export const MovieCard = ({
                       height={180}
                       src={imageUrl}
                       width={120}
-                      className="rounded"
+                      className="rounded shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
                       unoptimized
                     />
                   </a>
@@ -184,13 +200,15 @@ export const MovieCard = ({
                     height={180}
                     src={imageUrl}
                     width={120}
-                    className="rounded"
+                    className="rounded shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
                     unoptimized
                   />
                 )}
               </div> <ScrollShadow className="h-[280px]">
                 <div className="flex-1 text-left">
-                  <p className="text-justify">{movie.plot}</p>
+                  <p className="text-justify [text-shadow:0_1px_2px_rgba(255,255,255,0.68),0_0_20px_rgba(255,255,255,0.34)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_24px_rgba(0,0,0,0.62)]">
+                    {movie.plot}
+                  </p>
                 </div>
               </ScrollShadow>
             </div>
@@ -198,7 +216,7 @@ export const MovieCard = ({
           <Divider />
         </div>
 
-        <CardFooter>
+        <CardFooter className="relative z-10 bg-content1/30">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
             <div className="flex gap-4 md:flex-row flex-col">
               <div className="flex gap-2 flex-wrap">

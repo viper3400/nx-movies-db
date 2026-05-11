@@ -21,7 +21,7 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Button, Card, CardBody, Chip, Skeleton, addToast } from "@heroui/react";
+import { Button, Card, CardBody, Chip, Skeleton, Tooltip, addToast } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
@@ -30,6 +30,76 @@ import {
 } from "../app/services/actions/tmdbMetadataMapper";
 import { useAppBasePath } from "../hooks/useAppBasePath";
 import type { Selection } from "@react-types/shared";
+
+const STRING_FORM_FIELDS = [
+  "md5",
+  "title",
+  "subtitle",
+  "language",
+  "diskid",
+  "comment",
+  "disklabel",
+  "imdbID",
+  "imgurl",
+  "director",
+  "actors",
+  "country",
+  "plot",
+  "rating",
+  "filename",
+  "audio_codec",
+  "video_codec",
+  "custom1",
+  "custom2",
+  "custom3",
+  "custom4",
+] as const satisfies ReadonlyArray<keyof UpsertVideoDataFormValues>;
+
+function normalizeOptionalDate(value: Date | null | undefined): Date | null {
+  if (!(value instanceof Date)) {
+    return null;
+  }
+  if (Number.isNaN(value.getTime())) {
+    return null;
+  }
+
+  return new Date(Date.UTC(
+    value.getUTCFullYear(),
+    value.getUTCMonth(),
+    value.getUTCDate(),
+    0,
+    0,
+    0,
+    0,
+  ));
+}
+
+function normalizeOptionalString(value: string | null | undefined): string {
+  return (value ?? "").replace(/\r\n/g, "\n");
+}
+
+export function normalizeVideoDataForForm(
+  values: UpsertVideoDataFormValues,
+  defaultOwnerId = 1,
+): UpsertVideoDataFormValues {
+  const normalized = { ...values };
+
+  for (const field of STRING_FORM_FIELDS) {
+    normalized[field] = normalizeOptionalString(normalized[field]);
+  }
+
+  normalized.filesize = normalized.filesize ?? null;
+  normalized.filedate = normalizeOptionalDate(normalized.filedate);
+  normalized.runtime = normalized.runtime ?? null;
+  normalized.video_width = normalized.video_width ?? null;
+  normalized.video_height = normalized.video_height ?? null;
+  normalized.lastupdate = normalizeOptionalDate(normalized.lastupdate);
+  normalized.created = normalizeOptionalDate(normalized.created);
+  normalized.genreIds = normalized.genreIds ?? [];
+  normalized.owner_id = normalized.owner_id ?? defaultOwnerId;
+
+  return normalized;
+}
 
 function isTmdbDetailsError(value: TmdbMovieDetails | { error?: string }): value is { error?: string } {
   return "error" in value;
@@ -94,25 +164,28 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
 
   const defaults: UpsertVideoDataFormValues = useMemo(
     () =>
-      initialValues ?? {
-        id: null,
-        title: "",
-        subtitle: "",
-        language: "en",
-        country: "",
-        rating: "",
-        runtime: null,
-        imdbID: "",
-        filename: "",
-        video_width: null,
-        video_height: null,
-        year: new Date().getFullYear(),
-        istv: 0,
-        lastupdate: null,
-        mediatype: 1,
-        owner_id: defaultOwnerId,
-        genreIds: [],
-      },
+      normalizeVideoDataForForm(
+        initialValues ?? {
+          id: null,
+          title: "",
+          subtitle: "",
+          language: "en",
+          country: "",
+          rating: "",
+          runtime: null,
+          imdbID: "",
+          filename: "",
+          video_width: null,
+          video_height: null,
+          year: new Date().getFullYear(),
+          istv: 0,
+          lastupdate: null,
+          mediatype: 1,
+          owner_id: defaultOwnerId,
+          genreIds: [],
+        },
+        defaultOwnerId,
+      ),
     [defaultOwnerId, initialValues]
   );
 
@@ -175,12 +248,13 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
         }
       }}
     >
-      {({ values, onChange, readOnly, dirty, saving }) => (
+      {({ values, onChange, readOnly, dirty, changedFields, saving }) => (
         <UpsertVideoFormContent
           values={values}
           onChange={onChange}
           readOnly={readOnly}
           dirty={dirty}
+          changedFields={changedFields}
           saving={saving}
           saveError={saveError}
           readOnlyFields={readOnlyFields}
@@ -203,6 +277,7 @@ function UpsertVideoFormContent({
   onChange,
   readOnly,
   dirty,
+  changedFields,
   saving,
   saveError,
   readOnlyFields,
@@ -219,6 +294,7 @@ function UpsertVideoFormContent({
   onChange: (values: UpsertVideoDataFormValues) => void;
   readOnly: boolean;
   dirty: boolean;
+  changedFields: string[];
   saving: boolean;
   saveError: string | null;
   readOnlyFields: Partial<Record<keyof UpsertVideoDataFormValues, boolean>>;
@@ -231,6 +307,43 @@ function UpsertVideoFormContent({
   availableGenres: Array<{ label: string; value: string }>;
   availableOwners: Array<{ label: string; value: string }>;
 }) {
+  const fieldLabels: Partial<Record<keyof UpsertVideoDataFormValues, string>> = {
+    title: "Title",
+    subtitle: "Subtitle",
+    language: "Language",
+    diskid: "Disk ID",
+    comment: "Comment",
+    disklabel: "Disk Label",
+    imdbID: "IMDb ID",
+    year: "Year",
+    imgurl: "Image URL",
+    director: "Director",
+    actors: "Actors",
+    runtime: "Runtime",
+    country: "Country",
+    plot: "Plot",
+    rating: "Rating",
+    filename: "Filename",
+    filesize: "Filesize",
+    filedate: "File Date",
+    audio_codec: "Audio Codec",
+    video_codec: "Video Codec",
+    video_width: "Video Width",
+    video_height: "Video Height",
+    istv: "TV Series",
+    mediatype: "Media Type",
+    owner_id: "Owner",
+    genreIds: "Genres",
+    custom1: "Custom 1",
+    custom2: "Custom 2",
+    custom3: "Custom 3",
+    custom4: "Background URL",
+    created: "Created",
+    lastupdate: "Last Update",
+  };
+  const changedFieldLabelText = changedFields
+    .map((field) => fieldLabels[field as keyof UpsertVideoDataFormValues] ?? field)
+    .join(", ");
   const { appBasePath } = useAppBasePath();
   const [diskIdSuggestion, setDiskIdSuggestion] = useState<string | null>(null);
   const [loadingDiskIdSuggestion, setLoadingDiskIdSuggestion] = useState(false);
@@ -239,6 +352,7 @@ function UpsertVideoFormContent({
   const [tmdbQuery, setTmdbQuery] = useState(values.title ?? "");
   const [tmdbResults, setTmdbResults] = useState<TmdbSearchMovieResult[]>([]);
   const [tmdbSelectedMovie, setTmdbSelectedMovie] = useState<TmdbMovieDetails | null>(null);
+  const [tmdbSelectedBackdropUrl, setTmdbSelectedBackdropUrl] = useState<string | null>(null);
   const [tmdbMergeCandidates, setTmdbMergeCandidates] = useState<TmdbMetadataMergeCandidate[]>([]);
   const [tmdbManualGenreOverrides, setTmdbManualGenreOverrides] = useState<Record<string, number>>({});
   const [tmdbGenrePickerTmdbGenre, setTmdbGenrePickerTmdbGenre] = useState<string | null>(null);
@@ -309,7 +423,8 @@ function UpsertVideoFormContent({
     const tmdbDraft = mapTmdbMovieToVideoData(
       tmdbSelectedMovie,
       availableGenres,
-      tmdbManualGenreOverrides
+      tmdbManualGenreOverrides,
+      tmdbSelectedBackdropUrl
     );
     const nextCandidates = getTmdbMetadataMergeCandidates(getTmdbMergeBaseValues(values), tmdbDraft);
     setTmdbMergeCandidates((previousCandidates) =>
@@ -320,7 +435,7 @@ function UpsertVideoFormContent({
           : candidate;
       })
     );
-  }, [availableGenres, tmdbManualGenreOverrides, tmdbSelectedMovie, values]);
+  }, [availableGenres, tmdbManualGenreOverrides, tmdbSelectedMovie, tmdbSelectedBackdropUrl, values]);
 
   const handleTmdbSearch = async () => {
     const trimmedQuery = tmdbQuery.trim();
@@ -329,6 +444,7 @@ function UpsertVideoFormContent({
     setTmdbSearching(true);
     setTmdbError(null);
     setTmdbSelectedMovie(null);
+    setTmdbSelectedBackdropUrl(null);
     setTmdbMergeCandidates([]);
     setTmdbManualGenreOverrides({});
     setTmdbGenrePickerTmdbGenre(null);
@@ -371,6 +487,7 @@ function UpsertVideoFormContent({
       }
 
       setTmdbSelectedMovie(result);
+      setTmdbSelectedBackdropUrl(result.backdropUrl ?? result.backdropCandidates?.[0]?.url ?? null);
       setTmdbManualGenreOverrides({});
       setTmdbGenrePickerTmdbGenre(null);
     } catch (error) {
@@ -397,6 +514,7 @@ function UpsertVideoFormContent({
     if (nextOpen && tmdbStoredReference) {
       setTmdbMediaKind(tmdbStoredReference.mediaKind);
       setTmdbSelectedMovie(null);
+      setTmdbSelectedBackdropUrl(null);
       setTmdbMergeCandidates([]);
       setTmdbManualGenreOverrides({});
       setTmdbGenrePickerTmdbGenre(null);
@@ -416,6 +534,7 @@ function UpsertVideoFormContent({
 
   const resetTmdbRefresh = () => {
     setTmdbSelectedMovie(null);
+    setTmdbSelectedBackdropUrl(null);
     setTmdbMergeCandidates([]);
     setTmdbManualGenreOverrides({});
     setTmdbGenrePickerTmdbGenre(null);
@@ -453,13 +572,18 @@ function UpsertVideoFormContent({
         <span>
           {values.id ? `Video #${values.id}` : "Neuer Eintrag"}
         </span>
-        <Chip
-          size="sm"
-          color={saving ? "primary" : dirty ? "warning" : "success"}
-          variant={saving ? "solid" : "flat"}
+        <Tooltip
+          isDisabled={!dirty || !changedFieldLabelText}
+          content={changedFieldLabelText ? `Changed: ${changedFieldLabelText}` : undefined}
         >
-          {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
-        </Chip>
+          <Chip
+            size="sm"
+            color={saving ? "primary" : dirty ? "warning" : "success"}
+            variant={saving ? "solid" : "flat"}
+          >
+            {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
+          </Chip>
+        </Tooltip>
       </div>
 
       {showLookupSkeletons && (
@@ -501,7 +625,25 @@ function UpsertVideoFormContent({
 
         {tmdbPanelOpen && (
           <div data-testid="tmdb-refresh-panel" className="space-y-3">
-            <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(320px,460px)]">
+            {tmdbSelectedMovie ? (
+              <div className="flex justify-end">
+                <Button
+                  data-testid="tmdb-review-back-to-search"
+                  size="sm"
+                  variant="flat"
+                  onPress={() => {
+                    setTmdbSelectedMovie(null);
+                    setTmdbSelectedBackdropUrl(null);
+                    setTmdbMergeCandidates([]);
+                    setTmdbManualGenreOverrides({});
+                    setTmdbGenrePickerTmdbGenre(null);
+                    setTmdbError(null);
+                  }}
+                >
+                  Choose another TMDB result
+                </Button>
+              </div>
+            ) : (
               <TmdbMetadataSearchPanel
                 query={tmdbQuery}
                 mediaKind={tmdbMediaKind}
@@ -513,6 +655,7 @@ function UpsertVideoFormContent({
                 onMediaKindChange={(mediaKind) => {
                   setTmdbMediaKind(mediaKind);
                   setTmdbSelectedMovie(null);
+                  setTmdbSelectedBackdropUrl(null);
                   setTmdbMergeCandidates([]);
                   setTmdbManualGenreOverrides({});
                   setTmdbGenrePickerTmdbGenre(null);
@@ -525,38 +668,41 @@ function UpsertVideoFormContent({
                 mediaKindTestId="tmdb-refresh-media-kind"
                 submitTestId="tmdb-refresh-search-submit"
               />
+            )}
 
-              {tmdbLoadingDetails ? (
-                <div
-                  data-testid="tmdb-refresh-details-loading"
-                  className="flex min-h-32 items-center justify-center rounded-small border border-default-200 text-sm text-default-500"
-                >
-                  Loading details...
-                </div>
-              ) : tmdbSelectedMovie ? (
-                <TmdbMetadataMergePanel
-                  candidates={tmdbMergeCandidates}
-                  tmdbImdbId={tmdbSelectedMovie.imdbId}
-                  genreMatches={tmdbSelectedGenreMatches}
-                  availableGenres={availableGenres}
-                  loadingGenres={loadingGenres}
-                  genresErrorMessage={genresError?.message}
-                  genrePickerTmdbGenre={tmdbGenrePickerTmdbGenre}
-                  onCandidateSelectionChange={handleTmdbCandidateSelectionChange}
-                  onUnmappedGenrePress={setTmdbGenrePickerTmdbGenre}
-                  onManualGenreSelection={handleTmdbManualGenreSelection}
-                  onApplySelected={handleTmdbApplySelected}
-                  onNoMatch={resetTmdbRefresh}
-                />
-              ) : (
-                <div
-                  data-testid="tmdb-refresh-empty"
-                  className="rounded-small border border-default-200 p-3 text-sm text-default-500"
-                >
-                  Select a TMDB result to review field updates.
-                </div>
-              )}
-            </div>
+            {tmdbLoadingDetails ? (
+              <div
+                data-testid="tmdb-refresh-details-loading"
+                className="flex min-h-32 items-center justify-center rounded-small border border-default-200 text-sm text-default-500"
+              >
+                Loading details...
+              </div>
+            ) : tmdbSelectedMovie ? (
+              <TmdbMetadataMergePanel
+                candidates={tmdbMergeCandidates}
+                tmdbImdbId={tmdbSelectedMovie.imdbId}
+                backdropCandidates={tmdbSelectedMovie.backdropCandidates}
+                selectedBackdropUrl={tmdbSelectedBackdropUrl}
+                genreMatches={tmdbSelectedGenreMatches}
+                availableGenres={availableGenres}
+                loadingGenres={loadingGenres}
+                genresErrorMessage={genresError?.message}
+                genrePickerTmdbGenre={tmdbGenrePickerTmdbGenre}
+                onCandidateSelectionChange={handleTmdbCandidateSelectionChange}
+                onBackdropSelectionChange={setTmdbSelectedBackdropUrl}
+                onUnmappedGenrePress={setTmdbGenrePickerTmdbGenre}
+                onManualGenreSelection={handleTmdbManualGenreSelection}
+                onApplySelected={handleTmdbApplySelected}
+                onNoMatch={resetTmdbRefresh}
+              />
+            ) : (
+              <div
+                data-testid="tmdb-refresh-empty"
+                className="rounded-small border border-default-200 p-3 text-sm text-default-500"
+              >
+                Select a TMDB result to review field updates.
+              </div>
+            )}
           </div>
         )}
       </div>

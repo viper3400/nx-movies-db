@@ -18,7 +18,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
   const [error, setError] = useState<Error | null>(null);
   const [readOnlyMode, setReadOnlyMode] = useState<boolean>(true);
 
-  const { appBasePath, imageBaseUrl } = useAppBasePath();
+  const { appBasePath, imageBaseUrl, posterImageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
   const { loadSeenDatesForMovie, setUserSeenDateForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
 
@@ -55,6 +55,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
           <MovieCard
             movie={movie}
             imageUrl={imageBaseUrl + "/" + id}
+            bodyBackgroundImageUrl={posterImageBaseUrl ? `${posterImageBaseUrl}/${id}` : undefined}
             editUrl={`${appBasePath ?? ""}/edit/${id}`}
             loadSeenDatesForMovie={loadSeenDatesForMovie}
             loadUserFlagsForMovie={loadUserFlagsForMovie}

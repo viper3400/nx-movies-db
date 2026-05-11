@@ -23,6 +23,7 @@ export interface EditableFormWrapperProps<T> {
     onChange: (values: T) => void;
     readOnly: boolean;
     dirty: boolean;
+    changedFields: string[];
     saving: boolean;
   }) => React.ReactNode;
 }
@@ -52,6 +53,14 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   }, [initialValues]);
 
   const dirty = useMemo(() => !isEqual(savedValues, draftValues), [savedValues, draftValues]);
+  const changedFields = useMemo(() => {
+    const savedRecord = savedValues as Record<string, unknown>;
+    const draftRecord = draftValues as Record<string, unknown>;
+    return Array.from(new Set([
+      ...Object.keys(savedRecord ?? {}),
+      ...Object.keys(draftRecord ?? {}),
+    ])).filter((key) => !isEqual(savedRecord?.[key], draftRecord?.[key]));
+  }, [savedValues, draftValues]);
 
   const handleSave = async () => {
     if (saving || readOnly || !dirty) return;
@@ -124,7 +133,14 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
       </>
     ) : null;
 
-  const formContent = children({ values: draftValues, onChange: setDraftValues, readOnly, dirty, saving });
+  const formContent = children({
+    values: draftValues,
+    onChange: setDraftValues,
+    readOnly,
+    dirty,
+    changedFields,
+    saving,
+  });
 
   if (frame === "all") {
     return (

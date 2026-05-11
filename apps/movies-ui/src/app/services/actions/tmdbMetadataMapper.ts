@@ -2,6 +2,17 @@ import type { VideoData } from "@nx-movies-db/shared-types";
 
 export type TmdbMediaKind = "movie" | "tv";
 
+export type TmdbBackdropCandidate = {
+  filePath: string;
+  url: string;
+  width: number | null;
+  height: number | null;
+  voteAverage: number | null;
+  voteCount: number | null;
+  iso639_1: string | null;
+  isPrimary: boolean;
+};
+
 export type TmdbSearchMovieResult = {
   id: number;
   mediaKind: TmdbMediaKind;
@@ -22,6 +33,8 @@ export type TmdbMovieDetails = {
   runtime: number | null;
   voteAverage: number | null;
   posterUrl: string | null;
+  backdropUrl: string | null;
+  backdropCandidates: TmdbBackdropCandidate[];
   imdbId: string | null;
   genres: string[];
   productionCountries: string[];
@@ -57,6 +70,7 @@ export type TmdbMetadataMergeField =
   | "imdbID"
   | "year"
   | "imgurl"
+  | "custom4"
   | "director"
   | "actors"
   | "plot"
@@ -83,6 +97,7 @@ const mergeFieldLabels: Record<TmdbMetadataMergeField, string> = {
   imdbID: "External reference",
   year: "Year",
   imgurl: "Image URL",
+  custom4: "Background URL",
   director: "Director",
   actors: "Actors",
   plot: "Plot",
@@ -150,7 +165,8 @@ export function getTmdbGenreMatches(
 export function mapTmdbMovieToVideoData(
   movie: TmdbMovieDetails,
   localGenres: SelectOption[],
-  manualGenreOverrides: Record<string, number> = {}
+  manualGenreOverrides: Record<string, number> = {},
+  selectedBackdropUrl?: string | null
 ): VideoData {
   const genreIds = getTmdbGenreMatches(movie.genres, localGenres, manualGenreOverrides)
     .map((match) => match.localGenreId)
@@ -167,6 +183,7 @@ export function mapTmdbMovieToVideoData(
     imdbID: `tmdb:${movie.mediaKind}:${movie.id}`,
     year: getYear(movie.releaseDate),
     imgurl: movie.posterUrl ?? "",
+    custom4: selectedBackdropUrl ?? movie.backdropUrl ?? "",
     director: movie.directors.join("\n"),
     actors: movie.cast.map(formatTmdbActorLine).join("\n"),
     plot: movie.overview,
@@ -189,7 +206,6 @@ export function mapTmdbMovieToVideoData(
     custom1: "",
     custom2: "",
     custom3: "",
-    custom4: "",
     created: null,
   };
 }
@@ -229,6 +245,7 @@ export function getTmdbMetadataMergeCandidates(
     "imdbID",
     "year",
     "imgurl",
+    "custom4",
     "director",
     "actors",
     "plot",

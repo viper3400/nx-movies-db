@@ -1,7 +1,13 @@
 import axios from "axios";
 import { mkdir, rename, unlink, writeFile } from "fs/promises";
 import path from "path";
-import { deleteStoredCoverImage, isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
+import {
+  deleteStoredCoverImage,
+  deleteStoredPosterImage,
+  isRemoteHttpUrl,
+  storeCoverImageFromUrl,
+  storePosterImageFromUrl,
+} from "./coverImageLocalization";
 
 jest.mock("axios", () => ({
   __esModule: true,
@@ -88,6 +94,22 @@ describe("cover image localization", () => {
     });
   });
 
+  describe("storePosterImageFromUrl", () => {
+    it("stores a poster jpg using the same file naming convention", async () => {
+      axiosGet.mockResolvedValueOnce(fakeAxiosResponse("image/jpeg", [1, 9, 9]));
+
+      const posterImagePath = path.resolve("posters");
+      const storedUrl = await storePosterImageFromUrl("https://example.com/poster.jpg", posterImagePath, 777);
+
+      expect(mkdirMock).toHaveBeenCalledWith(posterImagePath, { recursive: true });
+      expect(renameMock).toHaveBeenCalledWith(
+        path.join(posterImagePath, `.777.jpg.${process.pid}.123456789.tmp`),
+        path.join(posterImagePath, "777.jpg")
+      );
+      expect(storedUrl).toBe("./777.jpg");
+    });
+  });
+
   describe("deleteStoredCoverImage", () => {
     it("removes the movie jpg filename", async () => {
       await deleteStoredCoverImage("/covers", 530);
@@ -99,6 +121,14 @@ describe("cover image localization", () => {
       unlinkMock.mockRejectedValueOnce(Object.assign(new Error("missing"), { code: "ENOENT" }));
 
       await expect(deleteStoredCoverImage("/covers", 530)).resolves.toBeUndefined();
+    });
+  });
+
+  describe("deleteStoredPosterImage", () => {
+    it("removes the movie poster jpg filename", async () => {
+      await deleteStoredPosterImage("/posters", 777);
+
+      expect(unlinkMock).toHaveBeenCalledWith(path.join("/posters", "777.jpg"));
     });
   });
 });

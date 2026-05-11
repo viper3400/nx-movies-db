@@ -3,7 +3,14 @@
 import { gql, type TypedDocumentNode } from "@apollo/client";
 import { getClient } from "../../../lib/apollocient";
 import type { UpsertVideoDataFormValues } from "@nx-movies-db/shared-ui";
-import { deleteStoredCoverImage, isRemoteHttpUrl, storeCoverImageFromUrl } from "./coverImageLocalization";
+import {
+  deleteStoredCoverImage,
+  deleteStoredPosterImage,
+  isRemoteHttpUrl,
+  storeCoverImageFromUrl,
+  storePosterImageFromUrl,
+} from "./coverImageLocalization";
+import { getVideoData } from "./getVideoData";
 
 type UpsertResult = {
   upsertVideoData: {
@@ -189,6 +196,7 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
 export async function upsertVideoData(values: UpsertVideoDataFormValues) {
   const client = getClient();
   const variables = mapToVariables(values);
+  const existingVideo = values.id ? await getVideoData(values.id) : undefined;
 
   const { data, error } = await client.mutate<UpsertResult, UpsertVariables>({
     mutation: UPSERT_MUTATION,
@@ -200,53 +208,90 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
   }
 
   const savedVideo = data?.upsertVideoData;
-  if (!savedVideo?.id || !isRemoteHttpUrl(variables.imgurl)) {
+  if (!savedVideo?.id) {
     return savedVideo;
   }
 
-  const coverImagePath = process.env.COVER_IMAGE_PATH;
-  if (!coverImagePath) {
-    console.error("Skipping cover image localization: COVER_IMAGE_PATH is not configured", {
+  let latestSavedVideo = savedVideo;
+
+  if (isRemoteHttpUrl(variables.imgurl)) {
+    const coverImagePath = process.env.COVER_IMAGE_PATH;
+    if (!coverImagePath) {
+      console.error("Skipping cover image localization: COVER_IMAGE_PATH is not configured", {
+        movieId: savedVideo.id,
+        imgurl: variables.imgurl,
+      });
+    } else {
+      try {
+        const localizedImgurl = await storeCoverImageFromUrl(variables.imgurl, coverImagePath, savedVideo.id);
+        const localizedVariables: UpsertVariables = {
+          ...variables,
+          id: savedVideo.id,
+          imgurl: localizedImgurl,
+          custom3: variables.imgurl,
+        };
+
+        const localizedResult = await client.mutate<UpsertResult, UpsertVariables>({
+          mutation: UPSERT_MUTATION,
+          variables: localizedVariables,
+        });
+
+        if (localizedResult.error) {
+          throw new Error(localizedResult.error.message);
+        }
+
+        latestSavedVideo = localizedResult.data?.upsertVideoData ?? latestSavedVideo;
+      } catch (error) {
+        try {
+          await deleteStoredCoverImage(coverImagePath, savedVideo.id);
+        } catch (deleteError) {
+          console.error("Failed to remove stale local cover image after localization failure", {
+            movieId: savedVideo.id,
+            error: deleteError instanceof Error ? deleteError.message : deleteError,
+          });
+        }
+
+        console.error("Cover image localization failed after metadata save", {
+          movieId: savedVideo.id,
+          imgurl: variables.imgurl,
+          error: error instanceof Error ? error.message : error,
+        });
+      }
+    }
+  }
+
+  const posterSourceChanged = existingVideo?.custom4 !== variables.custom4;
+  if (!isRemoteHttpUrl(variables.custom4) || (!existingVideo && !variables.custom4) || !posterSourceChanged) {
+    return latestSavedVideo;
+  }
+
+  const posterImagePath = process.env.POSTER_IMAGE_PATH;
+  if (!posterImagePath) {
+    console.error("Skipping poster image localization: POSTER_IMAGE_PATH is not configured", {
       movieId: savedVideo.id,
-      imgurl: variables.imgurl,
+      custom4: variables.custom4,
     });
-    return savedVideo;
+    return latestSavedVideo;
   }
 
   try {
-    const localizedImgurl = await storeCoverImageFromUrl(variables.imgurl, coverImagePath, savedVideo.id);
-    const localizedVariables: UpsertVariables = {
-      ...variables,
-      id: savedVideo.id,
-      imgurl: localizedImgurl,
-      custom3: variables.imgurl,
-    };
-
-    const localizedResult = await client.mutate<UpsertResult, UpsertVariables>({
-      mutation: UPSERT_MUTATION,
-      variables: localizedVariables,
-    });
-
-    if (localizedResult.error) {
-      throw new Error(localizedResult.error.message);
-    }
-
-    return localizedResult.data?.upsertVideoData ?? savedVideo;
+    await storePosterImageFromUrl(variables.custom4, posterImagePath, savedVideo.id);
   } catch (error) {
     try {
-      await deleteStoredCoverImage(coverImagePath, savedVideo.id);
+      await deleteStoredPosterImage(posterImagePath, savedVideo.id);
     } catch (deleteError) {
-      console.error("Failed to remove stale local cover image after localization failure", {
+      console.error("Failed to remove stale local poster image after localization failure", {
         movieId: savedVideo.id,
         error: deleteError instanceof Error ? deleteError.message : deleteError,
       });
     }
 
-    console.error("Cover image localization failed after metadata save", {
+    console.error("Poster image localization failed after metadata save", {
       movieId: savedVideo.id,
-      imgurl: variables.imgurl,
+      custom4: variables.custom4,
       error: error instanceof Error ? error.message : error,
     });
-    return savedVideo;
   }
+
+  return latestSavedVideo;
 }

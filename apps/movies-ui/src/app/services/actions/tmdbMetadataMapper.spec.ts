@@ -17,6 +17,19 @@ const movie: TmdbMovieDetails = {
   runtime: 136,
   voteAverage: 8.2,
   posterUrl: "https://image.tmdb.org/t/p/w500/poster.jpg",
+  backdropUrl: "https://image.tmdb.org/t/p/w500/backdrop.jpg",
+  backdropCandidates: [
+    {
+      filePath: "/backdrop.jpg",
+      url: "https://image.tmdb.org/t/p/w500/backdrop.jpg",
+      width: 1280,
+      height: 720,
+      voteAverage: 5.1,
+      voteCount: 10,
+      iso639_1: "en",
+      isPrimary: true,
+    },
+  ],
   imdbId: "tt0133093",
   genres: ["Action", "Science Fiction", "Unknown"],
   productionCountries: ["United States of America", "Australia"],
@@ -142,6 +155,7 @@ describe("mapTmdbMovieToVideoData", () => {
         rating: "8.2",
         imdbID: "tmdb:movie:603",
         imgurl: "https://image.tmdb.org/t/p/w500/poster.jpg",
+        custom4: "https://image.tmdb.org/t/p/w500/backdrop.jpg",
         country: "United States of America, Australia",
         director: "Lana Wachowski\nLilly Wachowski",
         actors: "Keanu Reeves::Neo::tmdb:6384\nLaurence Fishburne::Morpheus::tmdb:2975",
@@ -163,6 +177,8 @@ describe("mapTmdbMovieToVideoData", () => {
         runtime: null,
         voteAverage: null,
         posterUrl: null,
+        backdropUrl: null,
+        backdropCandidates: [],
         imdbId: null,
         productionCountries: [],
         directors: [],
@@ -177,6 +193,7 @@ describe("mapTmdbMovieToVideoData", () => {
     expect(result.runtime).toBeNull();
     expect(result.rating).toBe("");
     expect(result.imgurl).toBe("");
+    expect(result.custom4).toBe("");
     expect(result.imdbID).toBe("tmdb:movie:603");
     expect(result.genreIds).toEqual([]);
     expect(result.mediatype).toBe(1);
@@ -194,6 +211,18 @@ describe("mapTmdbMovieToVideoData", () => {
     expect(result.istv).toBe(1);
     expect(result.title).toBe("Game of Thrones");
     expect(result.imdbID).toBe("tmdb:tv:603");
+  });
+
+  it("uses the explicitly selected backdrop url for custom4", () => {
+    const result = mapTmdbMovieToVideoData(
+      movie,
+      [],
+      {},
+      "https://image.tmdb.org/t/p/w500/alternate-backdrop.jpg"
+    );
+
+    expect(result.imgurl).toBe("https://image.tmdb.org/t/p/w500/poster.jpg");
+    expect(result.custom4).toBe("https://image.tmdb.org/t/p/w500/alternate-backdrop.jpg");
   });
 });
 
@@ -234,6 +263,13 @@ describe("TMDB metadata merge candidates", () => {
           tmdbValue: 1999,
           selected: true,
           conflict: false,
+        }),
+        expect.objectContaining({
+          field: "custom4",
+          tmdbValue: "https://image.tmdb.org/t/p/w500/backdrop.jpg",
+          selected: true,
+          conflict: false,
+          reason: "empty-local",
         }),
       ])
     );

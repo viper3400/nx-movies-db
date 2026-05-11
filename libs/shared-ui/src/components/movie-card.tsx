@@ -105,18 +105,21 @@ export const MovieCard = ({
   }, [movie.id, additionalDataLoaded, loadSeenDatesForMovie, loadUserFlagsForMovie]);
 
   return (
-    <div key={movie.id}>
+    <div key={movie.id} data-testid={`movie-card-${movie.id}`}>
       <Card className="relative overflow-hidden border border-black/32 shadow-[0_10px_36px_rgba(0,0,0,0.14)] dark:border-white/22 dark:shadow-[0_12px_40px_rgba(0,0,0,0.42)]">
         {bodyBackgroundImageUrl && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-cover bg-right-top bg-no-repeat opacity-30"
+            className="pointer-events-none absolute inset-0 bg-cover bg-right-top bg-no-repeat opacity-40 dark:opacity-30"
             style={{ backgroundImage: `url("${bodyBackgroundImageUrl}")` }}
           />
         )}
         <CardHeader className="relative z-10 flex flex-col items-start gap-1 bg-content1/30 px-4 py-2 md:flex-row">
           <div className="flex-1 min-w-0">
-            <div className="pr-2 text-left text-lg font-semibold [text-shadow:0_1px_2px_rgba(255,255,255,0.68),0_0_24px_rgba(255,255,255,0.32)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_26px_rgba(0,0,0,0.62)]">
+            <div
+              data-testid="movie-card-title"
+              className="pr-2 text-left text-lg font-semibold [text-shadow:0_1px_2px_rgba(255,255,255,0.68),0_0_24px_rgba(255,255,255,0.32)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_26px_rgba(0,0,0,0.62)]"
+            >
               {movie.title}
             </div>
             {movie.subtitle && (

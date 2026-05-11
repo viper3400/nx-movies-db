@@ -1,6 +1,6 @@
 "use server";
 
-import type { TmdbMediaKind, TmdbMovieDetails, TmdbSearchMovieResult } from "./tmdbMetadataMapper";
+import type { TmdbBackdropCandidate, TmdbMediaKind, TmdbMovieDetails, TmdbSearchMovieResult } from "./tmdbMetadataMapper";
 
 type TmdbSearchResponse = {
   results?: Array<{
@@ -29,6 +29,7 @@ type TmdbMovieDetailsResponse = {
   episode_run_time?: number[];
   vote_average?: number | null;
   poster_path?: string | null;
+  backdrop_path?: string | null;
   genres?: Array<{ name?: string }>;
   production_countries?: Array<{ name?: string }>;
   created_by?: Array<{ name?: string }>;
@@ -44,6 +45,17 @@ type TmdbMovieDetailsResponse = {
 type TmdbMovieCreditsResponse = NonNullable<TmdbMovieDetailsResponse["credits"]>;
 
 type TmdbMovieExternalIdsResponse = NonNullable<TmdbMovieDetailsResponse["external_ids"]>;
+
+type TmdbMovieImagesResponse = {
+  backdrops?: Array<{
+    file_path?: string | null;
+    width?: number | null;
+    height?: number | null;
+    vote_average?: number | null;
+    vote_count?: number | null;
+    iso_639_1?: string | null;
+  }>;
+};
 
 export type TmdbMovieMetadataResult =
   | { movie: TmdbMovieDetails; error?: never }
@@ -74,9 +86,51 @@ function getTmdbConfig() {
   };
 }
 
-function buildPosterUrl(posterPath: string | null | undefined, imageSize: string): string | null {
-  if (!posterPath) return null;
-  return `${TMDB_IMAGE_BASE_URL}/${imageSize}${posterPath}`;
+function buildTmdbImageUrl(imagePath: string | null | undefined, imageSize: string): string | null {
+  if (!imagePath) return null;
+  return `${TMDB_IMAGE_BASE_URL}/${imageSize}${imagePath}`;
+}
+
+function buildBackdropCandidates(
+  primaryBackdropPath: string | null | undefined,
+  backdrops: TmdbMovieImagesResponse["backdrops"] | undefined,
+  imageSize: string
+): TmdbBackdropCandidate[] {
+  const candidates = new Map<string, TmdbBackdropCandidate>();
+
+  for (const backdrop of backdrops ?? []) {
+    if (!backdrop.file_path) continue;
+    candidates.set(backdrop.file_path, {
+      filePath: backdrop.file_path,
+      url: buildTmdbImageUrl(backdrop.file_path, imageSize)!,
+      width: backdrop.width ?? null,
+      height: backdrop.height ?? null,
+      voteAverage: backdrop.vote_average ?? null,
+      voteCount: backdrop.vote_count ?? null,
+      iso639_1: backdrop.iso_639_1 ?? null,
+      isPrimary: backdrop.file_path === primaryBackdropPath,
+    });
+  }
+
+  if (primaryBackdropPath && !candidates.has(primaryBackdropPath)) {
+    candidates.set(primaryBackdropPath, {
+      filePath: primaryBackdropPath,
+      url: buildTmdbImageUrl(primaryBackdropPath, imageSize)!,
+      width: null,
+      height: null,
+      voteAverage: null,
+      voteCount: null,
+      iso639_1: null,
+      isPrimary: true,
+    });
+  }
+
+  return [...candidates.values()].sort((left, right) => {
+    if (left.isPrimary !== right.isPrimary) return left.isPrimary ? -1 : 1;
+    const voteCountDiff = (right.voteCount ?? 0) - (left.voteCount ?? 0);
+    if (voteCountDiff !== 0) return voteCountDiff;
+    return (right.voteAverage ?? 0) - (left.voteAverage ?? 0);
+  });
 }
 
 async function fetchTmdb<T>(path: string, params: Record<string, string | number | undefined> = {}): Promise<T> {
@@ -136,7 +190,7 @@ export async function searchTmdbMovies({
     originalTitle: movie.original_title ?? movie.original_name ?? movie.title ?? movie.name ?? "",
     overview: movie.overview ?? "",
     releaseDate: movie.release_date || movie.first_air_date || null,
-    posterUrl: buildPosterUrl(movie.poster_path, config.imageSize),
+    posterUrl: buildTmdbImageUrl(movie.poster_path, config.imageSize),
   }));
 }
 
@@ -146,10 +200,12 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
     language: config.language,
   });
   const basePath = `/${mediaKind}/${tmdbId}`;
-  const [credits, externalIds] = await Promise.all([
+  const [credits, externalIds, images] = await Promise.all([
     fetchTmdb<TmdbMovieCreditsResponse>(`${basePath}/credits`, { language: config.language })
       .catch(() => undefined),
     fetchTmdb<TmdbMovieExternalIdsResponse>(`${basePath}/external_ids`)
+      .catch(() => undefined),
+    fetchTmdb<TmdbMovieImagesResponse>(`${basePath}/images`)
       .catch(() => undefined),
   ]);
 
@@ -172,6 +228,8 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
       character: member.character ?? "",
     }));
 
+  const backdropCandidates = buildBackdropCandidates(movie.backdrop_path, images?.backdrops, config.imageSize);
+
   return {
     id: movie.id,
     mediaKind,
@@ -181,7 +239,9 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
     releaseDate: movie.release_date || movie.first_air_date || null,
     runtime: movie.runtime ?? movie.episode_run_time?.[0] ?? null,
     voteAverage: movie.vote_average ?? null,
-    posterUrl: buildPosterUrl(movie.poster_path, config.imageSize),
+    posterUrl: buildTmdbImageUrl(movie.poster_path, config.imageSize),
+    backdropUrl: buildTmdbImageUrl(movie.backdrop_path, config.imageSize),
+    backdropCandidates,
     imdbId: externalIds?.imdb_id ?? null,
     genres: (movie.genres ?? []).map((genre) => genre.name).filter((name): name is string => !!name),
     productionCountries: (movie.production_countries ?? [])

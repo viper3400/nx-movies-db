@@ -19,6 +19,6 @@ The current UI serves local cover images through `/api/cover-image/[id]`. That r
 
 Poster images are separate from covers. They were introduced later as background images and are not represented by a Prisma field, GraphQL field, or `videodb_videodata` column.
 
-Poster lookup is only a filesystem convention: use the movie ID as the filename in a poster directory, for example `530.jpg`. No poster URL is stored in the database, and saving movie metadata should not update poster state unless a future change explicitly adds that behavior.
+Poster lookup is a filesystem convention: use the movie ID as the filename in a poster directory, for example `530.jpg`. The current UI serves these files through `/api/poster-image/[id]`, which reads from `POSTER_IMAGE_PATH` and falls back to `not_found.jpg` when the file is missing.
 
-If poster serving is added to this repo, it should use a separate route and configuration value from cover serving, for example `/api/poster-image/[id]` and `POSTER_IMAGE_PATH`.
+Saving metadata can also localize a remote poster/background URL into `POSTER_IMAGE_PATH`. This is separate from cover localization and does not write a poster path back into the database.

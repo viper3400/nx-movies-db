@@ -4,15 +4,17 @@ import { getAppBasePath } from "../app/services/actions/getAppBasePath";
 export function useAppBasePath() {
   const [appBasePath, setAppBasePath] = useState<string>();
   const [imageBaseUrl, setImageBaseUrl] = useState<string>();
+  const [posterImageBaseUrl, setPosterImageBaseUrl] = useState<string>();
 
   useEffect(() => {
     const fetch = async () => {
       const basePath = await getAppBasePath();
       setAppBasePath(basePath);
       setImageBaseUrl(basePath + "/api/cover-image");
+      setPosterImageBaseUrl(basePath + "/api/poster-image");
     };
     fetch();
   }, []);
 
-  return { appBasePath, imageBaseUrl };
+  return { appBasePath, imageBaseUrl, posterImageBaseUrl };
 }

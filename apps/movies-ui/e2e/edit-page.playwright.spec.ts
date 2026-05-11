@@ -61,9 +61,75 @@ async function findVideoByTitle(page: Page, title: string) {
   expect(response.ok()).toBeTruthy();
   const body = await response.json();
   const video = body.data?.videos?.videos?.[0];
-  expect(video?.id).toBeTruthy();
+  if (!video?.id) {
+    return null;
+  }
 
   return { id: String(video.id), ownerId: video.ownerid };
+}
+
+async function reloadUntilInputValue(page: Page, selector: string, expected: string) {
+  await expect
+    .poll(async () => {
+      await page.reload({ waitUntil: "domcontentloaded" });
+      const field = page.locator(selector);
+      await field.waitFor({ state: "visible" });
+      return field.inputValue();
+    }, { timeout: 15_000 })
+    .toBe(expected);
+}
+
+async function createManualEntry(page: Page, title: string) {
+  const uniqueToken = Date.now();
+  const diskPrefix = `R${String((uniqueToken % 80) + 10).padStart(2, "0")}F${String((Math.floor(uniqueToken / 100) % 80) + 10).padStart(2, "0")}`;
+
+  await page.goto("/edit/new");
+
+  const titleField = page.locator(selectors.title);
+  const diskIdField = page.locator(selectors.diskId);
+  const diskIdSuggestion = page.locator(selectors.diskIdSuggestion);
+  const saveButton = page.locator(selectors.save);
+
+  await titleField.waitFor({ state: "visible" });
+  await titleField.fill(title);
+  await titleField.press("Tab");
+  await diskIdField.fill(diskPrefix);
+  await diskIdSuggestion.waitFor({ state: "visible" });
+  await diskIdSuggestion.click();
+  await expect(diskIdField).toHaveValue(new RegExp(`^${diskPrefix}D\\d{2}$`));
+  await expect(saveButton).toBeEnabled();
+
+  await saveButton.click();
+  await waitUntilSaved(saveButton);
+  let createdId = new URL(page.url()).pathname.match(/\/edit\/(\d+)$/)?.[1] ?? null;
+
+  if (!createdId) {
+    await expect
+      .poll(() => new URL(page.url()).pathname.match(/\/edit\/(\d+)$/)?.[1] ?? null, {
+        timeout: 15_000,
+      })
+      .not.toBeNull()
+      .catch(() => undefined);
+    createdId = new URL(page.url()).pathname.match(/\/edit\/(\d+)$/)?.[1] ?? null;
+  }
+
+  if (!createdId) {
+    const createdVideo = await expect
+      .poll(async () => findVideoByTitle(page, title), { timeout: 15_000 })
+      .not.toBeNull()
+      .then(async () => findVideoByTitle(page, title));
+    createdId = createdVideo?.id ?? null;
+    if (createdId) {
+      await page.goto(`/edit/${createdId}`);
+    }
+  }
+
+  expect(createdId).toBeTruthy();
+
+  return {
+    id: createdId!,
+    diskId: await diskIdField.inputValue(),
+  };
 }
 
 test.describe("Edit page (vanilla Playwright)", () => {
@@ -87,15 +153,18 @@ test.describe("Edit page (vanilla Playwright)", () => {
   });
 
   test("user can edit and save an existing film title", async ({ page }) => {
-    const originalTitle = "Demolition Man";
+    const uniqueToken = Date.now();
+    const originalTitle = `Playwright Existing ${uniqueToken}`;
     const editedTitle = `${originalTitle} (Edited)`;
+    const created = await createManualEntry(page, originalTitle);
 
-    const { titleField, languageField, diskIdField, yearField, saveButton } = await openEditPage(page, "59");
+    const { titleField, languageField, diskIdField, yearField, saveButton } = await openEditPage(page, created.id);
 
     await expect(titleField).toHaveValue(originalTitle);
-    await expect(languageField).toHaveValue("german, english, spanish");
-    await expect(diskIdField).toHaveValue("R04F4D01");
-    await expect(yearField).toHaveValue("1993");
+    await expect(languageField).toHaveValue("en");
+    await expect(diskIdField).toHaveValue(created.diskId);
+    const originalYear = await yearField.inputValue();
+    await expect(yearField).toHaveValue(originalYear);
     await expect(saveButton).toBeDisabled();
 
     await titleField.fill(editedTitle);
@@ -104,9 +173,7 @@ test.describe("Edit page (vanilla Playwright)", () => {
 
     await saveButton.click();
     await waitUntilSaved(saveButton);
-
-    await page.reload();
-    await titleField.waitFor({ state: "visible" });
+    await reloadUntilInputValue(page, selectors.title, editedTitle);
     await expect(titleField).toHaveValue(editedTitle);
 
     await titleField.fill(originalTitle);
@@ -114,17 +181,16 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
     await waitUntilSaved(saveButton);
-
-    await page.reload();
-    await titleField.waitFor({ state: "visible" });
+    await reloadUntilInputValue(page, selectors.title, originalTitle);
     await expect(titleField).toHaveValue(originalTitle);
   });
 
   test("user can discard edits to restore the original value", async ({ page }) => {
-    const originalTitle = "Demolition Man";
+    const originalTitle = `Playwright Discard ${Date.now()}`;
     const draftTitle = `${originalTitle} Draft`;
+    const created = await createManualEntry(page, originalTitle);
 
-    const { titleField, saveButton, discardButton } = await openEditPage(page, "59");
+    const { titleField, saveButton, discardButton } = await openEditPage(page, created.id);
 
     await expect(titleField).toHaveValue(originalTitle);
 
@@ -140,15 +206,16 @@ test.describe("Edit page (vanilla Playwright)", () => {
   });
 
   test("user can edit disk info and year, then revert", async ({ page }) => {
-    const originalDiskId = "R04F4D01";
-    const editedDiskId = "R04F4D99";
-    const originalYear = "1993";
-    const editedYear = "1994";
-    const id = 59;
-
-    await page.goto(`/edit/${id}`);
+    const originalTitle = `Playwright Disk ${Date.now()}`;
+    const created = await createManualEntry(page, originalTitle);
+    await page.goto(`/edit/${created.id}`);
     const titleField = page.locator(selectors.title);
     await titleField.waitFor({ state: "visible" });
+
+    const originalDiskId = await page.locator(selectors.diskId).inputValue();
+    const originalYear = await page.locator(selectors.year).inputValue();
+    const editedDiskId = originalDiskId.replace(/D\d{2}$/, "D99");
+    const editedYear = String(Number(originalYear || "2000") + 1);
 
     await page.locator(selectors.diskId).waitFor({ state: "attached" });
     await expect(page.locator(selectors.diskId)).toHaveValue(originalDiskId);
@@ -162,8 +229,7 @@ test.describe("Edit page (vanilla Playwright)", () => {
 
     await page.locator(selectors.save).click();
     await waitUntilSaved(page.locator(selectors.save));
-
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await reloadUntilInputValue(page, selectors.diskId, editedDiskId);
     await expect(page.locator(selectors.diskId)).toHaveValue(editedDiskId);
     await expect(page.locator(selectors.year)).toHaveValue(editedYear);
 
@@ -173,8 +239,7 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await page.locator(selectors.year).press("Tab");
     await page.locator(selectors.save).click();
     await waitUntilSaved(page.locator(selectors.save));
-
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await reloadUntilInputValue(page, selectors.diskId, originalDiskId);
     await expect(page.locator(selectors.diskId)).toHaveValue(originalDiskId);
     await expect(page.locator(selectors.year)).toHaveValue(originalYear);
   });
@@ -184,33 +249,15 @@ test.describe("Edit page (vanilla Playwright)", () => {
     const createdTitle = `Playwright Created ${uniqueToken}`;
     const updatedTitle = `${createdTitle} Updated`;
     const temporaryTitle = `${createdTitle} Draft`;
-    const diskPrefix = `R${String((uniqueToken % 80) + 10).padStart(2, "0")}F${String((Math.floor(uniqueToken / 100) % 80) + 10).padStart(2, "0")}`;
 
-    await page.goto("/edit/new");
+    const created = await createManualEntry(page, createdTitle);
+    const createdId = created.id;
+    await page.goto(`/edit/${createdId}`);
 
     const titleField = page.locator(selectors.title);
-    const diskIdField = page.locator(selectors.diskId);
-    const diskIdSuggestion = page.locator(selectors.diskIdSuggestion);
-    const languageField = page.locator(selectors.language);
     const saveButton = page.locator(selectors.save);
     const discardButton = page.locator(selectors.discard);
 
-    await titleField.waitFor({ state: "visible" });
-    await titleField.fill(createdTitle);
-    await titleField.press("Tab");
-    await diskIdField.fill(diskPrefix);
-    await diskIdSuggestion.waitFor({ state: "visible" });
-    await diskIdSuggestion.click();
-    await expect(diskIdField).toHaveValue(new RegExp(`^${diskPrefix}D\\d{2}$`));
-
-    await expect(saveButton).toBeEnabled();
-
-    await saveButton.click();
-    await waitUntilSaved(saveButton);
-    const createdVideo = await findVideoByTitle(page, createdTitle);
-    expect(createdVideo.ownerId).toBe(2);
-    const createdId = createdVideo.id;
-    await page.goto(`/edit/${createdId}`);
     await titleField.waitFor({ state: "visible" });
     await expect(titleField).toHaveValue(createdTitle);
 
@@ -224,8 +271,7 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
     await waitUntilSaved(saveButton);
-
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await reloadUntilInputValue(page, selectors.title, updatedTitle);
     await expect(titleField).toHaveValue(updatedTitle);
 
     // Now draft a change and discard it

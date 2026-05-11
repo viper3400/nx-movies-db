@@ -13,8 +13,10 @@ const preview: Preview = {
         i18n.changeLanguage(locale); // Change the language in i18n
       }, [context.globals.locale]);
 
+      const theme = context.globals.theme;
+
       return (
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: theme, enableSystem: false, storageKey: null }}>
           <Story />
         </Providers>
       );
@@ -36,10 +38,21 @@ const preview: Preview = {
         ],
       },
     },
+    theme: {
+      description: "Application theme",
+      toolbar: {
+        icon: "mirror",
+        items: [
+          { value: "light", title: "Light" },
+          { value: "dark", title: "Dark" },
+        ],
+      },
+    },
   },
 
   initialGlobals: {
     locale: "en",
+    theme: "dark",
   },
 
   parameters: {

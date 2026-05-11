@@ -111,6 +111,7 @@ describe("tmdbMetadata actions", () => {
           runtime: 136,
           vote_average: 8.2,
           poster_path: "/poster.jpg",
+          backdrop_path: "/backdrop.jpg",
           genres: [{ name: "Action" }],
           production_countries: [{ name: "United States of America" }],
         }),
@@ -131,6 +132,29 @@ describe("tmdbMetadata actions", () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ imdb_id: "tt0133093" }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          backdrops: [
+            {
+              file_path: "/backdrop-alt.jpg",
+              width: 1280,
+              height: 720,
+              vote_average: 5.4,
+              vote_count: 20,
+              iso_639_1: "en",
+            },
+            {
+              file_path: "/backdrop.jpg",
+              width: 1280,
+              height: 720,
+              vote_average: 5.6,
+              vote_count: 40,
+              iso_639_1: "en",
+            },
+          ],
+        }),
       });
 
     const result = await getTmdbMovieMetadata(603);
@@ -138,9 +162,11 @@ describe("tmdbMetadata actions", () => {
     const [detailsUrl] = fetchMock.mock.calls[0];
     const [creditsUrl] = fetchMock.mock.calls[1];
     const [externalIdsUrl] = fetchMock.mock.calls[2];
+    const [imagesUrl] = fetchMock.mock.calls[3];
     expect(String(detailsUrl)).toContain("/movie/603");
     expect(String(creditsUrl)).toContain("/movie/603/credits");
     expect(String(externalIdsUrl)).toContain("/movie/603/external_ids");
+    expect(String(imagesUrl)).toContain("/movie/603/images");
     expect(result).toEqual({
       id: 603,
       mediaKind: "movie",
@@ -151,6 +177,29 @@ describe("tmdbMetadata actions", () => {
       runtime: 136,
       voteAverage: 8.2,
       posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+      backdropCandidates: [
+        {
+          filePath: "/backdrop.jpg",
+          url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+          width: 1280,
+          height: 720,
+          voteAverage: 5.6,
+          voteCount: 40,
+          iso639_1: "en",
+          isPrimary: true,
+        },
+        {
+          filePath: "/backdrop-alt.jpg",
+          url: "https://image.tmdb.org/t/p/w342/backdrop-alt.jpg",
+          width: 1280,
+          height: 720,
+          voteAverage: 5.4,
+          voteCount: 20,
+          iso639_1: "en",
+          isPrimary: false,
+        },
+      ],
       imdbId: "tt0133093",
       genres: ["Action"],
       productionCountries: ["United States of America"],
@@ -187,6 +236,7 @@ describe("tmdbMetadata actions", () => {
         id: 603,
         title: "Matrix",
         imdbId: null,
+        backdropCandidates: [],
         directors: [],
         cast: [],
       })
@@ -206,6 +256,7 @@ describe("tmdbMetadata actions", () => {
           episode_run_time: [60],
           vote_average: 8.5,
           poster_path: "/poster.jpg",
+          backdrop_path: "/backdrop.jpg",
           genres: [{ name: "Drama" }],
           production_countries: [{ name: "United States of America" }],
           created_by: [{ name: "David Benioff" }, { name: "D. B. Weiss" }],
@@ -223,6 +274,21 @@ describe("tmdbMetadata actions", () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ imdb_id: "tt0944947" }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          backdrops: [
+            {
+              file_path: "/backdrop.jpg",
+              width: 1280,
+              height: 720,
+              vote_average: 5.6,
+              vote_count: 40,
+              iso_639_1: "en",
+            },
+          ],
+        }),
       });
 
     const result = await getTmdbMovieMetadata(1399, "tv");
@@ -230,9 +296,11 @@ describe("tmdbMetadata actions", () => {
     const [detailsUrl] = fetchMock.mock.calls[0];
     const [creditsUrl] = fetchMock.mock.calls[1];
     const [externalIdsUrl] = fetchMock.mock.calls[2];
+    const [imagesUrl] = fetchMock.mock.calls[3];
     expect(String(detailsUrl)).toContain("/tv/1399");
     expect(String(creditsUrl)).toContain("/tv/1399/credits");
     expect(String(externalIdsUrl)).toContain("/tv/1399/external_ids");
+    expect(String(imagesUrl)).toContain("/tv/1399/images");
     expect(result).toEqual({
       id: 1399,
       mediaKind: "tv",
@@ -243,6 +311,19 @@ describe("tmdbMetadata actions", () => {
       runtime: 60,
       voteAverage: 8.5,
       posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+      backdropCandidates: [
+        {
+          filePath: "/backdrop.jpg",
+          url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+          width: 1280,
+          height: 720,
+          voteAverage: 5.6,
+          voteCount: 40,
+          iso639_1: "en",
+          isPrimary: true,
+        },
+      ],
       imdbId: "tt0944947",
       genres: ["Drama"],
       productionCountries: ["United States of America"],
@@ -274,5 +355,48 @@ describe("tmdbMetadata actions", () => {
       "TMDB_READ_ACCESS_TOKEN is not configured."
     );
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("creates a primary backdrop candidate from the details backdrop when the images call has no backdrops", async () => {
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          id: 603,
+          title: "Matrix",
+          original_title: "The Matrix",
+          overview: "Overview",
+          release_date: "1999-03-31",
+          poster_path: "/poster.jpg",
+          backdrop_path: "/backdrop.jpg",
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ crew: [], cast: [] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ imdb_id: null }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ backdrops: [] }),
+      });
+
+    const result = await getTmdbMovieMetadata(603);
+
+    expect(result.backdropCandidates).toEqual([
+      {
+        filePath: "/backdrop.jpg",
+        url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+        width: null,
+        height: null,
+        voteAverage: null,
+        voteCount: null,
+        iso639_1: null,
+        isPrimary: true,
+      },
+    ]);
   });
 });

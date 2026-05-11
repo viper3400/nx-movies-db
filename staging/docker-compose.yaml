@@ -13,6 +13,7 @@ services:
       - "3000:3000"
     volumes:
       - /home/jan/videodb-images/production/coverpics:/media/coverimages
+      - /home/jan/videodb-images/production/background:/media/posterimages
     restart: always
     environment:
       - GRAPHQL_URL=${GRAPHQL_URL}
@@ -27,5 +28,6 @@ services:
       - GRAPHQL_PROXY_URL=${GRAPHQL_PROXY_URL}
       - JWT_SECRET=${JWT_SECRET}
       - COVER_IMAGE_PATH=/media/coverimages
+      - POSTER_IMAGE_PATH=/media/posterimages
     depends_on:
       - movies-service

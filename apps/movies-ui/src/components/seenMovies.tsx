@@ -21,7 +21,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [nextPage, setNextPage] = useState<number>();
 
-  const { appBasePath, imageBaseUrl } = useAppBasePath();
+  const { appBasePath, imageBaseUrl, posterImageBaseUrl } = useAppBasePath();
   const { loadUserFlagsForMovie, updateUserFlagsForMovie } = useUserFlags(userName);
   const { loadSeenDatesForMovie, deleteUserSeenDateForMovie } = useSeenDates(userName);
 
@@ -142,6 +142,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
                     showDetailsButton
                     detailsUrl={detailsUrl}
                     imageUrl={imageBaseUrl + "/" + entry.movieId}
+                    bodyBackgroundImageUrl={posterImageBaseUrl ? `${posterImageBaseUrl}/${entry.movieId}` : undefined}
                     loadSeenDatesForMovie={loadSeenDatesForMovie}
                     loadUserFlagsForMovie={loadUserFlagsForMovie}
                     updateFlagsForMovie={updateUserFlagsForMovie}

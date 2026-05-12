@@ -185,24 +185,28 @@ export const MovieCard = ({
               <div className="shrink-0">
                 {detailsUrl ? (
                   <a href={detailsUrl} target="_blank" rel="noopener noreferrer">
-                    <Image
-                      alt="Movie Cover"
-                      height={180}
-                      src={imageUrl}
-                      width={120}
-                      className="rounded shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
-                      unoptimized
-                    />
+                    <div className="relative h-[180px] w-[120px]">
+                      <Image
+                        alt="Movie Cover"
+                        src={imageUrl}
+                        fill
+                        sizes="120px"
+                        className="rounded object-cover shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
+                        unoptimized
+                      />
+                    </div>
                   </a>
                 ) : (
-                  <Image
-                    alt="Movie Cover"
-                    height={180}
-                    src={imageUrl}
-                    width={120}
-                    className="rounded shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
-                    unoptimized
-                  />
+                  <div className="relative h-[180px] w-[120px]">
+                    <Image
+                      alt="Movie Cover"
+                      src={imageUrl}
+                      fill
+                      sizes="120px"
+                      className="rounded object-cover shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
+                      unoptimized
+                    />
+                  </div>
                 )}
               </div> <ScrollShadow className="h-[280px]">
                 <div className="flex-1 text-left">

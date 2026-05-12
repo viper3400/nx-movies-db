@@ -27,5 +27,6 @@ services:
       - GRAPHQL_PROXY_URL=${GRAPHQL_PROXY_URL}
       - JWT_SECRET=${JWT_SECRET}
       - COVER_IMAGE_PATH=/media/coverimages
+      - POSTER_IMAGE_PATH=/media/posterimages
     depends_on:
       - movies-service

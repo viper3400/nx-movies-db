@@ -5,15 +5,73 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'staging/**'
   pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'staging/**'
 
 permissions:
   actions: read
   contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      db: ${{ steps.filter.outputs.db }}
+      e2e: ${{ steps.filter.outputs.e2e }}
+      storybook: ${{ steps.filter.outputs.storybook }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            db:
+              - 'libs/movies-prisma-lib/**'
+              - 'libs/movies-graphql-lib/**'
+              - 'apps/movies-service/**'
+              - 'development-db/**'
+              - 'seed/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'nx.json'
+              - 'tsconfig.base.json'
+              - '.github/workflows/ci.yml'
+            e2e:
+              - 'apps/movies-ui/**'
+              - 'apps/movies-service/**'
+              - 'libs/movies-graphql-lib/**'
+              - 'libs/movies-prisma-lib/**'
+              - 'libs/shared-ui/**'
+              - 'libs/shared-types/**'
+              - 'development-db/**'
+              - 'seed/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'nx.json'
+              - 'tsconfig.base.json'
+              - '.github/workflows/ci.yml'
+            storybook:
+              - 'libs/shared-ui/**'
+              - 'libs/shared-types/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'nx.json'
+              - 'tsconfig.base.json'
+              - '.github/workflows/ci.yml'
+
   main:
     runs-on: ubuntu-latest
+    needs: changes
     env:
       DATABASE_URL: mysql://root:password@127.0.0.1:7200/videodb
       GITHUB_ID: dummy
@@ -37,38 +95,50 @@ jobs:
           cache: 'npm'
 
       - run: npm ci
-      #- uses: nrwl/nx-set-shas@v4
+      - uses: nrwl/nx-set-shas@v4
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: npx nx-cloud record -- echo Hello World
-      # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       # Run prisma generate first
-      - run: npx nx prisma-generate movies-prisma-lib --skip-nx-cache
-      # Now run lint and build in parallel
-      - run: npx nx run-many --all --parallel --skip-nx-cache --targets=lint
+      - run: npx nx run movies-prisma-lib:prisma-generate
 
-      # Now run lint and build in parallel
-      - run: npx nx run-many --all --parallel --skip-nx-cache --targets=build
+      - name: Lint changed projects on PRs
+        if: github.event_name == 'pull_request'
+        run: npx nx affected -t lint --parallel
 
-      # Now run shared-types tests
-      - run: npx nx run shared-types:test --skip-nx-cache
+      - name: Lint all projects on main
+        if: github.event_name != 'pull_request'
+        run: npx nx run-many --all --parallel --targets=lint
 
-      # Now run movies-ui integration tests
-      - run: npx nx run movies-ui:test --skip-nx-cache
+      - name: Build changed projects on PRs
+        if: github.event_name == 'pull_request'
+        run: npx nx affected -t build --parallel
 
-      # Now run shared-ui tests
-      - run: npx nx run shared-ui:test --skip-nx-cache
+      - name: Build all projects on main
+        if: github.event_name != 'pull_request'
+        run: npx nx run-many --all --parallel --targets=build
+
+      - name: Test changed projects on PRs
+        if: github.event_name == 'pull_request'
+        run: npx nx affected -t test --parallel --exclude=movies-prisma-lib,movies-service-e2e
+
+      - name: Test all default projects on main
+        if: github.event_name != 'pull_request'
+        run: npx nx run-many --all --parallel --targets=test --exclude=movies-prisma-lib,movies-service-e2e
 
       - name: Start Storybook
+        if: github.event_name != 'pull_request' || needs.changes.outputs.storybook == 'true'
         run: |
           npx nx run shared-ui:storybook --port 6006 --host 127.0.0.1 > storybook.log 2>&1 &
         env:
           CI: true # Set CI environment variable if needed
 
       - name: Install Playwright browsers
+        if: github.event_name != 'pull_request' || needs.changes.outputs.storybook == 'true'
         run: npx playwright install chromium
 
       - name: Wait for Storybook to be ready
+        if: github.event_name != 'pull_request' || needs.changes.outputs.storybook == 'true'
         run: |
           for i in {1..60}; do
             if curl -fsS http://127.0.0.1:6006 > /dev/null; then
@@ -82,11 +152,14 @@ jobs:
           exit 1
 
       - name: Run Storybook Tests
+        if: github.event_name != 'pull_request' || needs.changes.outputs.storybook == 'true'
         run: npx nx run shared-ui:test-storybook --url http://127.0.0.1:6006
 
   movies-prisma-lib-test:
     name: movies-prisma-lib DB tests
     runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.db == 'true'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -137,7 +210,7 @@ jobs:
           DATABASE_NAME: videodb
           DEBUG: prisma:client
         run: |
-          npx nx run movies-prisma-lib:test --skip-nx-cache
+          npx nx run movies-prisma-lib:test
 
       - name: Stop development DB
         if: always()
@@ -146,6 +219,8 @@ jobs:
   e2e-playwright:
     name: E2E Playwright (UI + DB + Service)
     runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.e2e == 'true'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -183,7 +258,7 @@ jobs:
           JWT_SECRET: qwertyuiopasdfghjklzxcvbnm123456
           PORT: 7100
         run: |
-          npx nx serve movies-service --configuration=production --skip-nx-cache &
+          npx nx serve movies-service --configuration=production &
           # Wait for GraphQL endpoint
           for i in {1..60}; do
             if curl -sS http://127.0.0.1:7100/graphql > /dev/null; then echo "Service up"; break; fi

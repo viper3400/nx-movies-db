@@ -15,6 +15,7 @@ interface SeenMoviesComponentProperties {
   userName: string
 }
 export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties) => {
+  const resultsContainerRef = useRef<HTMLDivElement | null>(null);
   const [seenMovies, setSeenMovies] = useState<SeenEntry[] | undefined>();
   const [dateRange, setDateRange] = useState<DateRange>({ startDate: parseDate("2010-01-01"), endDate: (parseDate("2099-01-01")) });
   const [loading, setLoading] = useState<boolean>(false);
@@ -117,56 +118,58 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
   }, []);
 
   return (
-    <div>
-      <div>
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="-mx-2 shrink-0 border-b border-default-200/70 bg-background/95 px-2 pb-4 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <DateRangeDrawerComponent onApply={onDateRangeChanged} />
       </div>
-      <div>
-        {seenMovies && imageBaseUrl && (
-          <AnimatePresence mode="popLayout">
-            {seenMovies.map((entry) => {
-              const detailsUrl = typeof appBasePath === "string" ? `${appBasePath}/details/${entry.movieId}` : undefined;
-              return (
-                <motion.div
-                  key={entry.movieId}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Spacer y={4} />
-                  <MovieCard
-                    movie={entry.video}
-                    showMarkAsSeenButtons={false}
-                    showDetailsButton
-                    detailsUrl={detailsUrl}
-                    imageUrl={imageBaseUrl + "/" + entry.movieId}
-                    bodyBackgroundImageUrl={posterImageBaseUrl ? `${posterImageBaseUrl}/${entry.movieId}` : undefined}
-                    loadSeenDatesForMovie={loadSeenDatesForMovie}
-                    loadUserFlagsForMovie={loadUserFlagsForMovie}
-                    updateFlagsForMovie={updateUserFlagsForMovie}
-                    setUserSeenDateForMovie={function (movieId: string, date: Date): Promise<void> {
-                      throw new Error("Function not implemented.");
-                    }} deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
-                    onAllSeenDatesDeleted={handleMovieRemoval}
-                    langResources={{
-                      "seenTodayLabel": "Seen Today",
-                      "chooseDateLabel": "Choose Date",
-                      "deletedEntryLabel": "Deleted Entry"
-                    }} />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        )}
-        <ResultsStatusIndicator
-          isLoading={loading}
-          hasNoResults={Array.isArray(seenMovies) && seenMovies.length === 0}
-          hasNoMoreResults={Array.isArray(seenMovies) && seenMovies.length > 0 && !hasMore}
-        />
+      <div ref={resultsContainerRef} className="min-h-0 flex-1 overflow-y-auto pt-4">
+        <div>
+          {seenMovies && imageBaseUrl && (
+            <AnimatePresence mode="popLayout">
+              {seenMovies.map((entry) => {
+                const detailsUrl = typeof appBasePath === "string" ? `${appBasePath}/details/${entry.movieId}` : undefined;
+                return (
+                  <motion.div
+                    key={entry.movieId}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Spacer y={4} />
+                    <MovieCard
+                      movie={entry.video}
+                      showMarkAsSeenButtons={false}
+                      showDetailsButton
+                      detailsUrl={detailsUrl}
+                      imageUrl={imageBaseUrl + "/" + entry.movieId}
+                      bodyBackgroundImageUrl={posterImageBaseUrl ? `${posterImageBaseUrl}/${entry.movieId}` : undefined}
+                      loadSeenDatesForMovie={loadSeenDatesForMovie}
+                      loadUserFlagsForMovie={loadUserFlagsForMovie}
+                      updateFlagsForMovie={updateUserFlagsForMovie}
+                      setUserSeenDateForMovie={function (movieId: string, date: Date): Promise<void> {
+                        throw new Error("Function not implemented.");
+                      }} deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
+                      onAllSeenDatesDeleted={handleMovieRemoval}
+                      langResources={{
+                        "seenTodayLabel": "Seen Today",
+                        "chooseDateLabel": "Choose Date",
+                        "deletedEntryLabel": "Deleted Entry"
+                      }} />
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          )}
+          <ResultsStatusIndicator
+            isLoading={loading}
+            hasNoResults={Array.isArray(seenMovies) && seenMovies.length === 0}
+            hasNoMoreResults={Array.isArray(seenMovies) && seenMovies.length > 0 && !hasMore}
+          />
+        </div>
+        <PageEndObserver onIntersect={handleNextPageTrigger} rootRef={resultsContainerRef} />
       </div>
-      <PageEndObserver onIntersect={handleNextPageTrigger} />
     </div>
   );
 };

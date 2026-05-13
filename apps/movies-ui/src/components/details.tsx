@@ -49,9 +49,9 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
     return <div>Error: {error.message}</div>;
   }
   return (
-    <div>
+    <div className="h-full min-h-0">
       {movie &&
-        <div>
+        <div className="flex h-full min-h-0 flex-col">
           <MovieCard
             movie={movie}
             imageUrl={imageBaseUrl + "/" + id}
@@ -62,6 +62,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
             updateFlagsForMovie={updateUserFlagsForMovie}
             setUserSeenDateForMovie={setUserSeenDateForMovie}
             deleteUserSeenDateForMovie={deleteUserSeenDateForMovie}
+            stretchToFill
             langResources={{
               seenTodayLabel: t("movie_card.seen_today"),
               chooseDateLabel: t("movie_card.choose_date"),

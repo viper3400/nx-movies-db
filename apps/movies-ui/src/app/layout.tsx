@@ -26,11 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} nextAuthUrl={nextAuthUrl}>
           {/* ONE wrapper – full width always */}
-          <div className="w-screen min-h-screen overflow-x-hidden">
-            <NavbarComponent />
+          <div className="w-screen min-h-screen">
+            <div className="fixed inset-x-0 top-0 z-40">
+              <NavbarComponent />
+            </div>
 
             {/* content: narrow-ish on phones, full width from sm+ */}
-            <main className="w-full px-0">
+            <main className="w-full px-0 pt-16">
               {children}
             </main>
           </div>

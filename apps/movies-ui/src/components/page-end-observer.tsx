@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 
 interface PageEndObserverProps {
   onIntersect: () => void;
+  rootRef?: RefObject<Element | null>;
 }
 
-const PageEndObserver: React.FC<PageEndObserverProps> = ({ onIntersect }) => {
+const PageEndObserver: React.FC<PageEndObserverProps> = ({ onIntersect, rootRef }) => {
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -14,7 +15,10 @@ const PageEndObserver: React.FC<PageEndObserverProps> = ({ onIntersect }) => {
           onIntersect();
         }
       },
-      { threshold: 1.0 }
+      {
+        root: rootRef?.current ?? null,
+        threshold: 1.0,
+      }
     );
 
     if (observerRef.current) {
@@ -26,7 +30,7 @@ const PageEndObserver: React.FC<PageEndObserverProps> = ({ onIntersect }) => {
         observer.unobserve(observerRef.current);
       }
     };
-  }, [onIntersect]);
+  }, [onIntersect, rootRef]);
 
   return <div ref={observerRef} style={{ height: "10px" }} />;
 };

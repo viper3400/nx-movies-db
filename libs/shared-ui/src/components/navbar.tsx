@@ -46,7 +46,7 @@ export const NavbarComponent = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="sticky">
+    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="static">
       <NavbarBrand data-testid="NavbarBrand">
         <SceneLogo />
         <Spacer x={4} />

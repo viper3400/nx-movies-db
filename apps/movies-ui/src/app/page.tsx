@@ -7,7 +7,7 @@ const getContentBasedOnSession = async () => {
   const session = await getAllowedSession();
   if (session) {
     return (
-      <div className="p-2">
+      <div className="h-[calc(100vh-4rem)] overflow-hidden p-2">
         <MovieComponent session={session} />
       </div>
     );
@@ -19,7 +19,7 @@ const getContentBasedOnSession = async () => {
 export default async function Home() {
   const content = await getContentBasedOnSession();
   return (
-    <div>
+    <div className="min-h-0">
       {content}
     </div>
   );

@@ -6,7 +6,7 @@ const getContentBasedOnSession = async (id: string) => {
   const session = await getAllowedSession();
   if (session) {
     return (
-      <div className="p-2">
+      <div className="h-[calc(100vh-4rem)] overflow-hidden p-2">
         <DetailsComponent id={id} userName={session.userName} />
       </div>
     );
@@ -27,8 +27,8 @@ export default async function Page({ params,
   const id = (await params).id;
   const content = (await getContentBasedOnSession(id));
   return (
-    <>
+    <div className="min-h-0">
       {content}
-    </>
+    </div>
   );
 }

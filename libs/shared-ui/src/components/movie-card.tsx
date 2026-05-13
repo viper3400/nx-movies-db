@@ -30,6 +30,7 @@ export interface MovieCardProps {
   deleteUserSeenDateForMovie: (movieId: string, date: Date) => Promise<void>;
   onAllSeenDatesDeleted?: (movieId: string) => void;
   langResources: MovieCardLangResources;
+  stretchToFill?: boolean;
 }
 export const MovieCard = ({
   movie,
@@ -45,7 +46,9 @@ export const MovieCard = ({
   setUserSeenDateForMovie,
   deleteUserSeenDateForMovie,
   onAllSeenDatesDeleted,
-  langResources }: MovieCardProps) => {
+  langResources,
+  stretchToFill = false,
+}: MovieCardProps) => {
 
   const [seenDates, setSeenDates] = useState<string[]>([]);
   const [seenDatesLoading, setSeenDatesLoading] = useState(false);
@@ -105,8 +108,8 @@ export const MovieCard = ({
   }, [movie.id, additionalDataLoaded, loadSeenDatesForMovie, loadUserFlagsForMovie]);
 
   return (
-    <div key={movie.id} data-testid={`movie-card-${movie.id}`}>
-      <Card className="relative overflow-hidden border border-black/32 shadow-[0_10px_36px_rgba(0,0,0,0.14)] dark:border-white/22 dark:shadow-[0_12px_40px_rgba(0,0,0,0.42)]">
+    <div key={movie.id} data-testid={`movie-card-${movie.id}`} className={stretchToFill ? "h-full" : undefined}>
+      <Card className={`relative overflow-hidden border border-black/32 shadow-[0_10px_36px_rgba(0,0,0,0.14)] dark:border-white/22 dark:shadow-[0_12px_40px_rgba(0,0,0,0.42)] ${stretchToFill ? "flex h-full flex-col" : ""}`}>
         {bodyBackgroundImageUrl && (
           <div
             aria-hidden="true"
@@ -155,9 +158,9 @@ export const MovieCard = ({
           </div>
         </CardHeader>
         <Divider />
-        <div>
-          <CardBody className="relative overflow-hidden">
-            <div className="relative z-10 flex flex-col md:flex-row items-start ">
+        <div className={stretchToFill ? "flex min-h-0 flex-1 flex-col" : undefined}>
+          <CardBody className={`relative overflow-hidden ${stretchToFill ? "flex flex-1 flex-col" : ""}`}>
+            <div className="relative z-10 flex flex-col items-start md:flex-row ">
               {isDeletedMovie &&
                 <div className="mr-4 mb-4">
                   <Chip
@@ -181,7 +184,7 @@ export const MovieCard = ({
                   void handleSeenDateDeletion(date);
                 }} />
             </div>
-            <div className="relative z-10 flex gap-4">
+            <div className={`relative z-10 flex gap-4 ${stretchToFill ? "min-h-0 flex-1" : ""}`}>
               <div className="shrink-0">
                 {detailsUrl ? (
                   <a href={detailsUrl} target="_blank" rel="noopener noreferrer">
@@ -208,7 +211,7 @@ export const MovieCard = ({
                     />
                   </div>
                 )}
-              </div> <ScrollShadow className="h-[280px]">
+              </div> <ScrollShadow className={stretchToFill ? "min-h-0 flex-1" : "h-[280px]"}>
                 <div className="flex-1 text-left">
                   <p className="text-justify [text-shadow:0_1px_2px_rgba(255,255,255,0.68),0_0_20px_rgba(255,255,255,0.34)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_24px_rgba(0,0,0,0.62)]">
                     {movie.plot}
@@ -220,7 +223,7 @@ export const MovieCard = ({
           <Divider />
         </div>
 
-        <CardFooter className="relative z-10 bg-content1/30">
+        <CardFooter className={`relative z-10 bg-content1/30 ${stretchToFill ? "mt-auto" : ""}`}>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
             <div className="flex gap-4 md:flex-row flex-col">
               <div className="flex gap-2 flex-wrap">

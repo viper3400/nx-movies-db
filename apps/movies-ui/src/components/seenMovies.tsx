@@ -155,7 +155,8 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
                       langResources={{
                         "seenTodayLabel": "Seen Today",
                         "chooseDateLabel": "Choose Date",
-                        "deletedEntryLabel": "Deleted Entry"
+                        "deletedEntryLabel": "Deleted Entry",
+                        "editLabel": "Edit"
                       }} />
                   </motion.div>
                 );

@@ -27,7 +27,8 @@
     "deleted_entry": "Gelöschter Eintrag",
     "not_seen": "noch nicht gesehen",
     "times_seen": "x gesehen",
-    "rating": "Bewertung"
+    "rating": "Bewertung",
+    "edit_label": "Bearbeiten"
   },
   "choose_date_modal": {
     "dialog_title": "Datum auswählen",

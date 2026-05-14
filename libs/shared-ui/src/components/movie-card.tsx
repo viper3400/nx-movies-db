@@ -14,6 +14,7 @@ export interface MovieCardLangResources {
   seenTodayLabel: string;
   chooseDateLabel: string;
   deletedEntryLabel: string;
+  editLabel: string;
 }
 export interface MovieCardProps {
   movie: Movie;
@@ -275,7 +276,7 @@ export const MovieCard = ({
                     window.location.href = editUrl;
                   }}
                 >
-                  Edit
+                  {langResources.editLabel}
                 </Button>
               }
             </div>

@@ -27,7 +27,8 @@
     "deleted_entry": "Deleted Entry",
     "not_seen": "not seen",
     "times_seen": "times seen",
-    "rating": "Rating"
+    "rating": "Rating",
+    "edit_label": "Edit"
   },
   "choose_date_modal": {
     "dialog_title": "Choose Date",

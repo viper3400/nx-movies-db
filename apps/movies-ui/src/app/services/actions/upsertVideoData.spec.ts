@@ -97,6 +97,27 @@ describe("upsertVideoData cover localization", () => {
     expect(storePosterImageFromUrlMock).not.toHaveBeenCalled();
   });
 
+  it("keeps an empty subtitle in mutation variables so clearing it persists", async () => {
+    isRemoteHttpUrlMock.mockReturnValue(false);
+    mutate.mockResolvedValueOnce({
+      data: { upsertVideoData: { id: 530, title: "Remote Cover", imdbID: null } },
+    });
+
+    await upsertVideoData({
+      ...baseValues,
+      id: 530,
+      subtitle: "",
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(1);
+    expect(mutate.mock.calls[0][0].variables).toEqual(
+      expect.objectContaining({
+        id: 530,
+        subtitle: "",
+      })
+    );
+  });
+
   it("creates first, then downloads and writes localized cover metadata using the new id", async () => {
     mutate
       .mockResolvedValueOnce({

@@ -48,6 +48,7 @@ export const Default: Story = {
       seenTodayLabel: "Seen Today",
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
+      editLabel: "Edit"
     },
   },
   play: async ({ canvasElement }) => {
@@ -110,6 +111,7 @@ export const Deleted: Story = {
       seenTodayLabel: "Seen Today",
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
+      editLabel: "Edit"
     },
   },
   play: async ({ canvasElement }) => {
@@ -158,6 +160,7 @@ export const TextOverflow: Story = {
       seenTodayLabel: "Seen Today",
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
+      editLabel: "Edit"
     },
   },
   play: async ({ canvasElement }) => {

@@ -144,6 +144,30 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
   }
 `;
 
+const OPTIONAL_STRING_FIELDS = new Set<keyof UpsertVideoDataFormValues>([
+  "md5",
+  "title",
+  "subtitle",
+  "language",
+  "diskid",
+  "comment",
+  "disklabel",
+  "imdbID",
+  "imgurl",
+  "director",
+  "actors",
+  "country",
+  "plot",
+  "rating",
+  "filename",
+  "audio_codec",
+  "video_codec",
+  "custom1",
+  "custom2",
+  "custom3",
+  "custom4",
+]);
+
 function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
   const v: OptionalUpsertFields = {};
   const entries = Object.entries(values) as Array<[
@@ -152,7 +176,9 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
   ]>;
 
   for (const [key, val] of entries) {
-    if (val === undefined || val === null || val === "") continue;
+    if (val === undefined || val === null) continue;
+
+    if (val === "" && !OPTIONAL_STRING_FIELDS.has(key)) continue;
 
     // Normalize Date fields to ISO strings (GraphQL DateTime)
     if ((key === "filedate" || key === "lastupdate" || key === "created") && val instanceof Date) {

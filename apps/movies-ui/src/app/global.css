@@ -27,3 +27,11 @@
     border-color: var(--color-gray-200, currentcolor);
   }
 }
+
+@layer utilities {
+  .app-main-viewport {
+    height: calc(100vh - 4rem);
+    height: calc(100dvh - 4rem);
+    overflow: hidden;
+  }
+}

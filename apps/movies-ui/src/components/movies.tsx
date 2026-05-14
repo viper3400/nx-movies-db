@@ -84,6 +84,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
                 seenTodayLabel: t("movie_card.seen_today"),
                 chooseDateLabel: t("movie_card.choose_date"),
                 deletedEntryLabel: t("movie_card.deleted_entry"),
+                editLabel: t("movie_card.edit_label")
               }}
             />
           )}

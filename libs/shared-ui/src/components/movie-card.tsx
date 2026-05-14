@@ -113,7 +113,7 @@ export const MovieCard = ({
         {bodyBackgroundImageUrl && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-cover bg-right-top bg-no-repeat opacity-40 dark:opacity-30"
+            className={`pointer-events-none absolute inset-0 bg-cover bg-no-repeat opacity-40 dark:opacity-30 ${stretchToFill ? "bg-center" : "bg-right-top"}`}
             style={{ backgroundImage: `url("${bodyBackgroundImageUrl}")` }}
           />
         )}
@@ -194,7 +194,7 @@ export const MovieCard = ({
                         src={imageUrl}
                         fill
                         sizes="120px"
-                        className="rounded object-cover shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
+                        className={`rounded shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)] ${stretchToFill ? "object-contain" : "object-cover"}`}
                         unoptimized
                       />
                     </div>
@@ -206,7 +206,7 @@ export const MovieCard = ({
                       src={imageUrl}
                       fill
                       sizes="120px"
-                      className="rounded object-cover shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)]"
+                      className={`rounded shadow-[0_0_34px_rgba(255,255,255,0.28)] dark:shadow-[0_0_36px_rgba(0,0,0,0.62)] ${stretchToFill ? "object-contain" : "object-cover"}`}
                       unoptimized
                     />
                   </div>

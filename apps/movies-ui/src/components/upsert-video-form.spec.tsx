@@ -9,6 +9,7 @@ import { normalizeVideoDataForForm, UpsertVideoForm } from "./upsert-video-form"
 import { searchTmdbMovies, upsertVideoData } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
+import { navigateTo } from "../lib/navigate-to";
 
 type UpsertVideoDataFormProps = {
   values: VideoData;
@@ -53,8 +54,6 @@ const mockUpsertVideoDataForm = jest.fn((props: UpsertVideoDataFormProps) => {
     </div>
   );
 });
-
-const mockReplace = jest.fn();
 
 let mockMediaAndGenresState = {
   availableMediaTypes: [{ label: "DVD", value: "1" }],
@@ -280,16 +279,15 @@ jest.mock("../hooks/useAppBasePath", () => ({
   useAppBasePath: () => ({ appBasePath: "" }),
 }));
 
-jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    replace: mockReplace,
-  }),
+jest.mock("../lib/navigate-to", () => ({
+  navigateTo: jest.fn(),
 }));
 
 const mockUpsertVideoData = jest.mocked(upsertVideoData);
 const mockSearchTmdbMovies = jest.mocked(searchTmdbMovies);
 const mockUseAvailableMediaAndGenres = jest.mocked(useAvailableMediaAndGenres);
 const mockUseAvailableOwners = jest.mocked(useAvailableOwners);
+const mockNavigateTo = jest.mocked(navigateTo);
 
 const baseVideoData: VideoData = {
   id: null,
@@ -370,6 +368,23 @@ describe("UpsertVideoForm", () => {
         })
       );
     });
+  });
+
+  it("adopts the saved id locally after creating a new entry", async () => {
+    render(<UpsertVideoForm defaultOwnerId={7} />);
+
+    changeTitleAndSave("New Title");
+
+    await waitFor(() => {
+      expect(mockNavigateTo).toHaveBeenCalledWith("/edit/99");
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tmdb-refresh-toggle")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("tmdb-refresh-panel")).not.toBeInTheDocument();
+    expect(screen.getByText("Video #99")).toBeInTheDocument();
   });
 
   it("preserves owner id from existing initial values", async () => {

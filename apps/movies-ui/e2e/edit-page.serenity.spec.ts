@@ -21,6 +21,15 @@ import {
   isVisible,
 } from "@serenity-js/web";
 
+async function waitForSaveStatus(page: { waitForFunction: Function }, text: string) {
+  await page.waitForFunction(
+    (expectedText: string) =>
+      document.querySelector("[data-testid='upsert-video-form-save-status']")?.textContent?.includes(expectedText) ?? false,
+    text,
+    { timeout: 15_000 },
+  );
+}
+
 const saveButton = PageElement.located(
   By.css("[data-testid='editable-form-save']"),
 ).describedAs("save button");
@@ -38,6 +47,7 @@ const languageField = videoField("language", "language field");
 const diskIdField = videoField("diskid", "disk id field");
 const imdbIdField = videoField("imdbID", "IMDB ID field");
 const imageUrlField = videoField("imgurl", "image url field");
+const custom3Field = videoField("custom3", "custom3 field");
 const custom4Field = videoField("custom4", "custom4 field");
 const diskIdSuggestion = PageElement.located(
   By.css("[data-testid='video-field-diskid-suggestion']"),
@@ -243,7 +253,7 @@ test.describe("Edit page using Serenity/JS", () => {
     );
   });
 
-  test("actor can apply a TMDB backdrop without changing the cover image source", async ({
+  test("actor can apply a TMDB backdrop without replacing the cover with the backdrop", async ({
     actorCalled,
     page,
   }) => {
@@ -302,10 +312,6 @@ test.describe("Edit page using Serenity/JS", () => {
       });
     });
 
-    const createdRecordNavigation = page.waitForURL(/\/edit\/\d+$/, {
-      timeout: 15_000,
-    });
-
     await actor.attemptsTo(
       Navigate.to("/edit/new"),
       Wait.until(titleField, isVisible()),
@@ -316,11 +322,9 @@ test.describe("Edit page using Serenity/JS", () => {
       Click.on(diskIdSuggestion),
       Ensure.that(saveButton, isEnabled()),
       Click.on(saveButton),
-      Wait.until(saveButton, not(isEnabled())),
     );
+    await page.waitForURL(/\/edit\/\d+$/, { timeout: 15_000, waitUntil: "domcontentloaded" });
 
-    await createdRecordNavigation;
-    await page.reload({ waitUntil: "domcontentloaded" });
     await actor.attemptsTo(
       Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
       Wait.upTo(Duration.ofSeconds(15)).until(tmdbRefreshToggle, isVisible()),
@@ -332,8 +336,8 @@ test.describe("Edit page using Serenity/JS", () => {
       Press.the(Key.Tab).in(imdbIdField),
       Ensure.that(saveButton, isEnabled()),
       Click.on(saveButton),
-      Wait.until(saveButton, not(isEnabled())),
     );
+    await waitForSaveStatus(page, "Alle Änderungen gespeichert");
 
     await page.reload({ waitUntil: "domcontentloaded" });
 
@@ -346,17 +350,19 @@ test.describe("Edit page using Serenity/JS", () => {
       Click.on(tmdbBackdropOption(1)),
       Click.on(tmdbMergeApplyButton),
       Ensure.that(Attribute.called("value").of(imageUrlField), equals(localCoverUrl)),
+      Ensure.that(Attribute.called("value").of(custom3Field), equals("")),
       Ensure.that(Attribute.called("value").of(custom4Field), equals(alternateBackdropUrl)),
       Ensure.that(saveButton, isEnabled()),
       Click.on(saveButton),
-      Wait.until(saveButton, not(isEnabled())),
     );
+    await waitForSaveStatus(page, "Alle Änderungen gespeichert");
 
     await page.reload();
 
     await actor.attemptsTo(
       Wait.until(titleField, isVisible()),
-      Ensure.that(Attribute.called("value").of(imageUrlField), equals(localCoverUrl)),
+      Ensure.that(Attribute.called("value").of(imageUrlField), matches(/^\.\/\d+\.jpg$/)),
+      Ensure.that(Attribute.called("value").of(custom3Field), equals(localCoverUrl)),
       Ensure.that(Attribute.called("value").of(custom4Field), equals(alternateBackdropUrl)),
       Ensure.that(Attribute.called("value").of(imdbIdField), equals("tmdb:movie:603")),
     );

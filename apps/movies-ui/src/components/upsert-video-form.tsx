@@ -22,13 +22,13 @@ import {
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
 import { Button, Card, CardBody, Chip, Skeleton, Tooltip, addToast } from "@heroui/react";
-import { useRouter } from "next/navigation";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
   getTmdbMetadataMergeCandidates,
 } from "../app/services/actions/tmdbMetadataMapper";
 import { useAppBasePath } from "../hooks/useAppBasePath";
+import { navigateTo } from "../lib/navigate-to";
 import type { Selection } from "@react-types/shared";
 
 const STRING_FORM_FIELDS = [
@@ -159,7 +159,6 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
     genresError,
   } = useAvailableMediaAndGenres();
   const { availableOwners, loadingOwners, ownersError } = useAvailableOwners();
-  const router = useRouter();
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const defaults: UpsertVideoDataFormValues = useMemo(
@@ -226,6 +225,14 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
         try {
           setSaveError(null);
           const result = await upsertVideoData(values);
+          const savedValues = normalizeVideoDataForForm(
+            {
+              ...values,
+              ...result,
+              id: result?.id ?? values.id,
+            },
+            defaultOwnerId,
+          );
           addToast({
             title: "Video gespeichert",
             description: result?.title ?? values.title ?? `Eintrag #${result?.id ?? values.id ?? "?"}`,
@@ -234,8 +241,10 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
 
           if (creatingNewRecord && result?.id) {
             const editPath = `/edit/${result.id}`;
-            router.replace(editPath);
+            navigateTo(editPath);
           }
+
+          return savedValues;
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unbekannter Fehler beim Speichern";
           setSaveError(message);
@@ -570,13 +579,16 @@ function UpsertVideoFormContent({
     <div className="space-y-3">
       <div className="flex items-center justify-between text-sm text-default-500">
         <span>
+          <span data-testid="upsert-video-form-record-label">
           {values.id ? `Video #${values.id}` : "Neuer Eintrag"}
+          </span>
         </span>
         <Tooltip
           isDisabled={!dirty || !changedFieldLabelText}
           content={changedFieldLabelText ? `Changed: ${changedFieldLabelText}` : undefined}
         >
           <Chip
+            data-testid="upsert-video-form-save-status"
             size="sm"
             color={saving ? "primary" : dirty ? "warning" : "success"}
             variant={saving ? "solid" : "flat"}

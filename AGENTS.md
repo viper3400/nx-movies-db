@@ -121,6 +121,7 @@ Notes:
 - Keep changes scoped to the project involved in the task.
 - If generated files change, mention the command that produced them.
 - If a command requires a running DB, say so instead of treating the failure as a code failure.
+- Agent sessions may run in non-interactive shells. Ensure `node` and `npm` are available on `PATH` in that context too; if using `mise`, enable shell activation so automated sessions can resolve the pinned Node version from `.mise.toml`.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

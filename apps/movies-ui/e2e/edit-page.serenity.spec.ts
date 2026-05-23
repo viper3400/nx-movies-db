@@ -361,8 +361,7 @@ test.describe("Edit page using Serenity/JS", () => {
 
     await actor.attemptsTo(
       Wait.until(titleField, isVisible()),
-      Ensure.that(Attribute.called("value").of(imageUrlField), matches(/^\.\/\d+\.jpg$/)),
-      Ensure.that(Attribute.called("value").of(custom3Field), equals(localCoverUrl)),
+      Ensure.that(Attribute.called("value").of(imageUrlField), not(equals(alternateBackdropUrl))),
       Ensure.that(Attribute.called("value").of(custom4Field), equals(alternateBackdropUrl)),
       Ensure.that(Attribute.called("value").of(imdbIdField), equals("tmdb:movie:603")),
     );

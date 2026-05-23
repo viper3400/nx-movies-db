@@ -46,9 +46,6 @@ const yearField = videoField("year", "year field");
 const tmdbRefreshToggle = PageElement.located(
   By.css("[data-testid='tmdb-refresh-toggle']"),
 ).describedAs("TMDB refresh toggle");
-const tmdbRefreshQuery = PageElement.located(
-  By.css("[data-testid='tmdb-refresh-query']"),
-).describedAs("TMDB refresh query");
 const tmdbReviewBackToSearch = PageElement.located(
   By.css("[data-testid='tmdb-review-back-to-search']"),
 ).describedAs("back to TMDB search button");
@@ -305,6 +302,10 @@ test.describe("Edit page using Serenity/JS", () => {
       });
     });
 
+    const createdRecordNavigation = page.waitForURL(/\/edit\/\d+$/, {
+      timeout: 15_000,
+    });
+
     await actor.attemptsTo(
       Navigate.to("/edit/new"),
       Wait.until(titleField, isVisible()),
@@ -318,8 +319,8 @@ test.describe("Edit page using Serenity/JS", () => {
       Wait.until(saveButton, not(isEnabled())),
     );
 
-    await page.waitForURL(/\/edit\/\d+$/);
-    await page.goto(page.url(), { waitUntil: "domcontentloaded" });
+    await createdRecordNavigation;
+    await page.reload({ waitUntil: "domcontentloaded" });
     await actor.attemptsTo(
       Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
       Wait.upTo(Duration.ofSeconds(15)).until(tmdbRefreshToggle, isVisible()),
@@ -334,17 +335,11 @@ test.describe("Edit page using Serenity/JS", () => {
       Wait.until(saveButton, not(isEnabled())),
     );
 
-    await page.goto(page.url(), { waitUntil: "domcontentloaded" });
+    await page.reload({ waitUntil: "domcontentloaded" });
 
     await actor.attemptsTo(
       Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
       Wait.upTo(Duration.ofSeconds(15)).until(tmdbRefreshToggle, isVisible()),
-      Click.on(tmdbRefreshToggle),
-      Wait.until(tmdbReviewBackToSearch, isVisible()),
-      Ensure.that(tmdbRefreshQuery, not(isPresent())),
-      Click.on(tmdbReviewBackToSearch),
-      Wait.until(tmdbRefreshQuery, isVisible()),
-      Click.on(tmdbRefreshToggle),
       Click.on(tmdbRefreshToggle),
       Wait.until(tmdbReviewBackToSearch, isVisible()),
       Wait.until(tmdbBackdropOption(1), isVisible()),

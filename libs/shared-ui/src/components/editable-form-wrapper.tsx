@@ -9,7 +9,7 @@ export type EditableFormFrame = typeof EDITABLE_FORM_FRAME_OPTIONS[number];
 
 export interface EditableFormWrapperProps<T> {
   initialValues: T;
-  onSave: (values: T) => void | Promise<void>;
+  onSave: (values: T) => T | void | Promise<T | void>;
   onDiscard?: (values: T) => void;
   readOnly?: boolean;
   className?: string;
@@ -66,8 +66,10 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
     if (saving || readOnly || !dirty) return;
     try {
       setSaving(true);
-      await onSave(draftValues);
-      setSavedValues(draftValues);
+      const savedResult = await onSave(draftValues);
+      const nextSavedValues = savedResult ?? draftValues;
+      setSavedValues(nextSavedValues);
+      setDraftValues(nextSavedValues);
     } finally {
       setSaving(false);
     }

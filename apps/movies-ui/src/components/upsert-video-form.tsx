@@ -580,7 +580,7 @@ function UpsertVideoFormContent({
       <div className="flex items-center justify-between text-sm text-default-500">
         <span>
           <span data-testid="upsert-video-form-record-label">
-          {values.id ? `Video #${values.id}` : "Neuer Eintrag"}
+            {values.id ? `Video #${values.id}` : "Neuer Eintrag"}
           </span>
         </span>
         <Tooltip

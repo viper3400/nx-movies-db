@@ -29,13 +29,13 @@
     "@apollo/client-integration-nextjs": "^0.14.1",
     "@graphql-yoga/plugin-jwt": "^3.4.3",
     "@heroui/react": "2.8.10",
-    "@internationalized/date": "3.12.1",
+    "@internationalized/date": "3.12.2",
     "@pothos/core": "^4.12.0",
     "@pothos/plugin-prisma": "^4.14.0",
     "@pothos/plugin-simple-objects": "^4.1.0",
     "@prisma/adapter-mariadb": "^7.0.1",
     "@prisma/client": "^7.0.0",
-    "@react-aria/i18n": "3.13.0",
+    "@react-aria/i18n": "3.13.1",
     "@react-aria/ssr": "^3.9.10",
     "@react-aria/visually-hidden": "^3.8.31",
     "axios": "^1.6.0",
@@ -61,8 +61,8 @@
     "zod": "^4.3.4"
   },
   "overrides": {
-    "@react-aria/i18n": "3.13.0",
-    "@internationalized/date": "3.12.1",
+    "@react-aria/i18n": "3.13.1",
+    "@internationalized/date": "3.12.2",
     "lucide-react": "^1.0.0"
   },
   "devDependencies": {

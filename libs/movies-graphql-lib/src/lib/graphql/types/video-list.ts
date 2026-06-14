@@ -11,6 +11,9 @@ builder.queryType({
         ids: t.arg.stringList({
           description: "Filter videos by ids",
         }),
+        excludedIds: t.arg.stringList({
+          description: "Exclude videos by ids",
+        }),
         title: t.arg.string({
           description: "Filter videos by title",
         }),

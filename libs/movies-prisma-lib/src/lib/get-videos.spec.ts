@@ -1,6 +1,11 @@
+import { prisma } from "../prismaclient";
 import { getVideos } from "./get-videos";
 
 describe("getVideos", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("should return all videos when no args are set", async () => {
     const result = await getVideos({}, undefined);
     expect(Array.isArray(result.videos)).toBe(true);
@@ -102,5 +107,83 @@ describe("getVideos", () => {
     expect(result.videos.length).toBeGreaterThan(0);
     expect(result.videos[0]).toHaveProperty("plot");
     expect(result.videos[0]).toHaveProperty("userMovieSettings");
+  });
+
+  it("should exclude recent random ids when enough candidates remain", async () => {
+    const findManySpy = jest.spyOn(prisma.videodb_videodata, "findMany");
+
+    findManySpy
+      .mockResolvedValueOnce([{ id: 3 }, { id: 4 }] as any)
+      .mockResolvedValueOnce([
+        { id: 3, title: "Movie 3" },
+        { id: 4, title: "Movie 4" },
+      ] as any);
+
+    jest.spyOn(Math, "random")
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0);
+
+    const result = await getVideos({
+      randomOrder: true,
+      excludedIds: ["1", "2"],
+      take: 2,
+    }, undefined);
+
+    expect(result.totalCount).toBe(2);
+    expect(result.videos.map(video => video.id)).toEqual([4, 3]);
+    expect(findManySpy.mock.calls[0][0].where.AND[2]).toEqual({
+      id: { notIn: [1, 2] },
+    });
+  });
+
+  it("should trim the oldest excluded ids until enough random candidates remain", async () => {
+    const findManySpy = jest.spyOn(prisma.videodb_videodata, "findMany");
+
+    findManySpy
+      .mockResolvedValueOnce([{ id: 4 }] as any)
+      .mockResolvedValueOnce([{ id: 1 }, { id: 4 }] as any)
+      .mockResolvedValueOnce([
+        { id: 1, title: "Movie 1" },
+        { id: 4, title: "Movie 4" },
+      ] as any);
+
+    jest.spyOn(Math, "random")
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0);
+
+    const result = await getVideos({
+      randomOrder: true,
+      excludedIds: ["1", "2", "3"],
+      take: 2,
+    }, undefined);
+
+    expect(findManySpy.mock.calls[0][0].where.AND[2]).toEqual({
+      id: { notIn: [1, 2, 3] },
+    });
+    expect(findManySpy.mock.calls[1][0].where.AND[2]).toEqual({
+      id: { notIn: [2, 3] },
+    });
+    expect(result.videos.map(video => video.id).sort()).toEqual([1, 4]);
+  });
+
+  it("should preserve sampled random order instead of sorting alphabetically", async () => {
+    jest.spyOn(prisma.videodb_videodata, "findMany")
+      .mockResolvedValueOnce([{ id: 1 }, { id: 2 }, { id: 3 }] as any)
+      .mockResolvedValueOnce([
+        { id: 1, title: "Alpha" },
+        { id: 2, title: "Bravo" },
+        { id: 3, title: "Charlie" },
+      ] as any);
+
+    jest.spyOn(Math, "random")
+      .mockReturnValueOnce(0.5)
+      .mockReturnValueOnce(0);
+
+    const result = await getVideos({
+      randomOrder: true,
+      take: 3,
+    }, undefined);
+
+    expect(result.videos.map(video => video.id)).toEqual([3, 1, 2]);
   });
 });

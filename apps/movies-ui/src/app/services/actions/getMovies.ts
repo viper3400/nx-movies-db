@@ -29,6 +29,7 @@ type GetMoviesResult = {
 type GetMoviesVariables = {
   title: string;
   diskid: string;
+  excludedIds: string[];
   deleteMode: string; // GraphQL enum DeleteMode
   tvSeriesMode: string; // GraphQL enum TvSeriesMode
   filterFavorites: boolean;
@@ -45,6 +46,7 @@ const getMovieByTitle: TypedDocumentNode<GetMoviesResult, GetMoviesVariables> = 
   query GetMovies(
     $title: String!,
     $diskid: String!,
+    $excludedIds: [String!]!,
     $deleteMode: DeleteMode,
     $tvSeriesMode: TvSeriesMode,
     $filterFavorites: Boolean!,
@@ -59,6 +61,7 @@ const getMovieByTitle: TypedDocumentNode<GetMoviesResult, GetMoviesVariables> = 
     videos(
       title: $title,
       diskid: $diskid,
+      excludedIds: $excludedIds,
       deleteMode: $deleteMode,
       tvSeriesMode: $tvSeriesMode
       filterFavorites: $filterFavorites,
@@ -100,6 +103,7 @@ export async function getMovies(
   filterRandom: boolean,
   mediaType: string[],
   genreName: string[],
+  excludedIds: string[],
   userName: string,
   take: number,
   skip: number) {
@@ -116,6 +120,7 @@ export async function getMovies(
   const variables: GetMoviesVariables = {
     title: searchTitle,
     diskid: searchDiskId,
+    excludedIds,
     deleteMode: deleteMode,
     tvSeriesMode: tvSeriesMode,
     filterFavorites: filterFavorites,
@@ -135,6 +140,7 @@ export async function getMovies(
   const { data, error } = await getClient().query<GetMoviesResult, GetMoviesVariables>({
     query: getMovieByTitle,
     variables,
+    fetchPolicy: filterRandom ? "no-cache" : undefined,
   });
   if (error) throw new Error(error.message);
   return data;

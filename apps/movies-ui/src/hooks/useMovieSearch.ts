@@ -11,6 +11,7 @@ interface UseMovieSearchProps {
 }
 
 const SEARCH_STATE_KEY = "moviesSearchState";
+const RECENT_RANDOM_HISTORY_LIMIT = 100;
 
 // Helper to map IDs to labels
 const getNameFromId = (ids: string[], options: Array<{ label: string; value: string }>): string[] =>
@@ -21,7 +22,19 @@ const getNameFromId = (ids: string[], options: Array<{ label: string; value: str
 type SearchState = {
   filters: MovieSearchFilters;
   searchText: string;
+  recentRandomMovieIds: string[];
 };
+
+export const mergeRecentRandomMovieIds = (currentIds: string[], newIds: string[], limit = RECENT_RANDOM_HISTORY_LIMIT) =>
+  [...currentIds, ...newIds].reduce<string[]>((acc, id) => {
+    const normalizedId = String(id);
+    const existingIndex = acc.indexOf(normalizedId);
+    if (existingIndex !== -1) {
+      acc.splice(existingIndex, 1);
+    }
+    acc.push(normalizedId);
+    return acc.slice(-limit);
+  }, []);
 
 export function useMovieSearch({
   session,
@@ -61,15 +74,18 @@ export function useMovieSearch({
         return {
           filters: normalizeFilters(merged),
           searchText: parsed.searchText ?? "",
+          recentRandomMovieIds: Array.isArray(parsed.recentRandomMovieIds)
+            ? parsed.recentRandomMovieIds.map((id: string | number) => String(id))
+            : [],
         };
       } catch {
         // ignore
       }
     }
-    return { filters: normalizeFilters(moviesSearchInitialFilters), searchText: "" };
+    return { filters: normalizeFilters(moviesSearchInitialFilters), searchText: "", recentRandomMovieIds: [] };
   });
 
-  const { filters, searchText } = searchState;
+  const { filters, searchText, recentRandomMovieIds } = searchState;
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isDefaultFilter, setIsDefaultFilter] = useState<boolean>(true);
@@ -173,6 +189,7 @@ export function useMovieSearch({
         randomSearchRef.current,
         getNameFromId(filters.filterForMediaTypes, availableMediaTypes),
         getNameFromId(filters.filterForGenres, availableGenres),
+        randomSearchRef.current ? recentRandomMovieIds : [],
         session.userName,
         10,
         page * 10
@@ -186,6 +203,15 @@ export function useMovieSearch({
         setSearchResult(list);
         setCurrentPage(0);
         setNextPage(list.length < total ? 1 : 0);
+        if (randomSearchRef.current && list.length > 0) {
+          setSearchState(prev => ({
+            ...prev,
+            recentRandomMovieIds: mergeRecentRandomMovieIds(
+              prev.recentRandomMovieIds,
+              list.map(movie => movie.id),
+            ),
+          }));
+        }
       } else if (currentPage !== null && page === currentPage + 1) {
         setSearchResult((prev) => (prev ? [...prev, ...list] : list));
         setCurrentPage(page);

@@ -124,9 +124,10 @@ export function useMovieSearch({
   };
 
   const handleRandomSearchRequest = async (e: PressEvent) => {
+    setSearchState(prev => ({ ...prev, searchText: "" }));
     clearSearchResult();
     randomSearchRef.current = true;
-    await executeSearch(0, searchText.trim());
+    await executeSearch(0, "");
   };
 
   // Pagination trigger

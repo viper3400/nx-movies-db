@@ -59,6 +59,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
           <div className="place-content-center ">
             <SurpriseButton
               onPress={handleRandomSearchRequest}
+              isDefaultFilter={isDefaultFilter}
               dataTestId="SurpriseButton" />
           </div>
           <div className="place-content-center ">

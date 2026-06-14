@@ -12,5 +12,13 @@ type Story = StoryObj<typeof SurpriseButton>;
 export const Default: Story = {
   args: {
     onPress: fn(),
+    isDefaultFilter: true,
+  },
+};
+
+export const NonDefaultFilter: Story = {
+  args: {
+    onPress: fn(),
+    isDefaultFilter: false,
   },
 };

@@ -3,33 +3,72 @@ import { prisma } from "../prismaclient";
 import { Video, VideoQueryArgs } from "../types";
 import { buildWhereClause } from "../helpers";
 
+const DEFAULT_RANDOM_PAGE_SIZE = 10;
+
+type RandomVideoSelection = {
+  selectedIds: number[];
+  totalCount: number;
+};
+
+export const shuffleIds = (ids: number[]) => {
+  const shuffled = [...ids];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+};
+
+const selectRandomVideoIds = async (args: VideoQueryArgs): Promise<RandomVideoSelection> => {
+  const take = args.take ?? DEFAULT_RANDOM_PAGE_SIZE;
+  let excludedIds = [...(args.excludedIds ?? [])];
+  let candidateIds: number[] = [];
+
+  while (true) {
+    const candidates = await prisma.videodb_videodata.findMany({
+      where: buildWhereClause({ ...args, excludedIds }),
+      select: {
+        id: true,
+      },
+    });
+    candidateIds = candidates.map(({ id }) => id);
+
+    if (candidateIds.length >= take || excludedIds.length === 0) {
+      break;
+    }
+
+    excludedIds = excludedIds.slice(1);
+  }
+
+  return {
+    selectedIds: shuffleIds(candidateIds).slice(0, take),
+    totalCount: Math.min(candidateIds.length, take),
+  };
+};
+
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const { queryPlot, queryUserSettings, randomOrder, take, skip } = args;
 
   let where = buildWhereClause(args);
+  let randomSelectedIds: number[] | undefined;
+  let totalCount: number;
 
   if (randomOrder) {
-    const allIds = await prisma.videodb_videodata.findMany({
-      where: where,
-      select: {
-        id: true
-      }
-    });
-    // Shuffle allIds and take the first 10
-    const shuffledIds = allIds
-      .map(value => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value.id)
-      .slice(0, 10);
+    const randomSelection = await selectRandomVideoIds(args);
+    randomSelectedIds = randomSelection.selectedIds;
+    totalCount = randomSelection.totalCount;
 
-    const shuffledIdsAsStrings = shuffledIds.map(id => id.toString());
-    const newArgs = { ...args, ids: shuffledIdsAsStrings };
+    const newArgs = {
+      ...args,
+      ids: randomSelectedIds.map(id => id.toString()),
+      excludedIds: undefined,
+    };
     where = buildWhereClause(newArgs);
+  } else {
+    totalCount = await prisma.videodb_videodata.count({
+      where: where
+    });
   }
-
-  const totalCount = await prisma.videodb_videodata.count({
-    where: where
-  });
 
   const videos: Video[] = await prisma.videodb_videodata.findMany({
     where: where,
@@ -67,13 +106,20 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
     },
     take: take,
     skip: skip,
-    orderBy: {
+    orderBy: randomOrder ? undefined : {
       title: "asc"
     },
     ...query,
   });
+
+  const orderedVideos: Video[] = randomSelectedIds
+    ? randomSelectedIds
+      .map(id => videos.find(video => video.id === id))
+      .filter((video): video is NonNullable<typeof video> => Boolean(video))
+    : videos;
+
   const result = {
-    videos, totalCount
+    videos: orderedVideos, totalCount
   };
   return result;
 };

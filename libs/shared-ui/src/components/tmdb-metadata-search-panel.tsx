@@ -2,9 +2,9 @@
 
 import React from "react";
 import {
-  Button,
   Switch,
 } from "@heroui/react";
+import { Button, Spinner } from "@heroui-v3/react";
 import { MovieSearchInput } from "./movie-search-input";
 import { TmdbSearchResultsList } from "./tmdb-search-results-list";
 import type { TmdbSearchResultItem } from "./tmdb-search-result-card";
@@ -75,14 +75,19 @@ export const TmdbMetadataSearchPanel: React.FC<TmdbMetadataSearchPanelProps> = (
         </Switch>
         <Button
           data-testid={submitTestId}
-          color="primary"
+          variant="primary"
           size="lg"
-          isLoading={isSearching}
+          isPending={isSearching}
           isDisabled={!query.trim()}
           onPress={onSearch}
           className="md:self-end"
         >
-          Search
+          {({ isPending }) => (
+            <>
+              {isPending && <Spinner color="current" size="sm" />}
+              Search
+            </>
+          )}
         </Button>
       </div>
 

@@ -21,7 +21,8 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Button, Card, CardBody, Chip, Skeleton, Tooltip, addToast } from "@heroui/react";
+import { Card, CardBody, Chip, Skeleton, Tooltip, addToast } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -627,7 +628,7 @@ function UpsertVideoFormContent({
             <Button
               data-testid="tmdb-refresh-toggle"
               size="sm"
-              variant="flat"
+              variant="secondary"
               onPress={handleTmdbPanelToggle}
             >
               {tmdbPanelOpen ? "Hide" : "Refresh metadata"}
@@ -642,7 +643,7 @@ function UpsertVideoFormContent({
                 <Button
                   data-testid="tmdb-review-back-to-search"
                   size="sm"
-                  variant="flat"
+                  variant="secondary"
                   onPress={() => {
                     setTmdbSelectedMovie(null);
                     setTmdbSelectedBackdropUrl(null);

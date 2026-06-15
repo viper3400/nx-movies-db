@@ -71,22 +71,6 @@ let mockOwnersState = {
 };
 
 jest.mock("@heroui/react", () => ({
-  Button: ({
-    children,
-    isDisabled,
-    isLoading,
-    onPress,
-    ...props
-  }: {
-    children: React.ReactNode;
-    isDisabled?: boolean;
-    isLoading?: boolean;
-    onPress?: () => void;
-  }) => (
-    <button type="button" disabled={isDisabled || isLoading} onClick={onPress} {...props}>
-      {children}
-    </button>
-  ),
   Card: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   CardBody: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   Chip: ({ children, ...props }: { children: React.ReactNode }) => <span {...props}>{children}</span>,
@@ -127,6 +111,26 @@ jest.mock("@heroui/react", () => ({
     </label>
   ),
   addToast: jest.fn(),
+}));
+
+jest.mock("@heroui-v3/react", () => ({
+  Button: ({
+    children,
+    isDisabled,
+    isPending,
+    onPress,
+    ...props
+  }: {
+    children: React.ReactNode | ((args: { isPending: boolean }) => React.ReactNode);
+    isDisabled?: boolean;
+    isPending?: boolean;
+    onPress?: () => void;
+  }) => (
+    <button type="button" disabled={isDisabled || isPending} onClick={onPress} {...props}>
+      {typeof children === "function" ? children({ isPending: !!isPending }) : children}
+    </button>
+  ),
+  Spinner: () => <span data-testid="mock-spinner" />,
 }));
 
 jest.mock("@nx-movies-db/shared-ui", () => {

@@ -4,8 +4,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
 } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import { useTranslation } from "react-i18next";
 
 interface DeleteSeenDateModalProps {
@@ -28,10 +28,10 @@ export const DeleteSeenDateModal = ({ isOpen, onOpenChange, date, onDeleteConfir
               <p>{date}</p>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button variant="danger-soft" onPress={onClose}>
                 {t("common.discard")}
               </Button>
-              <Button color="primary" onPress={() => {
+              <Button variant="primary" onPress={() => {
                 onDeleteConfirmed(date);
                 onClose();
               }}>

@@ -2,11 +2,11 @@
 
 import React from "react";
 import {
-  Button,
   Checkbox,
   Chip,
   Image,
 } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import type { Selection } from "@react-types/shared";
 import {
   TmdbGenreMappingControl,
@@ -206,14 +206,14 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
       <div className="flex flex-wrap justify-end gap-2">
         <Button
           data-testid="tmdb-merge-no-match"
-          variant="flat"
+          variant="secondary"
           onPress={onNoMatch}
         >
           No TMDB match
         </Button>
         <Button
           data-testid="tmdb-merge-apply"
-          color="primary"
+          variant="primary"
           isDisabled={selectedCount === 0}
           onPress={onApplySelected}
         >

@@ -2,12 +2,12 @@
 
 import React from "react";
 import {
-  Button,
   Card,
   CardBody,
   Chip,
   Image,
 } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 
 export type TmdbSearchResultMediaKind = "movie" | "tv";
 
@@ -67,8 +67,7 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
             <Button
               data-testid={`tmdb-result-${result.id}`}
               size="sm"
-              variant="flat"
-              color="primary"
+              variant="tertiary"
               onPress={() => onSelect?.(result)}
             >
               {selectLabel}

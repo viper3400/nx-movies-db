@@ -4,7 +4,6 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
-  Button,
   useDisclosure,
   Radio,
   RadioGroup,
@@ -16,6 +15,7 @@ import {
   CheckboxGroup,
   Tooltip,
 } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import { Tune } from "../icons";
 import { useState } from "react";
 import { t } from "i18next";
@@ -84,16 +84,14 @@ export function FilterDrawer(
         size="lg"
         variant="ghost"
         onPress={handleOpen}
-        startContent={
-          isDefaultFilter ? (
-            <Tune />
-          ) : (
-            <Badge color="secondary" content="" placement="bottom-right" shape="circle">
-              <Tune />
-            </Badge>
-          )
-        }
       >
+        {isDefaultFilter ? (
+          <Tune />
+        ) : (
+          <Badge color="secondary" content="" placement="bottom-right" shape="circle">
+            <Tune />
+          </Badge>
+        )}
         Filter
       </Button>
 
@@ -217,10 +215,10 @@ export function FilterDrawer(
                 </Accordion>
               </DrawerBody>
               <DrawerFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button variant="danger-soft" onPress={onClose}>
                   {t("common.close")}
                 </Button>
-                <Button color="default" onPress={
+                <Button variant="secondary" onPress={
                   () => {
                     handleApply(onClose);
                     onClose();

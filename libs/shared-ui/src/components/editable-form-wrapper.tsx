@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Spacer, Card, CardBody } from "@heroui/react";
+import { Card, CardBody } from "@heroui/react";
 import { Button, Spinner } from "@heroui-v3/react";
 import isEqual from "react-fast-compare";
 
@@ -109,14 +109,14 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
             )}
           </Button>
         </div>
-        <Spacer y={2} />
+        <div className="h-2" />
       </>
     ) : null;
 
   const actionsBottom =
     actionsPosition === "bottom" || actionsPosition === "both" ? (
       <>
-        <Spacer y={2} />
+        <div className="h-2" />
         <div className="flex gap-2 justify-end w-full">
           <Button
             variant="secondary"

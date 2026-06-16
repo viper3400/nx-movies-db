@@ -43,7 +43,7 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
       <div className="text-center sm:text-left">
         <Button
           className="mt-4"
-          variant="primary"
+          variant="outline"
           onPress={onOpen}
         >
           <CalendarRangeOutlined />

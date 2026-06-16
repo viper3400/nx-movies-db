@@ -16,7 +16,7 @@ export const SurpriseButton = ({ onPress, dataTestId, isDefaultFilter = true }: 
           data-testid={dataTestId}
           onPress={onPress}
           isIconOnly
-          variant="ghost"
+          variant="outline"
           size="lg"
         >
           {isDefaultFilter ? (

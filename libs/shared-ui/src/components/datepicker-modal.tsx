@@ -27,7 +27,7 @@ export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
 
   return (
     <>
-      <Button variant="primary" onPress={onOpen}>
+      <Button variant="tertiary" onPress={onOpen}>
         <EyeOutlined />
         {t("choose_date_modal.dialog_title")}
       </Button>

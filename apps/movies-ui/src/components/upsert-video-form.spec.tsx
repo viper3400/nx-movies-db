@@ -74,20 +74,6 @@ jest.mock("@heroui/react", () => ({
   Card: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   CardBody: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   Chip: ({ children, ...props }: { children: React.ReactNode }) => <span {...props}>{children}</span>,
-  Tooltip: ({
-    children,
-    content,
-    isDisabled,
-  }: {
-    children: React.ReactNode;
-    content?: React.ReactNode;
-    isDisabled?: boolean;
-  }) => (
-    <div>
-      {children}
-      {!isDisabled && content ? <div data-testid="mock-tooltip-content">{content}</div> : null}
-    </div>
-  ),
   Skeleton: (props: Record<string, unknown>) => <div data-testid="mock-skeleton" {...props} />,
   Spacer: (props: Record<string, unknown>) => <div data-testid="mock-spacer" {...props} />,
   Switch: ({
@@ -114,6 +100,21 @@ jest.mock("@heroui/react", () => ({
 }));
 
 jest.mock("@heroui-v3/react", () => ({
+  Tooltip: Object.assign(
+    ({
+      children,
+      isDisabled,
+    }: {
+      children: React.ReactNode;
+      isDisabled?: boolean;
+    }) => <div data-disabled={isDisabled ? "true" : "false"}>{children}</div>,
+    {
+      Trigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      Content: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid="mock-tooltip-content">{children}</div>
+      ),
+    }
+  ),
   Button: ({
     children,
     isDisabled,

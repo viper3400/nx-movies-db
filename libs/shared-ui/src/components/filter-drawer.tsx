@@ -6,14 +6,13 @@ import {
   DrawerFooter,
   Radio,
   RadioGroup,
-  Switch,
   Badge,
   Accordion,
   AccordionItem,
   Checkbox,
   CheckboxGroup,
 } from "@heroui/react";
-import { Button, Tooltip } from "@heroui-v3/react";
+import { Button, Switch, Tooltip } from "@heroui-v3/react";
 import { Tune } from "../icons";
 import { useState } from "react";
 import { t } from "i18next";
@@ -102,10 +101,26 @@ export function FilterDrawer(
                 <div className="flex w-full flex-col gap-4">
                   <Switch
                     isSelected={local.filterForFavorites}
-                    onValueChange={updateFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
+                    onChange={updateFavorites}
+                  >
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      {t("search.favoriteMoviesFilterLabel")}
+                    </Switch.Content>
+                  </Switch>
                   <Switch
                     isSelected={local.filterForWatchAgain}
-                    onValueChange={updateWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
+                    onChange={updateWatchAgain}
+                  >
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      {t("search.watchagainMoviesFilterLabel")}
+                    </Switch.Content>
+                  </Switch>
                 </div>
                 <Accordion>
                   <AccordionItem
@@ -209,10 +224,15 @@ export function FilterDrawer(
                     <div className="py-6">
                       <Switch
                         isSelected={local.randomExcludeDeleted}
-                        onValueChange={updateRandomExcludeDeleted}
+                        onChange={updateRandomExcludeDeleted}
                         isDisabled
                       >
-                        {t("search.randomExcludeDeletedLabel")}
+                        <Switch.Content>
+                          <Switch.Control>
+                            <Switch.Thumb />
+                          </Switch.Control>
+                          {t("search.randomExcludeDeletedLabel")}
+                        </Switch.Content>
                       </Switch>
                     </div>
                   </AccordionItem>

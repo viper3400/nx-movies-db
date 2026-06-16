@@ -23,13 +23,16 @@ Completed so far:
   - [libs/shared-ui/src/components/upsert-video-data-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/upsert-video-data-form.tsx:1)
   - [apps/movies-ui/src/components/details.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/details.tsx:1)
   - [apps/movies-ui/src/components/seenMovies.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/seenMovies.tsx:1)
+- Replaced the remaining HeroUI `Image` usage with `next/image` in:
+  - [libs/shared-ui/src/components/tmdb-search-result-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-search-result-card.tsx:1)
+  - [libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx:1)
 - Fixed migration-related regressions in:
   - filter e2e selector targeting for the deleted-movies accordion
   - authenticated cover/poster image routes in local test-mode flows
 
 Still active / not yet migrated:
 - Global v2 runtime/config is still active via `HeroUIProvider`, `ToastProvider`, and `heroui()` plugin files.
-- Several v2-only removed components are still in use: `Navbar`, `User`, and HeroUI `Image`.
+- Several v2-only removed components are still in use: `Navbar` and `User`.
 - A substantial set of components still uses v2 props and/or still imports from `@heroui/react`.
 
 ## Current Repo State
@@ -68,16 +71,10 @@ Status:
 
 #### HeroUI `Image`
 
-Current uses:
-- [libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx:1)
-- [libs/shared-ui/src/components/tmdb-search-result-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-search-result-card.tsx:1)
-
-Already migrated elsewhere:
-- [libs/shared-ui/src/components/movie-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/movie-card.tsx:1) already uses `next/image`.
-
-Plan:
-- Replace HeroUI `Image` with `next/image` where dimensions are known and optimization is useful.
-- Use plain `img` only where remote sizing/layout makes `next/image` awkward.
+Status:
+- Completed.
+- [libs/shared-ui/src/components/movie-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/movie-card.tsx:1), [libs/shared-ui/src/components/tmdb-search-result-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-search-result-card.tsx:1), and [libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx:1) all use `next/image`.
+- The TMDB-based images currently use `unoptimized` because the app does not yet declare matching remote image patterns in Next config.
 
 #### `User`
 
@@ -102,9 +99,8 @@ Plan:
   - login/logout section
 
 Recommended order inside this slice:
-1. HeroUI `Image`
-2. `User`
-3. `Navbar`
+1. `User`
+2. `Navbar`
 
 ### 2. Finish remaining component migrations
 
@@ -177,14 +173,13 @@ Plan:
 
 The next implementation slice should be:
 
-1. Replace HeroUI `Image`
-2. Replace `User`
-3. Replace `Navbar`
+1. Replace `User`
+2. Replace `Navbar`
 
 Reason:
-- `Spacer` is already handled everywhere except inside the legacy HeroUI `Navbar`.
-- HeroUI `Image` is the next straightforward blocker.
-- `User` and `Navbar` are more coupled and should be tackled after image migration.
+- `Spacer` and HeroUI `Image` are already handled.
+- `User` is only used inside the legacy HeroUI `Navbar`, so the remaining removed-component work is now concentrated in one file.
+- The next practical slice is the `Navbar` replacement, including the `User` replacement inside it.
 
 ## Verification Plan
 

@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   Card,
   CardBody,
   Chip,
-  Image,
 } from "@heroui/react";
 import { Button } from "@heroui-v3/react";
 
@@ -46,8 +46,8 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
               alt=""
               width={72}
               height={108}
-              radius="sm"
-              className="h-[108px] w-[72px] object-cover"
+              unoptimized
+              className="h-[108px] w-[72px] rounded-small object-cover"
             />
           ) : (
             <div className="h-[108px] w-[72px] rounded-small bg-default-100" />

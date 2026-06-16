@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { Button, Card, CardBody, CardHeader, Divider, Input } from "@heroui/react";
+import { Card, CardBody, CardHeader, Divider, Input } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 
 export type ImageSource =
   | { type: "file"; file: File; previewUrl: string }
@@ -83,7 +84,7 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
                   size="lg"
                   className="flex-1"
                 />
-                <Button color="primary" onPress={handleUrlApply} isDisabled={!urlValid}>
+                <Button variant="primary" onPress={handleUrlApply} isDisabled={!urlValid}>
                   Apply
                 </Button>
               </div>
@@ -102,11 +103,10 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
                   onChange={(e) => handleFilePick(e.target.files?.[0])}
                   className="hidden"
                 />
-                <Button onPress={() => inputRef.current?.click()}>Choose File…</Button>
+                <Button variant="secondary" onPress={() => inputRef.current?.click()}>Choose File…</Button>
                 {file && (
                   <Button
-                    variant="flat"
-                    color="default"
+                    variant="secondary"
                     onPress={() => handleFilePick(undefined)}
                   >
                     Clear File

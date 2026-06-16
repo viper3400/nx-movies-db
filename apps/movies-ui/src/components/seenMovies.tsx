@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getSeenVideos } from "../app/services/actions";
 import { SeenEntry } from "../interfaces";
 import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator } from "@nx-movies-db/shared-ui";
-import { Spacer } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
 import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
@@ -131,13 +130,13 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
                 return (
                   <motion.div
                     key={entry.movieId}
+                    className="mt-4"
                     layout
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Spacer y={4} />
                     <MovieCard
                       movie={entry.video}
                       showMarkAsSeenButtons={false}

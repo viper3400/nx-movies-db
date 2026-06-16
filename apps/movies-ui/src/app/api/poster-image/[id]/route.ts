@@ -1,14 +1,13 @@
 import fs from "fs";
 import path from "path";
 import { NextRequest } from "next/server";
-import { auth } from "../../../../lib/auth";
-import { isUserAllowed } from "../../../../lib/allowed-user-parser";
+import { getAllowedSession } from "../../../services/actions/getAllowedSession";
 
 const posterImagePath = process.env.POSTER_IMAGE_PATH || process.cwd();
 
 export async function GET(_req: NextRequest, ctx: RouteContext<"/api/poster-image/[id]">) {
-  const session = await auth();
-  if (!session?.user?.email || !isUserAllowed(session.user.email)) {
+  const session = await getAllowedSession();
+  if (!session) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },

@@ -6,76 +6,28 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NavbarComponent } from "./navbar";
 
-jest.mock("@heroui/react", () => ({
-  Navbar: ({ children }: { children: React.ReactNode }) => <nav>{children}</nav>,
-  NavbarBrand: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
-  NavbarContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarMenuItem: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavbarMenuToggle: () => <button type="button">Menu</button>,
-  Divider: () => <hr />,
-  Link: ({
-    children,
-    href,
-    onPress,
-  }: {
-    children: React.ReactNode;
-    href: string;
-    onPress?: () => void;
-  }) => (
-    <a
-      href={href}
-      onClick={(event) => {
-        event.preventDefault();
-        onPress?.();
-      }}
-    >
-      {children}
-    </a>
-  ),
-  Spacer: () => <span />,
-  User: ({ name, description }: { name?: string; description?: string }) => (
-    <div>
-      {name}
-      {description}
-    </div>
-  ),
-  Button: ({
-    children,
-    onPress,
-    as: As,
-    href,
-  }: {
-    children: React.ReactNode;
-    onPress?: () => void;
-    as?: React.ElementType;
-    href?: string;
-  }) => {
-    if (As) {
-      return (
-        <As
-          href={href}
-          role="button"
-          onClick={() => onPress?.()}
-        >
-          {children}
-        </As>
-      );
-    }
-    return (
-      <button type="button" onClick={() => onPress?.()}>
-        {children}
-      </button>
-    );
-  },
-}));
-
 jest.mock("./theme-switch", () => ({
   ThemeSwitch: () => <button type="button">Theme</button>,
 }));
 
+jest.mock("./navbar-user-summary", () => ({
+  NavbarUserSummary: ({
+    userName,
+    userEmail,
+  }: {
+    userName?: string;
+    userEmail: string;
+  }) => (
+    <div data-testid="navbar-user-summary">
+      {userName}
+      {userEmail}
+    </div>
+  ),
+}));
+
 jest.mock("../icons/icons", () => ({
   SceneLogo: () => <span />,
+  GithubIcon: () => <span>GH</span>,
 }));
 
 const menuLinks = [
@@ -95,6 +47,8 @@ describe("NavbarComponent", () => {
       />,
     );
 
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
+
     expect(screen.getByText("Filmdatenbank")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Filmsuche" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Gesehene Filme" })).toHaveAttribute("href", "/seen");
@@ -104,6 +58,8 @@ describe("NavbarComponent", () => {
 
   it("hides menu links and logout actions when no user email is supplied", () => {
     render(<NavbarComponent menuLinks={menuLinks} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
 
     expect(screen.queryByRole("link", { name: "Filmsuche" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "HomeWeb Logout" })).not.toBeInTheDocument();
@@ -118,6 +74,8 @@ describe("NavbarComponent", () => {
         handleGithubLogout={jest.fn()}
       />,
     );
+
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
 
     expect(screen.getByText("Google Logout")).toBeInTheDocument();
     expect(screen.queryByText("Github Logout")).not.toBeInTheDocument();
@@ -136,7 +94,9 @@ describe("NavbarComponent", () => {
       />,
     );
 
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
     fireEvent.click(screen.getByText("HomeWeb Logout"));
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
     fireEvent.click(screen.getByText("Github Logout"));
 
     expect(handleSignOut).toHaveBeenCalledTimes(1);

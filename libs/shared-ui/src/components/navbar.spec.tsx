@@ -7,6 +7,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { NavbarComponent } from "./navbar";
 
 jest.mock("@heroui/react", () => ({
+  Avatar: ({ name }: { name?: string }) => <span>{name}</span>,
   Navbar: ({ children }: { children: React.ReactNode }) => <nav>{children}</nav>,
   NavbarBrand: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   NavbarContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -34,12 +35,6 @@ jest.mock("@heroui/react", () => ({
     </a>
   ),
   Spacer: () => <span />,
-  User: ({ name, description }: { name?: string; description?: string }) => (
-    <div>
-      {name}
-      {description}
-    </div>
-  ),
   Button: ({
     children,
     onPress,

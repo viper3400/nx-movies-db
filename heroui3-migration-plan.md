@@ -26,13 +26,15 @@ Completed so far:
 - Replaced the remaining HeroUI `Image` usage with `next/image` in:
   - [libs/shared-ui/src/components/tmdb-search-result-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-search-result-card.tsx:1)
   - [libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx:1)
+- Replaced HeroUI `User` with a local `Avatar + text` block in:
+  - [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1)
 - Fixed migration-related regressions in:
   - filter e2e selector targeting for the deleted-movies accordion
   - authenticated cover/poster image routes in local test-mode flows
 
 Still active / not yet migrated:
 - Global v2 runtime/config is still active via `HeroUIProvider`, `ToastProvider`, and `heroui()` plugin files.
-- Several v2-only removed components are still in use: `Navbar` and `User`.
+- A v2-only removed component is still in use: `Navbar`.
 - A substantial set of components still uses v2 props and/or still imports from `@heroui/react`.
 
 ## Current Repo State
@@ -78,11 +80,8 @@ Status:
 
 #### `User`
 
-Current uses:
-- [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1)
-
-Plan:
-- Replace `User` with a small composed `Avatar + text` block.
+Status:
+- Completed in [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1) using a local `Avatar + text` composition.
 
 #### `Navbar`
 
@@ -99,8 +98,7 @@ Plan:
   - login/logout section
 
 Recommended order inside this slice:
-1. `User`
-2. `Navbar`
+1. `Navbar`
 
 ### 2. Finish remaining component migrations
 
@@ -173,13 +171,12 @@ Plan:
 
 The next implementation slice should be:
 
-1. Replace `User`
-2. Replace `Navbar`
+1. Replace `Navbar`
 
 Reason:
-- `Spacer` and HeroUI `Image` are already handled.
-- `User` is only used inside the legacy HeroUI `Navbar`, so the remaining removed-component work is now concentrated in one file.
-- The next practical slice is the `Navbar` replacement, including the `User` replacement inside it.
+- `Spacer`, HeroUI `Image`, and `User` are already handled.
+- The remaining removed-component work is now concentrated in one file.
+- Replacing the legacy HeroUI `Navbar` is the last removed-component blocker before broader prop/runtime cleanup.
 
 ## Verification Plan
 

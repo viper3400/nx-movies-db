@@ -4,7 +4,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure,
   DatePicker,
   DateValue,
 } from "@heroui/react";
@@ -22,16 +21,16 @@ interface DatePickerModalProps {
 export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
   const now = today(getLocalTimeZone());
   const [dateValue, setDateValue] = useState<DateValue | null>(now);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
   return (
     <>
-      <Button variant="tertiary" onPress={onOpen}>
+      <Button variant="tertiary" onPress={() => setIsOpen(true)}>
         <EyeOutlined />
         {t("choose_date_modal.dialog_title")}
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <ModalContent>
           {(onClose) => (
             <>

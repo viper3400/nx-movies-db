@@ -1,4 +1,4 @@
-import { useDisclosure, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker, DateValue } from "@heroui/react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker, DateValue } from "@heroui/react";
 import { Button } from "@heroui-v3/react";
 import { parseDate } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
@@ -18,7 +18,7 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
   const [selectedStartDate, setSelectedStartDate] = useState<DateValue | null>(parseDate("2010-01-01"));
   const [selectedEndDate, setSelectedEndDate] = useState<DateValue | null>(parseDate("2099-01-01"));
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
   const handleApply = async () => {
@@ -44,13 +44,13 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
         <Button
           className="mt-4"
           variant="outline"
-          onPress={onOpen}
+          onPress={() => setIsOpen(true)}
         >
           <CalendarRangeOutlined />
           {formatDate(selectedStartDate)} - {formatDate(selectedEndDate)}
         </Button>
       </div>
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
         <DrawerContent>
           {(onClose) => (
             <>

@@ -4,7 +4,6 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
-  useDisclosure,
   Radio,
   RadioGroup,
   Switch,
@@ -13,9 +12,8 @@ import {
   AccordionItem,
   Checkbox,
   CheckboxGroup,
-  Tooltip,
 } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Button, Tooltip } from "@heroui-v3/react";
 import { Tune } from "../icons";
 import { useState } from "react";
 import { t } from "i18next";
@@ -38,7 +36,7 @@ export function FilterDrawer(
     genres,
     dataTestId,
   }: FilterDrawerProperties) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   // Local state to manage changes within the component
   const [local, setLocal] = useState<MovieSearchFilters>(parent);
@@ -46,7 +44,7 @@ export function FilterDrawer(
   // Sync local state with parent state when the drawer is opened
   const handleOpen = () => {
     setLocal(parent); // Sync local state with parent when opening
-    onOpen();
+    setIsOpen(true);
   };
 
   // Apply changes to the parent state
@@ -95,7 +93,7 @@ export function FilterDrawer(
         Filter
       </Button>
 
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
         <DrawerContent>
           {(onClose) => (
             <>
@@ -178,8 +176,13 @@ export function FilterDrawer(
                     key="4"
                     aria-label="deleted-movies-filter"
                     title={
-                      <Tooltip content={t("search.deletedMoviesFilterTooltip")}>
-                        <span>{t("search.deletedMoviesFilterLabel")}</span>
+                      <Tooltip delay={0}>
+                        <Tooltip.Trigger className="inline-flex">
+                          <span>{t("search.deletedMoviesFilterLabel")}</span>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          {t("search.deletedMoviesFilterTooltip")}
+                        </Tooltip.Content>
                       </Tooltip>
                     }
                     subtitle={

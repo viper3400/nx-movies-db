@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Avatar,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -14,6 +13,7 @@ import {
   Button
 } from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
+import { NavbarUserSummary } from "./navbar-user-summary";
 import { SceneLogo, GithubIcon } from "../icons/icons";
 import { Fragment, useState } from "react";
 
@@ -44,12 +44,6 @@ export const NavbarComponent = ({
   handleGithubLogout
 }: NavbarComponentProperties) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const userInitials = userName
-    ?.split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 
   return (
     <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="static">
@@ -68,25 +62,7 @@ export const NavbarComponent = ({
         <NavbarMenuItem>
           {
             userEmail &&
-            <div
-              data-testid="navbar-user-summary"
-              className="flex items-center gap-3 rounded-small border border-default-200 px-3 py-2"
-            >
-              <Avatar src={userImage} name={userName} size="sm" />
-              <div className="min-w-0">
-                {userName && (
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {userName}
-                  </p>
-                )}
-                <p className="truncate text-xs text-default-500">
-                  {userEmail}
-                </p>
-              </div>
-              {!userImage && userInitials && (
-                <span className="sr-only">{userInitials}</span>
-              )}
-            </div>
+            <NavbarUserSummary userName={userName} userImage={userImage} userEmail={userEmail} />
           }
         </NavbarMenuItem>
         {

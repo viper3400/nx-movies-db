@@ -82,7 +82,7 @@ export function FilterDrawer(
       <Button
         data-testid={dataTestId}
         size="lg"
-        variant="ghost"
+        variant="outline"
         onPress={handleOpen}
       >
         {isDefaultFilter ? (

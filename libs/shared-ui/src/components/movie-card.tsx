@@ -250,7 +250,7 @@ export const MovieCard = ({
                 <>
                   <Button
                     data-testid="seen-today-button"
-                    variant="primary"
+                    variant="tertiary"
                     onPress={() => {
                       setUserSeenDateForMovie(movie.id, new Date());
                       setAdditionalDatesLoaded(false);
@@ -269,7 +269,12 @@ export const MovieCard = ({
                 </>
               }
               {showDetailsButton && detailsUrl &&
-                <Button variant="secondary" onPress={() => window.open(detailsUrl, "_blank")}>Details</Button>
+                <Button
+                  variant="tertiary"
+                  data-test-id="show-details-button"
+                  onPress={() => window.open(detailsUrl, "_blank")}>
+                  Details
+                </Button>
               }
               {editUrl &&
                 <Button

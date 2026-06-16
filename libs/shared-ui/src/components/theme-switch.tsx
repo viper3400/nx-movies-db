@@ -39,6 +39,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
             wrapperClassName,
           )}
         >
+          <Switch.Thumb className="hidden" />
           {!isSelected || isSSR ? (
             <SunFilledIcon size={22} />
           ) : (

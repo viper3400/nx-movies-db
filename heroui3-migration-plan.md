@@ -16,6 +16,13 @@ Completed so far:
   - [libs/shared-ui/src/components/filter-drawer.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/filter-drawer.tsx:1)
 - Replaced `useSwitch` with a v3 `Switch` implementation in:
   - [libs/shared-ui/src/components/theme-switch.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/theme-switch.tsx:1)
+- Normalized the remaining mixed v3 component usage for:
+  - `Tooltip` in [libs/shared-ui/src/components/filter-drawer.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/filter-drawer.tsx:1) and [apps/movies-ui/src/components/upsert-video-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/upsert-video-form.tsx:1)
+  - `Spinner` in [libs/shared-ui/src/components/tmdb-search-results-list.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-search-results-list.tsx:1) and [libs/shared-ui/src/components/results-status-indicator.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/results-status-indicator.tsx:1)
+  - `Switch` in [libs/shared-ui/src/components/tmdb-metadata-search-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-search-panel.tsx:1) and [libs/shared-ui/src/components/filter-drawer.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/filter-drawer.tsx:1)
+- Moved remaining shared `PressEvent` typing for v3 button flows to:
+  - [libs/shared-ui/src/components/search-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/search-form.tsx:1)
+  - [apps/movies-ui/src/hooks/useMovieSearch.ts](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/hooks/useMovieSearch.ts:1)
 - Removed the duplicate app-local theme switch implementation.
 - Replaced live `Spacer` usage with explicit Tailwind spacing in:
   - [libs/shared-ui/src/components/results-status-indicator.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/results-status-indicator.tsx:1)
@@ -106,7 +113,11 @@ This is now the main remaining migration track.
 
 #### Components already partly migrated to v3
 
-These already have at least some `@heroui-v3/react` usage and should be normalized:
+Status:
+- Completed for the current mixed-import slice.
+- The previously partial v3 families below have now been normalized in live usage.
+
+These were the component families in this slice:
 - `Button`
 - `Tooltip`
 - `Spinner`
@@ -118,9 +129,14 @@ Representative files:
 - [libs/shared-ui/src/components/editable-form-wrapper.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/editable-form-wrapper.tsx:1)
 - [apps/movies-ui/src/components/upsert-video-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/upsert-video-form.tsx:1)
 
-Plan:
-- Finish the remaining semantic cleanup where old v2 assumptions still exist.
-- Keep verifying loading, icon placement, pending state, and tooltip trigger behavior.
+Verification completed for this slice:
+- `npm exec nx run movies-ui:test -- --runInBand`
+- `npm exec nx run shared-ui:test -- --runInBand`
+- `npm exec nx run movies-ui:build`
+
+Notes:
+- The first `movies-ui:build` attempt failed in the sandbox because Turbopack tried to bind a local port during CSS processing; the rerun outside the sandbox succeeded.
+- `theme-switch.tsx` remains a custom-styled v3 `Switch` composition and should be watched during final styling cleanup.
 
 #### Components still fully on v2
 
@@ -146,11 +162,11 @@ Representative files:
 
 Plan:
 - Migrate by dependency-safe groups instead of file-by-file churn.
-- Good next group after removed components:
+- Good next group after the mixed-import cleanup:
   - `Chip`
   - `Card`
   - `Input`
-  - `Spinner`
+  - `Divider`
 
 ### 3. Final runtime and styling cleanup
 
@@ -171,12 +187,13 @@ Plan:
 
 The next implementation slice should be:
 
-1. Finish remaining v2 component families, starting with `Chip`, `Card`, `Input`, and `Spinner`
+1. Finish remaining v2 component families, starting with `Chip`, `Card`, `Input`, and `Divider`
 2. Then remove the v2 runtime/plugin setup
 
 Reason:
 - The removed-component phase is complete.
-- The biggest remaining work is not structural replacement anymore; it is component API and styling cleanup across still-v2 imports.
+- The mixed-import cleanup for `Button`, `Tooltip`, `Spinner`, and `Switch` is complete.
+- The biggest remaining work is now the still-v2 component families and their styling drift.
 - Final runtime cleanup should wait until those remaining component migrations are done.
 
 ## Verification Plan

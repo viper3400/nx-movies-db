@@ -1,4 +1,4 @@
-import { PressEvent } from "@heroui/react";
+import { PressEvent } from "@heroui-v3/react";
 import React from "react";
 import { CheckboxValue, FilterDrawer, MovieSearchFilters } from "..";
 import { MovieSearchInput, MovieSearchInputLangResources } from "./movie-search-input";

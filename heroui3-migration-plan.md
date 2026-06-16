@@ -28,13 +28,17 @@ Completed so far:
   - [libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx:1)
 - Replaced HeroUI `User` with a local `Avatar + text` block in:
   - [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1)
+- Replaced HeroUI `Navbar` with a local composed navigation component in:
+  - [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1)
+- Extracted the new navbar user summary into its own shared Storybook component:
+  - [libs/shared-ui/src/components/navbar-user-summary.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar-user-summary.tsx:1)
+  - [libs/shared-ui/src/components/navbar-user-summary.stories.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar-user-summary.stories.tsx:1)
 - Fixed migration-related regressions in:
   - filter e2e selector targeting for the deleted-movies accordion
   - authenticated cover/poster image routes in local test-mode flows
 
 Still active / not yet migrated:
 - Global v2 runtime/config is still active via `HeroUIProvider`, `ToastProvider`, and `heroui()` plugin files.
-- A v2-only removed component is still in use: `Navbar`.
 - A substantial set of components still uses v2 props and/or still imports from `@heroui/react`.
 
 ## Current Repo State
@@ -63,7 +67,10 @@ No additional hook migration work is currently required for the v2-to-v3 transit
 
 ### 1. Replace removed v2-only components
 
-This is now the most important remaining migration slice.
+Status:
+- Completed.
+- `Spacer`, HeroUI `Image`, `User`, and `Navbar` have all been removed from live app/shared-ui usage.
+- The migration is now past the removed-component phase.
 
 #### `Spacer`
 
@@ -85,24 +92,17 @@ Status:
 
 #### `Navbar`
 
-Current uses:
-- [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1)
-
-Plan:
-- Replace HeroUI `Navbar` with a local composed navigation component.
-- Preserve current behavior first:
+Status:
+- Completed in [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1) with a local semantic navigation layout preserving:
   - brand area
   - menu toggle
   - mobile menu
   - theme switch
   - login/logout section
 
-Recommended order inside this slice:
-1. `Navbar`
-
 ### 2. Finish remaining component migrations
 
-After removed components are gone, continue migrating remaining v2 component usage.
+This is now the main remaining migration track.
 
 #### Components already partly migrated to v3
 
@@ -171,12 +171,13 @@ Plan:
 
 The next implementation slice should be:
 
-1. Replace `Navbar`
+1. Finish remaining v2 component families, starting with `Chip`, `Card`, `Input`, and `Spinner`
+2. Then remove the v2 runtime/plugin setup
 
 Reason:
-- `Spacer`, HeroUI `Image`, and `User` are already handled.
-- The remaining removed-component work is now concentrated in one file.
-- Replacing the legacy HeroUI `Navbar` is the last removed-component blocker before broader prop/runtime cleanup.
+- The removed-component phase is complete.
+- The biggest remaining work is not structural replacement anymore; it is component API and styling cleanup across still-v2 imports.
+- Final runtime cleanup should wait until those remaining component migrations are done.
 
 ## Verification Plan
 

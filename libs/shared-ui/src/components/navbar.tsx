@@ -1,21 +1,10 @@
 "use client";
 
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
-  Divider,
-  Link,
-  Spacer,
-  Button
-} from "@heroui/react";
 import { ThemeSwitch } from "./theme-switch";
 import { NavbarUserSummary } from "./navbar-user-summary";
 import { SceneLogo, GithubIcon } from "../icons/icons";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 
 export interface NavbarMenuLink {
   href: string;
@@ -33,6 +22,17 @@ export interface NavbarComponentProperties {
   handleGithubLogout?: () => void;
 }
 
+function navActionClassName(intent: "primary" | "danger" | "warning" | "secondary" = "primary") {
+  const intentClasses = {
+    primary: "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
+    danger: "border-danger/30 bg-danger/10 text-danger hover:bg-danger/15",
+    warning: "border-warning/30 bg-warning/10 text-warning-700 hover:bg-warning/15",
+    secondary: "border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/15",
+  };
+
+  return `flex min-h-11 w-full items-center justify-center rounded-medium border px-4 py-2 text-sm font-medium transition-colors ${intentClasses[intent]}`;
+}
+
 export const NavbarComponent = ({
   brandLabel = "Filmdatenbank",
   menuLinks,
@@ -44,106 +44,146 @@ export const NavbarComponent = ({
   handleGithubLogout
 }: NavbarComponentProperties) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const menuId = useId();
+  const isGoogleUser = !!handleGoogleLogout && !!userEmail?.match(/@(gmail\.com|.*\.google\.com)$/);
+  const isGithubUser = !!handleGithubLogout && !!userEmail?.includes("@github.com");
 
-  return (
-    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen} isBordered position="static">
-      <NavbarBrand data-testid="NavbarBrand">
-        <SceneLogo />
-        <Spacer x={4} />
-        <p className="font-bold text-inherit">{brandLabel}</p>
-      </NavbarBrand>
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-      <NavbarContent justify="end">
-        <ThemeSwitch />
-        <NavbarMenuToggle aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"} />
-      </NavbarContent>
-
-      <NavbarMenu className="place-items-center space-y-4">
-        <NavbarMenuItem>
-          {
-            userEmail &&
+  const menuOverlay = (
+    <div
+      id={menuId}
+      data-testid="navbar-menu-overlay"
+      className="fixed inset-0 z-[70] overflow-y-auto bg-background/95 px-4 pb-6 pt-20 supports-[backdrop-filter]:bg-background/90 backdrop-blur-sm"
+    >
+      <button
+        type="button"
+        aria-label="Close navigation menu"
+        data-testid="navbar-menu-close"
+        onClick={() => setIsMenuOpen(false)}
+        className="fixed right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-medium border border-default-200 bg-default-100/70 text-foreground transition-colors hover:bg-default-200/70"
+      >
+        <span aria-hidden="true" className="text-2xl leading-none">×</span>
+      </button>
+      <div className="mx-auto flex max-w-md flex-col items-center gap-4">
+        {userEmail && (
+          <div className="w-full">
             <NavbarUserSummary userName={userName} userImage={userImage} userEmail={userEmail} />
-          }
-        </NavbarMenuItem>
-        {
-          userEmail &&
+          </div>
+        )}
+
+        {userEmail && (
           <>
             {menuLinks.map((menuLink) => (
               <Fragment key={menuLink.href}>
-                <Divider orientation="horizontal" />
-                <NavbarMenuItem className="w-full md:w-auto">
-                  <Button
-                    as={Link}
+                <div className="h-px w-full bg-default-200" />
+                <div className="w-full md:w-auto">
+                  <a
                     href={menuLink.href}
-                    variant="flat"
-                    className="w-full md:w-48 justify-center"
-                    color="primary"
-                    onPress={() => {
-                      setIsMenuOpen(false);
-                    }}>
+                    className={navActionClassName("primary")}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     {menuLink.label}
-                  </Button>
-                </NavbarMenuItem>
+                  </a>
+                </div>
               </Fragment>
             ))}
             {handleSignOut && (
               <>
-                <Divider orientation="horizontal" />
-                <NavbarMenuItem className="w-full md:w-auto">
-                  <Button
-                    variant="flat"
-                    className="w-full md:w-48 justify-center"
-                    color="danger"
+                <div className="h-px w-full bg-default-200" />
+                <div className="w-full md:w-auto">
+                  <button
                     type="button"
-                    onPress={() => {
+                    className={navActionClassName("danger")}
+                    onClick={() => {
                       handleSignOut();
                       setIsMenuOpen(false);
-                    }}>
+                    }}
+                  >
                     HomeWeb Logout
-                  </Button>
-                </NavbarMenuItem>
+                  </button>
+                </div>
               </>
             )}
-            {handleGoogleLogout && userEmail.match(/@(gmail\.com|.*\.google\.com)$/) && (
+            {isGoogleUser && (
               <>
-                <Divider orientation="horizontal" />
-                <NavbarMenuItem className="w-full md:w-auto">
-                  <Button
-                    variant="flat"
-                    className="w-full md:w-48 justify-center"
-                    color="warning"
+                <div className="h-px w-full bg-default-200" />
+                <div className="w-full md:w-auto">
+                  <button
                     type="button"
-                    onPress={() => {
-                      handleGoogleLogout();
+                    className={navActionClassName("warning")}
+                    onClick={() => {
+                      handleGoogleLogout?.();
                       setIsMenuOpen(false);
-                    }}>
+                    }}
+                  >
                     Google Logout
-                  </Button>
-                </NavbarMenuItem>
+                  </button>
+                </div>
               </>
             )}
-            {handleGithubLogout && userEmail.includes("@github.com") && (
+            {isGithubUser && (
               <>
-                <Divider orientation="horizontal" />
-                <NavbarMenuItem className="w-full md:w-auto">
-                  <Button
-                    variant="flat"
-                    className="w-full md:w-48 justify-center gap-2"
-                    color="secondary"
+                <div className="h-px w-full bg-default-200" />
+                <div className="w-full md:w-auto">
+                  <button
                     type="button"
-                    startContent={<GithubIcon size={18} />}
-                    onPress={() => {
-                      handleGithubLogout();
+                    className={`${navActionClassName("secondary")} gap-2`}
+                    onClick={() => {
+                      handleGithubLogout?.();
                       setIsMenuOpen(false);
-                    }}>
+                    }}
+                  >
+                    <GithubIcon size={18} />
                     Github Logout
-                  </Button>
-                </NavbarMenuItem>
+                  </button>
+                </div>
               </>
             )}
           </>
-        }
-      </NavbarMenu>
-    </Navbar >
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <nav
+      className="sticky top-0 z-50 border-b border-default-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      aria-label="Primary"
+    >
+      <div className="mx-auto flex min-h-16 w-full items-center justify-between gap-4 px-4">
+        <div data-testid="NavbarBrand" className="flex min-w-0 items-center gap-4">
+          <SceneLogo />
+          <p className="truncate font-bold text-inherit">{brandLabel}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <ThemeSwitch />
+          <button
+            type="button"
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            data-testid="navbar-menu-toggle"
+            aria-expanded={isMenuOpen}
+            aria-controls={menuId}
+            onClick={() => setIsMenuOpen((open) => !open)}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-medium border border-default-200 bg-default-100/70 text-foreground transition-colors hover:bg-default-200/70"
+          >
+            <span className="sr-only">{isMenuOpen ? "Close navigation menu" : "Open navigation menu"}</span>
+            <span className="flex flex-col gap-1.5" aria-hidden="true">
+              <span className={`block h-0.5 w-5 rounded-full bg-current transition-transform ${isMenuOpen ? "translate-y-2 rotate-45" : ""}`} />
+              <span className={`block h-0.5 w-5 rounded-full bg-current transition-opacity ${isMenuOpen ? "opacity-0" : ""}`} />
+              <span className={`block h-0.5 w-5 rounded-full bg-current transition-transform ${isMenuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {isMenuOpen && isMounted && createPortal(menuOverlay, document.body)}
+    </nav>
   );
 };
+
+export default NavbarComponent;

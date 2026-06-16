@@ -1,4 +1,5 @@
-import { Chip, Spinner } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Spinner } from "@heroui-v3/react";
 import { t } from "i18next";
 
 interface ResultsStatusIndicatorProperties {
@@ -12,7 +13,7 @@ export const ResultsStatusIndicator = ({ isLoading, hasNoResults, hasNoMoreResul
   return (
     <div className="py-4">
       {isLoading && (
-        <Spinner color="secondary" />)
+        <Spinner color="current" className="text-secondary" />)
       }
       {
         !isLoading && hasNoResults && <Chip color="warning" variant="faded" size="lg">{t("result_status_indicator.no_results")}</Chip>

@@ -97,7 +97,7 @@ test.describe("Filter UI", () => {
 
     const deletedAccordion = page
       .getByTestId("deleted-movies-filter-accordion")
-      .locator('[data-slot="trigger"]');
+      .locator("[data-slot=\"trigger\"]");
     await expect(deletedAccordion).toBeVisible();
     await deletedAccordion.click();
     for (const label of [

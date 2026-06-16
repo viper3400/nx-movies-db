@@ -175,6 +175,7 @@ export function FilterDrawer(
                   <AccordionItem
                     key="4"
                     aria-label="deleted-movies-filter"
+                    data-testid="deleted-movies-filter-accordion"
                     title={
                       <Tooltip delay={0}>
                         <Tooltip.Trigger className="inline-flex">

@@ -1,14 +1,13 @@
 import fs from "fs";
 import { NextRequest } from "next/server";
 import path from "path";
-import { auth } from "../../../../lib/auth";
-import { isUserAllowed } from "../../../../lib/allowed-user-parser";
+import { getAllowedSession } from "../../../services/actions/getAllowedSession";
 
 const coverImagePath = process.env.COVER_IMAGE_PATH || process.cwd();
 
 export async function GET(_req: NextRequest, ctx: RouteContext<"/api/cover-image/[id]">) {
-  const session = await auth();
-  if (!session?.user?.email || !isUserAllowed(session.user?.email)) {
+  const session = await getAllowedSession();
+  if (!session) {
     return new Response(
       JSON.stringify({ error: "Unauthorized" }),
       { status: 401, headers: { "Content-Type": "application/json" } }

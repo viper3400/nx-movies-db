@@ -1,4 +1,5 @@
-import { useDisclosure, Button, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker, DateValue } from "@heroui/react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker, DateValue } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import { parseDate } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
@@ -17,7 +18,7 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
   const [selectedStartDate, setSelectedStartDate] = useState<DateValue | null>(parseDate("2010-01-01"));
   const [selectedEndDate, setSelectedEndDate] = useState<DateValue | null>(parseDate("2099-01-01"));
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
   const handleApply = async () => {
@@ -42,12 +43,14 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
       <div className="text-center sm:text-left">
         <Button
           className="mt-4"
-          onPress={onOpen}
-          startContent={<CalendarRangeOutlined />}>
+          variant="outline"
+          onPress={() => setIsOpen(true)}
+        >
+          <CalendarRangeOutlined />
           {formatDate(selectedStartDate)} - {formatDate(selectedEndDate)}
         </Button>
       </div>
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
         <DrawerContent>
           {(onClose) => (
             <>
@@ -69,10 +72,10 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
                 </I18nProvider>
               </DrawerBody>
               <DrawerFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button variant="danger-soft" onPress={onClose}>
                   {t("common.close")}
                 </Button>
-                <Button color="primary" onPress={() => { handleApply(); onClose(); }}>
+                <Button variant="primary" onPress={() => { handleApply(); onClose(); }}>
                   {t("common.apply")}
                 </Button>
               </DrawerFooter>

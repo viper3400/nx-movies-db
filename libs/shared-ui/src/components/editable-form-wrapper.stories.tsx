@@ -136,44 +136,50 @@ export const Default: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const initialFirstName = args.initialValues.firstName;
+    const editedFirstName = initialFirstName === "Thomas" ? "Neo" : "Thomas";
 
     const saveButton = canvas.getByTestId("editable-form-save");
     const discardButton = canvas.getByTestId("editable-form-discard");
     const firstNameInput = canvas.getByTestId("profile-field-first-name");
 
     await expect(firstNameInput).toHaveAccessibleName("First name");
-    await expect(firstNameInput).toHaveValue("Neo");
+    await expect(firstNameInput).toHaveValue(initialFirstName);
     await expect(saveButton).toBeDisabled();
     await expect(discardButton).toBeDisabled();
 
     await userEvent.clear(firstNameInput);
-    await userEvent.type(firstNameInput, "Thomas");
+    await userEvent.type(firstNameInput, editedFirstName);
 
     await expect(saveButton).toBeEnabled();
     await expect(discardButton).toBeEnabled();
 
     await userEvent.click(saveButton);
-    await expect(saveButton).toHaveAttribute("data-loading");
+    await expect(saveButton).toHaveAttribute("aria-disabled", "true");
+    await expect(saveButton).toHaveAttribute("data-pending", "true");
+    await expect(firstNameInput).toHaveValue(editedFirstName);
   },
 };
 
 export const DiscardFlow: Story = {
   render: Default.render,
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const initialFirstName = args.initialValues.firstName;
+    const editedFirstName = initialFirstName === "Agent" ? "Neo" : "Agent";
 
     const discardButton = canvas.getByTestId("editable-form-discard");
     const firstNameInput = canvas.getByTestId("profile-field-first-name");
 
     await expect(firstNameInput).toHaveAccessibleName("First name");
     await userEvent.clear(firstNameInput);
-    await userEvent.type(firstNameInput, "Agent");
+    await userEvent.type(firstNameInput, editedFirstName);
 
     await userEvent.click(discardButton);
 
-    await expect(firstNameInput).toHaveValue("Neo");
+    await expect(firstNameInput).toHaveValue(initialFirstName);
   },
 };
 
@@ -227,8 +233,10 @@ export const ReadOnlyInteractions: Story = {
 
 export const DirtyStateTypingRegression: Story = {
   render: Default.render,
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const initialFirstName = args.initialValues.firstName;
+    const editedFirstName = initialFirstName === "Thomas" ? "Neo" : "Thomas";
 
     const saveButton = canvas.getByTestId("editable-form-save");
     const firstNameInput = canvas.getByTestId("profile-field-first-name");
@@ -236,7 +244,7 @@ export const DirtyStateTypingRegression: Story = {
     // Type without spaces — must still mark form dirty
     await expect(firstNameInput).toHaveAccessibleName("First name");
     await userEvent.clear(firstNameInput);
-    await userEvent.type(firstNameInput, "Thomas");
+    await userEvent.type(firstNameInput, editedFirstName);
 
     await expect(saveButton).toBeEnabled();
   },

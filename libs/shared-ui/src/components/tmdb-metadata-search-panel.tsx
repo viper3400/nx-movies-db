@@ -1,10 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Button,
-  Switch,
-} from "@heroui/react";
+import { Button, Spinner, Switch } from "@heroui-v3/react";
 import { MovieSearchInput } from "./movie-search-input";
 import { TmdbSearchResultsList } from "./tmdb-search-results-list";
 import type { TmdbSearchResultItem } from "./tmdb-search-result-card";
@@ -68,21 +65,31 @@ export const TmdbMetadataSearchPanel: React.FC<TmdbMetadataSearchPanelProps> = (
         <Switch
           data-testid={mediaKindTestId}
           isSelected={mediaKind === "tv"}
-          onValueChange={(selected) => onMediaKindChange(selected ? "tv" : "movie")}
+          onChange={(selected) => onMediaKindChange(selected ? "tv" : "movie")}
           className="md:self-end"
         >
-          TV series
+          <Switch.Content>
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+            TV series
+          </Switch.Content>
         </Switch>
         <Button
           data-testid={submitTestId}
-          color="primary"
+          variant="primary"
           size="lg"
-          isLoading={isSearching}
+          isPending={isSearching}
           isDisabled={!query.trim()}
           onPress={onSearch}
           className="md:self-end"
         >
-          Search
+          {({ isPending }) => (
+            <>
+              {isPending && <Spinner color="current" size="sm" />}
+              Search
+            </>
+          )}
         </Button>
       </div>
 

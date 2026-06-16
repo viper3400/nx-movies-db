@@ -21,7 +21,8 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Button, Card, CardBody, Chip, Skeleton, Tooltip, addToast } from "@heroui/react";
+import { Card, CardBody, Chip, Skeleton, addToast } from "@heroui/react";
+import { Button, Tooltip } from "@heroui-v3/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -584,17 +585,24 @@ function UpsertVideoFormContent({
           </span>
         </span>
         <Tooltip
+          delay={0}
           isDisabled={!dirty || !changedFieldLabelText}
-          content={changedFieldLabelText ? `Changed: ${changedFieldLabelText}` : undefined}
         >
-          <Chip
-            data-testid="upsert-video-form-save-status"
-            size="sm"
-            color={saving ? "primary" : dirty ? "warning" : "success"}
-            variant={saving ? "solid" : "flat"}
-          >
-            {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
-          </Chip>
+          <Tooltip.Trigger>
+            <span className="inline-flex">
+              <Chip
+                data-testid="upsert-video-form-save-status"
+                size="sm"
+                color={saving ? "primary" : dirty ? "warning" : "success"}
+                variant={saving ? "solid" : "flat"}
+              >
+                {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
+              </Chip>
+            </span>
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            {changedFieldLabelText ? `Changed: ${changedFieldLabelText}` : null}
+          </Tooltip.Content>
         </Tooltip>
       </div>
 
@@ -627,7 +635,7 @@ function UpsertVideoFormContent({
             <Button
               data-testid="tmdb-refresh-toggle"
               size="sm"
-              variant="flat"
+              variant="secondary"
               onPress={handleTmdbPanelToggle}
             >
               {tmdbPanelOpen ? "Hide" : "Refresh metadata"}
@@ -642,7 +650,7 @@ function UpsertVideoFormContent({
                 <Button
                   data-testid="tmdb-review-back-to-search"
                   size="sm"
-                  variant="flat"
+                  variant="secondary"
                   onPress={() => {
                     setTmdbSelectedMovie(null);
                     setTmdbSelectedBackdropUrl(null);

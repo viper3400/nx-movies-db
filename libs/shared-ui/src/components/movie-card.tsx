@@ -1,4 +1,5 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, Divider, ScrollShadow } from "@heroui/react";
+import { Card, CardBody, CardFooter, CardHeader, Chip, Divider, ScrollShadow } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useEffect, useState } from "react";
@@ -249,11 +250,12 @@ export const MovieCard = ({
                 <>
                   <Button
                     data-testid="seen-today-button"
-                    startContent={<EyeOutlined />}
+                    variant="tertiary"
                     onPress={() => {
                       setUserSeenDateForMovie(movie.id, new Date());
                       setAdditionalDatesLoaded(false);
                     }}>
+                    <EyeOutlined />
                     {langResources.seenTodayLabel}
                   </Button>
                   <DatePickerModal
@@ -267,11 +269,17 @@ export const MovieCard = ({
                 </>
               }
               {showDetailsButton && detailsUrl &&
-                <Button onPress={() => window.open(detailsUrl, "_blank")}>Details</Button>
+                <Button
+                  variant="tertiary"
+                  data-test-id="show-details-button"
+                  onPress={() => window.open(detailsUrl, "_blank")}>
+                  Details
+                </Button>
               }
               {editUrl &&
                 <Button
                   data-testid="edit-movie-button"
+                  variant="secondary"
                   onPress={() => {
                     window.location.href = editUrl;
                   }}

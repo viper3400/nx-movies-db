@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} nextAuthUrl={nextAuthUrl}>
           {/* ONE wrapper – full width always */}
           <div className="w-screen min-h-screen">
-            <div className="fixed inset-x-0 top-0 z-40">
+            <div className="fixed inset-x-0 top-0 z-[60]">
               <NavbarComponent />
             </div>
 

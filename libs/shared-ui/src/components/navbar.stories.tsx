@@ -30,20 +30,31 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open navigation menu" }));
+    const menuToggle = canvas.getByTestId("navbar-menu-toggle");
+    await userEvent.click(menuToggle);
 
-    await expect(page.findByText("Hans Dampf")).resolves.toBeVisible();
-    await expect(page.findByRole("button", { name: "Filmsuche" })).resolves.toHaveAttribute("href", "/");
-    await expect(page.findByRole("button", { name: "Gesehene Filme" })).resolves.toHaveAttribute("href", "/seen");
-    await expect(page.findByRole("button", { name: "Film hinzufügen" })).resolves.toHaveAttribute("href", "/edit/new");
-    await expect(page.findByRole("button", { name: "Info" })).resolves.toHaveAttribute("href", "/info");
-    expect(page.queryByText("Github Logout")).not.toBeInTheDocument();
+    const menuOverlay = await page.findByTestId("navbar-menu-overlay");
+    const overlay = within(menuOverlay);
 
-    await userEvent.click(page.getByText("HomeWeb Logout"));
+    await expect(overlay.findByText("Hans Dampf")).resolves.toBeVisible();
+    await expect(overlay.findByRole("link", { name: "Filmsuche" })).resolves.toHaveAttribute("href", "/");
+    await expect(overlay.findByRole("link", { name: "Gesehene Filme" })).resolves.toHaveAttribute("href", "/seen");
+    await expect(overlay.findByRole("link", { name: "Film hinzufügen" })).resolves.toHaveAttribute("href", "/edit/new");
+    await expect(overlay.findByRole("link", { name: "Info" })).resolves.toHaveAttribute("href", "/info");
+    expect(overlay.queryByText("Github Logout")).not.toBeInTheDocument();
+
+    const closeButton = overlay.getByTestId("navbar-menu-close");
+    await userEvent.click(closeButton);
+    expect(page.queryByTestId("navbar-menu-overlay")).not.toBeInTheDocument();
+
+    await userEvent.click(menuToggle);
+    const reopenedOverlay = within(await page.findByTestId("navbar-menu-overlay"));
+    await userEvent.click(reopenedOverlay.getByText("HomeWeb Logout"));
     await expect(args.handleSignOut).toHaveBeenCalledTimes(1);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open navigation menu" }));
-    await userEvent.click(page.getByText("Google Logout"));
+    await userEvent.click(menuToggle);
+    const reopenedOverlayForGoogle = within(await page.findByTestId("navbar-menu-overlay"));
+    await userEvent.click(reopenedOverlayForGoogle.getByText("Google Logout"));
     await expect(args.handleGoogleLogout).toHaveBeenCalledTimes(1);
   },
 };
@@ -56,10 +67,14 @@ export const SignedOut: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open navigation menu" }));
+    const menuToggle = canvas.getByTestId("navbar-menu-toggle");
+    await userEvent.click(menuToggle);
 
-    expect(page.queryByRole("link", { name: "Filmsuche" })).not.toBeInTheDocument();
-    expect(page.queryByText("HomeWeb Logout")).not.toBeInTheDocument();
+    const menuOverlay = await page.findByTestId("navbar-menu-overlay");
+    const overlay = within(menuOverlay);
+
+    expect(overlay.queryByRole("link", { name: "Filmsuche" })).not.toBeInTheDocument();
+    expect(overlay.queryByText("HomeWeb Logout")).not.toBeInTheDocument();
   },
 };
 
@@ -72,12 +87,16 @@ export const GithubUser: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open navigation menu" }));
+    const menuToggle = canvas.getByTestId("navbar-menu-toggle");
+    await userEvent.click(menuToggle);
 
-    await expect(page.findByText("Github Logout")).resolves.toBeVisible();
-    expect(page.queryByText("Google Logout")).not.toBeInTheDocument();
+    const menuOverlay = await page.findByTestId("navbar-menu-overlay");
+    const overlay = within(menuOverlay);
 
-    await userEvent.click(page.getByText("Github Logout"));
+    await expect(overlay.findByText("Github Logout")).resolves.toBeVisible();
+    expect(overlay.queryByText("Google Logout")).not.toBeInTheDocument();
+
+    await userEvent.click(overlay.getByText("Github Logout"));
     await expect(args.handleGithubLogout).toHaveBeenCalledTimes(1);
   },
 };

@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   Checkbox,
   Chip,
-  Image,
 } from "@heroui/react";
 import { Button } from "@heroui-v3/react";
 import type { Selection } from "@react-types/shared";
@@ -136,8 +136,8 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                         alt=""
                         width={320}
                         height={180}
-                        radius="sm"
-                        className="aspect-video h-auto w-full object-cover"
+                        unoptimized
+                        className="aspect-video h-auto w-full rounded-small object-cover"
                       />
                       <div className="mt-2 px-1 pb-1 text-xs text-default-500">
                         {backdrop.isPrimary ? "Primary background" : "Alternate background"}

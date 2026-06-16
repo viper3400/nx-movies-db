@@ -8,7 +8,6 @@ import {
   Textarea,
   DatePicker,
   DateValue,
-  Spacer,
   Select,
   SelectItem,
 } from "@heroui/react";
@@ -229,7 +228,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   );
 
   return (
-    <div className={className}>
+    <div className={`pb-4 ${className ?? ""}`.trim()}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {renderTextField({ k: "id", label: "ID", type: "number" })}
         {renderTextField({ k: "md5", label: "MD5" })}
@@ -312,7 +311,6 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderDateField({ k: "lastupdate", label: "Last Update" })}
 
       </div>
-      <Spacer y={4} />
     </div>
   );
 };

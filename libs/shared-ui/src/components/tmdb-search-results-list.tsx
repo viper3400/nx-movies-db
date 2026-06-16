@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Spinner } from "@heroui/react";
+import { Spinner } from "@heroui-v3/react";
 import {
   TmdbSearchResultCard,
   type TmdbSearchResultItem,
@@ -29,8 +29,9 @@ export const TmdbSearchResultsList: React.FC<TmdbSearchResultsListProps> = ({
   return (
     <div data-testid="tmdb-results-list" className="space-y-3">
       {isLoading && (
-        <div data-testid="tmdb-results-loading" className="flex min-h-32 items-center justify-center">
-          <Spinner label={loadingLabel} />
+        <div data-testid="tmdb-results-loading" className="flex min-h-32 flex-col items-center justify-center gap-2">
+          <Spinner color="current" />
+          <span className="text-sm text-default-500">{loadingLabel}</span>
         </div>
       )}
 

@@ -4,11 +4,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
-  useDisclosure,
   DatePicker,
   DateValue,
 } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import { EyeOutlined } from "../icons/eye-outlined";
 import { useTranslation } from "react-i18next";
 import { I18nProvider } from "@react-aria/i18n";
@@ -22,13 +21,16 @@ interface DatePickerModalProps {
 export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
   const now = today(getLocalTimeZone());
   const [dateValue, setDateValue] = useState<DateValue | null>(now);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
   return (
     <>
-      <Button onPress={onOpen} startContent={<EyeOutlined />}>{t("choose_date_modal.dialog_title")}</Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Button variant="tertiary" onPress={() => setIsOpen(true)}>
+        <EyeOutlined />
+        {t("choose_date_modal.dialog_title")}
+      </Button>
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -44,10 +46,10 @@ export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
                 </I18nProvider>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button variant="danger-soft" onPress={onClose}>
                   {t("choose_date_modal.discard")}
                 </Button>
-                <Button color="primary" onPress={() => {
+                <Button variant="primary" onPress={() => {
                   if (dateValue) {
                     const date = new Date(Date.UTC(dateValue.year, dateValue.month - 1, dateValue.day, 0, 0, 0));
                     onDateSelected(date); setDateValue(now);
@@ -64,4 +66,3 @@ export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
     </>
   );
 };
-

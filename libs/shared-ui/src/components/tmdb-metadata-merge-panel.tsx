@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
-  Button,
   Checkbox,
   Chip,
-  Image,
 } from "@heroui/react";
+import { Button } from "@heroui-v3/react";
 import type { Selection } from "@react-types/shared";
 import {
   TmdbGenreMappingControl,
@@ -136,8 +136,8 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                         alt=""
                         width={320}
                         height={180}
-                        radius="sm"
-                        className="aspect-video h-auto w-full object-cover"
+                        unoptimized
+                        className="aspect-video h-auto w-full rounded-small object-cover"
                       />
                       <div className="mt-2 px-1 pb-1 text-xs text-default-500">
                         {backdrop.isPrimary ? "Primary background" : "Alternate background"}
@@ -206,14 +206,14 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
       <div className="flex flex-wrap justify-end gap-2">
         <Button
           data-testid="tmdb-merge-no-match"
-          variant="flat"
+          variant="secondary"
           onPress={onNoMatch}
         >
           No TMDB match
         </Button>
         <Button
           data-testid="tmdb-merge-apply"
-          color="primary"
+          variant="primary"
           isDisabled={selectedCount === 0}
           onPress={onApplySelected}
         >

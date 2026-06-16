@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "@nx-movies-db/shared-ui";
 import { Movie } from "../interfaces";
-import { Input, Spacer } from "@heroui/react";
+import { Input } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 
@@ -69,20 +69,19 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
               deletedEntryLabel: t("movie_card.deleted_entry"),
               editLabel: t("movie_card.edit_label")
             }} />
-          <Spacer y={4} />
           {!readOnlyMode &&
-            <div>
+            <div className="mt-4 space-y-4">
               <Input
                 size="lg"
                 defaultValue={movie.title}
                 isReadOnly={readOnlyMode}
                 label="Titel"
-                variant={inputVariant} /><Spacer y={4} /><Input
+                variant={inputVariant} /><Input
                 size="lg"
                 defaultValue={movie.subtitle}
                 isReadOnly={readOnlyMode}
                 label="Subtitel"
-                variant={inputVariant} /><Spacer y={4} /><Input
+                variant={inputVariant} /><Input
                 size="lg"
                 defaultValue={movie.diskid}
                 isReadOnly={readOnlyMode}

@@ -6,24 +6,29 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { SurpriseButton } from "./surprise-button";
 
+jest.mock("@heroui-v3/react", () => {
+  const Tooltip = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+  Tooltip.Trigger = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+  Tooltip.Content = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+
+  return {
+    Tooltip,
+    Button: ({
+      children,
+      onPress,
+      ...props
+    }: {
+      children: React.ReactNode;
+      onPress?: () => void;
+    }) => (
+      <button type="button" onClick={onPress} {...props}>
+        {children}
+      </button>
+    ),
+  };
+});
+
 jest.mock("@heroui/react", () => ({
-  Tooltip: ({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) => <div>{children}</div>,
-  Button: ({
-    children,
-    onPress,
-    ...props
-  }: {
-    children: React.ReactNode;
-    onPress?: () => void;
-  }) => (
-    <button type="button" onClick={onPress} {...props}>
-      {children}
-    </button>
-  ),
   Badge: ({
     children,
     ...props

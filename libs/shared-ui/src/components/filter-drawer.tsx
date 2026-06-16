@@ -4,18 +4,15 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
-  Button,
-  useDisclosure,
   Radio,
   RadioGroup,
-  Switch,
   Badge,
   Accordion,
   AccordionItem,
   Checkbox,
   CheckboxGroup,
-  Tooltip,
 } from "@heroui/react";
+import { Button, Switch, Tooltip } from "@heroui-v3/react";
 import { Tune } from "../icons";
 import { useState } from "react";
 import { t } from "i18next";
@@ -38,7 +35,7 @@ export function FilterDrawer(
     genres,
     dataTestId,
   }: FilterDrawerProperties) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   // Local state to manage changes within the component
   const [local, setLocal] = useState<MovieSearchFilters>(parent);
@@ -46,7 +43,7 @@ export function FilterDrawer(
   // Sync local state with parent state when the drawer is opened
   const handleOpen = () => {
     setLocal(parent); // Sync local state with parent when opening
-    onOpen();
+    setIsOpen(true);
   };
 
   // Apply changes to the parent state
@@ -82,22 +79,20 @@ export function FilterDrawer(
       <Button
         data-testid={dataTestId}
         size="lg"
-        variant="ghost"
+        variant="outline"
         onPress={handleOpen}
-        startContent={
-          isDefaultFilter ? (
-            <Tune />
-          ) : (
-            <Badge color="secondary" content="" placement="bottom-right" shape="circle">
-              <Tune />
-            </Badge>
-          )
-        }
       >
+        {isDefaultFilter ? (
+          <Tune />
+        ) : (
+          <Badge color="secondary" content="" placement="bottom-right" shape="circle">
+            <Tune />
+          </Badge>
+        )}
         Filter
       </Button>
 
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
         <DrawerContent>
           {(onClose) => (
             <>
@@ -106,10 +101,26 @@ export function FilterDrawer(
                 <div className="flex w-full flex-col gap-4">
                   <Switch
                     isSelected={local.filterForFavorites}
-                    onValueChange={updateFavorites}>{t("search.favoriteMoviesFilterLabel")}</Switch>
+                    onChange={updateFavorites}
+                  >
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      {t("search.favoriteMoviesFilterLabel")}
+                    </Switch.Content>
+                  </Switch>
                   <Switch
                     isSelected={local.filterForWatchAgain}
-                    onValueChange={updateWatchAgain}>{t("search.watchagainMoviesFilterLabel")}</Switch>
+                    onChange={updateWatchAgain}
+                  >
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      {t("search.watchagainMoviesFilterLabel")}
+                    </Switch.Content>
+                  </Switch>
                 </div>
                 <Accordion>
                   <AccordionItem
@@ -179,9 +190,15 @@ export function FilterDrawer(
                   <AccordionItem
                     key="4"
                     aria-label="deleted-movies-filter"
+                    data-testid="deleted-movies-filter-accordion"
                     title={
-                      <Tooltip content={t("search.deletedMoviesFilterTooltip")}>
-                        <span>{t("search.deletedMoviesFilterLabel")}</span>
+                      <Tooltip delay={0}>
+                        <Tooltip.Trigger className="inline-flex">
+                          <span>{t("search.deletedMoviesFilterLabel")}</span>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          {t("search.deletedMoviesFilterTooltip")}
+                        </Tooltip.Content>
                       </Tooltip>
                     }
                     subtitle={
@@ -207,20 +224,25 @@ export function FilterDrawer(
                     <div className="py-6">
                       <Switch
                         isSelected={local.randomExcludeDeleted}
-                        onValueChange={updateRandomExcludeDeleted}
+                        onChange={updateRandomExcludeDeleted}
                         isDisabled
                       >
-                        {t("search.randomExcludeDeletedLabel")}
+                        <Switch.Content>
+                          <Switch.Control>
+                            <Switch.Thumb />
+                          </Switch.Control>
+                          {t("search.randomExcludeDeletedLabel")}
+                        </Switch.Content>
                       </Switch>
                     </div>
                   </AccordionItem>
                 </Accordion>
               </DrawerBody>
               <DrawerFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button variant="danger-soft" onPress={onClose}>
                   {t("common.close")}
                 </Button>
-                <Button color="default" onPress={
+                <Button variant="secondary" onPress={
                   () => {
                     handleApply(onClose);
                     onClose();

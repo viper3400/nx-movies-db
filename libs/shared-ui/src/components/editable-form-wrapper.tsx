@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Button, Spacer, Card, CardBody } from "@heroui/react";
+import { Card, CardBody } from "@heroui/react";
+import { Button, Spinner } from "@heroui-v3/react";
 import isEqual from "react-fast-compare";
 
 export const EDITABLE_FORM_FRAME_OPTIONS = ["content", "all", "none"] as const;
@@ -86,8 +87,7 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
       <>
         <div className="flex gap-2 justify-end w-full">
           <Button
-            color="default"
-            variant="flat"
+            variant="secondary"
             onPress={handleDiscard}
             isDisabled={!dirty || saving}
             data-testid="editable-form-discard"
@@ -95,27 +95,31 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
             {discardLabel}
           </Button>
           <Button
-            color="primary"
+            variant="primary"
             onPress={handleSave}
             isDisabled={!dirty || readOnly}
-            isLoading={saving}
+            isPending={saving}
             data-testid="editable-form-save"
           >
-            {saveLabel}
+            {({ isPending }) => (
+              <>
+                {isPending && <Spinner color="current" size="sm" />}
+                {saveLabel}
+              </>
+            )}
           </Button>
         </div>
-        <Spacer y={2} />
+        <div className="h-2" />
       </>
     ) : null;
 
   const actionsBottom =
     actionsPosition === "bottom" || actionsPosition === "both" ? (
       <>
-        <Spacer y={2} />
+        <div className="h-2" />
         <div className="flex gap-2 justify-end w-full">
           <Button
-            color="default"
-            variant="flat"
+            variant="secondary"
             onPress={handleDiscard}
             isDisabled={!dirty || saving}
             data-testid="editable-form-discard"
@@ -123,13 +127,18 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
             {discardLabel}
           </Button>
           <Button
-            color="primary"
+            variant="primary"
             onPress={handleSave}
             isDisabled={!dirty || readOnly}
-            isLoading={saving}
+            isPending={saving}
             data-testid="editable-form-save"
           >
-            {saveLabel}
+            {({ isPending }) => (
+              <>
+                {isPending && <Spinner color="current" size="sm" />}
+                {saveLabel}
+              </>
+            )}
           </Button>
         </div>
       </>

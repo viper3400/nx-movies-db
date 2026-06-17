@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "@nx-movies-db/shared-ui";
 import { Movie } from "../interfaces";
-import { Input } from "@heroui/react";
+import { Input, Label, TextField } from "@heroui-v3/react";
 import { useTranslation } from "react-i18next";
 import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 
@@ -24,7 +24,7 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
 
   const { t } = useTranslation();
 
-  const inputVariant = "underlined";
+  const inputVariant = "secondary";
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -71,22 +71,19 @@ export const DetailsComponent = ({ id, userName }: DetailsComponentProperties) =
             }} />
           {!readOnlyMode &&
             <div className="mt-4 space-y-4">
-              <Input
-                size="lg"
-                defaultValue={movie.title}
-                isReadOnly={readOnlyMode}
-                label="Titel"
-                variant={inputVariant} /><Input
-                size="lg"
-                defaultValue={movie.subtitle}
-                isReadOnly={readOnlyMode}
-                label="Subtitel"
-                variant={inputVariant} /><Input
-                size="lg"
-                defaultValue={movie.diskid}
-                isReadOnly={readOnlyMode}
-                label="Diskid"
-                variant={inputVariant} /></div>
+              <TextField isReadOnly={readOnlyMode}>
+                <Label>Titel</Label>
+                <Input data-testid="details-field-title" defaultValue={movie.title} variant={inputVariant} />
+              </TextField>
+              <TextField isReadOnly={readOnlyMode}>
+                <Label>Subtitel</Label>
+                <Input data-testid="details-field-subtitle" defaultValue={movie.subtitle} variant={inputVariant} />
+              </TextField>
+              <TextField isReadOnly={readOnlyMode}>
+                <Label>Diskid</Label>
+                <Input data-testid="details-field-diskid" defaultValue={movie.diskid} variant={inputVariant} />
+              </TextField>
+            </div>
           }
         </div>
       }

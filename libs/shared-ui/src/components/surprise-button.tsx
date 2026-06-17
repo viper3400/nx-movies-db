@@ -1,4 +1,3 @@
-import { Badge } from "@heroui/react";
 import { Button, PressEvent, Tooltip } from "@heroui-v3/react";
 import { Surprise } from "../icons";
 import { t } from "i18next";
@@ -22,15 +21,14 @@ export const SurpriseButton = ({ onPress, dataTestId, isDefaultFilter = true }: 
           {isDefaultFilter ? (
             <Surprise />
           ) : (
-            <Badge
-              color="secondary"
-              content=""
-              placement="bottom-right"
-              shape="circle"
-              data-testid="surprise-button-filter-indicator"
-            >
+            <span className="relative inline-flex">
               <Surprise />
-            </Badge>
+              <span
+                data-testid="surprise-button-filter-indicator"
+                aria-hidden="true"
+                className="absolute -bottom-0.5 -right-1 h-2.5 w-2.5 rounded-full bg-secondary-500 ring-2 ring-background"
+              />
+            </span>
           )}
         </Button>
       </Tooltip.Trigger>

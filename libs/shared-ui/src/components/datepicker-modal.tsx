@@ -5,14 +5,13 @@ import {
   ModalBody,
   ModalFooter,
   DatePicker,
-  DateValue,
 } from "@heroui/react";
 import { Button } from "@heroui-v3/react";
 import { EyeOutlined } from "../icons/eye-outlined";
 import { useTranslation } from "react-i18next";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
-import { today, getLocalTimeZone } from "@internationalized/date";
+import { today, getLocalTimeZone, type DateValue } from "@internationalized/date";
 
 interface DatePickerModalProps {
   onDateSelected: (date: Date | null) => void;
@@ -42,7 +41,8 @@ export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
                     className="max-w-[284px]"
                     firstDayOfWeek="mon"
                     value={dateValue}
-                    onChange={setDateValue} />
+                    onChange={setDateValue}
+                  />
                 </I18nProvider>
               </ModalBody>
               <ModalFooter>
@@ -52,7 +52,8 @@ export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
                 <Button variant="primary" onPress={() => {
                   if (dateValue) {
                     const date = new Date(Date.UTC(dateValue.year, dateValue.month - 1, dateValue.day, 0, 0, 0));
-                    onDateSelected(date); setDateValue(now);
+                    onDateSelected(date);
+                    setDateValue(now);
                   }
                   onClose();
                 }}>
@@ -62,7 +63,7 @@ export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
             </>
           )}
         </ModalContent>
-      </Modal >
+      </Modal>
     </>
   );
 };

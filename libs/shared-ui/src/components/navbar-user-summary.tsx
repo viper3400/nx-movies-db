@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Avatar } from "@heroui/react";
+import { Avatar } from "@heroui-v3/react";
 
 export interface NavbarUserSummaryProps {
   userName?: string;
@@ -28,7 +28,10 @@ export const NavbarUserSummary: React.FC<NavbarUserSummaryProps> = ({
       data-testid="navbar-user-summary"
       className={`flex items-center gap-3 rounded-small border border-default-200 px-3 py-2 ${className ?? ""}`.trim()}
     >
-      <Avatar src={userImage} name={userName} size="sm" />
+      <Avatar size="sm">
+        {userImage ? <Avatar.Image src={userImage} alt={userName ?? userEmail} /> : null}
+        <Avatar.Fallback>{userInitials || userEmail.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      </Avatar>
       <div className="min-w-0">
         {userName && (
           <p className="truncate text-sm font-medium text-foreground">

@@ -28,15 +28,6 @@ jest.mock("@heroui-v3/react", () => {
   };
 });
 
-jest.mock("@heroui/react", () => ({
-  Badge: ({
-    children,
-    ...props
-  }: {
-    children: React.ReactNode;
-  }) => <span {...props}>{children}</span>,
-}));
-
 jest.mock("../icons", () => ({
   Surprise: () => <span data-testid="surprise-icon" />,
 }));

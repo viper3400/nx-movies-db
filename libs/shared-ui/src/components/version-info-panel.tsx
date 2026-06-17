@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Chip } from "@heroui-v3/react";
 import clsx from "clsx";
 
 export interface VersionInfoDetail {
@@ -66,7 +66,7 @@ export const VersionInfoPanel = ({
 
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium text-default-500">Version</span>
-        <Chip color="secondary" variant="flat" className="font-mono text-base">
+        <Chip color="accent" variant="secondary" className="font-mono text-base">
           {appVersion}
         </Chip>
       </div>

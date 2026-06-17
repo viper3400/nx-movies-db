@@ -1,5 +1,5 @@
-import { Card, CardBody, CardFooter, CardHeader, Chip, Divider, ScrollShadow } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Card, CardBody, CardFooter, CardHeader, Divider, ScrollShadow } from "@heroui/react";
+import { Button, Chip } from "@heroui-v3/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useEffect, useState } from "react";
@@ -155,8 +155,8 @@ export const MovieCard = ({
                 <TvNextOutlined />
               </Chip>
             )}
-            <Chip color="secondary">{movie.mediaType}</Chip>
-            {movie.diskid && <Chip color="primary">{movie.diskid}</Chip>}
+            <Chip color="default">{movie.mediaType}</Chip>
+            {movie.diskid && <Chip color="accent" variant="primary">{movie.diskid}</Chip>}
           </div>
         </CardHeader>
         <Divider />
@@ -231,17 +231,17 @@ export const MovieCard = ({
               <div className="flex gap-2 flex-wrap">
                 {movie.genres &&
                   movie.genres.map((genreName: string) => (
-                    <Chip key={genreName} color="primary" variant="flat">
+                    <Chip key={genreName} color="accent" variant="tertiary">
                       {genreName}
                     </Chip>
                   ))}
               </div>
               <div className="flex gap-2">
                 {movie.runtime &&
-                  <Chip color="secondary" variant="flat">{movie.runtime} min</Chip>
+                  <Chip color="default" variant="tertiary">{movie.runtime} min</Chip>
                 }
                 {movie.rating &&
-                  <Chip color="warning" variant="flat">{`${t("movie_card.rating")} ${movie.rating}`}</Chip>
+                  <Chip color="warning" variant="tertiary">{`${t("movie_card.rating")} ${movie.rating}`}</Chip>
                 }
               </div>
             </div>

@@ -95,9 +95,7 @@ test.describe("Filter UI", () => {
       await expect(page.getByRole("radio", { name: label, exact: true })).toBeVisible({ timeout: 15_000 });
     }
 
-    const deletedAccordion = page
-      .getByTestId("deleted-movies-filter-accordion")
-      .locator("[data-slot=\"trigger\"]");
+    const deletedAccordion = page.getByTestId("deleted-movies-filter-accordion-trigger");
     await expect(deletedAccordion).toBeVisible();
     await deletedAccordion.click();
     for (const label of [

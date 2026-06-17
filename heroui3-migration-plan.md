@@ -46,7 +46,11 @@ Completed so far:
 
 Still active / not yet migrated:
 - Global v2 runtime/config is still active via `HeroUIProvider`, `ToastProvider`, and `heroui()` plugin files.
-- A substantial set of components still uses v2 props and/or still imports from `@heroui/react`.
+- The remaining work is now concentrated in a smaller set of v2 holdouts:
+  - date overlays and pickers
+  - `Textarea` / `Select` / `Checkbox`
+  - `Divider` / `ScrollShadow` / `Skeleton`
+  - one isolated app-local `Button`
 
 ## Current Repo State
 
@@ -109,64 +113,103 @@ Status:
 
 ### 2. Finish remaining component migrations
 
-This is now the main remaining migration track.
+This is still the main remaining migration track, but the file is now much closer to the end than the original list suggests.
 
-#### Components already partly migrated to v3
+#### Already complete
 
-Status:
-- Completed for the current mixed-import slice.
-- The previously partial v3 families below have now been normalized in live usage.
-
-These were the component families in this slice:
+These live component families are already migrated or removed from the v2 path:
 - `Button`
 - `Tooltip`
 - `Spinner`
 - `Switch`
-
-Representative files:
-- [libs/shared-ui/src/components/surprise-button.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/surprise-button.tsx:1)
-- [libs/shared-ui/src/components/tmdb-metadata-search-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-search-panel.tsx:1)
-- [libs/shared-ui/src/components/editable-form-wrapper.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/editable-form-wrapper.tsx:1)
-- [apps/movies-ui/src/components/upsert-video-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/upsert-video-form.tsx:1)
-
-Verification completed for this slice:
-- `npm exec nx run movies-ui:test -- --runInBand`
-- `npm exec nx run shared-ui:test -- --runInBand`
-- `npm exec nx run movies-ui:build`
-
-Notes:
-- The first `movies-ui:build` attempt failed in the sandbox because Turbopack tried to bind a local port during CSS processing; the rerun outside the sandbox succeeded.
-- `theme-switch.tsx` remains a custom-styled v3 `Switch` composition and should be watched during final styling cleanup.
-
-#### Components still fully on v2
-
-Representative remaining v2 component usage:
 - `Chip`
 - `Card`
-- `Divider`
 - `Input`
-- `Drawer`
-- `Modal`
-- `DatePicker`
 - `Badge`
-- `ScrollShadow`
-- `Skeleton`
+- `Avatar`
 - `Accordion`
+- `Navbar`
+- `User`
+- `Image`
+- `Spacer`
 
-Representative files:
+These files were part of the completed slices:
+- [libs/shared-ui/src/components/surprise-button.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/surprise-button.tsx:1)
+- [libs/shared-ui/src/components/filter-drawer.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/filter-drawer.tsx:1)
 - [libs/shared-ui/src/components/movie-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/movie-card.tsx:1)
-- [libs/shared-ui/src/components/upsert-video-data-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/upsert-video-data-form.tsx:1)
-- [libs/shared-ui/src/components/tmdb-genre-mapping-control.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-genre-mapping-control.tsx:1)
-- [libs/shared-ui/src/components/results-status-indicator.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/results-status-indicator.tsx:1)
-- [apps/movies-ui/src/components/details.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/details.tsx:1)
+- [libs/shared-ui/src/components/movie-search-input.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/movie-search-input.tsx:1)
+- [libs/shared-ui/src/components/navbar.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar.tsx:1)
+- [libs/shared-ui/src/components/navbar-user-summary.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/navbar-user-summary.tsx:1)
 
-Plan:
-- Migrate by dependency-safe groups instead of file-by-file churn.
-- Good next group after the mixed-import cleanup:
-  - `Chip`
-  - `Card`
-  - `Input`
+#### Remaining v2 imports and component families
+
+Current `@heroui/react` holdouts in source code:
+
+1. Date overlay stack
+- [libs/shared-ui/src/components/datepicker-modal.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/datepicker-modal.tsx:1)
+  - still on v2 `Modal` + v2 `DatePicker`
+  - intentionally reverted because the mixed v2/v3 overlay stack closed the dialog when selecting a date
+- [libs/shared-ui/src/components/date-range-drawer.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/date-range-drawer.tsx:1)
+  - still on v2 `Drawer` + v2 `DatePicker`
+  - only `DateValue` typing has been migrated to `@internationalized/date`
+
+2. Form primitives still on v2
+- [libs/shared-ui/src/components/upsert-video-data-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/upsert-video-data-form.tsx:1)
+  - `Textarea`
+  - `DatePicker`
+  - `Select`
+  - `Checkbox`
+- [libs/shared-ui/src/components/editable-form-wrapper.stories.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/editable-form-wrapper.stories.tsx:1)
+  - story-only `Textarea`
+- [libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-metadata-merge-panel.tsx:1)
+  - `Checkbox`
+- [libs/shared-ui/src/components/tmdb-genre-mapping-control.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/tmdb-genre-mapping-control.tsx:1)
+  - `Select`
+
+3. Visual primitives still on v2
+- [libs/shared-ui/src/components/image-upload-preview.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/image-upload-preview.tsx:1)
   - `Divider`
+- [libs/shared-ui/src/components/movie-card.tsx](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/components/movie-card.tsx:1)
+  - `Divider`
+  - `ScrollShadow`
+- [apps/movies-ui/src/components/upsert-video-form.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/upsert-video-form.tsx:1)
+  - `Skeleton`
+  - `addToast`
+
+4. Small isolated app-local holdout
+- [apps/movies-ui/src/components/github.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/github.tsx:1)
+  - simple v2 `Button`
+
+#### Runtime/config holdouts
+
+These should stay until the last runtime v2 component is gone:
+- [apps/movies-ui/src/app/provider.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/app/provider.tsx:1)
+  - `HeroUIProvider`
+  - `ToastProvider`
+- [apps/movies-ui/src/app/hero.ts](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/app/hero.ts:1)
+  - `heroui()` plugin
+- [libs/shared-ui/src/hero.ts](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/hero.ts:1)
+  - `heroui()` plugin
+
+#### Recommended remaining order
+
+1. Finish the safer non-overlay primitives:
+  - `Divider`
+  - `ScrollShadow`
+  - `Skeleton`
+  - isolated `Button` in [github.tsx](/Users/Jan/Documents/Development/nx-movies-db/apps/movies-ui/src/components/github.tsx:1)
+2. Finish the remaining form primitives:
+  - `Checkbox`
+  - `Select`
+  - `Textarea`
+3. Leave the date stack for last:
+  - `datepicker-modal`
+  - `date-range-drawer`
+  - `DatePicker` fields inside `upsert-video-data-form`
+
+Reason:
+- the date overlays are the only area that already showed real behavior regressions during migration
+- the remaining non-date primitives are much lower-risk and unblock the final runtime cleanup
 
 ### 3. Final runtime and styling cleanup
 
@@ -180,21 +223,22 @@ Plan:
   - [libs/shared-ui/src/hero.ts](/Users/Jan/Documents/Development/nx-movies-db/libs/shared-ui/src/hero.ts:1)
 - Remove `@plugin './hero.ts'` and v2-specific `@source` usage from CSS.
 - Remove `HeroUIProvider` if no longer required by the final v3 setup.
-- Reevaluate whether `ToastProvider` is still needed or should be migrated/removed.
-- Run a final styling pass for token, spacing, and variant drift.
+- Replace or remove `ToastProvider` / `addToast` once toast usage is fully on the v3 path.
+- Run a final styling pass for token, spacing, placement, and variant drift.
 
 ## Recommended Next Step
 
 The next implementation slice should be:
 
-1. Finish remaining v2 component families, starting with `Chip`, `Card`, `Input`, and `Divider`
-2. Then remove the v2 runtime/plugin setup
+1. Finish `Divider`, `ScrollShadow`, `Skeleton`, and the isolated `github.tsx` button
+2. Then migrate the remaining `Checkbox` / `Select` / `Textarea` usage
+3. Leave the date overlay stack for the last component pass
+4. Only then remove the v2 runtime/plugin setup
 
 Reason:
-- The removed-component phase is complete.
-- The mixed-import cleanup for `Button`, `Tooltip`, `Spinner`, and `Switch` is complete.
-- The biggest remaining work is now the still-v2 component families and their styling drift.
-- Final runtime cleanup should wait until those remaining component migrations are done.
+- `Chip`, `Card`, `Input`, `Badge`, and `Accordion` are already done.
+- The highest-risk remaining area is `DatePicker` inside drawers/modals.
+- Final runtime cleanup should wait until those last runtime v2 components are actually gone.
 
 ## Verification Plan
 
@@ -217,5 +261,5 @@ Before final cutover:
 ## Notes
 
 - The migration strategy remains **incremental coexistence**.
-- The highest-risk remaining item is the custom replacement for HeroUI `Navbar`.
-- The migration is now past the hook-removal phase; the remaining work is mostly component replacement and final runtime cleanup.
+- The highest-risk remaining item is now the date overlay stack, not the navbar.
+- The migration is past the hook-removal phase and past the first major primitive migrations; the remaining work is concentrated in a small set of component holdouts plus final runtime cleanup.

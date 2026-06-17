@@ -267,7 +267,7 @@ export function FilterDrawer(
                         data-testid="deleted-movies-filter-accordion"
                       >
                         <Accordion.Heading>
-                          <Accordion.Trigger>
+                          <Accordion.Trigger data-testid="deleted-movies-filter-accordion-trigger">
                             <div className="flex flex-1 flex-col text-left">
                               <Tooltip delay={0}>
                                 <Tooltip.Trigger className="inline-flex">

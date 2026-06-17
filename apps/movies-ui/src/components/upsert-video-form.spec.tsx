@@ -71,8 +71,6 @@ let mockOwnersState = {
 };
 
 jest.mock("@heroui/react", () => ({
-  Card: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
-  CardBody: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
   Skeleton: (props: Record<string, unknown>) => <div data-testid="mock-skeleton" {...props} />,
   Spacer: (props: Record<string, unknown>) => <div data-testid="mock-spacer" {...props} />,
   Switch: ({
@@ -100,6 +98,14 @@ jest.mock("@heroui/react", () => ({
 
 jest.mock("@heroui-v3/react", () => ({
   Chip: ({ children, ...props }: { children: React.ReactNode }) => <span {...props}>{children}</span>,
+  Card: Object.assign(
+    ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
+    {
+      Content: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
+      Header: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
+      Footer: ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
+    }
+  ),
   Tooltip: Object.assign(
     ({
       children,

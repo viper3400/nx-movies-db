@@ -21,8 +21,8 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Card, CardBody, Skeleton, addToast } from "@heroui/react";
-import { Button, Chip, Tooltip } from "@heroui-v3/react";
+import { Skeleton, addToast } from "@heroui/react";
+import { Button, Card, Chip, Tooltip } from "@heroui-v3/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -615,11 +615,11 @@ function UpsertVideoFormContent({
       )}
 
       {saveError && (
-        <Card shadow="sm" radius="sm" className="border border-danger-200 bg-danger-50">
-          <CardBody className="text-sm text-danger-700">
+        <Card className="rounded-sm border border-danger-200 bg-danger-50 shadow-sm">
+          <Card.Content className="text-sm text-danger-700">
             <p className="font-medium">Konnte nicht speichern</p>
             <p>{saveError}</p>
-          </CardBody>
+          </Card.Content>
         </Card>
       )}
 

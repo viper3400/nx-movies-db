@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { Card, CardBody, CardHeader, Divider, Input } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Divider, Input } from "@heroui/react";
+import { Button, Card } from "@heroui-v3/react";
 
 export type ImageSource =
   | { type: "file"; file: File; previewUrl: string }
@@ -64,12 +64,12 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   };
 
   return (
-    <Card shadow="sm" radius="lg" className={className}>
-      <CardHeader className="flex flex-col items-start gap-1">
+    <Card className={className ? `rounded-lg shadow-sm ${className}` : "rounded-lg shadow-sm"}>
+      <Card.Header className="flex flex-col items-start gap-1">
         <div className="text-base font-medium">{label}</div>
         <div className="text-xs text-foreground-500">Provide a URL or choose a file</div>
-      </CardHeader>
-      <CardBody>
+      </Card.Header>
+      <Card.Content>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <div className="flex flex-col gap-4">
             <div>
@@ -123,7 +123,7 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
             </div>
           </div>
         </div>
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 };

@@ -1,5 +1,5 @@
-import { Card, CardBody, CardFooter, CardHeader, Divider, ScrollShadow } from "@heroui/react";
-import { Button, Chip } from "@heroui-v3/react";
+import { Divider, ScrollShadow } from "@heroui/react";
+import { Button, Card, Chip } from "@heroui-v3/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useEffect, useState } from "react";
@@ -119,8 +119,8 @@ export const MovieCard = ({
             style={{ backgroundImage: `url("${bodyBackgroundImageUrl}")` }}
           />
         )}
-        <CardHeader className="relative z-10 flex flex-col items-start gap-1 bg-content1/30 px-4 py-2 md:flex-row">
-          <div className="flex-1 min-w-0">
+        <Card.Header className="relative z-10 flex flex-col items-start gap-1 px-4 py-2 md:flex-row">
+          <div className="flex-1 min-w-0 ">
             <div
               data-testid="movie-card-title"
               className="pr-2 text-left text-lg font-semibold [text-shadow:0_1px_2px_rgba(255,255,255,0.68),0_0_24px_rgba(255,255,255,0.32)] dark:[text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_26px_rgba(0,0,0,0.62)]"
@@ -158,10 +158,10 @@ export const MovieCard = ({
             <Chip color="default">{movie.mediaType}</Chip>
             {movie.diskid && <Chip color="accent" variant="primary">{movie.diskid}</Chip>}
           </div>
-        </CardHeader>
+        </Card.Header>
         <Divider />
         <div className={stretchToFill ? "flex min-h-0 flex-1 flex-col" : undefined}>
-          <CardBody className={`relative overflow-hidden ${stretchToFill ? "flex flex-1 flex-col" : ""}`}>
+          <Card.Content className={`relative overflow-hidden ${stretchToFill ? "flex flex-1 flex-col" : ""}`}>
             <div className="relative z-10 flex flex-col items-start md:flex-row ">
               {isDeletedMovie &&
                 <div className="mr-4 mb-4">
@@ -221,11 +221,11 @@ export const MovieCard = ({
                 </div>
               </ScrollShadow>
             </div>
-          </CardBody>
+          </Card.Content>
           <Divider />
         </div>
 
-        <CardFooter className={`relative z-10 bg-content1/30 ${stretchToFill ? "mt-auto" : ""}`}>
+        <Card.Footer className={`relative z-10 ${stretchToFill ? "mt-auto" : ""}`}>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
             <div className="flex gap-4 md:flex-row flex-col">
               <div className="flex gap-2 flex-wrap">
@@ -289,7 +289,7 @@ export const MovieCard = ({
               }
             </div>
           </div>
-        </CardFooter>
+        </Card.Footer>
       </Card>
     </div >
   );

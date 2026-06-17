@@ -3,14 +3,13 @@
 import React from "react";
 import {
   Checkbox,
-  Button,
-  Input,
   Textarea,
   DatePicker,
   DateValue,
   Select,
   SelectItem,
 } from "@heroui/react";
+import { Button, Description, FieldError, Input, InputGroup, Label, TextField } from "@heroui-v3/react";
 import { parseDate } from "@internationalized/date";
 import {
   isPhysicalMediaTypeName,
@@ -72,6 +71,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   const diskIdInvalid = diskIdInvalidFormat || diskIdMissing;
   const diskIdSuggestionToShow =
     diskIdSuggestion && diskIdSuggestion !== normalizedDiskId ? diskIdSuggestion : null;
+  const inputVariantV3 = inputVariant === "flat" || inputVariant === "bordered" ? "primary" : "secondary";
 
   const renderTextField = ({
     k,
@@ -82,66 +82,65 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     label: string;
     type?: string;
   }) => (
-    <Input
-      data-testid={`video-field-${String(k)}`}
-      label={label}
-      type={type}
-      value={
-        values[k] === null || values[k] === undefined
-          ? ""
-          : values[k]?.toString() ?? ""
-      }
-      onValueChange={(value) =>
-        set({
-          [k]:
-            type === "number"
-              ? value === "" || value == null
-                ? null
-                : Number(value)
-              : value,
-        } as Partial<VideoData>)
-      }
-      isDisabled={ro(k)}
-      variant={inputVariant}
-      size="lg"
-    />
+    <TextField isDisabled={ro(k)} name={String(k)} type={type}>
+      <Label>{label}</Label>
+      <Input
+        data-testid={`video-field-${String(k)}`}
+        type={type}
+        value={
+          values[k] === null || values[k] === undefined
+            ? ""
+            : values[k]?.toString() ?? ""
+        }
+        onChange={(event) => {
+          const value = event.target.value;
+          set({
+            [k]:
+              type === "number"
+                ? value === "" || value == null
+                  ? null
+                  : Number(value)
+                : value,
+          } as Partial<VideoData>);
+        }}
+        variant={inputVariantV3}
+      />
+    </TextField>
   );
 
   const renderDiskIdField = () => (
-    <Input
-      data-testid="video-field-diskid"
-      label="Disk ID"
-      value={values.diskid ?? ""}
-      onValueChange={(value) => set({ diskid: value })}
-      isDisabled={ro("diskid")}
-      variant={inputVariant}
-      size="lg"
-      isInvalid={diskIdInvalid}
-      errorMessage={
-        diskIdMissing
+    <TextField isDisabled={ro("diskid")} isInvalid={diskIdInvalid} name="diskid">
+      <Label>Disk ID</Label>
+      <InputGroup variant={inputVariantV3}>
+        <InputGroup.Input
+          data-testid="video-field-diskid"
+          value={values.diskid ?? ""}
+          onChange={(event) => set({ diskid: event.target.value })}
+        />
+        {diskIdSuggestionToShow && !ro("diskid") ? (
+          <InputGroup.Suffix>
+            <Button
+              data-testid="video-field-diskid-suggestion"
+              size="sm"
+              variant="secondary"
+              onPress={() => set({ diskid: diskIdSuggestionToShow })}
+            >
+              {diskIdSuggestionToShow}
+            </Button>
+          </InputGroup.Suffix>
+        ) : null}
+      </InputGroup>
+      {!diskIdInvalid && !diskIdSuggestionToShow && isDiskIdSuggestionLoading ? (
+        <Description>Checking next free Disk ID...</Description>
+      ) : null}
+      <FieldError>
+        {diskIdMissing
           ? "Disk ID is required for physical media."
           : diskIdInvalidFormat
             ? "Use RxxFyDzz, for example R01F3D04."
-            : undefined
-      }
-      description={
-        !diskIdInvalid && !diskIdSuggestionToShow && isDiskIdSuggestionLoading
-          ? "Checking next free Disk ID..."
-          : undefined
-      }
-      endContent={
-        diskIdSuggestionToShow && !ro("diskid") ? (
-          <Button
-            data-testid="video-field-diskid-suggestion"
-            size="sm"
-            variant="flat"
-            onPress={() => set({ diskid: diskIdSuggestionToShow })}
-          >
-            {diskIdSuggestionToShow}
-          </Button>
-        ) : null
-      }
-    />
+            : undefined}
+      </FieldError>
+    </TextField>
   );
 
   const renderTextAreaField = ({

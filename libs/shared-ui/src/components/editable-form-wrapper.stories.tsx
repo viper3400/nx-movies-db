@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
 import { useArgs } from "storybook/preview-api";
-import { Input, Textarea } from "@heroui/react";
+import { Textarea } from "@heroui/react";
+import { Input, Label, TextField } from "@heroui-v3/react";
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
 import { fn, userEvent, within, expect } from "storybook/test";
 
@@ -43,34 +44,34 @@ const Example: React.FC<{
       >
         {({ values, onChange, readOnly }) => (
           <div className="grid grid-cols-1 gap-4">
-            <Input
-              data-testid="profile-field-first-name"
-              label="First name"
-              value={values.firstName}
-              onValueChange={(value) => onChange({ ...values, firstName: value })}
-              isReadOnly={readOnly}
-              variant="underlined"
-              size="lg"
-            />
-            <Input
-              data-testid="profile-field-last-name"
-              label="Last name"
-              value={values.lastName}
-              onValueChange={(value) => onChange({ ...values, lastName: value })}
-              isReadOnly={readOnly}
-              variant="underlined"
-              size="lg"
-            />
-            <Input
-              data-testid="profile-field-email"
-              type="email"
-              label="Email"
-              value={values.email}
-              onValueChange={(value) => onChange({ ...values, email: value })}
-              isReadOnly={readOnly}
-              variant="underlined"
-              size="lg"
-            />
+            <TextField isReadOnly={readOnly} name="firstName">
+              <Label>First name</Label>
+              <Input
+                data-testid="profile-field-first-name"
+                value={values.firstName}
+                onChange={(event) => onChange({ ...values, firstName: event.target.value })}
+                variant="secondary"
+              />
+            </TextField>
+            <TextField isReadOnly={readOnly} name="lastName">
+              <Label>Last name</Label>
+              <Input
+                data-testid="profile-field-last-name"
+                value={values.lastName}
+                onChange={(event) => onChange({ ...values, lastName: event.target.value })}
+                variant="secondary"
+              />
+            </TextField>
+            <TextField isReadOnly={readOnly} name="email" type="email">
+              <Label>Email</Label>
+              <Input
+                data-testid="profile-field-email"
+                type="email"
+                value={values.email}
+                onChange={(event) => onChange({ ...values, email: event.target.value })}
+                variant="secondary"
+              />
+            </TextField>
             <Textarea
               data-testid="profile-field-bio"
               label="Bio"

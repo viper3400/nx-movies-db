@@ -5,6 +5,10 @@ import { getAllowedSession } from "../../services/actions/getAllowedSession";
 import { getVideoData } from "../../services/actions";
 import type { VideoData } from "@nx-movies-db/shared-types";
 
+jest.mock("@heroui-v3/react", () => ({
+  Button: ({ children, ...props }: { children: React.ReactNode }) => <button {...props}>{children}</button>,
+}));
+
 jest.mock("../../../components/upsert-video-form", () => ({
   UpsertVideoForm: jest.fn(() => null),
 }));

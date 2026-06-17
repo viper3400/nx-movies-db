@@ -4,9 +4,10 @@ import React from "react";
 import Image from "next/image";
 import {
   Checkbox,
-} from "@heroui/react";
-import { Button, Chip } from "@heroui-v3/react";
-import type { Selection } from "@react-types/shared";
+  Chip,
+  Button,
+  type Key,
+} from "@heroui-v3/react";
 import {
   TmdbGenreMappingControl,
   type TmdbGenreMappingMatch,
@@ -46,7 +47,7 @@ export interface TmdbMetadataMergePanelProps {
   onCandidateSelectionChange: (field: string, selected: boolean) => void;
   onBackdropSelectionChange?: (url: string) => void;
   onUnmappedGenrePress?: (tmdbGenre: string) => void;
-  onManualGenreSelection?: (selection: Selection) => void;
+  onManualGenreSelection?: (selection: Key | null) => void;
   onApplySelected: () => void;
   onNoMatch: () => void;
 }
@@ -157,9 +158,14 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                 <Checkbox
                   data-testid={`tmdb-merge-select-${candidate.field}`}
                   isSelected={candidate.selected}
-                  onValueChange={(selected) => onCandidateSelectionChange(candidate.field, selected)}
+                  onChange={(selected) => onCandidateSelectionChange(candidate.field, selected)}
                 >
-                  {candidate.label}
+                  <Checkbox.Content>
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    {candidate.label}
+                  </Checkbox.Content>
                 </Checkbox>
                 <Chip
                   size="sm"

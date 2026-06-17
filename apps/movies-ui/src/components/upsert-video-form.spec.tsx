@@ -71,7 +71,6 @@ let mockOwnersState = {
 };
 
 jest.mock("@heroui/react", () => ({
-  Skeleton: (props: Record<string, unknown>) => <div data-testid="mock-skeleton" {...props} />,
   Spacer: (props: Record<string, unknown>) => <div data-testid="mock-spacer" {...props} />,
   Switch: ({
     children,
@@ -93,10 +92,15 @@ jest.mock("@heroui/react", () => ({
       {children}
     </label>
   ),
-  addToast: jest.fn(),
 }));
 
 jest.mock("@heroui-v3/react", () => ({
+  toast: Object.assign(jest.fn(), {
+    success: jest.fn(),
+    danger: jest.fn(),
+    info: jest.fn(),
+    warning: jest.fn(),
+  }),
   Chip: ({ children, ...props }: { children: React.ReactNode }) => <span {...props}>{children}</span>,
   Card: Object.assign(
     ({ children, ...props }: { children: React.ReactNode }) => <div {...props}>{children}</div>,
@@ -137,6 +141,7 @@ jest.mock("@heroui-v3/react", () => ({
       {typeof children === "function" ? children({ isPending: !!isPending }) : children}
     </button>
   ),
+  Skeleton: (props: Record<string, unknown>) => <div data-testid="mock-skeleton" {...props} />,
   Spinner: () => <span data-testid="mock-spinner" />,
 }));
 
@@ -205,7 +210,7 @@ jest.mock("@nx-movies-db/shared-ui", () => {
       onCandidateSelectionChange: (field: string, selected: boolean) => void;
       onBackdropSelectionChange?: (url: string) => void;
       onUnmappedGenrePress?: (tmdbGenre: string) => void;
-      onManualGenreSelection?: (selection: Set<string>) => void;
+      onManualGenreSelection?: (selection: string | number | null) => void;
       onApplySelected: () => void;
       onNoMatch: () => void;
     }) => (
@@ -249,7 +254,7 @@ jest.mock("@nx-movies-db/shared-ui", () => {
         {genrePickerTmdbGenre && (
           <select
             data-testid="mock-tmdb-merge-manual-genre-select"
-            onChange={(event) => onManualGenreSelection?.(new Set([event.target.value]))}
+            onChange={(event) => onManualGenreSelection?.(event.target.value || null)}
           >
             <option value="">Select</option>
             {availableGenres.map((genre) => (

@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
 import { useArgs } from "storybook/preview-api";
-import { Textarea } from "@heroui/react";
-import { Input, Label, TextField } from "@heroui-v3/react";
+import { Input, Label, TextArea, TextField } from "@heroui-v3/react";
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
 import { fn, userEvent, within, expect } from "storybook/test";
 
@@ -72,15 +71,16 @@ const Example: React.FC<{
                 variant="secondary"
               />
             </TextField>
-            <Textarea
-              data-testid="profile-field-bio"
-              label="Bio"
-              value={values.bio ?? ""}
-              onValueChange={(value) => onChange({ ...values, bio: value })}
-              isReadOnly={readOnly}
-              variant="underlined"
-              minRows={3}
-            />
+            <TextField isReadOnly={readOnly} name="bio">
+              <Label>Bio</Label>
+              <TextArea
+                data-testid="profile-field-bio"
+                value={values.bio ?? ""}
+                onChange={(event) => onChange({ ...values, bio: event.target.value })}
+                variant="secondary"
+                rows={3}
+              />
+            </TextField>
           </div>
         )}
       </EditableFormWrapper>

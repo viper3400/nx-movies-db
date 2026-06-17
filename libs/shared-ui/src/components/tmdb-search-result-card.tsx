@@ -2,11 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import {
-  Card,
-  CardBody,
-} from "@heroui/react";
-import { Button, Chip } from "@heroui-v3/react";
+import { Button, Card, Chip } from "@heroui-v3/react";
 
 export type TmdbSearchResultMediaKind = "movie" | "tv";
 
@@ -36,8 +32,8 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
   selectLabel = "Select",
 }) => {
   return (
-    <Card data-testid={`tmdb-result-card-${result.id}`} shadow="sm" radius="sm">
-      <CardBody>
+    <Card data-testid={`tmdb-result-card-${result.id}`} className="rounded-sm shadow-sm">
+      <Card.Content>
         <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3">
           {result.posterUrl ? (
             <Image
@@ -73,7 +69,7 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
             </Button>
           </div>
         </div>
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 };

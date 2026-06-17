@@ -4,9 +4,8 @@ import React from "react";
 import Image from "next/image";
 import {
   Checkbox,
-  Chip,
 } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Button, Chip } from "@heroui-v3/react";
 import type { Selection } from "@react-types/shared";
 import {
   TmdbGenreMappingControl,
@@ -98,7 +97,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
             </p>
           )}
         </div>
-        <Chip size="sm" variant="flat" color={selectedCount ? "primary" : "default"}>
+        <Chip size="sm" variant="tertiary" color={selectedCount ? "accent" : "default"}>
           {selectedCount} selected
         </Chip>
       </div>
@@ -116,7 +115,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
             >
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold">Background</h3>
-                <Chip size="sm" variant="flat">
+                <Chip size="sm" variant="tertiary">
                   {backdropCandidates.length} options
                 </Chip>
               </div>
@@ -164,7 +163,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                 </Checkbox>
                 <Chip
                   size="sm"
-                  variant="flat"
+                  variant="tertiary"
                   color={candidate.conflict ? "warning" : "success"}
                 >
                   {getReasonLabel(candidate)}

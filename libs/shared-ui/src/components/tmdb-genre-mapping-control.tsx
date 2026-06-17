@@ -2,10 +2,10 @@
 
 import React from "react";
 import {
-  Chip,
   Select,
   SelectItem,
 } from "@heroui/react";
+import { Chip } from "@heroui-v3/react";
 import type { Selection } from "@react-types/shared";
 
 export interface TmdbGenreMappingMatch {
@@ -74,7 +74,7 @@ export const TmdbGenreMappingControl: React.FC<TmdbGenreMappingControlProps> = (
               >
                 <Chip
                   size="sm"
-                  variant="flat"
+                  variant="tertiary"
                   color={getGenreChipColor(match)}
                 >
                   {match.localGenre && match.localGenre !== match.tmdbGenre

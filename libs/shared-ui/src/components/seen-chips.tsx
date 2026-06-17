@@ -1,4 +1,4 @@
-import { Chip } from "@heroui/react";
+import { Chip, CloseButton } from "@heroui-v3/react";
 import { TimeElapsedFormatter } from "../lib";
 import { useTranslation } from "react-i18next";
 
@@ -37,8 +37,8 @@ export const SeenChips: React.FC<{
         loading && <Chip
           data-testid="loading_chip"
           className={"mr-4 mb-4 animate-pulse"}
-          color="secondary"
-          variant="bordered">
+          color="default"
+          variant="secondary">
           {t("common.loading")}
         </Chip>
       }
@@ -46,8 +46,8 @@ export const SeenChips: React.FC<{
         <Chip
           data-testid="not_seen_chip"
           className={"mr-4 mb-4"}
-          variant="bordered"
-          color="secondary">
+          variant="soft"
+          color="accent">
           {t("movie_card.not_seen")}
         </Chip>
 
@@ -57,13 +57,15 @@ export const SeenChips: React.FC<{
           <Chip
             data-testid="times_seen_chip"
             className={"mr-4 mb-4"}
-            color="secondary">
+            variant="secondary"
+            color="accent">
             {seenDates.length} {t("movie_card.times_seen")}
           </Chip>
 
           <Chip
             data-testid="seen_date_duration_chip"
-            color="primary"
+            color="accent"
+            variant="primary"
             className="mr-4 mb-4">
             {durationString(parsedDates)}
           </Chip>
@@ -77,10 +79,11 @@ export const SeenChips: React.FC<{
                 data-testid="seen_date_chip"
                 key={index}
                 className="mr-4 mb-4"
-                color="secondary"
-                variant="flat"
-                onClose={() => deleteSeenDate(date.toString())}>
+                color="default"
+                variant="soft"
+              >
                 {formatDate(date.toString())}
+                <CloseButton aria-label="close chip" onPress={() => void deleteSeenDate(date.toString())} />
               </Chip>
             ))}
         </div>

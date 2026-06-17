@@ -21,8 +21,8 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Card, CardBody, Chip, Skeleton, addToast } from "@heroui/react";
-import { Button, Tooltip } from "@heroui-v3/react";
+import { Card, CardBody, Skeleton, addToast } from "@heroui/react";
+import { Button, Chip, Tooltip } from "@heroui-v3/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -593,8 +593,8 @@ function UpsertVideoFormContent({
               <Chip
                 data-testid="upsert-video-form-save-status"
                 size="sm"
-                color={saving ? "primary" : dirty ? "warning" : "success"}
-                variant={saving ? "solid" : "flat"}
+                color={saving ? "accent" : dirty ? "warning" : "success"}
+                variant={saving ? "primary" : "tertiary"}
               >
                 {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
               </Chip>

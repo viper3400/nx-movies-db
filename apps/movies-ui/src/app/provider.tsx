@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { HeroUIProvider, ToastProvider } from "@heroui/react";
+import { HeroUIProvider } from "@heroui/react";
+import { Toast } from "@heroui-v3/react";
 import { useRouter } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
@@ -50,7 +51,13 @@ export function Providers({ children, themeProps, nextAuthUrl }: ProvidersProps)
     <SessionProvider basePath={nextAuthUrl ?? undefined} session={stubSession ?? undefined}>
       <I18nextProvider i18n={i18n}>
         <HeroUIProvider navigate={router.push}>
-          <ToastProvider placement="top-center" />
+          <Toast.Provider
+            placement="top"
+            gap={12}
+            maxVisibleToasts={5}
+            scaleFactor={0}
+            width="min(32rem, calc(100vw - 2rem))"
+          />
           {isMounted ? (
             <SharedThemeProvider {...themeProps}>{children}</SharedThemeProvider>
           ) : (

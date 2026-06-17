@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { Divider } from "@heroui/react";
-import { Button, Card, InputGroup, Label, TextField } from "@heroui-v3/react";
+import { Button, Card, InputGroup, Label, Separator, TextField } from "@heroui-v3/react";
 
 export type ImageSource =
   | { type: "file"; file: File; previewUrl: string }
@@ -92,7 +91,7 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
               <div className="mt-1 text-xs text-foreground-500">Enter an http/https URL, then Apply</div>
             </div>
 
-            <Divider />
+            <Separator />
 
             <div>
               <div className="mb-2 text-sm font-medium text-foreground-600">From File</div>

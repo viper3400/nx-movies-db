@@ -12,7 +12,9 @@ export const ResultsStatusIndicator = ({ isLoading, hasNoResults, hasNoMoreResul
   return (
     <div className="py-4">
       {isLoading && (
-        <Spinner color="current" className="text-secondary" />)
+        <div className="flex justify-left">
+          <Spinner color="accent" size="lg" />
+        </div>)
       }
       {
         !isLoading && hasNoResults && <Chip color="warning" variant="secondary" size="lg">{t("result_status_indicator.no_results")}</Chip>

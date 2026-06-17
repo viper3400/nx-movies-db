@@ -1,5 +1,4 @@
-import { Divider, ScrollShadow } from "@heroui/react";
-import { Button, Card, Chip } from "@heroui-v3/react";
+import { Button, Card, Chip, ScrollShadow, Separator } from "@heroui-v3/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useEffect, useState } from "react";
@@ -159,7 +158,7 @@ export const MovieCard = ({
             {movie.diskid && <Chip color="accent" variant="primary">{movie.diskid}</Chip>}
           </div>
         </Card.Header>
-        <Divider />
+        <Separator />
         <div className={stretchToFill ? "flex min-h-0 flex-1 flex-col" : undefined}>
           <Card.Content className={`relative overflow-hidden ${stretchToFill ? "flex flex-1 flex-col" : ""}`}>
             <div className="relative z-10 flex flex-col items-start md:flex-row ">
@@ -222,7 +221,7 @@ export const MovieCard = ({
               </ScrollShadow>
             </div>
           </Card.Content>
-          <Divider />
+          <Separator />
         </div>
 
         <Card.Footer className={`relative z-10 ${stretchToFill ? "mt-auto" : ""}`}>

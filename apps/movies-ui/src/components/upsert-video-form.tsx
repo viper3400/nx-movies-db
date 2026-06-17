@@ -21,8 +21,7 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Skeleton, addToast } from "@heroui/react";
-import { Button, Card, Chip, Tooltip } from "@heroui-v3/react";
+import { Button, Card, Chip, type Key, Skeleton, Tooltip, toast } from "@heroui-v3/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -30,7 +29,26 @@ import {
 } from "../app/services/actions/tmdbMetadataMapper";
 import { useAppBasePath } from "../hooks/useAppBasePath";
 import { navigateTo } from "../lib/navigate-to";
-import type { Selection } from "@react-types/shared";
+
+type ToastSeverity = "success" | "danger" | "warning";
+
+function showToast({
+  title,
+  description,
+  severity,
+  timeout,
+}: {
+  title: string;
+  description?: string;
+  severity: ToastSeverity;
+  timeout?: number;
+}) {
+  const resolvedTimeout = timeout ?? (severity === "success" ? 5000 : 9000);
+  toast[severity](title, {
+    description,
+    timeout: resolvedTimeout,
+  });
+}
 
 const STRING_FORM_FIELDS = [
   "md5",
@@ -192,7 +210,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
   useEffect(() => {
     const lookupError = mediaTypesError ?? genresError ?? ownersError;
     if (!lookupError) return;
-    addToast({
+    showToast({
       title: "Lookup fehlgeschlagen",
       description: lookupError.message,
       severity: "danger",
@@ -234,7 +252,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
             },
             defaultOwnerId,
           );
-          addToast({
+          showToast({
             title: "Video gespeichert",
             description: result?.title ?? values.title ?? `Eintrag #${result?.id ?? values.id ?? "?"}`,
             severity: "success",
@@ -249,7 +267,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unbekannter Fehler beim Speichern";
           setSaveError(message);
-          addToast({
+          showToast({
             title: "Konnte nicht speichern",
             description: message,
             severity: "danger",
@@ -407,7 +425,7 @@ function UpsertVideoFormContent({
         .catch((error) => {
           if (cancelled) return;
           setDiskIdSuggestion(null);
-          addToast({
+          showToast({
             title: "Disk-ID-Vorschlag fehlgeschlagen",
             description: error instanceof Error ? error.message : "Unbekannter Fehler",
             severity: "warning",
@@ -469,7 +487,7 @@ function UpsertVideoFormContent({
     } catch (error) {
       const message = error instanceof Error ? error.message : "TMDB search failed.";
       setTmdbError(message);
-      addToast({
+      showToast({
         title: "TMDB-Suche fehlgeschlagen",
         description: message,
         severity: "danger",
@@ -503,7 +521,7 @@ function UpsertVideoFormContent({
     } catch (error) {
       const message = error instanceof Error ? error.message : "TMDB details failed.";
       setTmdbError(message);
-      addToast({
+      showToast({
         title: "TMDB-Details fehlgeschlagen",
         description: message,
         severity: "danger",
@@ -554,9 +572,9 @@ function UpsertVideoFormContent({
     setTmdbPanelOpen(false);
   };
 
-  const handleTmdbManualGenreSelection = (selection: Selection) => {
-    if (selection === "all" || !tmdbGenrePickerTmdbGenre) return;
-    const key = Array.from(selection)[0];
+  const handleTmdbManualGenreSelection = (selection: Key | null) => {
+    if (!selection || !tmdbGenrePickerTmdbGenre) return;
+    const key = String(selection);
     if (!key) return;
 
     setTmdbManualGenreOverrides((overrides) => ({
@@ -569,7 +587,7 @@ function UpsertVideoFormContent({
   const handleTmdbApplySelected = () => {
     onChange(applyTmdbMetadataMergeCandidates(values, tmdbMergeCandidates));
     resetTmdbRefresh();
-    addToast({
+    showToast({
       title: "TMDB-Metadaten übernommen",
       description: "Die ausgewählten Felder wurden in den Entwurf übernommen.",
       severity: "success",

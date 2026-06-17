@@ -2,11 +2,12 @@
 
 import React from "react";
 import {
+  Chip,
+  type Key,
+  Label,
+  ListBox,
   Select,
-  SelectItem,
-} from "@heroui/react";
-import { Chip } from "@heroui-v3/react";
-import type { Selection } from "@react-types/shared";
+} from "@heroui-v3/react";
 
 export interface TmdbGenreMappingMatch {
   tmdbGenre: string;
@@ -26,7 +27,7 @@ export interface TmdbGenreMappingControlProps {
   heading?: string;
   manualSelectTestId?: string;
   onUnmappedGenrePress?: (tmdbGenre: string) => void;
-  onManualGenreSelection?: (selection: Selection) => void;
+  onManualGenreSelection?: (selection: Key | null) => void;
 }
 
 function getGenreChipColor(match: TmdbGenreMappingMatch) {
@@ -89,17 +90,27 @@ export const TmdbGenreMappingControl: React.FC<TmdbGenreMappingControlProps> = (
 
       {genrePickerTmdbGenre && (
         <Select
-          data-testid={manualSelectTestId}
-          label={`Map ${genrePickerTmdbGenre}`}
-          selectedKeys={new Set<string>()}
-          onSelectionChange={onManualGenreSelection}
+          placeholder="Choose a local genre"
+          value={null}
+          onChange={onManualGenreSelection}
           isDisabled={loadingGenres}
-          variant="faded"
-          size="sm"
+          variant="secondary"
         >
-          {availableGenres.map((genre) => (
-            <SelectItem key={genre.value}>{genre.label}</SelectItem>
-          ))}
+          <Label>{`Map ${genrePickerTmdbGenre}`}</Label>
+          <Select.Trigger data-testid={manualSelectTestId}>
+            <Select.Value />
+            <Select.Indicator />
+          </Select.Trigger>
+          <Select.Popover>
+            <ListBox>
+              {availableGenres.map((genre) => (
+                <ListBox.Item id={genre.value} key={genre.value} textValue={genre.label}>
+                  {genre.label}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
         </Select>
       )}
 

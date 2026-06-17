@@ -6,7 +6,6 @@ import {
   DrawerFooter,
   Radio,
   RadioGroup,
-  Badge,
   Accordion,
   AccordionItem,
   Checkbox,
@@ -85,9 +84,13 @@ export function FilterDrawer(
         {isDefaultFilter ? (
           <Tune />
         ) : (
-          <Badge color="secondary" content="" placement="bottom-right" shape="circle">
+          <span className="relative inline-flex">
             <Tune />
-          </Badge>
+            <span
+              aria-hidden="true"
+              className="absolute -bottom-0.5 -right-1 h-2.5 w-2.5 rounded-full bg-secondary-500 ring-2 ring-background"
+            />
+          </span>
         )}
         Filter
       </Button>

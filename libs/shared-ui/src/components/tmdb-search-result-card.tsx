@@ -5,9 +5,8 @@ import Image from "next/image";
 import {
   Card,
   CardBody,
-  Chip,
 } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Button, Chip } from "@heroui-v3/react";
 
 export type TmdbSearchResultMediaKind = "movie" | "tv";
 
@@ -55,10 +54,10 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
           <div className="min-w-0 space-y-2">
             <div className="flex flex-wrap items-start gap-2">
               <h2 className="text-base font-semibold leading-6">{result.title}</h2>
-              <Chip size="sm" variant="flat" color={result.mediaKind === "tv" ? "secondary" : "default"}>
+              <Chip size="sm" variant="tertiary" color={result.mediaKind === "tv" ? "accent" : "default"}>
                 {result.mediaKind === "tv" ? "TV" : "Movie"}
               </Chip>
-              <Chip size="sm" variant="flat">{getReleaseYear(result.releaseDate)}</Chip>
+              <Chip size="sm" variant="tertiary">{getReleaseYear(result.releaseDate)}</Chip>
             </div>
             {result.originalTitle && result.originalTitle !== result.title && (
               <p className="text-sm text-default-500">{result.originalTitle}</p>

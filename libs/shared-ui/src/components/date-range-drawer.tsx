@@ -1,6 +1,6 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker, DateValue } from "@heroui/react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker } from "@heroui/react";
 import { Button } from "@heroui-v3/react";
-import { parseDate } from "@internationalized/date";
+import { parseDate, type DateValue } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

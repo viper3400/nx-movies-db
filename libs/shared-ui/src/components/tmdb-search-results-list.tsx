@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Spinner } from "@heroui-v3/react";
+import { Spinner } from "@heroui/react";
 import {
   TmdbSearchResultCard,
   type TmdbSearchResultItem,

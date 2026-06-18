@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { Card, CardBody, CardHeader, Divider, Input } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Button, Card, InputGroup, Label, Separator, TextField } from "@heroui/react";
 
 export type ImageSource =
   | { type: "file"; file: File; previewUrl: string }
@@ -64,34 +63,35 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   };
 
   return (
-    <Card shadow="sm" radius="lg" className={className}>
-      <CardHeader className="flex flex-col items-start gap-1">
+    <Card className={className ? `rounded-lg shadow-sm ${className}` : "rounded-lg shadow-sm"}>
+      <Card.Header className="flex flex-col items-start gap-1">
         <div className="text-base font-medium">{label}</div>
         <div className="text-xs text-foreground-500">Provide a URL or choose a file</div>
-      </CardHeader>
-      <CardBody>
+      </Card.Header>
+      <Card.Content>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <div className="flex flex-col gap-4">
             <div>
               <div className="mb-2 text-sm font-medium text-foreground-600">From URL</div>
-              <div className="flex items-end gap-2">
-                <Input
-                  label={`${label} URL`}
-                  placeholder={placeholderUrl}
-                  value={url}
-                  onValueChange={setUrl}
-                  variant="underlined"
-                  size="lg"
-                  className="flex-1"
-                />
-                <Button variant="primary" onPress={handleUrlApply} isDisabled={!urlValid}>
-                  Apply
-                </Button>
-              </div>
+              <TextField className="flex-1" name="image-url" type="url">
+                <Label>{`${label} URL`}</Label>
+                <InputGroup variant="secondary">
+                  <InputGroup.Input
+                    placeholder={placeholderUrl}
+                    value={url}
+                    onChange={(event) => setUrl(event.target.value)}
+                  />
+                  <InputGroup.Suffix>
+                    <Button variant="primary" onPress={handleUrlApply} isDisabled={!urlValid}>
+                      Apply
+                    </Button>
+                  </InputGroup.Suffix>
+                </InputGroup>
+              </TextField>
               <div className="mt-1 text-xs text-foreground-500">Enter an http/https URL, then Apply</div>
             </div>
 
-            <Divider />
+            <Separator />
 
             <div>
               <div className="mb-2 text-sm font-medium text-foreground-600">From File</div>
@@ -118,12 +118,12 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
 
           <div className="w-full">
             <div className="mb-2 text-sm font-medium text-foreground-600">Preview</div>
-            <div className="w-full aspect-video bg-content2 rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="w-full aspect-video bg-surface-secondary rounded-lg overflow-hidden flex items-center justify-center">
               <img src={preview} alt="Preview" className="w-full h-full object-contain" />
             </div>
           </div>
         </div>
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 };

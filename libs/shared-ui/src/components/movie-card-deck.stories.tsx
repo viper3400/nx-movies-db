@@ -69,6 +69,7 @@ export const Default: Story = {
       seenTodayLabel: "Seen Today",
       chooseDateLabel: "Choose Date",
       deletedEntryLabel: "Deleted Entry",
+      editLabel: "Edit",
     },
   },
   play: async ({ canvasElement }) => {

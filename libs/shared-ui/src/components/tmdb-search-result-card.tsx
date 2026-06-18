@@ -2,12 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import {
-  Card,
-  CardBody,
-  Chip,
-} from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Button, Card, Chip } from "@heroui/react";
 
 export type TmdbSearchResultMediaKind = "movie" | "tv";
 
@@ -37,8 +32,8 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
   selectLabel = "Select",
 }) => {
   return (
-    <Card data-testid={`tmdb-result-card-${result.id}`} shadow="sm" radius="sm">
-      <CardBody>
+    <Card data-testid={`tmdb-result-card-${result.id}`} className="rounded-sm shadow-sm">
+      <Card.Content>
         <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3">
           {result.posterUrl ? (
             <Image
@@ -47,18 +42,18 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
               width={72}
               height={108}
               unoptimized
-              className="h-[108px] w-[72px] rounded-small object-cover"
+              className="h-[108px] w-[72px] rounded-[8px] object-cover"
             />
           ) : (
-            <div className="h-[108px] w-[72px] rounded-small bg-default-100" />
+            <div className="h-[108px] w-[72px] rounded-[8px] bg-default-100" />
           )}
           <div className="min-w-0 space-y-2">
             <div className="flex flex-wrap items-start gap-2">
               <h2 className="text-base font-semibold leading-6">{result.title}</h2>
-              <Chip size="sm" variant="flat" color={result.mediaKind === "tv" ? "secondary" : "default"}>
+              <Chip size="sm" variant="tertiary" color={result.mediaKind === "tv" ? "accent" : "default"}>
                 {result.mediaKind === "tv" ? "TV" : "Movie"}
               </Chip>
-              <Chip size="sm" variant="flat">{getReleaseYear(result.releaseDate)}</Chip>
+              <Chip size="sm" variant="tertiary">{getReleaseYear(result.releaseDate)}</Chip>
             </div>
             {result.originalTitle && result.originalTitle !== result.title && (
               <p className="text-sm text-default-500">{result.originalTitle}</p>
@@ -74,7 +69,7 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
             </Button>
           </div>
         </div>
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 };

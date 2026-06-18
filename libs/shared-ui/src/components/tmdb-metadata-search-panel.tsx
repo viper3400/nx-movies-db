@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button, Spinner, Switch } from "@heroui-v3/react";
+import { Button, Spinner, Switch } from "@heroui/react";
 import { MovieSearchInput } from "./movie-search-input";
 import { TmdbSearchResultsList } from "./tmdb-search-results-list";
 import type { TmdbSearchResultItem } from "./tmdb-search-result-card";
@@ -94,7 +94,7 @@ export const TmdbMetadataSearchPanel: React.FC<TmdbMetadataSearchPanelProps> = (
       </div>
 
       {errorMessage && (
-        <div className="rounded-small border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">
+        <div className="rounded-[8px] border border-danger/20 bg-danger/10 p-3 text-sm text-danger">
           {errorMessage}
         </div>
       )}

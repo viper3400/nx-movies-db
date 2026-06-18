@@ -1,4 +1,4 @@
-import { PressEvent } from "@heroui-v3/react";
+import { PressEvent } from "@heroui/react";
 import React from "react";
 import { CheckboxValue, FilterDrawer, MovieSearchFilters } from "..";
 import { MovieSearchInput, MovieSearchInputLangResources } from "./movie-search-input";
@@ -40,7 +40,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
 }) => {
   return (
     <form onSubmit={handleSearchSubmit}>
-      <div className="flex w-full flex-wrap md:flex-nowrap pb-4 gap-4 pr-4">
+      <div className="flex w-full flex-wrap gap-4 pb-4 pr-4 md:flex-nowrap md:items-end">
         <MovieSearchInput
           searchText={searchText}
           onSearchTextChange={(value) => {
@@ -55,14 +55,14 @@ export const SearchForm: React.FC<SearchFormProps> = ({
           totalMoviesCount={totalMoviesCount}
           langResources={langResources}
         />
-        <div className="flex place-content-center space-x-2">
-          <div className="place-content-center ">
+        <div className="flex items-end gap-2 self-end">
+          <div className="flex items-end">
             <SurpriseButton
               onPress={handleRandomSearchRequest}
               isDefaultFilter={isDefaultFilter}
               dataTestId="SurpriseButton" />
           </div>
-          <div className="place-content-center ">
+          <div className="flex items-end">
             <FilterDrawer
               filters={filters}
               setFilters={setFilters}

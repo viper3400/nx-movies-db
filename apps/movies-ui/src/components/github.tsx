@@ -12,10 +12,10 @@ export default function Github() {
       {session ? (
         <div>
           <span className='px-2'>{session.user?.email}</span>
-          <Button color="primary" onPress={() => signOut()} disabled={false}>Sign Out</Button>
+          <Button variant="primary" onPress={() => signOut()}>Sign Out</Button>
         </div>
       ) : (
-        <Button color="primary" onPress={() => signIn()} disabled={false}>Sign In</Button>
+        <Button variant="primary" onPress={() => signIn()}>Sign In</Button>
       )}
     </main>
   );

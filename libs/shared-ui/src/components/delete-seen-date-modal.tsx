@@ -1,11 +1,4 @@
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/react";
-import { Button } from "@heroui-v3/react";
+import { Button, Modal } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 interface DeleteSeenDateModalProps {
@@ -19,28 +12,34 @@ export const DeleteSeenDateModal = ({ isOpen, onOpenChange, date, onDeleteConfir
   const { t } = useTranslation();
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">{t("delete_date_modal.dialog_title")}</ModalHeader>
-            <ModalBody>
-              <p>{date}</p>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="danger-soft" onPress={onClose}>
-                {t("common.discard")}
-              </Button>
-              <Button variant="primary" onPress={() => {
-                onDeleteConfirmed(date);
-                onClose();
-              }}>
-                {t("common.delete")}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
+        <Modal.Container>
+          <Modal.Dialog>
+            {({ close }) => (
+              <>
+                <Modal.Header>
+                  <Modal.Heading>{t("delete_date_modal.dialog_title")}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>{date}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="danger-soft" onPress={close}>
+                    {t("common.discard")}
+                  </Button>
+                  <Button variant="primary" onPress={() => {
+                    onDeleteConfirmed(date);
+                    close();
+                  }}>
+                    {t("common.delete")}
+                  </Button>
+                </Modal.Footer>
+              </>
+            )}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

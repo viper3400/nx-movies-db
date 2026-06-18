@@ -1,5 +1,5 @@
 import { Button, Calendar, Drawer } from "@heroui/react";
-import { parseDate, type DateValue } from "@internationalized/date";
+import { parseDate, type CalendarDate } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,8 +14,8 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
   const [startIso, setStartIso] = useState<IsoDate>(makeIsoDate("2010-01-01"));
   const [endIso, setEndIso] = useState<IsoDate>(makeIsoDate("2099-01-01"));
 
-  const [selectedStartDate, setSelectedStartDate] = useState<DateValue | null>(parseDate("2010-01-01"));
-  const [selectedEndDate, setSelectedEndDate] = useState<DateValue | null>(parseDate("2099-01-01"));
+  const [selectedStartDate, setSelectedStartDate] = useState<CalendarDate | null>(parseDate("2010-01-01"));
+  const [selectedEndDate, setSelectedEndDate] = useState<CalendarDate | null>(parseDate("2099-01-01"));
 
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
     onApply(dateRange);
   };
 
-  const formatDate = (date: DateValue | null) => {
+  const formatDate = (date: CalendarDate | null) => {
     return date
       ? new Intl.DateTimeFormat("de-DE", {
         day: "2-digit",
@@ -43,8 +43,8 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
     onChange,
   }: {
     label: string;
-    value: DateValue;
-    onChange: (value: DateValue) => void;
+    value: CalendarDate;
+    onChange: (value: CalendarDate) => void;
   }) => (
     <div className="space-y-2">
       <p className="text-sm font-medium">{label}</p>

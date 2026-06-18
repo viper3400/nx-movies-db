@@ -118,7 +118,7 @@ export const SeenMoviesComponent = ({ userName }: SeenMoviesComponentProperties)
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="-mx-2 shrink-0 border-b border-default-200/70 bg-background/95 px-2 pb-4 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="-mx-2 shrink-0 border-b border-separator/60 bg-background/95 px-2 pb-4 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <DateRangeDrawerComponent onApply={onDateRangeChanged} />
       </div>
       <div ref={resultsContainerRef} className="min-h-0 flex-1 overflow-y-auto pt-4">

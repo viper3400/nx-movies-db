@@ -2,23 +2,26 @@
 
 import React from "react";
 import {
-  Checkbox,
   Button,
+  Checkbox,
+  DateField,
+  Description,
+  FieldError,
   Input,
-  Textarea,
-  DatePicker,
-  DateValue,
+  InputGroup,
+  Label,
+  ListBox,
   Select,
-  SelectItem,
+  TextArea,
+  TextField,
 } from "@heroui/react";
-import { parseDate } from "@internationalized/date";
+import { parseDate, type DateValue } from "@internationalized/date";
 import {
   isPhysicalMediaTypeName,
   isValidDiskId,
   normalizeDiskId,
   VideoData,
 } from "@nx-movies-db/shared-types";
-import type { Selection } from "@react-types/shared";
 
 export type UpsertVideoDataFormValues = VideoData;
 
@@ -72,6 +75,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   const diskIdInvalid = diskIdInvalidFormat || diskIdMissing;
   const diskIdSuggestionToShow =
     diskIdSuggestion && diskIdSuggestion !== normalizedDiskId ? diskIdSuggestion : null;
+  const inputVariantV3 = inputVariant === "flat" || inputVariant === "bordered" ? "primary" : "secondary";
 
   const renderTextField = ({
     k,
@@ -82,66 +86,65 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     label: string;
     type?: string;
   }) => (
-    <Input
-      data-testid={`video-field-${String(k)}`}
-      label={label}
-      type={type}
-      value={
-        values[k] === null || values[k] === undefined
-          ? ""
-          : values[k]?.toString() ?? ""
-      }
-      onValueChange={(value) =>
-        set({
-          [k]:
-            type === "number"
-              ? value === "" || value == null
-                ? null
-                : Number(value)
-              : value,
-        } as Partial<VideoData>)
-      }
-      isDisabled={ro(k)}
-      variant={inputVariant}
-      size="lg"
-    />
+    <TextField isDisabled={ro(k)} name={String(k)} type={type}>
+      <Label>{label}</Label>
+      <Input
+        data-testid={`video-field-${String(k)}`}
+        type={type}
+        value={
+          values[k] === null || values[k] === undefined
+            ? ""
+            : values[k]?.toString() ?? ""
+        }
+        onChange={(event) => {
+          const value = event.target.value;
+          set({
+            [k]:
+              type === "number"
+                ? value === "" || value == null
+                  ? null
+                  : Number(value)
+                : value,
+          } as Partial<VideoData>);
+        }}
+        variant={inputVariantV3}
+      />
+    </TextField>
   );
 
   const renderDiskIdField = () => (
-    <Input
-      data-testid="video-field-diskid"
-      label="Disk ID"
-      value={values.diskid ?? ""}
-      onValueChange={(value) => set({ diskid: value })}
-      isDisabled={ro("diskid")}
-      variant={inputVariant}
-      size="lg"
-      isInvalid={diskIdInvalid}
-      errorMessage={
-        diskIdMissing
+    <TextField isDisabled={ro("diskid")} isInvalid={diskIdInvalid} name="diskid">
+      <Label>Disk ID</Label>
+      <InputGroup variant={inputVariantV3}>
+        <InputGroup.Input
+          data-testid="video-field-diskid"
+          value={values.diskid ?? ""}
+          onChange={(event) => set({ diskid: event.target.value })}
+        />
+        {diskIdSuggestionToShow && !ro("diskid") ? (
+          <InputGroup.Suffix>
+            <Button
+              data-testid="video-field-diskid-suggestion"
+              size="sm"
+              variant="secondary"
+              onPress={() => set({ diskid: diskIdSuggestionToShow })}
+            >
+              {diskIdSuggestionToShow}
+            </Button>
+          </InputGroup.Suffix>
+        ) : null}
+      </InputGroup>
+      {!diskIdInvalid && !diskIdSuggestionToShow && isDiskIdSuggestionLoading ? (
+        <Description>Checking next free Disk ID...</Description>
+      ) : null}
+      <FieldError>
+        {diskIdMissing
           ? "Disk ID is required for physical media."
           : diskIdInvalidFormat
             ? "Use RxxFyDzz, for example R01F3D04."
-            : undefined
-      }
-      description={
-        !diskIdInvalid && !diskIdSuggestionToShow && isDiskIdSuggestionLoading
-          ? "Checking next free Disk ID..."
-          : undefined
-      }
-      endContent={
-        diskIdSuggestionToShow && !ro("diskid") ? (
-          <Button
-            data-testid="video-field-diskid-suggestion"
-            size="sm"
-            variant="flat"
-            onPress={() => set({ diskid: diskIdSuggestionToShow })}
-          >
-            {diskIdSuggestionToShow}
-          </Button>
-        ) : null
-      }
-    />
+            : undefined}
+      </FieldError>
+    </TextField>
   );
 
   const renderTextAreaField = ({
@@ -153,43 +156,50 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     label: string;
     rows?: number;
   }) => (
-    <Textarea
-      data-testid={`video-field-${String(k)}`}
-      label={label}
-      value={(values[k] as string) ?? ""}
-      onValueChange={(value) =>
-        set({
-          [k]: value,
-        } as Partial<VideoData>)
-      }
-      isDisabled={ro(k)}
-      variant={inputVariant}
-      minRows={rows}
-    />
+    <TextField isDisabled={ro(k)} name={String(k)}>
+      <Label>{label}</Label>
+      <TextArea
+        data-testid={`video-field-${String(k)}`}
+        value={(values[k] as string) ?? ""}
+        onChange={(event) =>
+          set({
+            [k]: event.target.value,
+          } as Partial<VideoData>)
+        }
+        rows={rows}
+        variant={inputVariantV3}
+      />
+    </TextField>
   );
 
   const renderDateField = ({ k, label }: { k: keyof VideoData; label: string }) => (
-    <DatePicker
-      data-testid={`video-field-${String(k)}`}
-      label={label}
-      value={dateToDateValue(values[k] as Date | null | undefined)}
-      onChange={(date) =>
-        set({
-          [k]: dateValueToJS(date),
-        } as Partial<VideoData>)
-      }
-      isDisabled={ro(k)}
-      granularity="day"
-      showMonthAndYearPickers
-      className="max-w-[284px]"
-    />
+    <div className="flex max-w-[284px] flex-col gap-1">
+      <span className="text-sm">{label}</span>
+      <DateField
+        aria-label={label}
+        value={dateToDateValue(values[k] as Date | null | undefined)}
+        onChange={(date) =>
+          set({
+            [k]: dateValueToJS(date),
+          } as Partial<VideoData>)
+        }
+        isDisabled={ro(k)}
+        granularity="day"
+      >
+        <DateField.Group data-testid={`video-field-${String(k)}`} variant={inputVariantV3}>
+          <DateField.Input>
+            {(segment) => <DateField.Segment segment={segment} />}
+          </DateField.Input>
+        </DateField.Group>
+      </DateField>
+    </div>
   );
 
   const renderCheckboxField = ({ k, label }: { k: keyof VideoData; label: string }) => (
     <Checkbox
       data-testid={`video-field-${String(k)}`}
       isSelected={values[k] === 1}
-      onValueChange={(selected) =>
+      onChange={(selected) =>
         set({
           [k]: selected ? 1 : 0,
         } as Partial<VideoData>)
@@ -197,7 +207,12 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
       isDisabled={ro(k)}
       className="min-h-14 items-center"
     >
-      {label}
+      <Checkbox.Content>
+        <Checkbox.Control>
+          <Checkbox.Indicator />
+        </Checkbox.Control>
+        {label}
+      </Checkbox.Content>
     </Checkbox>
   );
 
@@ -207,23 +222,30 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     options: { label: string; value: string }[]
   ) => (
     <Select
-      data-testid={`video-field-${String(k)}`}
-      label={label}
-      selectedKeys={
-        values[k] != null ? new Set([String(values[k])]) : new Set<string>()
-      }
-      onSelectionChange={(selection: Selection) => {
-        if (selection === "all") return;
-        const key = Array.from(selection)[0];
+      placeholder={`Select ${label}`}
+      value={values[k] != null ? String(values[k]) : null}
+      onChange={(selection) => {
+        const key = selection as string | null;
         set({ [k]: key ? Number(key) : null } as Partial<VideoData>);
       }}
       isDisabled={ro(k)}
-      variant={inputVariant}
-      size="lg"
+      variant={inputVariantV3}
     >
-      {options.map((o) => (
-        <SelectItem key={o.value}>{o.label}</SelectItem>
-      ))}
+      <Label>{label}</Label>
+      <Select.Trigger data-testid={`video-field-${String(k)}`}>
+        <Select.Value />
+        <Select.Indicator />
+      </Select.Trigger>
+      <Select.Popover>
+        <ListBox>
+          {options.map((o) => (
+            <ListBox.Item id={o.value} key={o.value} textValue={o.label}>
+              {o.label}
+              <ListBox.ItemIndicator />
+            </ListBox.Item>
+          ))}
+        </ListBox>
+      </Select.Popover>
     </Select>
   );
 
@@ -274,32 +296,37 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderSingleSelect("owner_id", "Owner", ownerOptions)}
 
         <Select
-          data-testid="video-field-genres"
-          label="Genres"
+          placeholder="Select genres"
           selectionMode="multiple"
-          selectedKeys={
-            values.genreIds?.length
-              ? new Set(values.genreIds.map(String))
-              : new Set<string>()
-          }
-          onSelectionChange={(selection: Selection) => {
-            if (selection === "all") {
-              set({
-                genreIds: genreOptions.map((o) => Number(o.value)),
-              });
-              return;
-            }
+          value={values.genreIds?.map(String) ?? []}
+          onChange={(selection) => {
+            const nextSelection = Array.isArray(selection)
+              ? selection
+              : selection
+                ? [selection]
+                : [];
             set({
-              genreIds: Array.from(selection).map((k) => Number(k)),
+              genreIds: nextSelection.map((key) => Number(key)),
             });
           }}
           isDisabled={ro("genreIds")}
-          variant={inputVariant}
-          size="lg"
+          variant={inputVariantV3}
         >
-          {genreOptions.map((o) => (
-            <SelectItem key={o.value}>{o.label}</SelectItem>
-          ))}
+          <Label>Genres</Label>
+          <Select.Trigger data-testid="video-field-genres">
+            <Select.Value />
+            <Select.Indicator />
+          </Select.Trigger>
+          <Select.Popover>
+            <ListBox>
+              {genreOptions.map((o) => (
+                <ListBox.Item id={o.value} key={o.value} textValue={o.label}>
+                  {o.label}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
         </Select>
 
         {renderTextField({ k: "custom1", label: "Custom 1" })}

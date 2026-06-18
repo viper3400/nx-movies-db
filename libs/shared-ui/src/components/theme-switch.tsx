@@ -6,7 +6,7 @@ import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 
 import { SunFilledIcon, MoonFilledIcon } from "../icons/icons";
-import { Switch } from "@heroui-v3/react";
+import { Switch } from "@heroui/react";
 
 export interface ThemeSwitchProps {
   className?: string;

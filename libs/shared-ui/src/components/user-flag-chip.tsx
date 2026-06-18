@@ -9,7 +9,7 @@ export interface UserFlagChipProperties {
 }
 export const UserFlagChip = ({ type, active, loading }: UserFlagChipProperties) => {
   return (
-    <Chip className={`text-left w-full ${loading ? "animate-pulse" : ""}`} color={active ? "warning" : "default"}>
+    <Chip className={`text-left w-full ${loading ? "animate-pulse" : ""}`} color={active ? "warning" : "default"} variant="primary">
       {type === "Favorite" ? (
         active ? <HeartFilled /> : <HeartOutlined />
       ) : (

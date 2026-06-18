@@ -52,7 +52,7 @@ export const VersionInfoPanel = ({
     <section
       aria-label={heading}
       className={clsx(
-        "w-full rounded-large border border-divider bg-content1 p-6 shadow-small",
+        "w-full rounded-[14px] border border-divider bg-surface p-6 shadow-sm",
         "flex flex-col gap-4",
         className,
       )}
@@ -66,7 +66,7 @@ export const VersionInfoPanel = ({
 
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium text-default-500">Version</span>
-        <Chip color="secondary" variant="flat" className="font-mono text-base">
+        <Chip color="accent" variant="secondary" className="font-mono text-base">
           {appVersion}
         </Chip>
       </div>

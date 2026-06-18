@@ -7,7 +7,7 @@ const getContentBasedOnSession = async () => {
   const session = await getAllowedSession();
   if (session) {
     return (
-      <div className="app-main-viewport">
+      <div className="app-main-viewport px-2">
         <MovieComponent session={session} />
       </div>
     );

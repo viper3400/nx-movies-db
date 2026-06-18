@@ -6,7 +6,7 @@ export default async function InfoPage() {
   const session = await getAllowedSession();
   if (!session) {
     return (
-      <div className="p-4">
+      <div className="px-4">
         <SignInFirstComponent />
       </div>
     );

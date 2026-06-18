@@ -44,7 +44,7 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="-mx-2 shrink-0 border-b border-default-200/70 bg-background/95 px-2 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="-mx-2 shrink-0 border-b border-default bg-background/95 px-2 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <SearchForm
           searchText={searchText}
           setSearchText={setSearchText}

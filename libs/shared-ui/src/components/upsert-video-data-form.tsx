@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { DatePicker, DateValue } from "@heroui/react";
 import {
   Button,
   Checkbox,
+  DateField,
   Description,
   FieldError,
   Input,
@@ -15,7 +15,7 @@ import {
   TextArea,
   TextField,
 } from "@heroui-v3/react";
-import { parseDate } from "@internationalized/date";
+import { parseDate, type DateValue } from "@internationalized/date";
 import {
   isPhysicalMediaTypeName,
   isValidDiskId,
@@ -173,20 +173,26 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   );
 
   const renderDateField = ({ k, label }: { k: keyof VideoData; label: string }) => (
-    <DatePicker
-      data-testid={`video-field-${String(k)}`}
-      label={label}
-      value={dateToDateValue(values[k] as Date | null | undefined)}
-      onChange={(date) =>
-        set({
-          [k]: dateValueToJS(date),
-        } as Partial<VideoData>)
-      }
-      isDisabled={ro(k)}
-      granularity="day"
-      showMonthAndYearPickers
-      className="max-w-[284px]"
-    />
+    <div className="flex max-w-[284px] flex-col gap-1">
+      <span className="text-sm">{label}</span>
+      <DateField
+        aria-label={label}
+        value={dateToDateValue(values[k] as Date | null | undefined)}
+        onChange={(date) =>
+          set({
+            [k]: dateValueToJS(date),
+          } as Partial<VideoData>)
+        }
+        isDisabled={ro(k)}
+        granularity="day"
+      >
+        <DateField.Group data-testid={`video-field-${String(k)}`} variant={inputVariantV3}>
+          <DateField.Input>
+            {(segment) => <DateField.Segment segment={segment} />}
+          </DateField.Input>
+        </DateField.Group>
+      </DateField>
+    </div>
   );
 
   const renderCheckboxField = ({ k, label }: { k: keyof VideoData; label: string }) => (

@@ -1,6 +1,5 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, DatePicker, DateValue } from "@heroui/react";
-import { Button } from "@heroui-v3/react";
-import { parseDate } from "@internationalized/date";
+import { Button, Calendar, Drawer } from "@heroui/react";
+import { parseDate, type DateValue } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -38,6 +37,47 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
       : "";
   };
 
+  const renderCalendar = ({
+    label,
+    value,
+    onChange,
+  }: {
+    label: string;
+    value: DateValue;
+    onChange: (value: DateValue) => void;
+  }) => (
+    <div className="space-y-2">
+      <p className="text-sm font-medium">{label}</p>
+      <Calendar
+        aria-label={label}
+        firstDayOfWeek="mon"
+        value={value}
+        onChange={onChange}
+      >
+        <Calendar.Header>
+          <Calendar.NavButton slot="previous" />
+          <Calendar.YearPickerTrigger>
+            <Calendar.YearPickerTriggerHeading />
+            <Calendar.YearPickerTriggerIndicator />
+          </Calendar.YearPickerTrigger>
+          <Calendar.NavButton slot="next" />
+        </Calendar.Header>
+        <Calendar.Grid>
+          <Calendar.GridHeader>
+            {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
+          </Calendar.GridHeader>
+          <Calendar.GridBody>
+            {(date) => (
+              <Calendar.Cell date={date}>
+                {({ formattedDate }) => formattedDate}
+              </Calendar.Cell>
+            )}
+          </Calendar.GridBody>
+        </Calendar.Grid>
+      </Calendar>
+    </div>
+  );
+
   return (
     <>
       <div className="text-center sm:text-left">
@@ -50,39 +90,49 @@ export const DateRangeDrawerComponent = ({ onApply }: DateRangeDrawerComponentPr
           {formatDate(selectedStartDate)} - {formatDate(selectedEndDate)}
         </Button>
       </div>
-      <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent>
-          {(onClose) => (
-            <>
-              <DrawerHeader className="flex flex-col gap-1">{t("common.dateSelection")}</DrawerHeader>
-              <DrawerBody>
-                <I18nProvider locale="de">
-                  <DatePicker
-                    firstDayOfWeek="mon"
-                    showMonthAndYearPickers
-                    value={parseDate(startIso)}
-                    onChange={(v) => v && setStartIso(makeIsoDate(v.toString()))}
-                    label={t("common.startDate")} />
-                  <DatePicker
-                    firstDayOfWeek="mon"
-                    showMonthAndYearPickers
-                    label={t("common.endDate")}
-                    value={parseDate(endIso)}
-                    onChange={(v) => v && setEndIso(makeIsoDate(v.toString()))} />
-                </I18nProvider>
-              </DrawerBody>
-              <DrawerFooter>
-                <Button variant="danger-soft" onPress={onClose}>
-                  {t("common.close")}
-                </Button>
-                <Button variant="primary" onPress={() => { handleApply(); onClose(); }}>
-                  {t("common.apply")}
-                </Button>
-              </DrawerFooter>
-            </>
-          )}
-        </DrawerContent>
-      </Drawer >
+      <Drawer>
+        <Drawer.Backdrop isOpen={isOpen} onOpenChange={setIsOpen}>
+          <Drawer.Content placement="right">
+            <Drawer.Dialog>
+              {({ close }) => (
+                <>
+                  <Drawer.Header className="flex flex-col gap-1">
+                    <Drawer.Heading>{t("common.dateSelection")}</Drawer.Heading>
+                  </Drawer.Header>
+                  <Drawer.Body>
+                    <I18nProvider locale="de">
+                      {renderCalendar({
+                        label: t("common.startDate"),
+                        value: parseDate(startIso),
+                        onChange: (v) => setStartIso(makeIsoDate(v.toString())),
+                      })}
+                      {renderCalendar({
+                        label: t("common.endDate"),
+                        value: parseDate(endIso),
+                        onChange: (v) => setEndIso(makeIsoDate(v.toString())),
+                      })}
+                    </I18nProvider>
+                  </Drawer.Body>
+                  <Drawer.Footer>
+                    <Button variant="danger-soft" onPress={close}>
+                      {t("common.close")}
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onPress={() => {
+                        handleApply();
+                        close();
+                      }}
+                    >
+                      {t("common.apply")}
+                    </Button>
+                  </Drawer.Footer>
+                </>
+              )}
+            </Drawer.Dialog>
+          </Drawer.Content>
+        </Drawer.Backdrop>
+      </Drawer>
     </>
   );
 };

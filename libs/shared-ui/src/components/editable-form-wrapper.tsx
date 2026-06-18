@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Card, CardBody } from "@heroui/react";
-import { Button, Spinner } from "@heroui-v3/react";
+import { Button, Card, Spinner } from "@heroui/react";
 import isEqual from "react-fast-compare";
 
 export const EDITABLE_FORM_FRAME_OPTIONS = ["content", "all", "none"] as const;
@@ -155,12 +154,12 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
 
   if (frame === "all") {
     return (
-      <Card shadow="sm" radius="lg" className={className} data-testid="editable-form-card">
-        <CardBody>
+      <Card className={className ? `rounded-lg shadow-sm ${className}` : "rounded-lg shadow-sm"} data-testid="editable-form-card">
+        <Card.Content>
           {actionsTop}
           {formContent}
           {actionsBottom}
-        </CardBody>
+        </Card.Content>
       </Card>
     );
   }
@@ -169,8 +168,8 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
     <div className={className} data-testid="editable-form-wrapper">
       {actionsTop}
       {frame === "content" ? (
-        <Card shadow="sm" radius="lg" data-testid="editable-form-content-card">
-          <CardBody>{formContent}</CardBody>
+        <Card className="rounded-lg shadow-sm" data-testid="editable-form-content-card">
+          <Card.Content>{formContent}</Card.Content>
         </Card>
       ) : (
         formContent

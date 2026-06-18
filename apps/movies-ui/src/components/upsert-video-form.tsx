@@ -21,8 +21,7 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Card, CardBody, Chip, Skeleton, addToast } from "@heroui/react";
-import { Button, Tooltip } from "@heroui-v3/react";
+import { Button, Card, Chip, type Key, Skeleton, Tooltip, toast } from "@heroui/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -30,7 +29,26 @@ import {
 } from "../app/services/actions/tmdbMetadataMapper";
 import { useAppBasePath } from "../hooks/useAppBasePath";
 import { navigateTo } from "../lib/navigate-to";
-import type { Selection } from "@react-types/shared";
+
+type ToastSeverity = "success" | "danger" | "warning";
+
+function showToast({
+  title,
+  description,
+  severity,
+  timeout,
+}: {
+  title: string;
+  description?: string;
+  severity: ToastSeverity;
+  timeout?: number;
+}) {
+  const resolvedTimeout = timeout ?? (severity === "success" ? 5000 : 9000);
+  toast[severity](title, {
+    description,
+    timeout: resolvedTimeout,
+  });
+}
 
 const STRING_FORM_FIELDS = [
   "md5",
@@ -192,7 +210,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
   useEffect(() => {
     const lookupError = mediaTypesError ?? genresError ?? ownersError;
     if (!lookupError) return;
-    addToast({
+    showToast({
       title: "Lookup fehlgeschlagen",
       description: lookupError.message,
       severity: "danger",
@@ -234,7 +252,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
             },
             defaultOwnerId,
           );
-          addToast({
+          showToast({
             title: "Video gespeichert",
             description: result?.title ?? values.title ?? `Eintrag #${result?.id ?? values.id ?? "?"}`,
             severity: "success",
@@ -249,7 +267,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unbekannter Fehler beim Speichern";
           setSaveError(message);
-          addToast({
+          showToast({
             title: "Konnte nicht speichern",
             description: message,
             severity: "danger",
@@ -407,7 +425,7 @@ function UpsertVideoFormContent({
         .catch((error) => {
           if (cancelled) return;
           setDiskIdSuggestion(null);
-          addToast({
+          showToast({
             title: "Disk-ID-Vorschlag fehlgeschlagen",
             description: error instanceof Error ? error.message : "Unbekannter Fehler",
             severity: "warning",
@@ -469,7 +487,7 @@ function UpsertVideoFormContent({
     } catch (error) {
       const message = error instanceof Error ? error.message : "TMDB search failed.";
       setTmdbError(message);
-      addToast({
+      showToast({
         title: "TMDB-Suche fehlgeschlagen",
         description: message,
         severity: "danger",
@@ -503,7 +521,7 @@ function UpsertVideoFormContent({
     } catch (error) {
       const message = error instanceof Error ? error.message : "TMDB details failed.";
       setTmdbError(message);
-      addToast({
+      showToast({
         title: "TMDB-Details fehlgeschlagen",
         description: message,
         severity: "danger",
@@ -554,9 +572,9 @@ function UpsertVideoFormContent({
     setTmdbPanelOpen(false);
   };
 
-  const handleTmdbManualGenreSelection = (selection: Selection) => {
-    if (selection === "all" || !tmdbGenrePickerTmdbGenre) return;
-    const key = Array.from(selection)[0];
+  const handleTmdbManualGenreSelection = (selection: Key | null) => {
+    if (!selection || !tmdbGenrePickerTmdbGenre) return;
+    const key = String(selection);
     if (!key) return;
 
     setTmdbManualGenreOverrides((overrides) => ({
@@ -569,7 +587,7 @@ function UpsertVideoFormContent({
   const handleTmdbApplySelected = () => {
     onChange(applyTmdbMetadataMergeCandidates(values, tmdbMergeCandidates));
     resetTmdbRefresh();
-    addToast({
+    showToast({
       title: "TMDB-Metadaten übernommen",
       description: "Die ausgewählten Felder wurden in den Entwurf übernommen.",
       severity: "success",
@@ -588,18 +606,19 @@ function UpsertVideoFormContent({
           delay={0}
           isDisabled={!dirty || !changedFieldLabelText}
         >
-          <Tooltip.Trigger>
-            <span className="inline-flex">
-              <Chip
-                data-testid="upsert-video-form-save-status"
-                size="sm"
-                color={saving ? "primary" : dirty ? "warning" : "success"}
-                variant={saving ? "solid" : "flat"}
-              >
-                {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
-              </Chip>
-            </span>
-          </Tooltip.Trigger>
+          <button
+            type="button"
+            className="inline-flex cursor-help bg-transparent p-0 text-left text-inherit"
+          >
+            <Chip
+              data-testid="upsert-video-form-save-status"
+              size="sm"
+              color={saving ? "accent" : dirty ? "warning" : "success"}
+              variant={saving ? "primary" : "tertiary"}
+            >
+              {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
+            </Chip>
+          </button>
           <Tooltip.Content>
             {changedFieldLabelText ? `Changed: ${changedFieldLabelText}` : null}
           </Tooltip.Content>
@@ -608,22 +627,22 @@ function UpsertVideoFormContent({
 
       {showLookupSkeletons && (
         <div className="grid gap-2 sm:grid-cols-2" aria-live="polite">
-          {loadingMediaTypes && <Skeleton className="h-12 w-full rounded-large" />}
-          {loadingGenres && <Skeleton className="h-12 w-full rounded-large" />}
-          {loadingOwners && <Skeleton className="h-12 w-full rounded-large sm:col-span-2" />}
+          {loadingMediaTypes && <Skeleton className="h-12 w-full rounded-[14px]" />}
+          {loadingGenres && <Skeleton className="h-12 w-full rounded-[14px]" />}
+          {loadingOwners && <Skeleton className="h-12 w-full rounded-[14px] sm:col-span-2" />}
         </div>
       )}
 
       {saveError && (
-        <Card shadow="sm" radius="sm" className="border border-danger-200 bg-danger-50">
-          <CardBody className="text-sm text-danger-700">
+        <Card className="rounded-sm border border-danger/20 bg-danger/10 shadow-sm">
+          <Card.Content className="text-sm text-danger">
             <p className="font-medium">Konnte nicht speichern</p>
             <p>{saveError}</p>
-          </CardBody>
+          </Card.Content>
         </Card>
       )}
 
-      <div className="space-y-3 rounded-small border border-default-200 p-3">
+      <div className="space-y-3 rounded-[8px] border border-default-200 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-semibold">
@@ -693,7 +712,7 @@ function UpsertVideoFormContent({
             {tmdbLoadingDetails ? (
               <div
                 data-testid="tmdb-refresh-details-loading"
-                className="flex min-h-32 items-center justify-center rounded-small border border-default-200 text-sm text-default-500"
+                className="flex min-h-32 items-center justify-center rounded-[8px] border border-default-200 text-sm text-default-500"
               >
                 Loading details...
               </div>
@@ -718,7 +737,7 @@ function UpsertVideoFormContent({
             ) : (
               <div
                 data-testid="tmdb-refresh-empty"
-                className="rounded-small border border-default-200 p-3 text-sm text-default-500"
+                className="rounded-[8px] border border-default-200 p-3 text-sm text-default-500"
               >
                 Select a TMDB result to review field updates.
               </div>

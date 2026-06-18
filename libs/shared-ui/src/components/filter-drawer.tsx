@@ -152,7 +152,11 @@ export function FilterDrawer(
                               onChange={updateMediaTypes}
                             >
                               {mediaTypes.map((mt) => (
-                                <Checkbox key={mt.value} value={mt.value}>
+                                <Checkbox
+                                  key={mt.value}
+                                  value={mt.value}
+                                  variant="secondary"
+                                >
                                   <Checkbox.Content>
                                     <Checkbox.Control>
                                       <Checkbox.Indicator />
@@ -194,7 +198,11 @@ export function FilterDrawer(
                               onChange={updateGenres}
                             >
                               {genres.map((mt) => (
-                                <Checkbox key={mt.value} value={mt.value}>
+                                <Checkbox
+                                  key={mt.value}
+                                  value={mt.value}
+                                  variant="secondary"
+                                >
                                   <Checkbox.Content>
                                     <Checkbox.Control>
                                       <Checkbox.Indicator />

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { Button, Card, InputGroup, Label, Separator, TextField } from "@heroui-v3/react";
+import { Button, Card, InputGroup, Label, Separator, TextField } from "@heroui/react";
 
 export type ImageSource =
   | { type: "file"; file: File; previewUrl: string }
@@ -118,7 +118,7 @@ export const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
 
           <div className="w-full">
             <div className="mb-2 text-sm font-medium text-foreground-600">Preview</div>
-            <div className="w-full aspect-video bg-content2 rounded-lg overflow-hidden flex items-center justify-center">
+            <div className="w-full aspect-video bg-surface-secondary rounded-lg overflow-hidden flex items-center justify-center">
               <img src={preview} alt="Preview" className="w-full h-full object-contain" />
             </div>
           </div>

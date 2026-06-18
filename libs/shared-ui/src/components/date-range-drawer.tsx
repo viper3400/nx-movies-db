@@ -1,4 +1,4 @@
-import { Button, Calendar, Drawer } from "@heroui-v3/react";
+import { Button, Calendar, Drawer } from "@heroui/react";
 import { parseDate, type DateValue } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";

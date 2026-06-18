@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button } from "@heroui-v3/react";
+import { Button } from "@heroui/react";
 
 
 export default function Github() {

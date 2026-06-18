@@ -6,7 +6,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { SurpriseButton } from "./surprise-button";
 
-jest.mock("@heroui-v3/react", () => {
+jest.mock("@heroui/react", () => {
   const Tooltip = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
   Tooltip.Trigger = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
   Tooltip.Content = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;

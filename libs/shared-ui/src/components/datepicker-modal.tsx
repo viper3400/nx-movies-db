@@ -1,4 +1,4 @@
-import { Button, Calendar, Modal } from "@heroui-v3/react";
+import { Button, Calendar, Modal } from "@heroui/react";
 import { EyeOutlined } from "../icons/eye-outlined";
 import { useTranslation } from "react-i18next";
 import { I18nProvider } from "@react-aria/i18n";

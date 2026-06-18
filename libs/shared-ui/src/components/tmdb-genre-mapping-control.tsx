@@ -7,7 +7,7 @@ import {
   Label,
   ListBox,
   Select,
-} from "@heroui-v3/react";
+} from "@heroui/react";
 
 export interface TmdbGenreMappingMatch {
   tmdbGenre: string;
@@ -115,7 +115,7 @@ export const TmdbGenreMappingControl: React.FC<TmdbGenreMappingControlProps> = (
       )}
 
       {genresErrorMessage && (
-        <p className="text-sm text-warning-600">{genresErrorMessage}</p>
+        <p className="text-sm text-warning">{genresErrorMessage}</p>
       )}
     </div>
   );

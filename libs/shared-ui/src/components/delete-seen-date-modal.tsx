@@ -1,4 +1,4 @@
-import { Button, Modal } from "@heroui-v3/react";
+import { Button, Modal } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 interface DeleteSeenDateModalProps {

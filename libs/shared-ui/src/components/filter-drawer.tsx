@@ -1,4 +1,4 @@
-import { Accordion, Button, Checkbox, CheckboxGroup, Drawer, Radio, RadioGroup, Switch, Tooltip } from "@heroui-v3/react";
+import { Accordion, Button, Checkbox, CheckboxGroup, Drawer, Radio, RadioGroup, Switch, Tooltip } from "@heroui/react";
 import { Tune } from "../icons";
 import { useState } from "react";
 import { t } from "i18next";
@@ -74,7 +74,7 @@ export function FilterDrawer(
             <Tune />
             <span
               aria-hidden="true"
-              className="absolute -bottom-0.5 -right-1 h-2.5 w-2.5 rounded-full bg-secondary-500 ring-2 ring-background"
+              className="absolute -bottom-0.5 -right-1 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-background"
             />
           </span>
         )}
@@ -270,9 +270,12 @@ export function FilterDrawer(
                           <Accordion.Trigger data-testid="deleted-movies-filter-accordion-trigger">
                             <div className="flex flex-1 flex-col text-left">
                               <Tooltip delay={0}>
-                                <Tooltip.Trigger className="inline-flex">
+                                <button
+                                  type="button"
+                                  className="inline-flex cursor-help bg-transparent p-0 text-inherit"
+                                >
                                   <span>{t("search.deletedMoviesFilterLabel")}</span>
-                                </Tooltip.Trigger>
+                                </button>
                                 <Tooltip.Content>
                                   {t("search.deletedMoviesFilterTooltip")}
                                 </Tooltip.Content>

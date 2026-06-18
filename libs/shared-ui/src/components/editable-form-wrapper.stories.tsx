@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
 import { useArgs } from "storybook/preview-api";
-import { Input, Label, TextArea, TextField } from "@heroui-v3/react";
+import { Input, Label, TextArea, TextField } from "@heroui/react";
 import { EditableFormWrapper, EDITABLE_FORM_FRAME_OPTIONS } from "./editable-form-wrapper";
 import { fn, userEvent, within, expect } from "storybook/test";
 

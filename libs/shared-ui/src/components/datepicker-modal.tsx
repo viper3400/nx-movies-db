@@ -3,7 +3,7 @@ import { EyeOutlined } from "../icons/eye-outlined";
 import { useTranslation } from "react-i18next";
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
-import { today, getLocalTimeZone, type DateValue } from "@internationalized/date";
+import { today, getLocalTimeZone, type CalendarDate } from "@internationalized/date";
 
 interface DatePickerModalProps {
   onDateSelected: (date: Date | null) => void;
@@ -11,7 +11,7 @@ interface DatePickerModalProps {
 
 export const DatePickerModal = ({ onDateSelected }: DatePickerModalProps) => {
   const now = today(getLocalTimeZone());
-  const [dateValue, setDateValue] = useState<DateValue>(now);
+  const [dateValue, setDateValue] = useState<CalendarDate>(now);
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 

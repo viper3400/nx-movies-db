@@ -14,7 +14,7 @@ import {
   Select,
   TextArea,
   TextField,
-} from "@heroui-v3/react";
+} from "@heroui/react";
 import { parseDate, type DateValue } from "@internationalized/date";
 import {
   isPhysicalMediaTypeName,

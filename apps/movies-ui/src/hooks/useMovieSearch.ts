@@ -2,7 +2,7 @@ import { useState, useEffect, FormEvent, useRef } from "react";
 import { getMovies } from "../app/services/actions";
 import { Movie, moviesSearchInitialFilters } from "../interfaces";
 import { DeleteMode, MovieSearchFilters } from "@nx-movies-db/shared-ui";
-import { PressEvent } from "@heroui-v3/react";
+import { PressEvent } from "@heroui/react";
 
 interface UseMovieSearchProps {
   session: { userName: string };

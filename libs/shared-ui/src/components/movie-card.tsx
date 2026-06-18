@@ -1,4 +1,4 @@
-import { Button, Card, Chip, ScrollShadow, Separator } from "@heroui-v3/react";
+import { Button, Card, Chip, ScrollShadow, Separator } from "@heroui/react";
 import Image from "next/image";
 import { Movie, UserFlagsDTO } from "../interfaces";
 import { useEffect, useState } from "react";
@@ -150,7 +150,7 @@ export const MovieCard = ({
               }}
             />
             {movie.istv && (
-              <Chip className="bg-primary-500">
+              <Chip className="bg-accent">
                 <TvNextOutlined />
               </Chip>
             )}

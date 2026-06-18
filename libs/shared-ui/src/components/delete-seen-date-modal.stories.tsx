@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { DeleteSeenDateModal } from "./delete-seen-date-modal";
-import { Button } from "@heroui-v3/react";
+import { Button } from "@heroui/react";
 
 const meta: Meta<typeof DeleteSeenDateModal> = {
   component: DeleteSeenDateModal,

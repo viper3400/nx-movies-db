@@ -1,4 +1,4 @@
-import { Chip } from "@heroui-v3/react";
+import { Chip } from "@heroui/react";
 import { FlagFilled, FlagOutlined, HeartFilled, HeartOutlined } from "../icons/icons";
 
 export interface UserFlagChipProperties {

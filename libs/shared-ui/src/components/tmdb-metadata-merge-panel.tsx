@@ -7,7 +7,7 @@ import {
   Chip,
   Button,
   type Key,
-} from "@heroui-v3/react";
+} from "@heroui/react";
 import {
   TmdbGenreMappingControl,
   type TmdbGenreMappingMatch,
@@ -87,7 +87,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
   return (
     <div
       data-testid="tmdb-metadata-merge-panel"
-      className="space-y-3 rounded-small border border-default-200 p-3"
+      className="space-y-3 rounded-[8px] border border-default-200 p-3"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
@@ -112,7 +112,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
           {backdropCandidates.length > 1 && (
             <div
               data-testid="tmdb-backdrop-picker"
-              className="rounded-small border border-default-200 p-3"
+              className="rounded-[8px] border border-default-200 p-3"
             >
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold">Background</h3>
@@ -128,7 +128,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                       key={backdrop.filePath}
                       data-testid={`tmdb-backdrop-option-${index}`}
                       type="button"
-                      className={`overflow-hidden rounded-small border p-1 text-left transition ${isSelected ? "border-primary bg-primary/10" : "border-default-200"}`}
+                      className={`overflow-hidden rounded-[8px] border p-1 text-left transition ${isSelected ? "border-accent bg-accent/10" : "border-default-200"}`}
                       onClick={() => onBackdropSelectionChange?.(backdrop.url)}
                     >
                       <Image
@@ -137,7 +137,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                         width={320}
                         height={180}
                         unoptimized
-                        className="aspect-video h-auto w-full rounded-small object-cover"
+                        className="aspect-video h-auto w-full rounded-[8px] object-cover"
                       />
                       <div className="mt-2 px-1 pb-1 text-xs text-default-500">
                         {backdrop.isPrimary ? "Primary background" : "Alternate background"}
@@ -152,7 +152,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
             <div
               key={candidate.field}
               data-testid={`tmdb-merge-candidate-${candidate.field}`}
-              className="rounded-small border border-default-200 p-3"
+              className="rounded-[8px] border border-default-200 p-3"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Checkbox

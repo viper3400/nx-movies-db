@@ -21,7 +21,7 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Button, Card, Chip, type Key, Skeleton, Tooltip, toast } from "@heroui-v3/react";
+import { Button, Card, Chip, type Key, Skeleton, Tooltip, toast } from "@heroui/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
@@ -606,18 +606,19 @@ function UpsertVideoFormContent({
           delay={0}
           isDisabled={!dirty || !changedFieldLabelText}
         >
-          <Tooltip.Trigger>
-            <span className="inline-flex">
-              <Chip
-                data-testid="upsert-video-form-save-status"
-                size="sm"
-                color={saving ? "accent" : dirty ? "warning" : "success"}
-                variant={saving ? "primary" : "tertiary"}
-              >
-                {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
-              </Chip>
-            </span>
-          </Tooltip.Trigger>
+          <button
+            type="button"
+            className="inline-flex cursor-help bg-transparent p-0 text-left text-inherit"
+          >
+            <Chip
+              data-testid="upsert-video-form-save-status"
+              size="sm"
+              color={saving ? "accent" : dirty ? "warning" : "success"}
+              variant={saving ? "primary" : "tertiary"}
+            >
+              {saving ? "Speichere..." : dirty ? "Änderungen vorhanden" : "Alle Änderungen gespeichert"}
+            </Chip>
+          </button>
           <Tooltip.Content>
             {changedFieldLabelText ? `Changed: ${changedFieldLabelText}` : null}
           </Tooltip.Content>
@@ -626,22 +627,22 @@ function UpsertVideoFormContent({
 
       {showLookupSkeletons && (
         <div className="grid gap-2 sm:grid-cols-2" aria-live="polite">
-          {loadingMediaTypes && <Skeleton className="h-12 w-full rounded-large" />}
-          {loadingGenres && <Skeleton className="h-12 w-full rounded-large" />}
-          {loadingOwners && <Skeleton className="h-12 w-full rounded-large sm:col-span-2" />}
+          {loadingMediaTypes && <Skeleton className="h-12 w-full rounded-[14px]" />}
+          {loadingGenres && <Skeleton className="h-12 w-full rounded-[14px]" />}
+          {loadingOwners && <Skeleton className="h-12 w-full rounded-[14px] sm:col-span-2" />}
         </div>
       )}
 
       {saveError && (
-        <Card className="rounded-sm border border-danger-200 bg-danger-50 shadow-sm">
-          <Card.Content className="text-sm text-danger-700">
+        <Card className="rounded-sm border border-danger/20 bg-danger/10 shadow-sm">
+          <Card.Content className="text-sm text-danger">
             <p className="font-medium">Konnte nicht speichern</p>
             <p>{saveError}</p>
           </Card.Content>
         </Card>
       )}
 
-      <div className="space-y-3 rounded-small border border-default-200 p-3">
+      <div className="space-y-3 rounded-[8px] border border-default-200 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-semibold">
@@ -711,7 +712,7 @@ function UpsertVideoFormContent({
             {tmdbLoadingDetails ? (
               <div
                 data-testid="tmdb-refresh-details-loading"
-                className="flex min-h-32 items-center justify-center rounded-small border border-default-200 text-sm text-default-500"
+                className="flex min-h-32 items-center justify-center rounded-[8px] border border-default-200 text-sm text-default-500"
               >
                 Loading details...
               </div>
@@ -736,7 +737,7 @@ function UpsertVideoFormContent({
             ) : (
               <div
                 data-testid="tmdb-refresh-empty"
-                className="rounded-small border border-default-200 p-3 text-sm text-default-500"
+                className="rounded-[8px] border border-default-200 p-3 text-sm text-default-500"
               >
                 Select a TMDB result to review field updates.
               </div>

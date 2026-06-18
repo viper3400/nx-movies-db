@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { HeroUIProvider } from "@heroui/react";
-import { Toast } from "@heroui-v3/react";
-import { useRouter } from "next/navigation";
+import { Toast } from "@heroui/react";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 import { I18nextProvider } from "react-i18next";
@@ -40,7 +38,6 @@ if (testModeEnabled) {
 }
 
 export function Providers({ children, themeProps, nextAuthUrl }: ProvidersProps) {
-  const router = useRouter();
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -50,20 +47,18 @@ export function Providers({ children, themeProps, nextAuthUrl }: ProvidersProps)
   return (
     <SessionProvider basePath={nextAuthUrl ?? undefined} session={stubSession ?? undefined}>
       <I18nextProvider i18n={i18n}>
-        <HeroUIProvider navigate={router.push}>
-          <Toast.Provider
-            placement="top"
-            gap={12}
-            maxVisibleToasts={5}
-            scaleFactor={0}
-            width="min(32rem, calc(100vw - 2rem))"
-          />
-          {isMounted ? (
-            <SharedThemeProvider {...themeProps}>{children}</SharedThemeProvider>
-          ) : (
-            <div className="h-screen w-screen bg-black"></div>
-          )}
-        </HeroUIProvider>
+        <Toast.Provider
+          placement="top"
+          gap={12}
+          maxVisibleToasts={5}
+          scaleFactor={0}
+          width="min(32rem, calc(100vw - 2rem))"
+        />
+        {isMounted ? (
+          <SharedThemeProvider {...themeProps}>{children}</SharedThemeProvider>
+        ) : (
+          <div className="h-screen w-screen bg-black"></div>
+        )}
       </I18nextProvider>
     </SessionProvider>
   );

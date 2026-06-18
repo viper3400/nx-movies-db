@@ -1,4 +1,4 @@
-import { Chip, CloseButton } from "@heroui-v3/react";
+import { Chip, CloseButton } from "@heroui/react";
 import { TimeElapsedFormatter } from "../lib";
 import { useTranslation } from "react-i18next";
 

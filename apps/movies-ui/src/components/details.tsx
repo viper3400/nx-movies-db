@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getMoviesById } from "../app/services/actions/getMoviesById";
 import { MovieCard } from "@nx-movies-db/shared-ui";
 import { Movie } from "../interfaces";
-import { Input, Label, TextField } from "@heroui-v3/react";
+import { Input, Label, TextField } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
 

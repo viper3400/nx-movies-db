@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Button, Card, Spinner } from "@heroui-v3/react";
+import { Button, Card, Spinner } from "@heroui/react";
 import isEqual from "react-fast-compare";
 
 export const EDITABLE_FORM_FRAME_OPTIONS = ["content", "all", "none"] as const;

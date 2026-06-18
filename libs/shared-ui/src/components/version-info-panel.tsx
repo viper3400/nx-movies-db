@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useMemo } from "react";
-import { Chip } from "@heroui-v3/react";
+import { Chip } from "@heroui/react";
 import clsx from "clsx";
 
 export interface VersionInfoDetail {
@@ -52,7 +52,7 @@ export const VersionInfoPanel = ({
     <section
       aria-label={heading}
       className={clsx(
-        "w-full rounded-large border border-divider bg-content1 p-6 shadow-small",
+        "w-full rounded-[14px] border border-divider bg-surface p-6 shadow-sm",
         "flex flex-col gap-4",
         className,
       )}

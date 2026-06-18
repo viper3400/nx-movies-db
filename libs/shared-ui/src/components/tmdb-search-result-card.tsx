@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { Button, Card, Chip } from "@heroui-v3/react";
+import { Button, Card, Chip } from "@heroui/react";
 
 export type TmdbSearchResultMediaKind = "movie" | "tv";
 
@@ -42,10 +42,10 @@ export const TmdbSearchResultCard: React.FC<TmdbSearchResultCardProps> = ({
               width={72}
               height={108}
               unoptimized
-              className="h-[108px] w-[72px] rounded-small object-cover"
+              className="h-[108px] w-[72px] rounded-[8px] object-cover"
             />
           ) : (
-            <div className="h-[108px] w-[72px] rounded-small bg-default-100" />
+            <div className="h-[108px] w-[72px] rounded-[8px] bg-default-100" />
           )}
           <div className="min-w-0 space-y-2">
             <div className="flex flex-wrap items-start gap-2">

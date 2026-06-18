@@ -1,4 +1,4 @@
-import { CloseButton, FieldError, InputGroup, Label, TextField } from "@heroui-v3/react";
+import { CloseButton, FieldError, InputGroup, Label, TextField } from "@heroui/react";
 import React from "react";
 
 export interface MovieSearchInputLangResources {

@@ -24,13 +24,13 @@ export interface NavbarComponentProperties {
 
 function navActionClassName(intent: "primary" | "danger" | "warning" | "secondary" = "primary") {
   const intentClasses = {
-    primary: "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
+    primary: "border-accent/30 bg-accent/10 text-accent hover:bg-accent/15",
     danger: "border-danger/30 bg-danger/10 text-danger hover:bg-danger/15",
-    warning: "border-warning/30 bg-warning/10 text-warning-700 hover:bg-warning/15",
-    secondary: "border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/15",
+    warning: "border-warning/30 bg-warning/10 text-warning hover:bg-warning/15",
+    secondary: "border-accent/30 bg-accent/10 text-accent hover:bg-accent/15",
   };
 
-  return `flex min-h-11 w-full items-center justify-center rounded-medium border px-4 py-2 text-sm font-medium transition-colors ${intentClasses[intent]}`;
+  return `flex min-h-11 w-full items-center justify-center rounded-[12px] border px-4 py-2 text-sm font-medium transition-colors ${intentClasses[intent]}`;
 }
 
 export const NavbarComponent = ({
@@ -64,7 +64,7 @@ export const NavbarComponent = ({
         aria-label="Close navigation menu"
         data-testid="navbar-menu-close"
         onClick={() => setIsMenuOpen(false)}
-        className="fixed right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-medium border border-default-200 bg-default-100/70 text-foreground transition-colors hover:bg-default-200/70"
+        className="fixed right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-[12px] border border-default-200 bg-default-100/70 text-foreground transition-colors hover:bg-default-200/70"
       >
         <span aria-hidden="true" className="text-2xl leading-none">×</span>
       </button>
@@ -169,7 +169,7 @@ export const NavbarComponent = ({
             aria-expanded={isMenuOpen}
             aria-controls={menuId}
             onClick={() => setIsMenuOpen((open) => !open)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-medium border border-default-200 bg-default-100/70 text-foreground transition-colors hover:bg-default-200/70"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] border border-default-200 bg-default-100/70 text-foreground transition-colors hover:bg-default-200/70"
           >
             <span className="sr-only">{isMenuOpen ? "Close navigation menu" : "Open navigation menu"}</span>
             <span className="flex flex-col gap-1.5" aria-hidden="true">

@@ -71,30 +71,6 @@ let mockOwnersState = {
 };
 
 jest.mock("@heroui/react", () => ({
-  Spacer: (props: Record<string, unknown>) => <div data-testid="mock-spacer" {...props} />,
-  Switch: ({
-    children,
-    isSelected,
-    onValueChange,
-    ...props
-  }: {
-    children: React.ReactNode;
-    isSelected?: boolean;
-    onValueChange?: (selected: boolean) => void;
-  }) => (
-    <label>
-      <input
-        type="checkbox"
-        checked={!!isSelected}
-        onChange={(event) => onValueChange?.(event.target.checked)}
-        {...props}
-      />
-      {children}
-    </label>
-  ),
-}));
-
-jest.mock("@heroui-v3/react", () => ({
   toast: Object.assign(jest.fn(), {
     success: jest.fn(),
     danger: jest.fn(),

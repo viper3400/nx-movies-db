@@ -151,7 +151,7 @@ export const NavbarComponent = ({
 
   return (
     <nav
-      className="sticky top-0 z-50 border-b border-default bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
       aria-label="Primary"
     >
       <div className="mx-auto flex min-h-16 w-full items-center justify-between gap-4 px-4">
@@ -180,6 +180,7 @@ export const NavbarComponent = ({
           </button>
         </div>
       </div>
+      <div className="mx-4 border-b border-default" />
 
       {isMenuOpen && isMounted && createPortal(menuOverlay, document.body)}
     </nav>

@@ -32,10 +32,12 @@ export default async function Page({
   // If id is 'new', render a blank form to create a new entry
   if (id === "new") {
     return (
-      <div className="p-4 max-w-6xl mx-auto">
-        <UpsertVideoForm
-          defaultOwnerId={session.ownerId}
-        />
+      <div className="app-main-viewport bg-background/95 px-2">
+        <div className="mx-auto h-full max-w-6xl overflow-y-auto p-4">
+          <UpsertVideoForm
+            defaultOwnerId={session.ownerId}
+          />
+        </div>
       </div>
     );
   }
@@ -43,8 +45,10 @@ export default async function Page({
   const initialValues = await getInitialValues(id);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
-      <UpsertVideoForm initialValues={initialValues} />
+    <div className="app-main-viewport bg-background/95 px-2">
+      <div className="mx-auto h-full max-w-6xl overflow-y-auto p-4">
+        <UpsertVideoForm initialValues={initialValues} />
+      </div>
     </div>
   );
 }

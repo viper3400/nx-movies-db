@@ -6,7 +6,7 @@ const getContentBasedOnSession = async (id: string) => {
   const session = await getAllowedSession();
   if (session) {
     return (
-      <div className="app-main-viewport p-2">
+      <div className="app-main-viewport bg-background/95 p-2">
         <DetailsComponent id={id} userName={session.userName} />
       </div>
     );

@@ -44,30 +44,32 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="-mx-2 shrink-0 border-b border-default bg-background/95 px-2 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <SearchForm
-          searchText={searchText}
-          setSearchText={setSearchText}
-          invalidSearch={invalidSearch}
-          validateSearch={validateSearch}
-          clearSearchResult={clearSearchResult}
-          totalMoviesCount={totalMoviesCount}
-          filters={filters}
-          setFilters={setFilters}
-          handleSearchSubmit={handleSearchSubmit}
-          handleRandomSearchRequest={handleRandomSearchRequest}
-          isDefaultFilter={isDefaultFilter}
-          langResources={{
-            placeholderLabel: t("search.placeholder"),
-            searchLabel: t("search.search"),
-            resultCountLabel: t("search.result_count"),
-          }}
-          mediaTypes={availableMediaTypes ?? []}
-          genres={availableGenres ?? []}
-        />
+      <div className="-mx-2 shrink-0 bg-background/95 px-2 pt-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-2 border-b border-default">
+          <SearchForm
+            searchText={searchText}
+            setSearchText={setSearchText}
+            invalidSearch={invalidSearch}
+            validateSearch={validateSearch}
+            clearSearchResult={clearSearchResult}
+            totalMoviesCount={totalMoviesCount}
+            filters={filters}
+            setFilters={setFilters}
+            handleSearchSubmit={handleSearchSubmit}
+            handleRandomSearchRequest={handleRandomSearchRequest}
+            isDefaultFilter={isDefaultFilter}
+            langResources={{
+              placeholderLabel: t("search.placeholder"),
+              searchLabel: t("search.search"),
+              resultCountLabel: t("search.result_count"),
+            }}
+            mediaTypes={availableMediaTypes ?? []}
+            genres={availableGenres ?? []}
+          />
+        </div>
       </div>
 
-      <div ref={resultsContainerRef} className="min-h-0 flex-1 overflow-y-auto pt-4">
+      <div ref={resultsContainerRef} className="bg-background/95 -mx-2 px-2 min-h-0 flex-1 overflow-y-auto pt-4">
         <div>
           {searchResult && imageBaseUrl && (
             <MovieCardDeck

@@ -17,6 +17,7 @@ type UpsertResult = {
     id: number;
     title: string | null;
     imdbID: string | null;
+    lastupdate: string | null;
   };
 };
 
@@ -63,6 +64,17 @@ type UpsertVariables = OptionalUpsertFields & {
   mediatype: number;
   owner_id: number;
 };
+
+function normalizeUpsertResult(
+  result: UpsertResult["upsertVideoData"] | null | undefined
+) {
+  return result
+    ? {
+      ...result,
+      lastupdate: result.lastupdate ? new Date(result.lastupdate) : null,
+    }
+    : result;
+}
 
 const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
   mutation UpsertVideoData(
@@ -140,6 +152,7 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
       id
       title
       imdbID
+      lastupdate
     }
   }
 `;
@@ -288,7 +301,7 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
 
   const posterSourceChanged = existingVideo?.custom4 !== variables.custom4;
   if (!isRemoteHttpUrl(variables.custom4) || (!existingVideo && !variables.custom4) || !posterSourceChanged) {
-    return latestSavedVideo;
+    return normalizeUpsertResult(latestSavedVideo);
   }
 
   const posterImagePath = process.env.POSTER_IMAGE_PATH;
@@ -297,7 +310,7 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
       movieId: savedVideo.id,
       custom4: variables.custom4,
     });
-    return latestSavedVideo;
+    return normalizeUpsertResult(latestSavedVideo);
   }
 
   try {
@@ -319,5 +332,5 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
     });
   }
 
-  return latestSavedVideo;
+  return normalizeUpsertResult(latestSavedVideo);
 }

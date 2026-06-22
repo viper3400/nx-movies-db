@@ -75,6 +75,14 @@ Notes:
 - `npm run test:e2e` expects the database, GraphQL service, and UI to already be running.
 - For focused work, prefer direct Nx commands such as `npx nx run shared-ui:test` or `npx nx run movies-graphql-lib:test`.
 
+## E2E Test Perspective
+
+- Treat e2e coverage from a tester's perspective, not a developer's convenience perspective. Prefer assertions that validate the user-visible contract and persisted behavior, not just that the page rendered, a save completed, or a field is non-empty.
+- For behavior with semantic meaning, assert the business rule. Example: for "last update" behavior, do not stop at "the field has a value"; verify that a real edit causes the persisted value to advance and that the user sees the changed value after save or reload.
+- Be wary of weak assertions that can pass while the feature is still broken. "Value exists", "toast appeared", or "request returned 200" are smoke signals, not proof that the requirement holds.
+- When exact timestamps, IDs, or formatting are unstable, avoid brittle exact-string checks, but still assert a meaningful contract such as "value changed", "value is not earlier than before", or "reloaded state matches the saved state".
+- If an e2e assertion is difficult to express because the UI control is awkward, do not lower the bar by weakening the assertion. Instead, combine user-level checks with a persisted-state check through the existing API boundary when needed.
+
 ## UI Conventions
 
 - Shared/reusable components belong in `libs/shared-ui`; app-specific wiring belongs in `apps/movies-ui`.

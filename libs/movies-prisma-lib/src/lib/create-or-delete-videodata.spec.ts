@@ -60,6 +60,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       mediatype: 14,
       owner_id: 2,
       istv: 0,
+      lastupdate: new Date("2020-01-01T00:00:00.000Z"),
     });
     trackVideo(created.id);
 
@@ -81,6 +82,7 @@ describe("createOrDeleteVideoData integration tests", () => {
       where: { id: created.id },
     });
     expect(dbEntry).toMatchObject(updatedData);
+    expect(dbEntry?.lastupdate.getTime()).toBeGreaterThan(new Date("2020-01-01T00:00:00.000Z").getTime());
   });
 
   it("should upsert and replace genre relations when genreIds are provided", async () => {

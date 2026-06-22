@@ -159,6 +159,7 @@ export const TmdbMetadataMergePanel: React.FC<TmdbMetadataMergePanelProps> = ({
                   data-testid={`tmdb-merge-select-${candidate.field}`}
                   isSelected={candidate.selected}
                   onChange={(selected) => onCandidateSelectionChange(candidate.field, selected)}
+                  variant="secondary"
                 >
                   <Checkbox.Content>
                     <Checkbox.Control>

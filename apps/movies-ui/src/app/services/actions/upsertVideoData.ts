@@ -11,12 +11,14 @@ import {
   storePosterImageFromUrl,
 } from "./coverImageLocalization";
 import { getVideoData } from "./getVideoData";
+import type { VideoData } from "@nx-movies-db/shared-types";
 
 type UpsertResult = {
   upsertVideoData: {
     id: number;
     title: string | null;
     imdbID: string | null;
+    lastupdate: string | null;
   };
 };
 
@@ -63,6 +65,19 @@ type UpsertVariables = OptionalUpsertFields & {
   mediatype: number;
   owner_id: number;
 };
+
+type UpsertVideoDataActionResult = Pick<VideoData, "id" | "title" | "imdbID" | "lastupdate">;
+
+function normalizeUpsertResult(
+  result: UpsertResult["upsertVideoData"] | null | undefined
+): UpsertVideoDataActionResult | null | undefined {
+  return result
+    ? {
+      ...result,
+      lastupdate: result.lastupdate ? new Date(result.lastupdate) : null,
+    }
+    : result;
+}
 
 const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
   mutation UpsertVideoData(
@@ -140,6 +155,7 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
       id
       title
       imdbID
+      lastupdate
     }
   }
 `;
@@ -219,7 +235,9 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
   return v as UpsertVariables;
 }
 
-export async function upsertVideoData(values: UpsertVideoDataFormValues) {
+export async function upsertVideoData(
+  values: UpsertVideoDataFormValues
+): Promise<UpsertVideoDataActionResult | null | undefined> {
   const client = getClient();
   const variables = mapToVariables(values);
   const existingVideo = values.id ? await getVideoData(values.id) : undefined;
@@ -235,7 +253,7 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
 
   const savedVideo = data?.upsertVideoData;
   if (!savedVideo?.id) {
-    return savedVideo;
+    return normalizeUpsertResult(savedVideo);
   }
 
   let latestSavedVideo = savedVideo;
@@ -288,7 +306,7 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
 
   const posterSourceChanged = existingVideo?.custom4 !== variables.custom4;
   if (!isRemoteHttpUrl(variables.custom4) || (!existingVideo && !variables.custom4) || !posterSourceChanged) {
-    return latestSavedVideo;
+    return normalizeUpsertResult(latestSavedVideo);
   }
 
   const posterImagePath = process.env.POSTER_IMAGE_PATH;
@@ -297,7 +315,7 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
       movieId: savedVideo.id,
       custom4: variables.custom4,
     });
-    return latestSavedVideo;
+    return normalizeUpsertResult(latestSavedVideo);
   }
 
   try {
@@ -319,5 +337,5 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
     });
   }
 
-  return latestSavedVideo;
+  return normalizeUpsertResult(latestSavedVideo);
 }

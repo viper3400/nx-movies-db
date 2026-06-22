@@ -11,6 +11,7 @@ import {
   storePosterImageFromUrl,
 } from "./coverImageLocalization";
 import { getVideoData } from "./getVideoData";
+import type { VideoData } from "@nx-movies-db/shared-types";
 
 type UpsertResult = {
   upsertVideoData: {
@@ -65,9 +66,11 @@ type UpsertVariables = OptionalUpsertFields & {
   owner_id: number;
 };
 
+type UpsertVideoDataActionResult = Pick<VideoData, "id" | "title" | "imdbID" | "lastupdate">;
+
 function normalizeUpsertResult(
   result: UpsertResult["upsertVideoData"] | null | undefined
-) {
+): UpsertVideoDataActionResult | null | undefined {
   return result
     ? {
       ...result,
@@ -232,7 +235,9 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
   return v as UpsertVariables;
 }
 
-export async function upsertVideoData(values: UpsertVideoDataFormValues) {
+export async function upsertVideoData(
+  values: UpsertVideoDataFormValues
+): Promise<UpsertVideoDataActionResult | null | undefined> {
   const client = getClient();
   const variables = mapToVariables(values);
   const existingVideo = values.id ? await getVideoData(values.id) : undefined;
@@ -248,7 +253,7 @@ export async function upsertVideoData(values: UpsertVideoDataFormValues) {
 
   const savedVideo = data?.upsertVideoData;
   if (!savedVideo?.id) {
-    return savedVideo;
+    return normalizeUpsertResult(savedVideo);
   }
 
   let latestSavedVideo = savedVideo;

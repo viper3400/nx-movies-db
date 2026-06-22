@@ -117,7 +117,10 @@ export async function upsertVideoData(data: VideoDataInput): Promise<VideoData> 
     const video = id
       ? await tx.videodb_videodata.update({
         where: { id },
-        data: rest,
+        data: {
+          ...rest,
+          lastupdate: new Date(),
+        },
       })
       : await tx.videodb_videodata.create({
         data: rest,

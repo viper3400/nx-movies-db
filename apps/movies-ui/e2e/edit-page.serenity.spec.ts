@@ -1,7 +1,9 @@
+import { type Page } from "@playwright/test";
 import { test } from "@serenity-js/playwright-test";
 import {
   Ensure,
   equals,
+  isGreaterThan,
   isPresent,
   matches,
   not,
@@ -17,17 +19,116 @@ import {
   Navigate,
   PageElement,
   Press,
+  Scroll,
   isEnabled,
   isVisible,
 } from "@serenity-js/web";
 
-async function waitForSaveStatus(page: { waitForFunction: Function }, text: string) {
+async function waitForSaveStatus(page: Page, text: string) {
   await page.waitForFunction(
     (expectedText: string) =>
       document.querySelector("[data-testid='upsert-video-form-save-status']")?.textContent?.includes(expectedText) ?? false,
     text,
     { timeout: 15_000 },
   );
+}
+
+async function seedVideoRecord(page: Page, {
+  title,
+  diskId,
+  lastupdate,
+}: {
+  title: string;
+  diskId: string;
+  lastupdate: string;
+}) {
+  const response = await page.request.post("/api/graphql-proxy", {
+    data: {
+      query: `
+        mutation SeedVideoRecord(
+          $title: String!,
+          $diskid: String!,
+          $year: Int!,
+          $istv: Int!,
+          $lastupdate: DateTime!,
+          $mediatype: Int!,
+          $owner_id: Int!
+        ) {
+          upsertVideoData(
+            title: $title,
+            diskid: $diskid,
+            year: $year,
+            istv: $istv,
+            lastupdate: $lastupdate,
+            mediatype: $mediatype,
+            owner_id: $owner_id
+          ) {
+            id
+            title
+            lastupdate
+          }
+        }
+      `,
+      variables: {
+        title,
+        diskid: diskId,
+        year: 2024,
+        istv: 0,
+        lastupdate,
+        mediatype: 14,
+        owner_id: 1,
+      },
+    },
+  });
+
+  if (!response.ok()) {
+    throw new Error(`Failed to seed video record for "${title}"`);
+  }
+
+  const body = await response.json();
+  if (body.errors) {
+    throw new Error(`GraphQL errors while seeding video record: ${JSON.stringify(body.errors)}`);
+  }
+  if (!body.data?.upsertVideoData?.id) {
+    throw new Error("GraphQL did not return a seeded video id");
+  }
+
+  return body.data.upsertVideoData as {
+    id: number;
+    title: string;
+    lastupdate: string | null;
+  };
+}
+
+async function fetchPersistedLastUpdate(page: Page, id: number) {
+  const response = await page.request.post("/api/graphql-proxy", {
+    data: {
+      query: `
+        query LastUpdateForVideo($id: Int!) {
+          videoData(id: $id) {
+            id
+            lastupdate
+          }
+        }
+      `,
+      variables: { id },
+    },
+  });
+
+  if (!response.ok()) {
+    throw new Error(`Failed to fetch lastupdate for video ${id}`);
+  }
+  const body = await response.json();
+  if (body.errors) {
+    throw new Error(`GraphQL errors while loading lastupdate: ${JSON.stringify(body.errors)}`);
+  }
+
+  return body.data?.videoData?.lastupdate as string | null | undefined;
+}
+
+async function readDateFieldText(page: Page, fieldName: string) {
+  const rawText = await page.locator(`[data-testid='video-field-${fieldName}']`).textContent();
+  return (rawText ?? "").replace(/\s+/g, " ").trim();
 }
 
 const saveButton = PageElement.located(
@@ -49,6 +150,7 @@ const imdbIdField = videoField("imdbID", "IMDB ID field");
 const imageUrlField = videoField("imgurl", "image url field");
 const custom3Field = videoField("custom3", "custom3 field");
 const custom4Field = videoField("custom4", "custom4 field");
+const lastUpdateField = videoField("lastupdate", "last update field");
 const diskIdSuggestion = PageElement.located(
   By.css("[data-testid='video-field-diskid-suggestion']"),
 ).describedAs("disk id suggestion");
@@ -162,6 +264,100 @@ test.describe("Edit page using Serenity/JS", () => {
       Ensure.that(
         Attribute.called("value").of(titleField),
         equals(originalTitle),
+      ),
+    );
+  });
+
+  test("actor sees last update advance after saving an edit", async ({
+    actorCalled,
+    page,
+  }) => {
+    const actor = actorCalled("Quinn");
+    const uniqueToken = Date.now();
+    const originalTitle = `Serenity Last Update ${uniqueToken}`;
+    const editedTitle = `${originalTitle} Edited`;
+    const diskId = `R${String((uniqueToken % 80) + 10).padStart(2, "0")}F${String((Math.floor(uniqueToken / 100) % 80) + 10).padStart(2, "0")}D07`;
+    const seeded = await seedVideoRecord(page, {
+      title: originalTitle,
+      diskId,
+      lastupdate: "2020-01-02T00:00:00.000Z",
+    });
+
+    await actor.attemptsTo(
+      Navigate.to(`/edit/${seeded.id}`),
+      Wait.until(titleField, isVisible()),
+      Wait.until(lastUpdateField, isPresent()),
+      Scroll.to(lastUpdateField),
+      Ensure.that(Attribute.called("value").of(titleField), equals(originalTitle)),
+    );
+
+    const beforeDisplayedLastUpdate = await readDateFieldText(page, "lastupdate");
+    const beforePersistedLastUpdate = await fetchPersistedLastUpdate(page, seeded.id);
+
+    await actor.attemptsTo(
+      Ensure.that(beforeDisplayedLastUpdate, not(equals(""))),
+      Ensure.that(beforePersistedLastUpdate, equals("2020-01-02T00:00:00.000Z")),
+    );
+
+    await actor.attemptsTo(
+      Clear.theValueOf(titleField),
+      Enter.theValue(editedTitle).into(titleField),
+      Press.the(Key.Tab).in(titleField),
+      Ensure.that(saveButton, isEnabled()),
+      Click.on(saveButton),
+    );
+    await waitForSaveStatus(page, "Alle Änderungen gespeichert");
+
+    await page.waitForFunction(
+      async ([videoId, previousLastUpdate]) => {
+        const response = await fetch("/api/graphql-proxy", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            query: `
+              query LastUpdateForVideo($id: Int!) {
+                videoData(id: $id) {
+                  lastupdate
+                }
+              }
+            `,
+            variables: { id: videoId },
+          }),
+        });
+
+        if (!response.ok) {
+          return false;
+        }
+
+        const body = await response.json();
+        return body?.data?.videoData?.lastupdate !== previousLastUpdate;
+      },
+      [seeded.id, beforePersistedLastUpdate],
+      { timeout: 15_000 },
+    );
+
+    await page.reload({ waitUntil: "domcontentloaded" });
+
+    await actor.attemptsTo(
+      Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
+      Wait.until(lastUpdateField, isPresent()),
+      Scroll.to(lastUpdateField),
+      Ensure.that(Attribute.called("value").of(titleField), equals(editedTitle)),
+    );
+
+    const afterDisplayedLastUpdate = await readDateFieldText(page, "lastupdate");
+    const afterPersistedLastUpdate = await fetchPersistedLastUpdate(page, seeded.id);
+
+    await actor.attemptsTo(
+      Ensure.that(afterDisplayedLastUpdate, not(equals(""))),
+      Ensure.that(afterDisplayedLastUpdate, not(equals(beforeDisplayedLastUpdate))),
+      Ensure.that(afterPersistedLastUpdate, not(equals(null))),
+      Ensure.that(afterPersistedLastUpdate, not(equals(undefined))),
+      Ensure.that(
+        Date.parse(afterPersistedLastUpdate ?? ""),
+        isGreaterThan(Date.parse(beforePersistedLastUpdate ?? "")),
       ),
     );
   });

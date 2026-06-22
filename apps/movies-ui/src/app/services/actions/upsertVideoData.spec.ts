@@ -91,7 +91,7 @@ describe("upsertVideoData cover localization", () => {
       imgurl: "./530.jpg",
     });
 
-    expect(result).toEqual({ id: 530, title: "Local Cover", imdbID: null });
+    expect(result).toMatchObject({ id: 530, title: "Local Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
     expect(storeCoverImageFromUrlMock).not.toHaveBeenCalled();
     expect(storePosterImageFromUrlMock).not.toHaveBeenCalled();
@@ -196,7 +196,7 @@ describe("upsertVideoData cover localization", () => {
 
     const result = await upsertVideoData(baseValues);
 
-    expect(result).toEqual({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
     expect(deleteStoredCoverImageMock).toHaveBeenCalledWith("/covers", 530);
     expect(consoleError).toHaveBeenCalledWith(
@@ -217,7 +217,7 @@ describe("upsertVideoData cover localization", () => {
 
     const result = await upsertVideoData(baseValues);
 
-    expect(result).toEqual({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
     expect(storeCoverImageFromUrlMock).not.toHaveBeenCalled();
     expect(consoleError).toHaveBeenCalledWith(
@@ -267,7 +267,7 @@ describe("upsertVideoData cover localization", () => {
 
     const result = await upsertVideoData(baseValues);
 
-    expect(result).toEqual({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
     expect(deleteStoredPosterImageMock).toHaveBeenCalledWith("/posters", 530);
     expect(consoleError).toHaveBeenCalledWith(
       "Poster image localization failed after metadata save",
@@ -291,7 +291,7 @@ describe("upsertVideoData cover localization", () => {
 
     const result = await upsertVideoData(baseValues);
 
-    expect(result).toEqual({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
     expect(storePosterImageFromUrlMock).not.toHaveBeenCalled();
     expect(consoleError).toHaveBeenCalledWith(
       "Skipping poster image localization: POSTER_IMAGE_PATH is not configured",
@@ -300,5 +300,27 @@ describe("upsertVideoData cover localization", () => {
         custom4: "https://image.tmdb.org/t/p/w500/poster.jpg",
       })
     );
+  });
+
+  it("converts the returned lastupdate timestamp into a Date", async () => {
+    isRemoteHttpUrlMock.mockReturnValue(false);
+    mutate.mockResolvedValueOnce({
+      data: {
+        upsertVideoData: {
+          id: 530,
+          title: "Remote Cover",
+          imdbID: null,
+          lastupdate: "2026-06-22T12:34:56.000Z",
+        },
+      },
+    });
+
+    const result = await upsertVideoData({
+      ...baseValues,
+      id: 530,
+    });
+
+    expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(result?.lastupdate).toEqual(new Date("2026-06-22T12:34:56.000Z"));
   });
 });

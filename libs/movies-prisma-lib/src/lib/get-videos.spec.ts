@@ -1,6 +1,12 @@
 import { prisma } from "../prismaclient";
 import { getVideos } from "./get-videos";
 
+function getAndClausesFromCall(spy: jest.SpyInstance, callIndex: number) {
+  const where = spy.mock.calls[callIndex]?.[0]?.where as { AND?: unknown } | undefined;
+  expect(Array.isArray(where?.AND)).toBe(true);
+  return where!.AND as Array<unknown>;
+}
+
 describe("getVideos", () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -131,7 +137,7 @@ describe("getVideos", () => {
 
     expect(result.totalCount).toBe(2);
     expect(result.videos.map(video => video.id)).toEqual([4, 3]);
-    expect(findManySpy.mock.calls[0][0].where.AND[2]).toEqual({
+    expect(getAndClausesFromCall(findManySpy, 0)[2]).toEqual({
       id: { notIn: [1, 2] },
     });
   });
@@ -157,10 +163,10 @@ describe("getVideos", () => {
       take: 2,
     }, undefined);
 
-    expect(findManySpy.mock.calls[0][0].where.AND[2]).toEqual({
+    expect(getAndClausesFromCall(findManySpy, 0)[2]).toEqual({
       id: { notIn: [1, 2, 3] },
     });
-    expect(findManySpy.mock.calls[1][0].where.AND[2]).toEqual({
+    expect(getAndClausesFromCall(findManySpy, 1)[2]).toEqual({
       id: { notIn: [2, 3] },
     });
     expect(result.videos.map(video => video.id).sort()).toEqual([1, 4]);

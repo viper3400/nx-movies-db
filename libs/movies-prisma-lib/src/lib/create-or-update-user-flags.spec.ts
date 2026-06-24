@@ -34,10 +34,11 @@ describe("createOrUpdateUserFlag integration tests", () => {
       is_favorite: true,
       asp_username: "hans.dampf",
     });
+    expect(result).not.toBeNull();
 
     // Verify the entry in the database
     const dbEntry = await prisma.homewebbridge_usermoviesettings.findUnique({
-      where: { id: result.id },
+      where: { id: result!.id },
     });
 
     expect(dbEntry).toMatchObject({
@@ -73,10 +74,11 @@ describe("createOrUpdateUserFlag integration tests", () => {
       is_favorite: true,
       asp_username: "hans.dampf",
     });
+    expect(result).not.toBeNull();
 
     // Verify the updated entry in the database
     const dbEntry = await prisma.homewebbridge_usermoviesettings.findUnique({
-      where: { id: result.id },
+      where: { id: result!.id },
     });
 
     expect(dbEntry).toMatchObject({

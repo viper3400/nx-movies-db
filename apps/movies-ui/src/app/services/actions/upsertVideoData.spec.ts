@@ -1,4 +1,5 @@
 import { getClient } from "../../../lib/apollocient";
+import { revalidatePath } from "next/cache";
 import {
   deleteStoredCoverImage,
   deleteStoredPosterImage,
@@ -11,6 +12,10 @@ import { upsertVideoData } from "./upsertVideoData";
 
 jest.mock("../../../lib/apollocient", () => ({
   getClient: jest.fn(),
+}));
+
+jest.mock("next/cache", () => ({
+  revalidatePath: jest.fn(),
 }));
 
 jest.mock("./coverImageLocalization", () => ({
@@ -26,6 +31,7 @@ jest.mock("./getVideoData", () => ({
 }));
 
 const getClientMock = getClient as jest.MockedFunction<typeof getClient>;
+const revalidatePathMock = revalidatePath as jest.MockedFunction<typeof revalidatePath>;
 const deleteStoredCoverImageMock = deleteStoredCoverImage as jest.MockedFunction<typeof deleteStoredCoverImage>;
 const deleteStoredPosterImageMock = deleteStoredPosterImage as jest.MockedFunction<typeof deleteStoredPosterImage>;
 const isRemoteHttpUrlMock = isRemoteHttpUrl as jest.MockedFunction<typeof isRemoteHttpUrl>;
@@ -93,6 +99,7 @@ describe("upsertVideoData cover localization", () => {
 
     expect(result).toMatchObject({ id: 530, title: "Local Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(storeCoverImageFromUrlMock).not.toHaveBeenCalled();
     expect(storePosterImageFromUrlMock).not.toHaveBeenCalled();
   });
@@ -134,6 +141,7 @@ describe("upsertVideoData cover localization", () => {
 
     expect(storeCoverImageFromUrlMock).toHaveBeenCalledWith("https://example.com/cover.png", "/covers", 530);
     expect(mutate).toHaveBeenCalledTimes(2);
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(mutate.mock.calls[1][0].variables).toEqual(
       expect.objectContaining({
         id: 530,
@@ -178,6 +186,7 @@ describe("upsertVideoData cover localization", () => {
       })
     );
     expect(storeCoverImageFromUrlMock).toHaveBeenCalledWith("https://example.com/cover.png", "/covers", 530);
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(mutate.mock.calls[1][0].variables).toEqual(
       expect.objectContaining({
         id: 530,
@@ -198,6 +207,7 @@ describe("upsertVideoData cover localization", () => {
 
     expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(deleteStoredCoverImageMock).toHaveBeenCalledWith("/covers", 530);
     expect(consoleError).toHaveBeenCalledWith(
       "Cover image localization failed after metadata save",
@@ -219,6 +229,7 @@ describe("upsertVideoData cover localization", () => {
 
     expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
     expect(mutate).toHaveBeenCalledTimes(1);
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(storeCoverImageFromUrlMock).not.toHaveBeenCalled();
     expect(consoleError).toHaveBeenCalledWith(
       "Skipping cover image localization: COVER_IMAGE_PATH is not configured",
@@ -252,6 +263,7 @@ describe("upsertVideoData cover localization", () => {
       id: 530,
     });
 
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(storePosterImageFromUrlMock).not.toHaveBeenCalled();
   });
 
@@ -268,6 +280,7 @@ describe("upsertVideoData cover localization", () => {
     const result = await upsertVideoData(baseValues);
 
     expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(deleteStoredPosterImageMock).toHaveBeenCalledWith("/posters", 530);
     expect(consoleError).toHaveBeenCalledWith(
       "Poster image localization failed after metadata save",
@@ -292,6 +305,7 @@ describe("upsertVideoData cover localization", () => {
     const result = await upsertVideoData(baseValues);
 
     expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(storePosterImageFromUrlMock).not.toHaveBeenCalled();
     expect(consoleError).toHaveBeenCalledWith(
       "Skipping poster image localization: POSTER_IMAGE_PATH is not configured",
@@ -321,6 +335,7 @@ describe("upsertVideoData cover localization", () => {
     });
 
     expect(result).toMatchObject({ id: 530, title: "Remote Cover", imdbID: null });
+    expect(revalidatePathMock).toHaveBeenCalledWith("/edit/530");
     expect(result?.lastupdate).toEqual(new Date("2026-06-22T12:34:56.000Z"));
   });
 });

@@ -8,6 +8,7 @@ const selectors = {
   year: "[data-testid='video-field-year']",
   save: "[data-testid='editable-form-save']",
   discard: "[data-testid='editable-form-discard']",
+  saveStatus: "[data-testid='upsert-video-form-save-status']",
 };
 
 async function openEditPage(page: Page, id: string) {
@@ -25,8 +26,11 @@ async function openEditPage(page: Page, id: string) {
   };
 }
 
-async function waitUntilSaved(saveButton: Locator) {
+async function waitUntilSaved(page: Page, saveButton: Locator) {
   await expect(saveButton).toBeDisabled({ timeout: 15_000 });
+  await expect(page.locator(selectors.saveStatus)).toHaveText("Alle Änderungen gespeichert", {
+    timeout: 15_000,
+  });
 }
 
 async function findVideoByTitle(page: Page, title: string) {
@@ -68,6 +72,48 @@ async function findVideoByTitle(page: Page, title: string) {
   return { id: String(video.id), ownerId: video.ownerid };
 }
 
+async function findVideoTitleById(page: Page, id: string) {
+  const response = await page.request.post("/api/graphql-proxy", {
+    data: {
+      query: `
+        query FindVideoTitleById($id: Int!) {
+          videoData(id: $id) {
+            id
+            title
+          }
+        }
+      `,
+      variables: { id: Number(id) },
+    },
+  });
+
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  return body.data?.videoData?.title ?? null;
+}
+
+async function findVideoFieldsById(page: Page, id: string) {
+  const response = await page.request.post("/api/graphql-proxy", {
+    data: {
+      query: `
+        query FindVideoFieldsById($id: Int!) {
+          videoData(id: $id) {
+            id
+            title
+            diskid
+            year
+          }
+        }
+      `,
+      variables: { id: Number(id) },
+    },
+  });
+
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  return body.data?.videoData ?? null;
+}
+
 async function reloadUntilInputValue(page: Page, selector: string, expected: string) {
   await expect
     .poll(async () => {
@@ -100,7 +146,7 @@ async function createManualEntry(page: Page, title: string) {
   await expect(saveButton).toBeEnabled();
 
   await saveButton.click();
-  await waitUntilSaved(saveButton);
+  await waitUntilSaved(page, saveButton);
   let createdId = new URL(page.url()).pathname.match(/\/edit\/(\d+)$/)?.[1] ?? null;
 
   if (!createdId) {
@@ -125,6 +171,7 @@ async function createManualEntry(page: Page, title: string) {
   }
 
   expect(createdId).toBeTruthy();
+  await expect.poll(async () => findVideoTitleById(page, createdId!), { timeout: 15_000 }).toBe(title);
 
   return {
     id: createdId!,
@@ -172,7 +219,8 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await expect(saveButton).toBeEnabled();
 
     await saveButton.click();
-    await waitUntilSaved(saveButton);
+    await waitUntilSaved(page, saveButton);
+    await expect.poll(async () => findVideoTitleById(page, created.id), { timeout: 15_000 }).toBe(editedTitle);
     await reloadUntilInputValue(page, selectors.title, editedTitle);
     await expect(titleField).toHaveValue(editedTitle);
 
@@ -180,7 +228,8 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await titleField.press("Tab");
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
-    await waitUntilSaved(saveButton);
+    await waitUntilSaved(page, saveButton);
+    await expect.poll(async () => findVideoTitleById(page, created.id), { timeout: 15_000 }).toBe(originalTitle);
     await reloadUntilInputValue(page, selectors.title, originalTitle);
     await expect(titleField).toHaveValue(originalTitle);
   });
@@ -228,7 +277,10 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await expect(page.locator(selectors.save)).toBeEnabled();
 
     await page.locator(selectors.save).click();
-    await waitUntilSaved(page.locator(selectors.save));
+    await waitUntilSaved(page, page.locator(selectors.save));
+    await expect
+      .poll(async () => findVideoFieldsById(page, created.id), { timeout: 15_000 })
+      .toMatchObject({ title: originalTitle, diskid: editedDiskId, year: Number(editedYear) });
     await reloadUntilInputValue(page, selectors.diskId, editedDiskId);
     await expect(page.locator(selectors.diskId)).toHaveValue(editedDiskId);
     await expect(page.locator(selectors.year)).toHaveValue(editedYear);
@@ -238,7 +290,10 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await page.locator(selectors.year).fill(originalYear);
     await page.locator(selectors.year).press("Tab");
     await page.locator(selectors.save).click();
-    await waitUntilSaved(page.locator(selectors.save));
+    await waitUntilSaved(page, page.locator(selectors.save));
+    await expect
+      .poll(async () => findVideoFieldsById(page, created.id), { timeout: 15_000 })
+      .toMatchObject({ title: originalTitle, diskid: originalDiskId, year: Number(originalYear) });
     await reloadUntilInputValue(page, selectors.diskId, originalDiskId);
     await expect(page.locator(selectors.diskId)).toHaveValue(originalDiskId);
     await expect(page.locator(selectors.year)).toHaveValue(originalYear);
@@ -270,7 +325,8 @@ test.describe("Edit page (vanilla Playwright)", () => {
     await titleField.press("Tab");
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
-    await waitUntilSaved(saveButton);
+    await waitUntilSaved(page, saveButton);
+    await expect.poll(async () => findVideoTitleById(page, createdId), { timeout: 15_000 }).toBe(updatedTitle);
     await reloadUntilInputValue(page, selectors.title, updatedTitle);
     await expect(titleField).toHaveValue(updatedTitle);
 

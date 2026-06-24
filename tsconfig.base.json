@@ -5,6 +5,7 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
     "emitDecoratorMetadata": true,
@@ -15,19 +16,18 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "paths": {
       "@nx-movies-db/movies-graphql-lib": [
-        "libs/movies-graphql-lib/src/index.ts"
+        "./libs/movies-graphql-lib/src/index.ts"
       ],
       "@nx-movies-db/movies-prisma-lib": [
-        "libs/movies-prisma-lib/src/index.ts"
+        "./libs/movies-prisma-lib/src/index.ts"
       ],
-      "@nx-movies-db/shared-types": ["libs/shared-types/src/index.ts"],
-      "@nx-movies-db/shared-ui": ["libs/shared-ui/src/index.ts"],
-      "@nx-movies-db/shared-ui/server": ["libs/shared-ui/src/server.ts"],
-      "@nx-movies-db/stocks-backend": ["libs/stocks-backend/src/index.ts"],
-      "@nx-movies-db/stocks-lib": ["libs/stocks-lib/src/index.ts"],
+      "@nx-movies-db/shared-types": ["./libs/shared-types/src/index.ts"],
+      "@nx-movies-db/shared-ui": ["./libs/shared-ui/src/index.ts"],
+      "@nx-movies-db/shared-ui/server": ["./libs/shared-ui/src/server.ts"],
+      "@nx-movies-db/stocks-backend": ["./libs/stocks-backend/src/index.ts"],
+      "@nx-movies-db/stocks-lib": ["./libs/stocks-lib/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]

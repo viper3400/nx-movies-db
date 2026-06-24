@@ -2,6 +2,12 @@ import { getUserFlagsForUser, UserFlagsForMovieArgs } from "./get-user-flags";
 
 describe("Get User Flags", () => {
   const userNames = ["User 1", "User 2"];
+  type ExpectedFlags = {
+    movieId: number;
+    isResultExpected: boolean;
+    isFavorite: boolean;
+    isWatchAgain: boolean;
+  };
 
   // Test cases for different user combinations
   const testCases = [
@@ -47,7 +53,7 @@ describe("Get User Flags", () => {
     },
   ];
 
-  const assertUserFlags = async (userName, expected) => {
+  const assertUserFlags = async (userName: string, expected: ExpectedFlags) => {
     const args: UserFlagsForMovieArgs = { movieId: expected.movieId, userName };
     const query = undefined;
 

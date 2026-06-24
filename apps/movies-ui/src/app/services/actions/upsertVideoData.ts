@@ -1,6 +1,7 @@
 "use server";
 
 import { gql, type TypedDocumentNode } from "@apollo/client";
+import { revalidatePath } from "next/cache";
 import { getClient } from "../../../lib/apollocient";
 import type { UpsertVideoDataFormValues } from "@nx-movies-db/shared-ui";
 import {
@@ -67,6 +68,14 @@ type UpsertVariables = OptionalUpsertFields & {
 };
 
 type UpsertVideoDataActionResult = Pick<VideoData, "id" | "title" | "imdbID" | "lastupdate">;
+
+function revalidateSavedVideoRoutes(videoId: number | null | undefined) {
+  if (!videoId) {
+    return;
+  }
+
+  revalidatePath(`/edit/${videoId}`);
+}
 
 function normalizeUpsertResult(
   result: UpsertResult["upsertVideoData"] | null | undefined
@@ -306,6 +315,7 @@ export async function upsertVideoData(
 
   const posterSourceChanged = existingVideo?.custom4 !== variables.custom4;
   if (!isRemoteHttpUrl(variables.custom4) || (!existingVideo && !variables.custom4) || !posterSourceChanged) {
+    revalidateSavedVideoRoutes(latestSavedVideo.id);
     return normalizeUpsertResult(latestSavedVideo);
   }
 
@@ -315,6 +325,7 @@ export async function upsertVideoData(
       movieId: savedVideo.id,
       custom4: variables.custom4,
     });
+    revalidateSavedVideoRoutes(latestSavedVideo.id);
     return normalizeUpsertResult(latestSavedVideo);
   }
 
@@ -337,5 +348,6 @@ export async function upsertVideoData(
     });
   }
 
+  revalidateSavedVideoRoutes(latestSavedVideo.id);
   return normalizeUpsertResult(latestSavedVideo);
 }

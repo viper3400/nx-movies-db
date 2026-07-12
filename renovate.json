@@ -5,7 +5,7 @@
   ],
   "stabilityDays": 7,
   "constraints": {
-    "npm": "11.17.0"
+    "npm": "11.18.0"
   },
   "packageRules": [
     {

@@ -24,6 +24,22 @@ describe("getVideos", () => {
     expect(result.videos.some(v => v.title?.includes("Grasgeflüster"))).toBe(true);
   });
 
+  it.each([
+    "Die Zeit, die man Leben nennt",
+    "Paris, Paris",
+  ])("should find a title containing commas: %s", async (title) => {
+    const result = await getVideos({ title }, undefined);
+
+    expect(result.videos.some(video => video.title === title)).toBe(true);
+  });
+
+  it("keeps comma-containing searches as a contiguous phrase", async () => {
+    const result = await getVideos({ title: "Die Zeit, die" }, undefined);
+
+    expect(result.videos.some(video => video.title === "Die Zeit, die man Leben nennt")).toBe(true);
+    expect(result.videos.some(video => video.title === "Wettlauf gegen die Zeit")).toBe(false);
+  });
+
   it("should filter by id", async () => {
     const args = { ids: ["253"] };
     const result = await getVideos(args, undefined);

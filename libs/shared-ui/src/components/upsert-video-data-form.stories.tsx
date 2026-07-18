@@ -154,6 +154,24 @@ export const PhysicalMediaRequiresDiskId: Story = {
   },
 };
 
+export const TitleIsRequired: Story = {
+  args: {
+    values: {
+      ...meta.args?.values,
+      title: "   ",
+    } as UpsertVideoDataFormValues,
+  },
+  render: (args) => <EditableFormStory {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const titleInput = canvas.getByTestId("video-field-title");
+
+    await expect(titleInput).toHaveAccessibleName("Title");
+    await expect(titleInput).toBeInvalid();
+    await expect(canvas.getByText("Title is required.")).toBeInTheDocument();
+  },
+};
+
 export const WithWrapper: Story = {
   name: "With Save/Discard Wrapper",
   parameters: { frame: EDITABLE_FORM_FRAME_OPTIONS[0] },

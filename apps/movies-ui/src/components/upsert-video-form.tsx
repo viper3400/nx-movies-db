@@ -21,34 +21,15 @@ import {
 } from "../app/services/actions";
 import { useAvailableMediaAndGenres } from "../hooks/useAvailableMediaAndGenres";
 import { useAvailableOwners } from "../hooks/useAvailableOwners";
-import { Button, Card, Chip, type Key, Skeleton, Tooltip, toast } from "@heroui/react";
+import { Button, Card, Chip, type Key, Skeleton, Tooltip } from "@heroui/react";
 import { getDiskIdShelfPrefix, normalizeDiskId } from "@nx-movies-db/shared-types";
 import {
   applyTmdbMetadataMergeCandidates,
   getTmdbMetadataMergeCandidates,
 } from "../app/services/actions/tmdbMetadataMapper";
 import { useAppBasePath } from "../hooks/useAppBasePath";
+import { showAppToast as showToast } from "../lib/app-toast";
 import { navigateTo } from "../lib/navigate-to";
-
-type ToastSeverity = "success" | "danger" | "warning";
-
-function showToast({
-  title,
-  description,
-  severity,
-  timeout,
-}: {
-  title: string;
-  description?: string;
-  severity: ToastSeverity;
-  timeout?: number;
-}) {
-  const resolvedTimeout = timeout ?? (severity === "success" ? 5000 : 9000);
-  toast[severity](title, {
-    description,
-    timeout: resolvedTimeout,
-  });
-}
 
 const STRING_FORM_FIELDS = [
   "md5",

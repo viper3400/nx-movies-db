@@ -7,6 +7,7 @@ import type { Session } from "next-auth";
 import { I18nextProvider } from "react-i18next";
 import i18n, { ThemeProvider as SharedThemeProvider, ThemeProviderOptions } from "@nx-movies-db/shared-ui";
 import { parseUserString } from "../lib/allowed-user-parser";
+import { appToastQueue } from "../lib/app-toast";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -48,9 +49,11 @@ export function Providers({ children, themeProps, nextAuthUrl }: ProvidersProps)
     <SessionProvider basePath={nextAuthUrl ?? undefined} session={stubSession ?? undefined}>
       <I18nextProvider i18n={i18n}>
         <Toast.Provider
+          className="z-[70]"
           placement="top"
           gap={12}
           maxVisibleToasts={5}
+          queue={appToastQueue}
           scaleFactor={0}
           width="min(32rem, calc(100vw - 2rem))"
         />

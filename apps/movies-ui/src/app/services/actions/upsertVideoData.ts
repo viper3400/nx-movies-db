@@ -61,6 +61,7 @@ type OptionalUpsertFields = Partial<{
 }>;
 
 type UpsertVariables = OptionalUpsertFields & {
+  title: string;
   year: number;
   istv: number;
   mediatype: number;
@@ -92,7 +93,7 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
   mutation UpsertVideoData(
     $id: Int,
     $md5: String,
-    $title: String,
+    $title: String!,
     $subtitle: String,
     $language: String,
     $diskid: String,
@@ -171,7 +172,6 @@ const UPSERT_MUTATION: TypedDocumentNode<UpsertResult, UpsertVariables> = gql`
 
 const OPTIONAL_STRING_FIELDS = new Set<keyof UpsertVideoDataFormValues>([
   "md5",
-  "title",
   "subtitle",
   "language",
   "diskid",
@@ -194,6 +194,11 @@ const OPTIONAL_STRING_FIELDS = new Set<keyof UpsertVideoDataFormValues>([
 ]);
 
 function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
+  const title = values.title?.trim();
+  if (!title) {
+    throw new Error("Title is required.");
+  }
+
   const v: OptionalUpsertFields = {};
   const entries = Object.entries(values) as Array<[
     keyof UpsertVideoDataFormValues,
@@ -241,7 +246,7 @@ function mapToVariables(values: UpsertVideoDataFormValues): UpsertVariables {
     }
   });
 
-  return v as UpsertVariables;
+  return { ...v, title } as UpsertVariables;
 }
 
 export async function upsertVideoData(

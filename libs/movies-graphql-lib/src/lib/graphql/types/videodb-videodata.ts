@@ -17,7 +17,7 @@ builder.mutationField("upsertVideoData", (t) =>
       // If `id` is provided, it’ll update; otherwise it creates
       id: t.arg.int(),
       md5: t.arg.string(),
-      title: t.arg.string(),
+      title: t.arg.string({ required: true }),
       subtitle: t.arg.string(),
       language: t.arg.string(),
       diskid: t.arg.string(),

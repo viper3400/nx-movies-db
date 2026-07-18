@@ -275,6 +275,10 @@ jest.mock("../lib/navigate-to", () => ({
   navigateTo: jest.fn(),
 }));
 
+jest.mock("../lib/app-toast", () => ({
+  showAppToast: jest.fn(),
+}));
+
 const mockUpsertVideoData = jest.mocked(upsertVideoData);
 const mockSearchTmdbMovies = jest.mocked(searchTmdbMovies);
 const mockUseAvailableMediaAndGenres = jest.mocked(useAvailableMediaAndGenres);

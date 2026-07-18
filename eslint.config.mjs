@@ -6,9 +6,6 @@ import typescriptPlugin from "@typescript-eslint/eslint-plugin";
 import nextPlugin from "@next/eslint-plugin-next";
 import tsParser from "@typescript-eslint/parser";
 
-// Falls nötig: import nextPlugin from "eslint-plugin-next";
-// Falls nötig: import reactPlugin from "eslint-plugin-react";
-
 export default [
   {
     ignores: [
@@ -28,7 +25,6 @@ export default [
       "@nx": nxPlugin,
       "unused-imports": unusedImports,
       "@typescript-eslint": typescriptPlugin,
-      // react: reactPlugin,
     },
     rules: {
       "@nx/enforce-module-boundaries": [

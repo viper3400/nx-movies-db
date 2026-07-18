@@ -86,6 +86,17 @@ describe("upsertVideoData cover localization", () => {
     }
   });
 
+  it("rejects an empty title before calling the GraphQL mutation", async () => {
+    await expect(
+      upsertVideoData({
+        ...baseValues,
+        title: "   ",
+      })
+    ).rejects.toThrow("Title is required.");
+
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
   it("saves non-remote imgurl without trying to localize the cover", async () => {
     isRemoteHttpUrlMock.mockReturnValue(false);
     mutate.mockResolvedValueOnce({

@@ -73,6 +73,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
   const diskIdInvalidFormat = !!normalizedDiskId && !isValidDiskId(normalizedDiskId);
   const diskIdMissing = diskIdRequired && !normalizedDiskId;
   const diskIdInvalid = diskIdInvalidFormat || diskIdMissing;
+  const titleInvalid = !values.title?.trim();
   const diskIdSuggestionToShow =
     diskIdSuggestion && diskIdSuggestion !== normalizedDiskId ? diskIdSuggestion : null;
   const inputVariantV3 = inputVariant === "flat" || inputVariant === "bordered" ? "primary" : "secondary";
@@ -81,12 +82,24 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
     k,
     label,
     type = "text",
+    isRequired = false,
+    isInvalid = false,
+    errorMessage,
   }: {
     k: keyof VideoData;
     label: string;
     type?: string;
+    isRequired?: boolean;
+    isInvalid?: boolean;
+    errorMessage?: string;
   }) => (
-    <TextField isDisabled={ro(k)} name={String(k)} type={type}>
+    <TextField
+      isDisabled={ro(k)}
+      isInvalid={isInvalid}
+      isRequired={isRequired}
+      name={String(k)}
+      type={type}
+    >
       <Label>{label}</Label>
       <Input
         data-testid={`video-field-${String(k)}`}
@@ -109,6 +122,7 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         }}
         variant={inputVariantV3}
       />
+      <FieldError>{errorMessage}</FieldError>
     </TextField>
   );
 
@@ -255,7 +269,13 @@ export const UpsertVideoDataForm: React.FC<UpsertVideoDataFormProps> = ({
         {renderTextField({ k: "id", label: "ID", type: "number" })}
         {renderTextField({ k: "md5", label: "MD5" })}
 
-        {renderTextField({ k: "title", label: "Title" })}
+        {renderTextField({
+          k: "title",
+          label: "Title",
+          isRequired: true,
+          isInvalid: titleInvalid,
+          errorMessage: titleInvalid ? "Title is required." : undefined,
+        })}
         {renderTextField({ k: "subtitle", label: "Subtitle" })}
 
         {renderTextField({ k: "language", label: "Language" })}

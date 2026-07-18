@@ -10,6 +10,7 @@ export type EditableFormFrame = typeof EDITABLE_FORM_FRAME_OPTIONS[number];
 export interface EditableFormWrapperProps<T> {
   initialValues: T;
   onSave: (values: T) => T | void | Promise<T | void>;
+  isSaveDisabled?: (values: T) => boolean;
   onDiscard?: (values: T) => void;
   readOnly?: boolean;
   className?: string;
@@ -32,6 +33,7 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   const {
     initialValues,
     onSave,
+    isSaveDisabled,
     onDiscard,
     readOnly = false,
     className,
@@ -53,6 +55,7 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
   }, [initialValues]);
 
   const dirty = useMemo(() => !isEqual(savedValues, draftValues), [savedValues, draftValues]);
+  const saveDisabled = !dirty || readOnly || saving || !!isSaveDisabled?.(draftValues);
   const changedFields = useMemo(() => {
     const savedRecord = savedValues as Record<string, unknown>;
     const draftRecord = draftValues as Record<string, unknown>;
@@ -96,7 +99,7 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
           <Button
             variant="primary"
             onPress={handleSave}
-            isDisabled={!dirty || readOnly}
+            isDisabled={saveDisabled}
             isPending={saving}
             data-testid="editable-form-save"
           >
@@ -128,7 +131,7 @@ export function EditableFormWrapper<T>(props: EditableFormWrapperProps<T>) {
           <Button
             variant="primary"
             onPress={handleSave}
-            isDisabled={!dirty || readOnly}
+            isDisabled={saveDisabled}
             isPending={saving}
             data-testid="editable-form-save"
           >

@@ -29,6 +29,7 @@ const dateTimeSchema = z.union([z.date(), z.string().datetime()]);
 const videoDataInputSchema: z.ZodType<VideoDataInput> = z
   .object({
     id: z.number().int().positive().optional(),
+    title: z.string().trim().min(1, "Title is required."),
     year: z.number().int().min(0).max(9999),
     istv: z.number().int().min(0),
     mediatype: z.number().int().min(1),

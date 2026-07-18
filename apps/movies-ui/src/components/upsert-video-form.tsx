@@ -239,6 +239,7 @@ export const UpsertVideoForm: React.FC<UpsertVideoFormProps> = ({
     <EditableFormWrapper<UpsertVideoDataFormValues>
       initialValues={defaults}
       frame="content"
+      isSaveDisabled={(values) => !values.title?.trim()}
       onSave={async (values) => {
         const creatingNewRecord = !values.id;
         try {

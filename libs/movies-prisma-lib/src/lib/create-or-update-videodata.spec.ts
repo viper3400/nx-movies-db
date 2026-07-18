@@ -39,6 +39,15 @@ describe("parseVideoDataInput", () => {
     ).toThrow(VideoDataValidationError);
   });
 
+  it.each(["", "   "])("rejects an empty title (%p)", (title) => {
+    expect(() =>
+      parseVideoDataInput({
+        ...baseVideo(),
+        title,
+      })
+    ).toThrow(VideoDataValidationError);
+  });
+
   it("throws when genreIds contains invalid identifiers", () => {
     expect(() =>
       parseVideoDataInput({

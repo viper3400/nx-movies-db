@@ -362,6 +362,17 @@ describe("UpsertVideoForm", () => {
     });
   });
 
+  it("does not save an empty title", async () => {
+    render(<UpsertVideoForm initialValues={{ ...baseVideoData, title: "Existing title" }} />);
+
+    fireEvent.change(screen.getByTestId("mock-field-title"), {
+      target: { value: "   " },
+    });
+
+    expect(screen.getByTestId("editable-form-save")).toBeDisabled();
+    expect(mockUpsertVideoData).not.toHaveBeenCalled();
+  });
+
   it("adopts the saved id locally after creating a new entry", async () => {
     render(<UpsertVideoForm defaultOwnerId={7} />);
 

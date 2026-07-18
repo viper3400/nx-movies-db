@@ -1,3 +1,7 @@
+jest.mock("@nx-movies-db/movies-prisma-lib", () => ({
+  prisma: {},
+}));
+
 import { schema } from "../schema";
 
 describe("upsertVideoData mutation", () => {

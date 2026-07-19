@@ -10,6 +10,36 @@ type RandomVideoSelection = {
   totalCount: number;
 };
 
+export const getVideoSearchRank = (video: Video, searchText: string) => {
+  const query = searchText.toLocaleLowerCase();
+  const title = video.title?.toLocaleLowerCase();
+
+  if (title === query) {
+    return 0;
+  }
+
+  if (title?.startsWith(query)) {
+    return 1;
+  }
+
+  if (title?.includes(query)) {
+    return 2;
+  }
+
+  return 3;
+};
+
+export const rankVideosBySearch = (videos: Video[], searchText: string) =>
+  [...videos].sort((left, right) => {
+    const rankDifference = getVideoSearchRank(left, searchText) - getVideoSearchRank(right, searchText);
+    if (rankDifference !== 0) {
+      return rankDifference;
+    }
+
+    const titleDifference = (left.title ?? "").localeCompare(right.title ?? "", undefined, { sensitivity: "base" });
+    return titleDifference !== 0 ? titleDifference : left.id - right.id;
+  });
+
 export const shuffleIds = (ids: number[]) => {
   const shuffled = [...ids];
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
@@ -48,6 +78,8 @@ const selectRandomVideoIds = async (args: VideoQueryArgs): Promise<RandomVideoSe
 
 export const getVideos = async (args: VideoQueryArgs, query: any) => {
   const { queryPlot, queryUserSettings, randomOrder, take, skip } = args;
+  const titleSearchText = args.title?.trim();
+  const shouldRankByTitle = !randomOrder && Boolean(titleSearchText);
 
   let where = buildWhereClause(args);
   let randomSelectedIds: number[] | undefined;
@@ -70,7 +102,7 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
     });
   }
 
-  const videos: Video[] = await prisma.videodb_videodata.findMany({
+  const fetchedVideos: Video[] = await prisma.videodb_videodata.findMany({
     where: where,
     select: {
       id: true,
@@ -104,13 +136,20 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
         }
       } : false
     },
-    take: take,
-    skip: skip,
+    take: shouldRankByTitle ? undefined : take,
+    skip: shouldRankByTitle ? undefined : skip,
     orderBy: randomOrder ? undefined : {
       title: "asc"
     },
     ...query,
   });
+
+  const videos = shouldRankByTitle
+    ? rankVideosBySearch(fetchedVideos, titleSearchText!).slice(
+      skip ?? 0,
+      take === undefined ? undefined : (skip ?? 0) + take,
+    )
+    : fetchedVideos;
 
   const orderedVideos: Video[] = randomSelectedIds
     ? randomSelectedIds

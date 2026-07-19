@@ -1,5 +1,5 @@
 import { prisma } from "../prismaclient";
-import { getVideos } from "./get-videos";
+import { getVideos, rankVideosBySearch } from "./get-videos";
 
 function getAndClausesFromCall(spy: jest.SpyInstance, callIndex: number) {
   const where = spy.mock.calls[callIndex]?.[0]?.where as { AND?: unknown } | undefined;
@@ -22,6 +22,52 @@ describe("getVideos", () => {
     const args = { title: "Grasgeflüster" };
     const result = await getVideos(args, undefined);
     expect(result.videos.some(v => v.title?.includes("Grasgeflüster"))).toBe(true);
+  });
+
+  it("ranks exact and partial title matches ahead of subtitle-only matches", () => {
+    const videos = rankVideosBySearch([
+      { id: 5, title: "The Best Movie", subtitle: "" },
+      { id: 4, title: "Alphabet", subtitle: "The best result" },
+      { id: 3, title: "Best Years", subtitle: "" },
+      { id: 2, title: "A Best Picture", subtitle: "" },
+      { id: 1, title: "BEST", subtitle: "" },
+    ] as any, "best");
+
+    expect(videos.map(video => video.id)).toEqual([1, 3, 2, 5, 4]);
+  });
+
+  it("keeps alphabetical ordering and uses ids as a stable tie-breaker", () => {
+    const videos = rankVideosBySearch([
+      { id: 4, title: "Best Z", subtitle: "" },
+      { id: 3, title: "best A", subtitle: "" },
+      { id: 2, title: "Best A", subtitle: "" },
+    ] as any, "best");
+
+    expect(videos.map(video => video.id)).toEqual([2, 3, 4]);
+  });
+
+  it("applies pagination after title-match ranking", async () => {
+    jest.spyOn(prisma.videodb_videodata, "count").mockResolvedValue(4);
+    const findManySpy = jest.spyOn(prisma.videodb_videodata, "findMany").mockResolvedValue([
+      { id: 4, title: "A Best Picture", subtitle: "" },
+      { id: 3, title: "Best Years", subtitle: "" },
+      { id: 2, title: "Best", subtitle: "" },
+      { id: 1, title: "Alphabet", subtitle: "The best result" },
+    ] as any);
+
+    const result = await getVideos({ title: "best", skip: 1, take: 2 }, undefined);
+
+    expect(result.videos.map(video => video.id)).toEqual([3, 4]);
+    expect(findManySpy).toHaveBeenCalledWith(expect.objectContaining({
+      take: undefined,
+      skip: undefined,
+    }));
+  });
+
+  it("ranks the exact title Es before non-exact matches", async () => {
+    const result = await getVideos({ title: "Es" }, undefined);
+
+    expect(result.videos[0]?.title).toBe("Es");
   });
 
   it.each([

@@ -9,6 +9,7 @@ export * from "./get-media-types";
 export * from "./get-next-disk-id-suggestion";
 export * from "./get-seen-dates";
 export * from "./get-seen-list";
+export * from "./get-user-by-email";
 export * from "./get-user-flags";
 export * from "./get-videos";
 export * from "./movies-prisma-lib";

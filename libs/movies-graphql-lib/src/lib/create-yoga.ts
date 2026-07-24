@@ -11,6 +11,7 @@ export const yoga = createYoga({
         issuer: ["movie-database"],
         algorithms: ["HS256"]
       },
+      extendContext: true,
       reject: {
         missingToken: true,
         invalidToken: true,
@@ -18,4 +19,3 @@ export const yoga = createYoga({
     })
   ]
 });
-

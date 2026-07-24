@@ -1,0 +1,6 @@
+-- Copy this file to development-db/local-seed.sql (which is gitignored).
+-- It runs after seed/videodb.sql when starting the database with db:start:local.
+
+UPDATE videodb_users
+SET email = 'your-google-email@example.com'
+WHERE name = 'Jan';

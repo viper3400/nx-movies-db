@@ -54,6 +54,16 @@ TMDB_READ_ACCESS_TOKEN=tmdb-v3-read-access-token
 TMDB_LANGUAGE=de-DE
 TMDB_IMAGE_SIZE=w500
 ```
+
+### Local OAuth user seed
+
+Production access is controlled by `videodb_users.email`. To use a real OAuth provider against a freshly seeded local database, copy `development-db/local-seed.sql.example` to the gitignored `development-db/local-seed.sql`, add your OAuth email, then initialize a fresh database with:
+
+```bash
+npm run db:start:local
+```
+
+MySQL runs this optional local SQL file after the normal `seed/videodb.sql` import. To apply it again after a previous seed, recreate the database first with `npm run db:stop`.
 # Setting Up the Development Database
 
 This project includes a development database located in the `./seed` folder, which can be deployed to a MySQL database using the `docker-compose` file found in the `./development-db` folder.

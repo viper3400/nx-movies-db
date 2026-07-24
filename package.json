@@ -68,8 +68,8 @@
     "lucide-react": "^1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.5",
-    "@babel/preset-react": "^7.14.5",
+    "@babel/core": "^8.0.0",
+    "@babel/preset-react": "^8.0.0",
     "@chromatic-com/storybook": "^5.0.0",
     "@emnapi/core": "1.11.2",
     "@emnapi/runtime": "1.11.2",

@@ -1,0 +1,5 @@
+services:
+  movies-service-db:
+    volumes:
+      # This uncommitted file is executed after seed/videodb.sql.
+      - ./local-seed.sql:/docker-entrypoint-initdb.d/zz-local-seed.sql:ro

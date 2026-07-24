@@ -54,6 +54,8 @@ staging/*.config
 
 development-db/db
 development-db/*.config
+development-db/local-seed.sql
+seed/zz-local-seed.sql
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 

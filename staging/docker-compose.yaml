@@ -17,7 +17,6 @@ services:
     restart: always
     environment:
       - GRAPHQL_URL=${GRAPHQL_URL}
-      - ALLOWED_USERS=${ALLOWED_USERS}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}

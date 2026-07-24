@@ -24,7 +24,7 @@ All services now read from the workspace root `.env` (create it with `cp .env.ex
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth credentials. |
 | `NEXTAUTH_SECRET` / `NEXTAUTH_URL` | Required by NextAuth for JWT/session signing and callback URL resolution. |
 | `JWT_SECRET` | Must match the backend value so the UI can mint API tokens. |
-| `ALLOWED_USERS` | Semicolon-delimited list (`email,name,id`) controlling access. |
+| `videodb_users.email` | Curated database email used to authorize a signed-in OAuth user. The same row supplies the owner ID and legacy user name. |
 | `NEXT_PUBLIC_TEST_MODE`, `NEXT_PUBLIC_TEST_USERS` | Enable stub sessions for local runs. |
 | `APP_BASE_PATH` | Next.js `basePath` value (e.g., `/movies`). |
 | `COVER_IMAGE_PATH` | Filesystem folder containing cover images served by `/api/cover-image/[id]`. |
@@ -45,7 +45,6 @@ GOOGLE_CLIENT_SECRET=google-client-secret
 NEXTAUTH_SECRET=dev-nextauth-secret
 NEXTAUTH_URL=http://127.0.0.1:3000/api/auth
 JWT_SECRET=dev-jwt-secret
-ALLOWED_USERS=jane@doe.com,Jane,3;john@example.org,John,4
 NEXT_PUBLIC_TEST_MODE=true
 NEXT_PUBLIC_TEST_USERS="tester@example.com,Tester,2"
 APP_BASE_PATH=/movies

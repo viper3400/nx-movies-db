@@ -24,12 +24,3 @@ export function parseUserString(input: string): AllowedUser[] {
 
   return users;
 }
-
-export function getAllowedUser(email: string) : AllowedUser | undefined {
-  const allowedUsersEnv = process.env.ALLOWED_USERS ? process.env.ALLOWED_USERS : "";
-  const allowedUsers = parseUserString(allowedUsersEnv);
-  return allowedUsers.find(u => u.email === email);
-}
-export function isUserAllowed(email: string): boolean {
-  return getAllowedUser(email) !== undefined;
-}

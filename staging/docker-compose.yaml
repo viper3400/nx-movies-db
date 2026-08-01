@@ -28,5 +28,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - COVER_IMAGE_PATH=/media/coverimages
       - POSTER_IMAGE_PATH=/media/posterimages
+      - TMDB_COVER_IMAGE_SIZE=${TMDB_COVER_IMAGE_SIZE:-w500}
+      - TMDB_BACKGROUND_IMAGE_SIZE=${TMDB_BACKGROUND_IMAGE_SIZE:-w1280}
     depends_on:
       - movies-service

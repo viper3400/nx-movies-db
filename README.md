@@ -31,7 +31,9 @@ All services now read from the workspace root `.env` (create it with `cp .env.ex
 | `POSTER_IMAGE_PATH` | Filesystem folder containing poster/background images served by `/api/poster-image/[id]` and used for poster localization during metadata saves. |
 | `TMDB_READ_ACCESS_TOKEN` | Private TMDB API read access token for the server-side metadata import workflow. |
 | `TMDB_LANGUAGE` | Optional TMDB metadata language, for example `de-DE` or `en-US`. |
-| `TMDB_IMAGE_SIZE` | Optional TMDB cover image size, defaulting to `w500`. |
+| `TMDB_COVER_IMAGE_SIZE` | Optional TMDB cover image size, defaulting to `w500`. |
+| `TMDB_BACKGROUND_IMAGE_SIZE` | Optional TMDB background image size, defaulting to `w1280`. |
+| `TMDB_IMAGE_SIZE` | Deprecated shared fallback for both image types; use the two settings above. |
 
 **Example**
 
@@ -52,7 +54,8 @@ COVER_IMAGE_PATH=./development-db/coverpics
 POSTER_IMAGE_PATH=./development-db/background
 TMDB_READ_ACCESS_TOKEN=tmdb-v3-read-access-token
 TMDB_LANGUAGE=de-DE
-TMDB_IMAGE_SIZE=w500
+TMDB_COVER_IMAGE_SIZE=w500
+TMDB_BACKGROUND_IMAGE_SIZE=w1280
 ```
 
 ### Local OAuth user seed

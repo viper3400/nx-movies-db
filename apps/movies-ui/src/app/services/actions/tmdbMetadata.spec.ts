@@ -6,13 +6,17 @@ describe("tmdbMetadata actions", () => {
   const originalToken = process.env.TMDB_READ_ACCESS_TOKEN;
   const originalLanguage = process.env.TMDB_LANGUAGE;
   const originalImageSize = process.env.TMDB_IMAGE_SIZE;
+  const originalCoverImageSize = process.env.TMDB_COVER_IMAGE_SIZE;
+  const originalBackgroundImageSize = process.env.TMDB_BACKGROUND_IMAGE_SIZE;
 
   beforeEach(() => {
     fetchMock.mockReset();
     global.fetch = fetchMock as unknown as typeof fetch;
     process.env.TMDB_READ_ACCESS_TOKEN = "token";
     process.env.TMDB_LANGUAGE = "de-DE";
-    process.env.TMDB_IMAGE_SIZE = "w342";
+    process.env.TMDB_COVER_IMAGE_SIZE = "w342";
+    process.env.TMDB_BACKGROUND_IMAGE_SIZE = "w1280";
+    delete process.env.TMDB_IMAGE_SIZE;
   });
 
   afterEach(() => {
@@ -24,6 +28,12 @@ describe("tmdbMetadata actions", () => {
 
     if (originalImageSize === undefined) delete process.env.TMDB_IMAGE_SIZE;
     else process.env.TMDB_IMAGE_SIZE = originalImageSize;
+
+    if (originalCoverImageSize === undefined) delete process.env.TMDB_COVER_IMAGE_SIZE;
+    else process.env.TMDB_COVER_IMAGE_SIZE = originalCoverImageSize;
+
+    if (originalBackgroundImageSize === undefined) delete process.env.TMDB_BACKGROUND_IMAGE_SIZE;
+    else process.env.TMDB_BACKGROUND_IMAGE_SIZE = originalBackgroundImageSize;
   });
 
   it("searches TMDB movies with bearer auth and configured language", async () => {
@@ -177,11 +187,11 @@ describe("tmdbMetadata actions", () => {
       runtime: 136,
       voteAverage: 8.2,
       posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
-      backdropUrl: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/backdrop.jpg",
       backdropCandidates: [
         {
           filePath: "/backdrop.jpg",
-          url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+          url: "https://image.tmdb.org/t/p/w1280/backdrop.jpg",
           width: 1280,
           height: 720,
           voteAverage: 5.6,
@@ -191,7 +201,7 @@ describe("tmdbMetadata actions", () => {
         },
         {
           filePath: "/backdrop-alt.jpg",
-          url: "https://image.tmdb.org/t/p/w342/backdrop-alt.jpg",
+          url: "https://image.tmdb.org/t/p/w1280/backdrop-alt.jpg",
           width: 1280,
           height: 720,
           voteAverage: 5.4,
@@ -311,11 +321,11 @@ describe("tmdbMetadata actions", () => {
       runtime: 60,
       voteAverage: 8.5,
       posterUrl: "https://image.tmdb.org/t/p/w342/poster.jpg",
-      backdropUrl: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/backdrop.jpg",
       backdropCandidates: [
         {
           filePath: "/backdrop.jpg",
-          url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+          url: "https://image.tmdb.org/t/p/w1280/backdrop.jpg",
           width: 1280,
           height: 720,
           voteAverage: 5.6,
@@ -389,7 +399,7 @@ describe("tmdbMetadata actions", () => {
     expect(result.backdropCandidates).toEqual([
       {
         filePath: "/backdrop.jpg",
-        url: "https://image.tmdb.org/t/p/w342/backdrop.jpg",
+        url: "https://image.tmdb.org/t/p/w1280/backdrop.jpg",
         width: null,
         height: null,
         voteAverage: null,

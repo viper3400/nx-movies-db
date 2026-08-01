@@ -66,6 +66,9 @@ test-results
 playwright-report
 target
 
+# local k6 benchmark output (contains timing data from the target environment)
+perf-results
+
 # TypeScript incremental build cache
 *.tsbuildinfo
 

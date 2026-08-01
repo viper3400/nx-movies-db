@@ -50,6 +50,20 @@
       "options": {
         "command": "node ./tools/docs/generate-video-docs.mjs"
       }
+    },
+    "perf-compare": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "mkdir -p \"${PERF_OUTPUT_DIR:-perf-results}\" && for PERF_VUS in 1 5 10; do for PERF_REPEAT in 1 2 3; do PERF_PROFILE=compare PERF_RUN_LABEL=\"${PERF_RUN_LABEL:-comparison}\" PERF_OUTPUT_DIR=\"${PERF_OUTPUT_DIR:-perf-results}\" PERF_VUS=$PERF_VUS PERF_REPEAT=$PERF_REPEAT k6 run --out \"json=${PERF_OUTPUT_DIR:-perf-results}/${PERF_RUN_LABEL:-comparison}-vus${PERF_VUS}-run${PERF_REPEAT}-raw.json\" tools/performance/service-benchmark.js || exit $?; done; done && node tools/performance/summarize-results.mjs \"${PERF_OUTPUT_DIR:-perf-results}\" \"${PERF_RUN_LABEL:-comparison}\""
+      }
+    },
+    "perf-production-read": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "mkdir -p \"${PERF_OUTPUT_DIR:-perf-results}\" && PERF_PROFILE=production-read PERF_RUN_LABEL=\"${PERF_RUN_LABEL:-production-read}\" PERF_OUTPUT_DIR=\"${PERF_OUTPUT_DIR:-perf-results}\" k6 run --out \"json=${PERF_OUTPUT_DIR:-perf-results}/${PERF_RUN_LABEL:-production-read}-raw.json\" tools/performance/service-benchmark.js && node tools/performance/summarize-results.mjs \"${PERF_OUTPUT_DIR:-perf-results}\" \"${PERF_RUN_LABEL:-production-read}\""
+      }
     }
   }
 }

@@ -71,7 +71,8 @@ type SearchTmdbMoviesArgs = {
 const TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 const DEFAULT_TMDB_LANGUAGE = "en-US";
-const DEFAULT_TMDB_IMAGE_SIZE = "w500";
+const DEFAULT_TMDB_COVER_IMAGE_SIZE = "w500";
+const DEFAULT_TMDB_BACKGROUND_IMAGE_SIZE = "w1280";
 
 function getTmdbConfig() {
   const token = process.env.TMDB_READ_ACCESS_TOKEN;
@@ -82,7 +83,13 @@ function getTmdbConfig() {
   return {
     token,
     language: process.env.TMDB_LANGUAGE ?? DEFAULT_TMDB_LANGUAGE,
-    imageSize: process.env.TMDB_IMAGE_SIZE ?? DEFAULT_TMDB_IMAGE_SIZE,
+    // TMDB_IMAGE_SIZE is retained as a fallback for existing deployments.
+    coverImageSize: process.env.TMDB_COVER_IMAGE_SIZE
+      ?? process.env.TMDB_IMAGE_SIZE
+      ?? DEFAULT_TMDB_COVER_IMAGE_SIZE,
+    backgroundImageSize: process.env.TMDB_BACKGROUND_IMAGE_SIZE
+      ?? process.env.TMDB_IMAGE_SIZE
+      ?? DEFAULT_TMDB_BACKGROUND_IMAGE_SIZE,
   };
 }
 
@@ -190,7 +197,7 @@ export async function searchTmdbMovies({
     originalTitle: movie.original_title ?? movie.original_name ?? movie.title ?? movie.name ?? "",
     overview: movie.overview ?? "",
     releaseDate: movie.release_date || movie.first_air_date || null,
-    posterUrl: buildTmdbImageUrl(movie.poster_path, config.imageSize),
+    posterUrl: buildTmdbImageUrl(movie.poster_path, config.coverImageSize),
   }));
 }
 
@@ -228,7 +235,11 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
       character: member.character ?? "",
     }));
 
-  const backdropCandidates = buildBackdropCandidates(movie.backdrop_path, images?.backdrops, config.imageSize);
+  const backdropCandidates = buildBackdropCandidates(
+    movie.backdrop_path,
+    images?.backdrops,
+    config.backgroundImageSize
+  );
 
   return {
     id: movie.id,
@@ -239,8 +250,8 @@ export async function getTmdbMovieMetadata(tmdbId: number, mediaKind: TmdbMediaK
     releaseDate: movie.release_date || movie.first_air_date || null,
     runtime: movie.runtime ?? movie.episode_run_time?.[0] ?? null,
     voteAverage: movie.vote_average ?? null,
-    posterUrl: buildTmdbImageUrl(movie.poster_path, config.imageSize),
-    backdropUrl: buildTmdbImageUrl(movie.backdrop_path, config.imageSize),
+    posterUrl: buildTmdbImageUrl(movie.poster_path, config.coverImageSize),
+    backdropUrl: buildTmdbImageUrl(movie.backdrop_path, config.backgroundImageSize),
     backdropCandidates,
     imdbId: externalIds?.imdb_id ?? null,
     genres: (movie.genres ?? []).map((genre) => genre.name).filter((name): name is string => !!name),

@@ -22,7 +22,9 @@ All runtime configuration now lives in the workspace root `.env` (copy `.env.exa
 | `POSTER_IMAGE_PATH` | movies-ui | Filesystem location for poster/background image assets served via `/api/poster-image/[id]` and used when metadata saves localize poster downloads. Posters remain a filesystem convention and are not stored in Prisma/GraphQL fields. | `apps/movies-ui/src/app/api/poster-image/[id]/route.ts:7` · `apps/movies-ui/src/app/services/actions/upsertVideoData.ts:268` |
 | `TMDB_READ_ACCESS_TOKEN` | movies-ui | Private TMDB API read access token used as a bearer token by the server-side import workflow. Never expose it as a `NEXT_PUBLIC_*` variable. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts:47` |
 | `TMDB_LANGUAGE` | movies-ui | Optional TMDB search/detail language, for example `de-DE` or `en-US`; defaults to TMDB-compatible English when unset. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts:55` |
-| `TMDB_IMAGE_SIZE` | movies-ui | Optional TMDB image size used when building imported cover URLs; defaults to `w500`. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts:56` |
+| `TMDB_COVER_IMAGE_SIZE` | movies-ui | Optional TMDB cover image size; defaults to `w500`. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts` |
+| `TMDB_BACKGROUND_IMAGE_SIZE` | movies-ui | Optional TMDB background image size; defaults to `w1280`. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts` |
+| `TMDB_IMAGE_SIZE` | movies-ui | Deprecated fallback shared by covers and backgrounds when neither setting above is present. | `apps/movies-ui/src/app/services/actions/tmdbMetadata.ts` |
 | `NEXT_OUTPUT` | movies-ui | Chooses between `standalone`, `server`, or `export` outputs when building the UI. | `apps/movies-ui/next.config.js:15` |
 | `E2E_BASE_URL` | movies-ui | Default base URL for Playwright UI tests. | `apps/movies-ui/playwright.config.ts:9` |
 | `CI`, `NODE_ENV` | workspace-wide | `CI` increases Playwright retries; together they decide whether Prisma tests load `.env` or `.env.local`. | `apps/movies-ui/playwright.config.ts:7` · `libs/movies-prisma-lib/jest.setup.ts:9` |

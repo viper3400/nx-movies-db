@@ -7,7 +7,7 @@ import { DateRange, DateRangeDrawerComponent, MovieCard, ResultsStatusIndicator 
 import { parseDate } from "@internationalized/date";
 import PageEndObserver from "./page-end-observer";
 import { useAppBasePath, useSeenDates, useUserFlags } from "../hooks";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 
 interface SeenMoviesComponentProperties {

@@ -80,6 +80,13 @@
       ]
     },
     {
+      "groupName": "g: heroui",
+      "automerge": false,
+      "matchPackageNames": [
+        "/^@heroui\\//"
+      ]
+    },
+    {
       "groupName": "g: vite",
       "description": "Group Vite ecosystem dependencies",
       "labels": [

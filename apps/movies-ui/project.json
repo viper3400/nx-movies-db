@@ -5,6 +5,25 @@
   "projectType": "application",
   "tags": ["type:app", "scope:movies", "platform:web"],
   "targets": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        { "externalDependencies": ["next"] },
+        { "dependentTasksOutputFiles": "**/*.d.ts", "transitive": true }
+      ],
+      "outputs": [
+        "{workspaceRoot}/apps/movies-ui/.next/!(cache)/**/*",
+        "{workspaceRoot}/apps/movies-ui/.next/!(cache)"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/movies-ui",
+        "command": "next build --webpack"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {

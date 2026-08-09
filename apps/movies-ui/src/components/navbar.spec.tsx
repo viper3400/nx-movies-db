@@ -36,6 +36,7 @@ describe("NavbarComponent", () => {
   it("links the add/import menu item to the unified new-entry route", () => {
     mockUseSession.mockReturnValue({
       data: {
+        expires: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
         user: {
           name: "User",
           email: "user@example.com",

@@ -57,7 +57,7 @@ const mockUpsertVideoDataForm = jest.fn((props: UpsertVideoDataFormProps) => {
 
 let mockMediaAndGenresState = {
   availableMediaTypes: [{ label: "DVD", value: "1" }],
-  availableGenres: [],
+  availableGenres: [] as Array<{ label: string; value: string }>,
   loadingMediaTypes: false,
   loadingGenres: false,
   mediaTypesError: null as Error | null,

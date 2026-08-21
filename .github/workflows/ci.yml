@@ -296,9 +296,7 @@ jobs:
       - name: Run Playwright tests
         env:
           E2E_BASE_URL: http://127.0.0.1:3000
-        run: |
-          cd apps/movies-ui
-          npx playwright test -c playwright.config.ts
+        run: npm run test:e2e
 
       - name: Upload Playwright HTML report
         if: always()
@@ -307,6 +305,15 @@ jobs:
           name: playwright-report
           path: apps/movies-ui/playwright-report
           if-no-files-found: ignore
+
+      - name: Upload Serenity HTML report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: serenity-report-${{ github.run_id }}
+          path: reports/serenity-js
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Teardown
         if: always()

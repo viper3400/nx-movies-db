@@ -308,6 +308,15 @@ jobs:
           path: apps/movies-ui/playwright-report
           if-no-files-found: ignore
 
+      - name: Upload Serenity HTML report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: serenity-report-${{ github.run_id }}
+          path: reports/serenity-js
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Teardown
         if: always()
         run: |

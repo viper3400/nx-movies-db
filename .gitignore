@@ -64,6 +64,7 @@ storybook-static
 # test results
 test-results
 playwright-report
+reports/
 target
 
 # local k6 benchmark output (contains timing data from the target environment)

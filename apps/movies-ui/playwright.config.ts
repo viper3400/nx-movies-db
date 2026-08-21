@@ -10,7 +10,7 @@ export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({
     baseURL: process.env.E2E_BASE_URL || "http://localhost:3000",
     trace: "retain-on-failure",
     crew: [
-      ['@serenity-js/web:Photographer', { strategy: 'TakePhotosOfFailures' }]
+      ["@serenity-js/web:Photographer", { strategy: "TakePhotosOfFailures" }]
       // ['@serenity-js/web:Photographer', { strategy: 'TakePhotosOfInteractions' }]
     ],
   },
@@ -25,9 +25,9 @@ export default defineConfig<SerenityFixtures, SerenityWorkerFixtures>({
         /*['@serenity-js/serenity-bdd', {
           specDirectory: './spec'
         }],*/
-        ['@serenity-js/html-reporter', {
-          outputDirectory: './reports/serenity-js',
-          specDirectory: './apps/movies-ui/e2e',
+        ["@serenity-js/html-reporter", {
+          outputDirectory: "./reports/serenity-js",
+          specDirectory: "./apps/movies-ui/e2e",
         }],
         ["@serenity-js/core:ArtifactArchiver", {
           outputDirectory: "./target/site/serenity"

@@ -296,9 +296,7 @@ jobs:
       - name: Run Playwright tests
         env:
           E2E_BASE_URL: http://127.0.0.1:3000
-        run: |
-          cd apps/movies-ui
-          npx playwright test -c playwright.config.ts
+        run: npm run test:e2e
 
       - name: Upload Playwright HTML report
         if: always()

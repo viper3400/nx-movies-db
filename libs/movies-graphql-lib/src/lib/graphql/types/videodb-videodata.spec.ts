@@ -10,4 +10,11 @@ describe("upsertVideoData mutation", () => {
 
     expect(mutation?.args.find((argument) => argument.name === "title")?.type.toString()).toBe("String!");
   });
+
+  it("exposes a filtered video suggestion query", () => {
+    const query = schema.getQueryType()?.getFields().videoSuggestions;
+
+    expect(query?.args.find((argument) => argument.name === "query")?.type.toString()).toBe("String!");
+    expect(query?.type.toString()).toBe("[VideoSuggestion!]");
+  });
 });

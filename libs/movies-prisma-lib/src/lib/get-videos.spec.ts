@@ -1,5 +1,5 @@
 import { prisma } from "../prismaclient";
-import { getVideos, rankVideosBySearch } from "./get-videos";
+import { getVideoSuggestions, getVideos, rankVideoSuggestions, rankVideosBySearch } from "./get-videos";
 
 function getAndClausesFromCall(spy: jest.SpyInstance, callIndex: number) {
   const where = spy.mock.calls[callIndex]?.[0]?.where as { AND?: unknown } | undefined;
@@ -34,6 +34,46 @@ describe("getVideos", () => {
     ] as any, "best");
 
     expect(videos.map(video => video.id)).toEqual([1, 3, 2, 5, 4]);
+  });
+
+  it("ranks autocomplete candidates by title before subtitle and disk ID matches", () => {
+    const videos = rankVideoSuggestions([
+      { id: 5, title: "Else", subtitle: "Matrix", diskid: "R01F2" },
+      { id: 4, title: "Else", subtitle: "", diskid: "matrix-shelf" },
+      { id: 3, title: "The Matrix Reloaded", subtitle: "", diskid: "R01F3" },
+      { id: 2, title: "Matrix Revolutions", subtitle: "", diskid: "R01F4" },
+      { id: 1, title: "Matrix", subtitle: "", diskid: "R01F1" },
+    ] as any, "matrix");
+
+    expect(videos.map(video => video.id)).toEqual([1, 2, 3, 5, 4]);
+  });
+
+  it("applies collection filters and caps autocomplete suggestions", async () => {
+    const findManySpy = jest.spyOn(prisma.videodb_videodata, "findMany").mockResolvedValue(
+      Array.from({ length: 9 }, (_, index) => ({
+        id: index + 1,
+        title: `Matrix ${index + 1}`,
+        subtitle: null,
+        diskid: `R01F${index + 1}`,
+      })) as any,
+    );
+
+    const suggestions = await getVideoSuggestions({
+      deleteMode: "ONLY_DELETED",
+      mediaType: ["DVD"],
+      genreName: ["Action"],
+    }, "matrix");
+
+    expect(suggestions).toHaveLength(8);
+    expect(findManySpy).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        AND: expect.arrayContaining([
+          { owner_id: { equals: 999 } },
+          { videodb_mediatypes: { name: { in: ["DVD"] } } },
+          expect.objectContaining({ OR: expect.any(Array) }),
+        ]),
+      }),
+    }));
   });
 
   it("keeps alphabetical ordering and uses ids as a stable tie-breaker", () => {

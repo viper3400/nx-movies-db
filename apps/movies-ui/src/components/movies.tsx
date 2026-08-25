@@ -30,9 +30,14 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
     validateSearch,
     clearSearchResult,
     totalMoviesCount,
+    suggestions,
+    suggestionsLoading,
+    autocompleteEnabled,
+    setAutocompleteEnabled,
     filters,
     setFilters,
     handleSearchSubmit,
+    handleSuggestionSelect,
     handleRandomSearchRequest,
     loading,
     searchResult,
@@ -62,7 +67,17 @@ export const MovieComponent = ({ session }: MovieComponentProperties) => {
               placeholderLabel: t("search.placeholder"),
               searchLabel: t("search.search"),
               resultCountLabel: t("search.result_count"),
+              suggestionsLoadingLabel: t("search.suggestionsLoadingLabel"),
+              suggestionsEmptyLabel: t("search.suggestionsEmptyLabel"),
+              suggestionMetadataLabel: t("search.suggestionMetadataLabel"),
+              enableAutocompleteLabel: t("search.enableAutocompleteLabel"),
+              disableAutocompleteLabel: t("search.disableAutocompleteLabel"),
             }}
+            suggestions={suggestions}
+            suggestionsLoading={suggestionsLoading}
+            onSuggestionSelect={handleSuggestionSelect}
+            autocompleteEnabled={autocompleteEnabled}
+            onAutocompleteEnabledChange={setAutocompleteEnabled}
             mediaTypes={availableMediaTypes ?? []}
             genres={availableGenres ?? []}
           />

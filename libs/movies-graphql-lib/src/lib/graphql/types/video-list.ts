@@ -1,7 +1,7 @@
 import { builder } from "../builder";
-import { getVideos } from "@nx-movies-db/movies-prisma-lib";
+import { getVideoSuggestions, getVideos } from "@nx-movies-db/movies-prisma-lib";
 import type { VideoQueryArgs } from "@nx-movies-db/movies-prisma-lib";
-import { DeleteMode, TvSeriesMode, Videos } from "../objects";
+import { DeleteMode, TvSeriesMode, VideoSuggestion, Videos } from "../objects";
 
 builder.queryType({
   fields: (t) => ({
@@ -87,6 +87,20 @@ builder.queryType({
           requestMeta: { totalCount: videosData.totalCount },
         };
       }
-    })
+    }),
+    videoSuggestions: t.field({
+      type: [VideoSuggestion],
+      args: {
+        query: t.arg.string({ required: true }),
+        genreName: t.arg.stringList(),
+        mediaType: t.arg.stringList(),
+        userName: t.arg.string(),
+        filterFavorites: t.arg.boolean(),
+        filterFlagged: t.arg.boolean(),
+        deleteMode: t.arg({ type: DeleteMode }),
+        tvSeriesMode: t.arg({ type: TvSeriesMode }),
+      },
+      resolve: async (_parent, args) => getVideoSuggestions(args as VideoQueryArgs, args.query),
+    }),
   })
 });

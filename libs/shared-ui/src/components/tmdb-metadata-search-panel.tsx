@@ -55,6 +55,11 @@ export const TmdbMetadataSearchPanel: React.FC<TmdbMetadataSearchPanelProps> = (
             placeholderLabel: mediaKind === "tv" ? "Search TMDB TV title..." : "Search TMDB movie title...",
             searchLabel: mediaKind === "tv" ? "TMDB TV title" : "TMDB movie title",
             resultCountLabel: "Results",
+            suggestionsLoadingLabel: "Searching…",
+            suggestionsEmptyLabel: "No matches",
+            suggestionMetadataLabel: "·",
+            enableAutocompleteLabel: "Enable autocomplete",
+            disableAutocompleteLabel: "Disable autocomplete",
           }}
           onKeyDown={(event) => {
             if (event.key === "Enter") {

@@ -83,6 +83,13 @@ Notes:
 - When exact timestamps, IDs, or formatting are unstable, avoid brittle exact-string checks, but still assert a meaningful contract such as "value changed", "value is not earlier than before", or "reloaded state matches the saved state".
 - If an e2e assertion is difficult to express because the UI control is awkward, do not lower the bar by weakening the assertion. Instead, combine user-level checks with a persisted-state check through the existing API boundary when needed.
 
+### Serenity/JS And Combinatorial Coverage
+
+- Express Serenity/JS scenarios in the collection domain, for example "searches the collection" and "chooses a suggested movie". Keep locators, test IDs, and browser-level mechanics in a screen abstraction or reusable interaction.
+- Use pairwise coverage for independent behavioural dimensions. Document the dimensions and constraints in the test; do not use an opaque exhaustive matrix when a smaller pairwise set covers the important interactions.
+- Seed records through the GraphQL API boundary and give fixtures believable, purpose-revealing domain titles. Technical test-design terms such as "pairwise" must not appear in user-visible fixture data.
+- When fixture uniqueness is needed, put the generated value in a readable suffix, for example `Movie title (seed 123456789)`.
+
 ## UI Conventions
 
 - Shared/reusable components belong in `libs/shared-ui`; app-specific wiring belongs in `apps/movies-ui`.

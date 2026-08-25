@@ -2,6 +2,7 @@ export * from "./getGenres";
 export * from "./getMediaTypes";
 export * from "./getOwners";
 export * from "./getMovies";
+export * from "./getMovieSuggestions";
 export * from "./getVideoData";
 export * from "./getSeenDates";
 export * from "./updateUserFlags";

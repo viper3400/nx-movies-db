@@ -1,7 +1,7 @@
 import { PressEvent } from "@heroui/react";
 import React from "react";
 import { CheckboxValue, FilterDrawer, MovieSearchFilters } from "..";
-import { MovieSearchInput, MovieSearchInputLangResources } from "./movie-search-input";
+import { MovieSearchInput, MovieSearchInputLangResources, MovieSearchSuggestion } from "./movie-search-input";
 import { SurpriseButton } from "./surprise-button";
 
 
@@ -20,6 +20,11 @@ interface SearchFormProps {
   langResources: MovieSearchInputLangResources;
   mediaTypes: CheckboxValue[];
   genres: CheckboxValue[];
+  suggestions?: MovieSearchSuggestion[];
+  suggestionsLoading?: boolean;
+  onSuggestionSelect?: (suggestion: MovieSearchSuggestion) => void;
+  autocompleteEnabled: boolean;
+  onAutocompleteEnabledChange: (enabled: boolean) => void;
 }
 
 export const SearchForm: React.FC<SearchFormProps> = ({
@@ -37,6 +42,11 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   langResources,
   mediaTypes,
   genres,
+  suggestions,
+  suggestionsLoading,
+  onSuggestionSelect,
+  autocompleteEnabled,
+  onAutocompleteEnabledChange,
 }) => {
   return (
     <form onSubmit={handleSearchSubmit}>
@@ -54,8 +64,13 @@ export const SearchForm: React.FC<SearchFormProps> = ({
           }}
           totalMoviesCount={totalMoviesCount}
           langResources={langResources}
+          suggestions={suggestions}
+          suggestionsLoading={suggestionsLoading}
+          onSuggestionSelect={onSuggestionSelect}
+          autocompleteEnabled={autocompleteEnabled}
+          onAutocompleteEnabledChange={onAutocompleteEnabledChange}
         />
-        <div className="flex items-end gap-2 self-end">
+        <div className="flex items-end gap-2 self-end md:pb-1">
           <div className="flex items-end">
             <SurpriseButton
               onPress={handleRandomSearchRequest}

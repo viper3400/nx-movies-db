@@ -4,6 +4,7 @@ import { Video, VideoQueryArgs } from "../types";
 import { buildWhereClause } from "../helpers";
 
 const DEFAULT_RANDOM_PAGE_SIZE = 10;
+export const DEFAULT_VIDEO_SUGGESTION_LIMIT = 8;
 
 type RandomVideoSelection = {
   selectedIds: number[];
@@ -35,6 +36,29 @@ export const rankVideosBySearch = (videos: Video[], searchText: string) =>
     if (rankDifference !== 0) {
       return rankDifference;
     }
+
+    const titleDifference = (left.title ?? "").localeCompare(right.title ?? "", undefined, { sensitivity: "base" });
+    return titleDifference !== 0 ? titleDifference : left.id - right.id;
+  });
+
+export const getVideoSuggestionRank = (video: Video, searchText: string) => {
+  const query = searchText.toLocaleLowerCase();
+  const title = video.title?.toLocaleLowerCase() ?? "";
+  const subtitle = video.subtitle?.toLocaleLowerCase() ?? "";
+  const diskId = video.diskid?.toLocaleLowerCase() ?? "";
+
+  if (title === query) return 0;
+  if (title.startsWith(query)) return 1;
+  if (title.includes(query)) return 2;
+  if (subtitle.includes(query)) return 3;
+  if (diskId.startsWith(query)) return 4;
+  return 5;
+};
+
+export const rankVideoSuggestions = (videos: Video[], searchText: string) =>
+  [...videos].sort((left, right) => {
+    const rankDifference = getVideoSuggestionRank(left, searchText) - getVideoSuggestionRank(right, searchText);
+    if (rankDifference !== 0) return rankDifference;
 
     const titleDifference = (left.title ?? "").localeCompare(right.title ?? "", undefined, { sensitivity: "base" });
     return titleDifference !== 0 ? titleDifference : left.id - right.id;
@@ -161,4 +185,45 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
     videos: orderedVideos, totalCount
   };
   return result;
+};
+
+/**
+ * Finds small, ranked search suggestions while applying the same collection
+ * filters as the main movie search. Ranking happens in memory so exact and
+ * prefix matches are deterministic across MySQL collations.
+ */
+export const getVideoSuggestions = async (
+  args: VideoQueryArgs,
+  searchText: string,
+  limit = DEFAULT_VIDEO_SUGGESTION_LIMIT,
+) => {
+  const query = searchText.trim();
+  if (!query) return [];
+
+  const baseWhere = buildWhereClause({ ...args, title: undefined, diskid: undefined });
+  const where = {
+    ...baseWhere,
+    AND: [
+      ...(baseWhere.AND ?? []),
+      {
+        OR: [
+          { title: { contains: query } },
+          { subtitle: { contains: query } },
+          { diskid: { startsWith: query } },
+        ],
+      },
+    ],
+  };
+
+  const videos = await prisma.videodb_videodata.findMany({
+    where,
+    select: {
+      id: true,
+      title: true,
+      subtitle: true,
+      diskid: true,
+    },
+  });
+
+  return rankVideoSuggestions(videos as Video[], query).slice(0, limit);
 };

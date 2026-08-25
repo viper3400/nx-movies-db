@@ -1,5 +1,5 @@
 import { useState, useEffect, FormEvent, useRef } from "react";
-import { getMovies } from "../app/services/actions";
+import { getMovieSuggestions, getMovies, MovieSuggestion } from "../app/services/actions";
 import { Movie, moviesSearchInitialFilters } from "../interfaces";
 import { DeleteMode, MovieSearchFilters } from "@nx-movies-db/shared-ui";
 import { PressEvent } from "@heroui/react";
@@ -12,6 +12,7 @@ interface UseMovieSearchProps {
 
 const SEARCH_STATE_KEY = "moviesSearchState";
 const RECENT_RANDOM_HISTORY_LIMIT = 100;
+const SUGGESTION_DEBOUNCE_MS = 250;
 
 // Helper to map IDs to labels
 const getNameFromId = (ids: string[], options: Array<{ label: string; value: string }>): string[] =>
@@ -23,6 +24,7 @@ type SearchState = {
   filters: MovieSearchFilters;
   searchText: string;
   recentRandomMovieIds: string[];
+  autocompleteEnabled: boolean;
 };
 
 export const mergeRecentRandomMovieIds = (currentIds: string[], newIds: string[], limit = RECENT_RANDOM_HISTORY_LIMIT) =>
@@ -77,19 +79,23 @@ export function useMovieSearch({
           recentRandomMovieIds: Array.isArray(parsed.recentRandomMovieIds)
             ? parsed.recentRandomMovieIds.map((id: string | number) => String(id))
             : [],
+          autocompleteEnabled: parsed.autocompleteEnabled !== false,
         };
       } catch {
         // ignore
       }
     }
-    return { filters: normalizeFilters(moviesSearchInitialFilters), searchText: "", recentRandomMovieIds: [] };
+    return { filters: normalizeFilters(moviesSearchInitialFilters), searchText: "", recentRandomMovieIds: [], autocompleteEnabled: true };
   });
 
-  const { filters, searchText, recentRandomMovieIds } = searchState;
+  const { filters, searchText, recentRandomMovieIds, autocompleteEnabled } = searchState;
   const [searchResult, setSearchResult] = useState<Movie[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isDefaultFilter, setIsDefaultFilter] = useState<boolean>(true);
   const [totalMoviesCount, setTotalMoviesCount] = useState<number>(0);
+  const [suggestions, setSuggestions] = useState<MovieSuggestion[] | undefined>();
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const suggestionRequestRef = useRef(0);
   const currentPageRef = useRef<number | null>(null);
   const nextPageRef = useRef<number>(1);
   const loadingRef = useRef(false);
@@ -120,6 +126,40 @@ export function useMovieSearch({
   }, [filters]);
 
   useEffect(() => {
+    const query = searchText.trim();
+    const requestId = ++suggestionRequestRef.current;
+
+    if (!autocompleteEnabled || query.length < 2) {
+      setSuggestions(undefined);
+      setSuggestionsLoading(false);
+      return;
+    }
+
+    setSuggestions(undefined);
+    setSuggestionsLoading(true);
+    const timeout = window.setTimeout(() => {
+      void getMovieSuggestions({
+        query,
+        deleteMode: filters.deleteMode,
+        tvSeriesMode: filters.tvSeriesMode,
+        filterFavorites: filters.filterForFavorites,
+        filterFlagged: filters.filterForWatchAgain,
+        mediaType: getNameFromId(filters.filterForMediaTypes, availableMediaTypes),
+        genreName: getNameFromId(filters.filterForGenres, availableGenres),
+        userName: session.userName,
+      }).then((result) => {
+        if (suggestionRequestRef.current === requestId) setSuggestions(result);
+      }).catch(() => {
+        if (suggestionRequestRef.current === requestId) setSuggestions([]);
+      }).finally(() => {
+        if (suggestionRequestRef.current === requestId) setSuggestionsLoading(false);
+      });
+    }, SUGGESTION_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeout);
+  }, [searchText, filters, autocompleteEnabled, availableMediaTypes, availableGenres, session.userName]);
+
+  useEffect(() => {
     if (randomSearchRef.current === true) {
       randomSearchRef.current = false;
       clearSearchResult();
@@ -137,6 +177,14 @@ export function useMovieSearch({
     randomSearchRef.current = false;
     clearSearchResult();
     await executeSearch(0, searchText.trim());
+  };
+
+  const handleSuggestionSelect = async (suggestion: MovieSuggestion) => {
+    const selectedTitle = suggestion.title ?? suggestion.subtitle ?? suggestion.diskid ?? "";
+    randomSearchRef.current = false;
+    setSearchState(prev => ({ ...prev, searchText: selectedTitle }));
+    clearSearchResult();
+    await executeSearch(0, selectedTitle);
   };
 
   const handleRandomSearchRequest = async (e: PressEvent) => {
@@ -229,6 +277,9 @@ export function useMovieSearch({
   const setFilters = (f: MovieSearchFilters) =>
     setSearchState(prev => ({ ...prev, filters: normalizeFilters(f) }));
 
+  const setAutocompleteEnabled = (enabled: boolean) =>
+    setSearchState(prev => ({ ...prev, autocompleteEnabled: enabled }));
+
   return {
     searchText,
     setSearchText,
@@ -237,10 +288,15 @@ export function useMovieSearch({
     loading,
     validateSearch: () => true, // No validation needed
     totalMoviesCount,
+    suggestions,
+    suggestionsLoading,
+    autocompleteEnabled,
+    setAutocompleteEnabled,
     filters,
     setFilters,
     isDefaultFilter,
     handleSearchSubmit,
+    handleSuggestionSelect,
     handleRandomSearchRequest,
     clearSearchResult,
     handleNextPageTrigger,

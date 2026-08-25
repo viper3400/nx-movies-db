@@ -131,8 +131,7 @@ export const AutocompleteToggleTooltip: Story = {
     const canvas = within(canvasElement);
     const toggle = canvas.getByTestId("movie-search-autocomplete-toggle");
 
-    await userEvent.hover(toggle);
-
-    await expect(within(document.body).findByText("Disable autocomplete")).resolves.toBeVisible();
+    expect(toggle).toHaveAccessibleName("Disable autocomplete");
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
   },
 };

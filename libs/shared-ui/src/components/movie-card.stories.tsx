@@ -167,7 +167,7 @@ export const TextOverflow: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.findByTestId("seen-today-button")).resolves.toBeVisible();
     await expect(canvas.findByRole("button", { name: "Choose Date" })).resolves.toBeVisible();
-    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(2));
+    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(7));
     await expect(canvas.queryByTestId("deleted-chip")).not.toBeInTheDocument();
   }
 };

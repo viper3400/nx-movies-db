@@ -32,7 +32,7 @@ export const SeenChips: React.FC<{
   const parsedDates = seenDates?.map(date => new Date(date)).filter(date => !isNaN(date.getTime())) || [];
 
   return (
-    <div className="flex flex-col md:flex-row items-left">
+    <div className="flex flex-col items-start md:flex-row">
       {
         loading && <Chip
           data-testid="loading_chip"
@@ -53,7 +53,7 @@ export const SeenChips: React.FC<{
 
       }
       {seenDates && seenDates.length > 0 && !loading &&
-        <div className="flex flex-row">
+        <div className="flex shrink-0 items-start">
           <Chip
             data-testid="times_seen_chip"
             className={"mr-4 mb-4"}
@@ -72,7 +72,7 @@ export const SeenChips: React.FC<{
         </div>
       }
       {seenDates && seenDates.length > 0 && !loading &&
-        <div className="flex flex-row flex-wrap">
+        <div className="flex min-w-0 flex-1 flex-row flex-wrap items-start">
           {
             seenDates.map((date, index) => (
               <Chip

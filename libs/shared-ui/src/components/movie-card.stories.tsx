@@ -141,7 +141,7 @@ export const TextOverflow: Story = {
     detailsUrl: "/movies/details/1",
     showDetailsButton: true,
     showMarkAsSeenButtons: true,
-    loadSeenDatesForMovie: async () => ["2025-04-25", "2025-04-20"],
+    loadSeenDatesForMovie: async () => ["2025-04-25", "2025-04-20", "2024-04-30", "2024-12-12", "2023-12-10", "2023-10-11", "2023-01-01"],
     loadUserFlagsForMovie: async () => ({
       movieId: "1",
       isFavorite: true,
@@ -167,7 +167,7 @@ export const TextOverflow: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.findByTestId("seen-today-button")).resolves.toBeVisible();
     await expect(canvas.findByRole("button", { name: "Choose Date" })).resolves.toBeVisible();
-    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(2));
+    await waitFor(() => expect(canvas.queryAllByTestId("seen_date_chip")).toHaveLength(7));
     await expect(canvas.queryByTestId("deleted-chip")).not.toBeInTheDocument();
   }
 };

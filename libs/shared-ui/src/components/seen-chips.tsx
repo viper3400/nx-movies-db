@@ -83,7 +83,11 @@ export const SeenChips: React.FC<{
                 variant="soft"
               >
                 {formatDate(date.toString())}
-                <CloseButton aria-label="close chip" onPress={() => void deleteSeenDate(date.toString())} />
+                <CloseButton
+                  aria-label="close chip"
+                  className="-mr-2"
+                  onPress={() => void deleteSeenDate(date.toString())}
+                />
               </Chip>
             ))}
         </div>

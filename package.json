@@ -138,7 +138,7 @@
     "jiti": "2.7.0",
     "jsdom": "~30.0.0",
     "jsonc-eslint-parser": "^3.0.0",
-    "mariadb": "3.5.3",
+    "mariadb": "3.5.4",
     "nx": "23.1.1",
     "postcss": "8.5.26",
     "prettier": "^3.0.0",

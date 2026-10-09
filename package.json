@@ -47,7 +47,7 @@
     "commander": "^15.0.0",
     "cors": "^2.8.5",
     "express": "~5.2.0",
-    "motion": "^13.0.0",
+    "motion": "^14.0.0",
     "graphql": "^17.0.0",
     "graphql-scalars": "^2.0.0",
     "graphql-yoga": "^5.10.3",

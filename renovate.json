@@ -1,38 +1,24 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-  "stabilityDays": 7,
+  "extends": ["config:recommended"],
+  "minimumReleaseAge": "7 days",
   "constraints": {
     "npm": "12.2.0"
   },
   "packageRules": [
     {
       "description": "Hold minor and patch releases for 3 days",
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "stabilityDays": 3
+      "matchUpdateTypes": ["minor", "patch"],
+      "minimumReleaseAge": "3 days"
     },
     {
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "/^jaxx\\/.*$/"
-      ],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/^jaxx\\/.*$/"],
       "enabled": false
     },
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "matchDepTypes": [
-        "devDependencies"
-      ],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
@@ -53,10 +39,7 @@
       "groupName": "g: storybook",
       "separateMajorMinor": true,
       "automerge": false,
-      "labels": [
-        "deps",
-        "storybook"
-      ],
+      "labels": ["deps", "storybook"],
       "matchPackageNames": [
         "/^storybook$/",
         "/^@storybook//",
@@ -67,25 +50,17 @@
     {
       "groupName": "g: prisma",
       "automerge": false,
-      "matchPackageNames": [
-        "/^@prisma//",
-        "/^prisma$/"
-      ]
+      "matchPackageNames": ["/^@prisma//", "/^prisma$/"]
     },
     {
       "groupName": "g: heroui",
       "automerge": false,
-      "matchPackageNames": [
-        "/^@heroui\\//"
-      ]
+      "matchPackageNames": ["/^@heroui\\//"]
     },
     {
       "groupName": "g: vite",
       "description": "Group Vite ecosystem dependencies",
-      "labels": [
-        "deps",
-        "vite"
-      ],
+      "labels": ["deps", "vite"],
       "matchPackageNames": [
         "/^vite$/",
         "/^vitest$/",
@@ -96,16 +71,10 @@
     },
     {
       "description": "Pin MySQL Docker images to 8.x and block v9 upgrades",
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "mysql"
-      ],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mysql"],
       "allowedVersions": "<9",
-      "matchManagers": [
-        "docker-compose"
-      ]
+      "matchManagers": ["docker-compose"]
     }
   ]
 }

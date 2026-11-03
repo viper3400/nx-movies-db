@@ -140,7 +140,7 @@
     "jsonc-eslint-parser": "^3.0.0",
     "mariadb": "3.5.4",
     "nx": "24.0.2",
-    "postcss": "8.5.31",
+    "postcss": "8.5.32",
     "prettier": "^3.0.0",
     "prisma": "^7.0.0",
     "storybook": "^10.0.0",

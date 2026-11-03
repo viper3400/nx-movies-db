@@ -9,11 +9,6 @@
   },
   "packageRules": [
     {
-      "description": "Ship security updates immediately",
-      "matchVulnerabilityAlerts": true,
-      "stabilityDays": 0
-    },
-    {
       "description": "Hold minor and patch releases for 3 days",
       "matchUpdateTypes": [
         "minor",

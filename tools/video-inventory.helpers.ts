@@ -9,10 +9,27 @@ export type InventoryRow = {
   databasePath?: string | null;
   sharePath?: string;
   candidates?: string[];
+  titleSuggestions?: { movieId: number; title: string; databasePath: string | null }[];
 };
 
 function key(value: string): string {
   return value.replace(/\\/g, "/").replace(/\/+/g, "/").replace(/\/$/, "").toLocaleLowerCase("en-US");
+}
+
+export function normalizeMovieTitle(value: string): string {
+  return value
+    .normalize("NFKD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLocaleLowerCase("en-US")
+    .replace(/[^\p{Letter}\p{Number}]+/gu, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function fileTitle(filePath: string): string {
+  const basename = filePath.replace(/\\/g, "/").split("/").pop() ?? "";
+  const extension = path.posix.extname(basename);
+  return extension ? basename.slice(0, -extension.length) : basename;
 }
 
 export function normalizeDatabasePath(filename: string, legacyPrefix: string, shareRoot: string): string | null {
@@ -45,6 +62,7 @@ export function createInventoryReport(
 
   const items: InventoryRow[] = [];
   const matchedPaths = new Set<string>();
+  const unresolvedMovies: MovieRecord[] = [];
   for (const movie of movies) {
     const resolved = movie.filename ? normalizeDatabasePath(movie.filename, legacyPrefix, shareRoot) : null;
     const candidates = resolved ? filesByPath.get(key(resolved)) ?? [] : [];
@@ -55,10 +73,19 @@ export function createInventoryReport(
       items.push({ status: "ambiguous", movieId: movie.id, title: movie.title, databasePath: movie.filename, candidates: candidates.map((file) => file.path) });
     } else {
       items.push({ status: "database-entry-not-found", movieId: movie.id, title: movie.title, databasePath: movie.filename });
+      unresolvedMovies.push(movie);
     }
   }
   for (const file of files) {
-    if (!matchedPaths.has(key(file.path))) items.push({ status: "file-not-in-database", sharePath: file.path });
+    if (!matchedPaths.has(key(file.path))) {
+      const normalizedFileTitle = normalizeMovieTitle(fileTitle(file.path));
+      const titleSuggestions = normalizedFileTitle
+        ? unresolvedMovies
+            .filter((movie) => movie.title && normalizeMovieTitle(movie.title) === normalizedFileTitle)
+            .map((movie) => ({ movieId: movie.id, title: movie.title!, databasePath: movie.filename }))
+        : [];
+      items.push({ status: "file-not-in-database", sharePath: file.path, ...(titleSuggestions.length ? { titleSuggestions } : {}) });
+    }
   }
   const summary: Record<string, number> = { matched: 0, "database-entry-not-found": 0, "file-not-in-database": 0, ambiguous: 0 };
   for (const item of items) summary[item.status] += 1;

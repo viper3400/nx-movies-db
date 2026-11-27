@@ -35,7 +35,7 @@ function fileTitle(filePath: string): string {
 
 export function normalizeDatabasePath(filename: string, legacyPrefix: string, shareRoot: string): string | null {
   let value = filename.trim();
-  if (value.startsWith('"') && value.endsWith('"') && value.length >= 2) value = value.slice(1, -1).trim();
+  if (value.startsWith("\"") && value.endsWith("\"") && value.length >= 2) value = value.slice(1, -1).trim();
   if (!value) return null;
 
   const normalizedValue = key(value);
@@ -91,8 +91,8 @@ export function createInventoryReport(
       const normalizedFileTitle = normalizeMovieTitle(fileTitle(file.path));
       const titleSuggestions = normalizedFileTitle
         ? unresolvedMovies
-            .filter((movie) => movie.title && normalizeMovieTitle(movie.title) === normalizedFileTitle)
-            .map((movie) => ({ movieId: movie.id, title: movie.title!, databasePath: movie.filename }))
+          .filter((movie) => movie.title && normalizeMovieTitle(movie.title) === normalizedFileTitle)
+          .map((movie) => ({ movieId: movie.id, title: movie.title!, databasePath: movie.filename }))
         : [];
       items.push({ status: "file-not-in-database", sharePath: file.path, ...(titleSuggestions.length ? { titleSuggestions } : {}) });
     }

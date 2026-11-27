@@ -85,6 +85,34 @@ describe("createOrDeleteVideoData integration tests", () => {
     expect(dbEntry?.lastupdate.getTime()).toBeGreaterThan(new Date("2020-01-01T00:00:00.000Z").getTime());
   });
 
+  it("clears the disk ID when changing a physical-media record to HDD", async () => {
+    const created = await upsertVideoData({
+      title: "Clear Disk ID Regression",
+      year: 2024,
+      mediatype: 16,
+      owner_id: 2,
+      istv: 0,
+      diskid: "R77F7D01",
+    });
+    trackVideo(created.id);
+
+    await upsertVideoData({
+      id: created.id,
+      title: created.title ?? "Clear Disk ID Regression",
+      year: created.year,
+      mediatype: 14,
+      owner_id: created.owner_id,
+      istv: created.istv,
+      diskid: "",
+    });
+
+    const dbEntry = await prisma.videodb_videodata.findUnique({
+      where: { id: created.id },
+      select: { mediatype: true, diskid: true },
+    });
+    expect(dbEntry).toEqual({ mediatype: 14, diskid: null });
+  });
+
   it("should upsert and replace genre relations when genreIds are provided", async () => {
     const genres = await prisma.videodb_genres.findMany({ take: 3 });
     expect(genres.length).toBeGreaterThanOrEqual(3);

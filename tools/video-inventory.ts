@@ -9,7 +9,7 @@ if (process.env.DOTENV_CONFIG_PATH === undefined) dotenv.config();
 const extensions = new Set([".mkv", ".mp4", ".avi", ".mov", ".m4v", ".wmv", ".mpeg", ".mpg", ".ts", ".webm"]);
 const query = `query InventoryMovies($skip: Int, $take: Int) {
   videos(skip: $skip, take: $take, deleteMode: INCLUDE_DELETED, tvSeriesMode: INCLUDE_TVSERIES) {
-    videos { id title filename }
+    videos { id title filename mediaType }
     requestMeta { totalCount }
   }
 }`;

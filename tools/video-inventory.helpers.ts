@@ -1,9 +1,10 @@
 import path from "node:path";
 
-export type MovieRecord = { id: number; title: string | null; filename: string | null };
+export type MovieRecord = { id: number; title: string | null; filename: string | null; mediaType: string | null };
 export type ShareFile = { path: string; relativePath: string };
 export type InventoryRow = {
-  status: "matched" | "database-entry-not-found" | "file-not-in-database" | "ambiguous";
+  status: "matched" | "missing-file" | "file-not-required" | "file-not-in-database" | "ambiguous";
+  mediaType?: string | null;
   movieId?: number;
   title?: string | null;
   databasePath?: string | null;
@@ -64,15 +65,24 @@ export function createInventoryReport(
   const matchedPaths = new Set<string>();
   const unresolvedMovies: MovieRecord[] = [];
   for (const movie of movies) {
+    const expectsFile = movie.mediaType?.trim().toLocaleLowerCase("en-US") === "hdd";
     const resolved = movie.filename ? normalizeDatabasePath(movie.filename, legacyPrefix, shareRoot) : null;
     const candidates = resolved ? filesByPath.get(key(resolved)) ?? [] : [];
     if (candidates.length === 1) {
       matchedPaths.add(key(candidates[0].path));
-      items.push({ status: "matched", movieId: movie.id, title: movie.title, databasePath: movie.filename, sharePath: candidates[0].path });
+      items.push({ status: "matched", movieId: movie.id, title: movie.title, databasePath: movie.filename, sharePath: candidates[0].path, mediaType: movie.mediaType });
     } else if (candidates.length > 1) {
-      items.push({ status: "ambiguous", movieId: movie.id, title: movie.title, databasePath: movie.filename, candidates: candidates.map((file) => file.path) });
+      items.push({ status: "ambiguous", movieId: movie.id, title: movie.title, databasePath: movie.filename, candidates: candidates.map((file) => file.path), mediaType: movie.mediaType });
+    } else if (!expectsFile) {
+      items.push({
+        status: "file-not-required",
+        movieId: movie.id,
+        title: movie.title,
+        databasePath: movie.filename,
+        mediaType: movie.mediaType,
+      });
     } else {
-      items.push({ status: "database-entry-not-found", movieId: movie.id, title: movie.title, databasePath: movie.filename });
+      items.push({ status: "missing-file", movieId: movie.id, title: movie.title, databasePath: movie.filename, mediaType: movie.mediaType });
       unresolvedMovies.push(movie);
     }
   }
@@ -87,7 +97,7 @@ export function createInventoryReport(
       items.push({ status: "file-not-in-database", sharePath: file.path, ...(titleSuggestions.length ? { titleSuggestions } : {}) });
     }
   }
-  const summary: Record<string, number> = { matched: 0, "database-entry-not-found": 0, "file-not-in-database": 0, ambiguous: 0 };
+  const summary: Record<string, number> = { matched: 0, "missing-file": 0, "file-not-required": 0, "file-not-in-database": 0, ambiguous: 0 };
   for (const item of items) summary[item.status] += 1;
   return { summary, items, scanErrors };
 }

@@ -20,8 +20,8 @@ Run the dry-run scan:
 npm run inventory:scan
 ```
 
-Use `npm run inventory:scan -- --help` for the full environment-variable list. Set `INVENTORY_REPORT` to choose the JSON report path; otherwise the report is written under `tmp/`. The report classifies matched movies, database entries missing from the share, files absent from the database, ambiguous paths, and filesystem scan errors.
+Use `npm run inventory:scan -- --help` for the full environment-variable list. Set `INVENTORY_REPORT` to choose the JSON report path; otherwise the report is written under `tmp/`. The report classifies matched HDD movies, missing files for HDD records, movies whose media type does not require a share file, files absent from the database, ambiguous paths, and filesystem scan errors.
 
 If the API requires bearer authentication, set `INVENTORY_API_TOKEN`. Keep tokens in environment configuration, not source control. The command supports common video extensions (`mkv`, `mp4`, `avi`, `mov`, `m4v`, `wmv`, `mpeg`, `mpg`, `ts`, `webm`).
 
-For share files that remain unmatched after exact path matching, the report also suggests database movies whose paths are unresolved and whose titles match the file basename (without its video extension). Title comparison ignores case, diacritics, punctuation, and repeated whitespace. Suggestions are review-only; there is no automatic association or database update. If multiple unresolved records share the same title, all are listed as candidates.
+For share files that remain unmatched after exact path matching, the report also suggests unresolved HDD movies whose titles match the file basename (without its video extension). Title comparison ignores case, diacritics, punctuation, and repeated whitespace. Suggestions are review-only; there is no automatic association or database update. If multiple unresolved HDD records share the same title, all are listed as candidates.

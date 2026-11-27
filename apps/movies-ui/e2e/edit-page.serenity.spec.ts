@@ -1,4 +1,4 @@
-import { type Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 import { test } from "@serenity-js/playwright-test";
 import {
   Ensure,
@@ -75,7 +75,7 @@ async function seedVideoRecord(page: Page, {
         year: 2024,
         istv: 0,
         lastupdate,
-        mediatype: 14,
+        mediatype: 16,
         owner_id: 1,
       },
     },
@@ -126,6 +126,34 @@ async function fetchPersistedLastUpdate(page: Page, id: number) {
   return body.data?.videoData?.lastupdate as string | null | undefined;
 }
 
+async function fetchPersistedMediaAndDiskId(page: Page, id: number) {
+  const response = await page.request.post("/api/graphql-proxy", {
+    data: {
+      query: `
+        query MediaAndDiskIdForVideo($id: Int!) {
+          videoData(id: $id) {
+            id
+            diskid
+            mediatype
+          }
+        }
+      `,
+      variables: { id },
+    },
+  });
+  if (!response.ok()) {
+    throw new Error(`Failed to fetch media type and disk ID for video ${id}`);
+  }
+  const body = await response.json();
+  if (body.errors) {
+    throw new Error(`GraphQL errors while loading video data: ${JSON.stringify(body.errors)}`);
+  }
+  return body.data?.videoData as
+    | { diskid: string | null; mediatype: number }
+    | null
+    | undefined;
+}
+
 async function readDateFieldText(page: Page, fieldName: string) {
   const rawText = await page.locator(`[data-testid='video-field-${fieldName}']`).textContent();
   return (rawText ?? "").replace(/\s+/g, " ").trim();
@@ -155,6 +183,7 @@ const diskIdSuggestion = PageElement.located(
   By.css("[data-testid='video-field-diskid-suggestion']"),
 ).describedAs("disk id suggestion");
 const yearField = videoField("year", "year field");
+const mediaTypeField = videoField("mediatype", "media type field");
 const tmdbRefreshToggle = PageElement.located(
   By.css("[data-testid='tmdb-refresh-toggle']"),
 ).describedAs("TMDB refresh toggle");
@@ -360,6 +389,47 @@ test.describe("Edit page using Serenity/JS", () => {
         isGreaterThan(Date.parse(beforePersistedLastUpdate ?? "")),
       ),
     );
+  });
+
+  test("actor can change Blu-ray to HDD and remove the disk ID", async ({
+    actorCalled,
+    page,
+  }) => {
+    const actor = actorCalled("Alex");
+    const uniqueToken = Date.now();
+    const title = `Serenity Remove Disk ID ${uniqueToken}`;
+    const diskId = `R${String((uniqueToken % 80) + 10).padStart(2, "0")}F${String((Math.floor(uniqueToken / 100) % 80) + 10).padStart(2, "0")}D08`;
+    const seeded = await seedVideoRecord(page, {
+      title,
+      diskId,
+      lastupdate: "2020-01-02T00:00:00.000Z",
+    });
+
+    await actor.attemptsTo(
+      Navigate.to(`/edit/${seeded.id}`),
+      Wait.until(titleField, isVisible()),
+      Ensure.that(Attribute.called("value").of(diskIdField), equals(diskId)),
+      Click.on(mediaTypeField),
+    );
+    await expect(page.locator("[data-testid='video-field-mediatype']")).toContainText("Blu-ray");
+    await page.getByRole("option", { name: "HDD", exact: true }).click();
+    await actor.attemptsTo(
+      Clear.theValueOf(diskIdField),
+      Press.the(Key.Tab).in(diskIdField),
+      Ensure.that(saveButton, isEnabled()),
+      Click.on(saveButton),
+    );
+    await waitForSaveStatus(page, "Alle Änderungen gespeichert");
+
+    const persisted = await fetchPersistedMediaAndDiskId(page, seeded.id);
+    expect(persisted).toMatchObject({ mediatype: 14, diskid: null });
+
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await actor.attemptsTo(
+      Wait.upTo(Duration.ofSeconds(15)).until(titleField, isVisible()),
+      Ensure.that(Attribute.called("value").of(diskIdField), equals("")),
+    );
+    await expect(page.locator("[data-testid='video-field-mediatype']")).toContainText("HDD");
   });
 
   test.skip("actor can edit disk info and year, persist, and revert", async ({

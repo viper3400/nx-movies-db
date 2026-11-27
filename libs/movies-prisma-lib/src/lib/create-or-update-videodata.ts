@@ -120,6 +120,10 @@ export async function upsertVideoData(data: VideoDataInput): Promise<VideoData> 
         where: { id },
         data: {
           ...rest,
+          // Distinguish a cleared field from an omitted field on partial updates.
+          ...(Object.prototype.hasOwnProperty.call(data, "diskid")
+            ? { diskid: parsed.diskid ?? null }
+            : {}),
           lastupdate: new Date(),
         },
       })

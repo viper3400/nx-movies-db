@@ -71,6 +71,7 @@ builder.queryType({
           title: video.title,
           subtitle: video.subtitle,
           diskid: video.diskid,
+          filename: video.filename,
           ownerid: video.owner_id, // Make sure to match the field name
           istv: video.istv == 1 ? true : false,
           runtime: video.runtime,

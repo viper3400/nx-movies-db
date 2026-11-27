@@ -3,6 +3,7 @@ export type Video = {
   subtitle?: string | null;
   title?: string | null;
   diskid?: string | null;
+  filename?: string | null;
   owner_id: number;
   istv: number;
   runtime: number | null;

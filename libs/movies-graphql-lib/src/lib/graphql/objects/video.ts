@@ -6,6 +6,7 @@ export const Video = builder.simpleObject("Video", {
     title: t.string(),
     subtitle: t.string(),
     diskid: t.string(),
+    filename: t.string({ nullable: true }),
     ownerid: t.int(),
     istv: t.boolean(),
     plot: t.string(),

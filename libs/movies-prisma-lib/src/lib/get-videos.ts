@@ -133,6 +133,7 @@ export const getVideos = async (args: VideoQueryArgs, query: any) => {
       subtitle: true,
       title: true,
       diskid: true,
+      filename: true,
       owner_id: true,
       istv: true,
       runtime: true,

@@ -15,6 +15,7 @@
     "prisma:generate": "nx run movies-prisma-lib:prisma-generate",
     "prisma:format": "nx run movies-prisma-lib:prisma-format",
     "backfill:tmdb": "node -r @swc-node/register ./tools/tmdb-plot-backfill.ts",
+    "inventory:scan": "node -r @swc-node/register ./tools/video-inventory.ts",
     "db:start": "MYSQL_DATABASE=videodb MYSQL_ROOT_PASSWORD=password podman compose -f development-db/docker-compose.ci.yaml up -d movies-service-db",
     "db:start:local": "if [ ! -f development-db/local-seed.sql ]; then echo 'Create development-db/local-seed.sql from development-db/local-seed.sql.example first.'; exit 1; fi; MYSQL_DATABASE=videodb MYSQL_ROOT_PASSWORD=password podman compose -f development-db/docker-compose.ci.yaml -f development-db/docker-compose.local-seed.yaml up -d movies-service-db",
     "db:stop": "podman compose -f development-db/docker-compose.ci.yaml down -v",
